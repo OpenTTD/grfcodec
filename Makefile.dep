@@ -1,0 +1,26 @@
+error.o: error.c error.h typesize.h
+getopt.o: getopt.c
+grfcomm.o: grfcomm.c typesize.h error.h path.h grfcomm.h
+grfmerge.o: grfmerge.c typesize.h version.h
+path.o: path.c path.h typesize.h
+grfcodec.o: grfcodec.cc typesize.h pcx.h sprites.h \
+ pcxsprit.h ttdpal.h grfcomm.h info.h error.h path.h version.h conv.h
+grfdiff.o: grfdiff.cc typesize.h error.h sprites.h pcx.h \
+ grfcomm.h grfmrg.h path.h version.h
+info.o: info.cc info.h pcxsprit.h pcx.h typesize.h sprites.h
+pcx.o: pcx.cc pcx.h typesize.h
+pcxsprit.o: pcxsprit.cc pcxsprit.h pcx.h typesize.h sprites.h
+sprites.o: sprites.cc typesize.h error.h sprites.h pcx.h
+error.obj: error.c error.h typesize.h
+getopt.obj: getopt.c
+grfcomm.obj: grfcomm.c typesize.h error.h path.h grfcomm.h
+grfmerge.obj: grfmerge.c typesize.h
+path.obj: path.c path.h typesize.h
+grfcodec.obj: grfcodec.cc typesize.h pcx.h sprites.h \
+ pcxsprit.h ttdpal.h grfcomm.h info.h error.h path.h conv.h
+grfdiff.obj: grfdiff.cc typesize.h error.h sprites.h pcx.h \
+ grfcomm.h grfmrg.h path.h
+info.obj: info.cc info.h pcxsprit.h pcx.h typesize.h sprites.h
+pcx.obj: pcx.cc pcx.h typesize.h
+pcxsprit.obj: pcxsprit.cc pcxsprit.h pcx.h typesize.h sprites.h
+sprites.obj: sprites.cc typesize.h error.h sprites.h pcx.h
