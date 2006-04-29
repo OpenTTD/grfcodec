@@ -41,17 +41,17 @@
 
 class spriteinfowriter : virtual public bandnotify {
 	public:
-	virtual void addsprite(int x, U8 info[8]) { };
-	virtual void adddata(U16 size, U8 *data) { };
+	virtual void addsprite(int /*x*/, U8 /*info*/[8]) { };
+	virtual void adddata(U16 /*size*/, U8 * /*data*/) { };
 };
 
 class spritestorage {
 	public:
 	virtual void newsprite() {};
-	virtual void setsize(int sx, int sy) {};
+	virtual void setsize(int /*sx*/, int /*sy*/) {};
 	virtual int  curspritex() {return 0;};
 	virtual void newrow() {};
-	virtual void nextpixel(U8 colour) {};
+	virtual void nextpixel(U8 /*colour*/) {};
 	virtual void spritedone() {};
 };
 
@@ -63,8 +63,8 @@ void cfread (void *ptr, size_t size, size_t n, FILE *stream);
 void cfwrite (void *ptr, size_t size, size_t n, FILE *stream);
 long fcopy(FILE *one, FILE *two, long bytes);
 
-int decodetile(U8 *buffer, int sx, int sy, unsigned long datasize, spritestorage *store, FILE *info);
-int decoderegular(U8 *buffer, int sx, int sy, U16 datasize, spritestorage *store, FILE *info);
+int decodetile(U8 *buffer, int sx, int sy, spritestorage *store, FILE *info);
+int decoderegular(U8 *buffer, int sx, int sy, spritestorage *store, FILE *info);
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);
 
 U16 getlasttilesize();

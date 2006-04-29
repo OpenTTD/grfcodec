@@ -79,7 +79,7 @@ long fcopy(FILE *one, FILE *two, long bytes)
   return total;
 }
 
-int decodetile(U8 *buffer, int sx, int sy, unsigned long datasize, spritestorage *store)
+int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
 {
   U16 *ibuffer = (U16*) buffer;
 
@@ -118,7 +118,7 @@ int decodetile(U8 *buffer, int sx, int sy, unsigned long datasize, spritestorage
   return 1;
 }
 
-int decoderegular(U8 *buffer, int sx, int sy, int datasize, spritestorage *store)
+int decoderegular(U8 *buffer, int sx, int sy, spritestorage *store)
 {
   long offset = 8;
   for (int y=0; y<sy; y++) {
@@ -282,9 +282,9 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
   writer->addsprite(store->curspritex(), info);
 
   if (HASTRANSPARENCY(info))	// it's a tile
-	result = decodetile(outbuffer, sx, sy, datasize, store);
+	result = decodetile(outbuffer, sx, sy, store);
   else
-	result = decoderegular(outbuffer, sx, sy, datasize, store);
+	result = decoderegular(outbuffer, sx, sy, store);
 
   store->spritedone();
 
@@ -447,6 +447,10 @@ multitype strategy2(U8* data, unsigned int datasize, unsigned int datamax)
 multitype strategy3(U8* data, unsigned int datasize, unsigned int datamax);
 // in assembly optimized source if used
 
+#ifdef _MSC_VER
+#pragma warning(disable:4701)//chunk may be used uninitialized
+#endif
+
 long realcompress(U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
 {
   long inpos = 0, outpos = 0;
@@ -518,6 +522,10 @@ long realcompress(U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
 
   return 1;
 }
+
+#ifdef _MSC_VER
+#pragma warning(default:4701)
+#endif
 
 U16 lasttilesize;
 
