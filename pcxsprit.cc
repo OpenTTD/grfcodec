@@ -83,7 +83,7 @@ void pcxwrite::setcolours(U8 bg, U8 bord, int skip)
   borderskip = skip;
 }
 
-void pcxwrite::startsubimage(int x, int y, int sx, int sy)
+void pcxwrite::startsubimage(int /*x*/, int /*y*/, int sx, int sy)
 {
 #define BORDERSIZE 4
   int bordersizex = BORDERSIZE;

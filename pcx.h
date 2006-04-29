@@ -70,7 +70,7 @@ class singlefile : virtual public multifile {
 
 class bandnotify {	// used when a band is written to the PCX file
 	public:
-	virtual void newband(class pcxfile *pcx) { };
+	virtual void newband(class pcxfile* /*pcx*/) { };
 };
 
 class pcxfile {
@@ -80,7 +80,7 @@ class pcxfile {
 	virtual const char *filename() { return mfile->filename(); };
 	virtual FILE *getnextfile() { return mfile->nextfile(); };
 	virtual FILE *getcurfile() { return mfile->curfile(); };
-	virtual void filedone(int final) { };
+	virtual void filedone(int /*final*/) { };
 	virtual void filestart() { };
 
 	void setfile(multifile *mfile);
@@ -91,10 +91,10 @@ class pcxfile {
 	void alloclines(int newlines);
 	void expirelines(int oldlines);
 	void initline(int y);
-	virtual void setline(U8 *band) { };
+	virtual void setline(U8* /*band*/) { };
 	void endimage();
 
-	virtual void startsubimage(int x, int y, int sx, int sy) { };
+	virtual void startsubimage(int /*x*/, int /*y*/, int /*sx*/, int /*sy*/) { };
 	void newline();
 	void streamputpixel(U8 colour);
 	void streamputpixel(U8 *buffer, unsigned long datasize);

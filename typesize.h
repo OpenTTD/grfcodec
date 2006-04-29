@@ -58,6 +58,13 @@
 #	error Unknown variables sizes, please define.
 #endif
 
+#ifdef _MSC_VER
+// disable warnings: conversion from $LARGE_SIZE to $SMALL_SIZE
+#pragma warning(disable:4267 4244)
+// ... conditional expression is constant
+#pragma warning(disable:4127)
+#endif
+
 #undef maketype
 
 #ifdef DOCHECK
