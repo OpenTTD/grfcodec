@@ -400,13 +400,18 @@ void infowriter::newband(pcxfile *pcx)
 			} else {
 			    fprintf(info, "* %d\t", d->size);
 			    for (j=0; j<d->size; j++) {
-				// Readable characters are 32..126 and 158..255
-				int thistxt = (d->data[j] >= 32 && d->data[j] < 127) || d->data[j] > 158;
-				int nexttxt = j+1<d->size && ((d->data[j+1]>=32 && d->data[j+1]<127) || d->data[j+1] > 158);
+				// Readable characters are 32..126 (excluding " (34)) and 158..255
+#define istxt(x) (j+(x)<d->size && ((d->data[j+(x)]>=32 && d->data[j+(x)]!=34 && d->data[j+(x)]<127) || d->data[j+(x)] > 158))
+				//int thistxt = (d->data[j] >= 32 && d->data[j] < 127) || d->data[j] > 158;
+				//int nexttxt = j+1<d->size && ((d->data[j+1]>=32 && d->data[j+1]<127) || d->data[j+1] > 158);
 
-				// If there are at least two readable characters
-				// in a row, use "..." notation
-				if (useplaintext && thistxt && (instr || nexttxt) && d->data[j] != '"') {
+				if (istxt(0) && useplaintext && (instr || 
+						//two in a row for 8 and E
+						(istxt(1) && (d->data[0]==8 || d->data[0]==0xE ||
+						//four in a row for everything else.
+						(istxt(2) && istxt(3))
+						))
+					)) {
 					if (!instr) {
 						fputs(" \"", info); instr = 1;
 					}
@@ -427,9 +432,13 @@ void infowriter::newband(pcxfile *pcx)
 						|| count>=50)))
 				     && j<d->size-1) {
 					if (instr) {
-						fputs("\"", info); instr = 0;
-					}
-					fputs("\n\t", info);
+						if(istxt(1)){
+							fputs("\"\n\t \"", info);
+						}else{
+							fputs("\"\n\t", info); instr = 0;
+						}
+					}else
+						fputs("\n\t", info);
 					count = 0;
 				}
 			    }
