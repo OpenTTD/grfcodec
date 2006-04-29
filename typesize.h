@@ -23,8 +23,10 @@
 	typedef   signed type S ## size; \
 	typedef unsigned type U ## size;
 
+#ifndef _MSC_VER
 #define strnicmp strncasecmp
 #define stricmp strcasecmp
+#endif
 
 #ifdef __BORLANDC__
 
