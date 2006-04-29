@@ -93,7 +93,7 @@ enum _argtype
   optional_argument
 };
 
-#if __STDC__ || __BORLANDC__
+#if __STDC__ || __BORLANDC__ || _MSC_VER
 extern int getopt (int argc, char *const *argv, const char *shortopts);
 extern int getopt_long (int argc, char *const *argv, const char *shortopts,
 		        const struct option *longopts, int *longind);

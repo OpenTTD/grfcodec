@@ -13,6 +13,9 @@
 #ifdef MINGW
         #include <io.h>
         #define mkdir(a,b) mkdir(a)
+#elif defined(_MSC_VER)
+	#include <direct.h>
+    #define mkdir(a,b) mkdir(a)
 #endif
 
 

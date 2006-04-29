@@ -21,14 +21,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-//#include <dir.h>
 #include <getopt.h>
 #include <sys/stat.h>
-#include <unistd.h>
+
 #ifdef MINGW
 	#include <io.h>
 	#define mkdir(a,b) mkdir(a)
-#endif
+#elif defined(_MSC_VER)
+	#include <io.h>
+	#include <direct.h>
+	#define mkdir(a,b) mkdir(a)
+	#define F_OK 0
+#else
+	#include <unistd.h>
+#endif//_MSC_VER
 
 #define DOCHECK
 
@@ -45,6 +51,8 @@
 #ifdef WIN32
 #	include "path.h"
 #endif
+
+BEGINC
 
 char *usagetext=
 	"%sUsage:\n"
@@ -72,6 +80,8 @@ char *usagetext=
 	"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>\n"
 	"You may copy and redistribute it under the terms of the GNU General Public\n"
 	"License, as stated in the file 'COPYING'.\n";
+
+ENDC
 
 void showpalettetext()
 {
