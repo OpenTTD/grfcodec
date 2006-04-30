@@ -105,7 +105,7 @@ class pcxfile {
 	void installwritemap(int *map);
 
 	void putpixel(int x, int y, U8 colour);
-	U8 getpixel(int x, int y);
+	//U8 getpixel(int x, int y);
 	int  subimagex()
 		{ return subx + dx; }
 	int  subimagey()

@@ -29,7 +29,7 @@ class pcxwrite : virtual public pcxfile, virtual public spritestorage {
 
 	void setcolours(U8 bg, U8 bord, int skip);
 	void setpalette(U8 *palette);
-	void setpalette(FILE *palfile);
+	//void setpalette(FILE *palfile);
 
 	protected:
 

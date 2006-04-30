@@ -328,7 +328,7 @@ void pcxfile::putpixel(int x, int y, U8 colour)
   band[subofsy(y, 1)][subofsx(x, 1)] = putcolourmap[colour];
 }
 
-U8 pcxfile::getpixel(int x, int y)
+/*U8 pcxfile::getpixel(int x, int y)
 {
   int sx = subofsx(x, 0);
   int sy = subofsy(y, 0);
@@ -343,7 +343,7 @@ U8 pcxfile::getpixel(int x, int y)
   }
 
   return getcolourmap[colour];
-}
+}*/
 
 void pcxfile::endsubimage()
 {

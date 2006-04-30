@@ -205,10 +205,10 @@ void pcxwrite::setpalette(U8 *palette)
   memmove(pcxwrite::palette, palette, 768);
 }
 
-void pcxwrite::setpalette(FILE *palfile)
+/*void pcxwrite::setpalette(FILE *palfile)
 {
   fread(palette, 1, 768, palfile);
-}
+}*/
 
 
 /***********************\
