@@ -503,7 +503,7 @@ U8 *readpal(char *filearg)
 {
   enum paltype { UNK, BCP, PSP };
   paltype type = UNK;
-  U8 *pal = new U8[256*3];
+  static U8 pal[256*3];
 
   if (!strnicmp(filearg, "bcp:", 4))
 	type = BCP;
