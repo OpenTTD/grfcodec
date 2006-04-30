@@ -103,11 +103,6 @@ pcxfile::pcxfile()
   codecing = 0;
   notify = NULL;
 
-  int i;
-  for (i=0; i<256; i++)
-	getcolourmap[i] = i;
-  for (i=0; i<256; i++)
-	putcolourmap[i] = i;
 }
 
 pcxfile::~pcxfile()
@@ -524,12 +519,10 @@ int pcxfile::subofsy(int y, int checkbound)
 
 void pcxfile::installreadmap(int *map)
 {
-  for (int i=0; i<256; i++)
-	getcolourmap[i] = map[i];
+	getcolourmap = map;
 }
 
 void pcxfile::installwritemap(int *map)
 {
-  for (int i=0; i<256; i++)
-	putcolourmap[i] = map[i];
+	putcolourmap = map;
 }
