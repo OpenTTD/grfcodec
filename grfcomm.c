@@ -167,12 +167,14 @@ int doopen(char *grffile, char *dir, char *ext, char *mode,
   if (filename) *filename=strdup(fn);
 
   f = fopen(fn, mode);
-  if (file) *file = f;
 
   if (!f) {
 	fperror(e_openfile, lastspritefilename);
 	exit(2);
   }
+
+  if (file) *file = f;
+  else fclose(f);
 
   return 1;
 }
