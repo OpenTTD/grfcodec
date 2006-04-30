@@ -242,11 +242,6 @@ int inforeader::next(int wantno)
 	intinf[7] = ry >> 8;
   }
 
-  if (y < lasty) {
-	printf("\nError: y is %d, smaller than %d. Y can't decrease!\n", y, lasty);
-	exit(2);
-  }
-
   sx = (intinf[3] << 8) | intinf[2];
   sy = intinf[1];
 
@@ -255,6 +250,13 @@ int inforeader::next(int wantno)
 
   if (infover < 4)
 	y++;	// bug, had an extra line at the top
+
+  if (y < lasty) {
+	printf("\nError: y is %d, smaller than %d. Y can't decrease!\n", y, lasty);
+	exit(2);
+  }
+
+  lasty = y;
 
   pcx->startsubimage(x, y, sx, sy);
 
