@@ -58,8 +58,6 @@ inforeader::inforeader(FILE *fn)
 
 inforeader::~inforeader()
 {
-  if (colourmap)
-	delete(colourmap);
   if (buffer)
 	free(buffer);
   if (pcxname)
@@ -333,11 +331,7 @@ int inforeader::getsprite(U8 *sprite)
 
 void inforeader::installmap(int *map)
 {
-  if (!colourmap)
-	colourmap = new int[256];
-
-  for (int i=0; i<256; i++)
-	colourmap[i] = map[i];
+	colourmap = map;
 }
 
 

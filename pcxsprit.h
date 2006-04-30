@@ -36,11 +36,14 @@ class pcxwrite : virtual public pcxfile, virtual public spritestorage {
 	private:
 	void showspriteno();
 
-	U8 palette[768];
+	U8 *palette;
 
 	int borderskip, spriteno, lastdigitx;
 	U8 background;
 	U8 border;
+
+	pcxwrite(const pcxwrite&);//not copyable: pcxfile::colormap
+	void operator=(const pcxwrite&);//not assignable: pcxfile::colormap
 };
 
 class pcxread : virtual public pcxfile {
@@ -56,6 +59,8 @@ class pcxread : virtual public pcxfile {
 
 	private:
 	multifile *mfile;
+	pcxread(const pcxread&); //not copyable: pcxfile::colormap
+	void operator=(const pcxread&); //not assignable: pcx::colormap
 };
 
 #endif /* _PCXSPRIT_H */

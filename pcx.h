@@ -141,8 +141,28 @@ class pcxfile {
 	int bandlines;
 	int codecing;
 	bandnotify *notify;
-	int getcolourmap[256];
-	int putcolourmap[256];
+	class colourmap{
+	public:
+		colourmap():map(new int[256]),deletemap(true){
+			for(int i=0;i<256;i++)
+				map[i]=i;
+		}
+		~colourmap(){
+			if(deletemap) delete map;
+		}
+		const colourmap&operator=(int*p){
+			if(deletemap) delete map;
+			deletemap=false;
+			map=p;
+			return*this;
+		}
+		int operator[](int x){return map[x];}
+	private:
+		int*map;
+		bool deletemap;
+		void operator=(const colourmap&);// Not assignable
+		colourmap(const colourmap&);// not copyable
+	} getcolourmap, putcolourmap;
 
 	private:
 

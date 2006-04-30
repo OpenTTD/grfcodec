@@ -202,7 +202,7 @@ void pcxwrite::writepal()
 
 void pcxwrite::setpalette(U8 *palette)
 {
-  memmove(pcxwrite::palette, palette, 768);
+  pcxwrite::palette = palette;
 }
 
 /*void pcxwrite::setpalette(FILE *palfile)
