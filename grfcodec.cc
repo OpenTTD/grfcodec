@@ -263,10 +263,10 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 
   printf("Encoding in temporary file %s\n", grfnew);
 
-  inforeader *info = new inforeader(infofile);
+  inforeader info(infofile);
 
   if (colourmap)
-	info->installmap(colourmap);
+	info.installmap(colourmap);
 
   long totaluncomp = 1, totalcomp = 1;
   long totaltransp = 1, totaluntransp = 1;
@@ -274,7 +274,7 @@ int encode(char *file, char *dir, int compress, int *colourmap)
   int spriteno = 0;
 
 
-  while (info->next(spriteno)) {
+  while (info.next(spriteno)) {
 	//int comp1 = totalcomp / totaluncomp;
 	int comp2 = (100L * totalcomp / totaluncomp);// % 100;
 
@@ -286,14 +286,14 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 
 	printf("\rSprite%5d  Done:%3d%%  "
 		"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
-		spriteno, (int) (ftell(info->f)*100L/info->filesize),
+		spriteno, (int) (ftell(info.f)*100L/info.filesize),
 		comp2, comp4, comp6);
 
-	if (info->verbatim) {		// non-sprite data, copy verbatim
-		if (info->bininclude) {		// include binary file
-			FILE *bin = fopen(info->bininclude, "rb");
+	if (info.verbatim) {		// non-sprite data, copy verbatim
+		if (info.bininclude) {		// include binary file
+			FILE *bin = fopen(info.bininclude, "rb");
 			if (!bin) {
-				fperror("Cannot read %s", info->bininclude);
+				fperror("Cannot read %s", info.bininclude);
 				exit(2);
 			}
 
@@ -301,8 +301,8 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 			fstat(fileno(bin), &stat_buf);
 			off_t fsize = stat_buf.st_size;
 
-			char *nameofs = info->bininclude + strlen(info->bininclude);
-			while (nameofs > info->bininclude) {
+			char *nameofs = info.bininclude + strlen(info.bininclude);
+			while (nameofs > info.bininclude) {
 				nameofs--;
 				if (nameofs[0] == '\\' || nameofs[0] == '/') {
 					nameofs++;
@@ -343,50 +343,51 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 				fwrite(buffer, chunk, 1, grf);
 				fsize -= chunk;
 			}
+			delete[]buffer;
 			fclose(bin);
 		} else {
-			totalcomp += info->size;
-			totaluncomp += info->size;
+			totalcomp += info.size;
+			totaluncomp += info.size;
 			spriteno++;
 
-			fwrite(&(info->size), 1, 2, grf);
+			fwrite(&(info.size), 1, 2, grf);
 			fputc(0xff, grf);
-			for (int i=0; i<info->size; i++)
-				fputc(info->nextverb(), grf);
-			if (info->verbatim_str) {
+			for (int i=0; i<info.size; i++)
+				fputc(info.nextverb(), grf);
+			if (info.verbatim_str) {
 				/* XXX: Trailing quote mark. */
-				fgetc(info->f);
-				info->verbatim_str = 0;
+				fgetc(info.f);
+				info.verbatim_str = 0;
 			}
 		}
 	} else {				// real sprite, encode it
-		U8 *image = (U8*) malloc(info->imgsize);
+		U8 *image = (U8*) malloc(info.imgsize);
 		if (!image) {
-			printf("Error: can't allocate sprite memory (%ld bytes)\n", info->imgsize);
+			printf("Error: can't allocate sprite memory (%ld bytes)\n", info.imgsize);
 			exit(2);
 		}
 
-		info->getsprite(image);
+		info.getsprite(image);
 
 		U16 compsize;
-		if (info->inf[0] & 8) {
-			compsize = encodetile(grf, image, info->imgsize, 0, info->sx, info->sy, info->inf, compress);
+		if (info.inf[0] & 8) {
+			compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress);
 			totaltransp += getlasttilesize();	// how much after transparency removed
-			totaluntransp += info->imgsize;		// how much with transparency
+			totaluntransp += info.imgsize;		// how much with transparency
 
 			totalreg += compsize;			// how much after transp&redund removed
 			totalunreg += getlasttilesize();	// how much with redund
 		} else {
-			compsize = encoderegular(grf, image, info->imgsize, info->inf, compress);
-			totaltransp += info->imgsize;
-			totaluntransp += info->imgsize;
+			compsize = encoderegular(grf, image, info.imgsize, info.inf, compress);
+			totaltransp += info.imgsize;
+			totaluntransp += info.imgsize;
 
 			totalreg += compsize;
-			totalunreg += info->imgsize;
+			totalunreg += info.imgsize;
 		}
 
 		totalcomp += compsize;
-		totaluncomp += info->imgsize;
+		totaluncomp += info.imgsize;
 		spriteno++;
 		free(image);
 	}
