@@ -27,7 +27,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <ctype.h>
-#include <values.h>
+#include <limits.h>
 
 #define DOCHECK
 
