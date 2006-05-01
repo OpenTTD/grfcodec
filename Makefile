@@ -57,6 +57,8 @@ grfmerge.exe:	grfmerge.obj $(GRFMERGESRC:%.c=%.obj)
 clean:
 	rm -rf *.o *.os *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.ah
 
+remake: clean all
+
 # grfmrg.bin (the binary code included in grfdiff) can be either BCC or GCC code
 grfmrg.bin:	grfmerge.exe
 	upx --best $< -o $@
