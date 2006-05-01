@@ -7,14 +7,21 @@
 # (note, this must match the text in grfcodec.cc and grftut.txt)
 PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars
 
-PREFIX=i686-pc-mingw32-
+# OS detection: Cygwin vs Linux
+ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
+
+# OS dependant variables
+PREFIX = $(shell [ \( $(ISCYGWIN) -eq 0 \) ] && echo i686-pc-mingw32- )
+CP = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo true || echo cp )
+GRFMERGE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo grfmerge.exe || echo grfmerge)
+NOCYGWIN = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo -mno-cygwin )
 
 # Gnu compiler settings
 SHELL = /bin/sh
 CC = ${PREFIX}g++
 CXX = ${PREFIX}g++
 # use 386 instructions but optimize for pentium II/III
-CFLAGS = -g -DWIN32 -DMINGW -O3 -I. $(CFLAGAPP) -Wall
+CFLAGS = -g -DWIN32 -DMINGW $(NOCYGWIN) -O3 -I. $(CFLAGAPP) -Wall
 CXXFLAGS = $(CFLAGS)
 #LDOPT = -g -Wl,--subsystem,console -luser32 -lgdi32 -lwinmm -lcomdlg32 -lcomctl32
 #LDOPT = -Wl,--subsystem,console,-s
@@ -45,20 +52,19 @@ grfdiff.exe:	grfdiff.obj $(GRFDIFFSRC:%.c=%.obj) grfmrg.obj
 grfmerge.exe:	grfmerge.obj $(GRFMERGESRC:%.c=%.obj)
 
 clean:
-	rm -rf *.o *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.ah
+	rm -rf *.o *.os *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.ah
 
 # grfmrg.bin (the binary code included in grfdiff) can be either BCC or GCC code
 grfmrg.bin:	grfmerge.exe
 	upx --best $< -o $@
 
 # remake grfmerge.exe optimized for size instead of speed
-grfmrgc.bin:	grfmerge
-	rm -f grfmerge.o $(GRFMERGESRC:%.c=%.o) $@
-	make -f Makefile.win -e CFLAGAPP="-Os" $<
-	strip $<
-	upx -qq --best $< -o $@
-	rm -f grfmerge.o $(GRFMERGESRC:%.c=%.o)
-	make -f Makefile.win grfmerge.o $(GRFMERGESRC:%.c=%.o)
+grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
+	rm -f $@
+	$(CC) -o grfmerge $(CFLAGS) -Os $^
+	strip $(GRFMERGE)
+	upx -qq --best $(GRFMERGE) -o $@
+	rm -f $(GRFMERGE)
 
 # making an assembly file which includes the above code; first for BCC
 grfmrg.ah:	grfmrg.bin 
@@ -85,7 +91,7 @@ ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 
 % : %.o
 	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
-	cp $@ $@.exe
+	$(CP) $@ $@.exe
 
 %.S : %.c
 	$(CC) -S -o $@ $(CFLAGS) $<
