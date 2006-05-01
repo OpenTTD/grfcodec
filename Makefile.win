@@ -70,7 +70,7 @@ grfmrg.obj:	grfmrg.asm grfmrg.ah
 
 # and then for GCC
 grfmrg.o:	grfmrgc.asm grfmrgc.bin
-	nasm -f elf $< -o $@
+	nasm -f coff $< -o $@
 
 ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 	perl pal2c.pl $^ > $@
@@ -102,8 +102,10 @@ ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
 
 Makefile.dep:
+	[ -e ttdpal.h ] || touch ttdpal.h
 	$(CC) $(CFLAGS) -MM *.c *.cc > $@
 	perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
+	[ ! -s ttdpal.h ] && rm ttdpal.h
 
 # Borland compiler rules
 

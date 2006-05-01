@@ -1,5 +1,5 @@
 
-# Makefile for GRFCodec using gcc on Linux
+# Makefile for GRFCodec using gcc on Linux, or on Cygwin in Cygwin mode.
 
 # Order of the palettes compiled in
 # (note, this must match the text in grfcodec.cc and grftut.txt)
@@ -26,6 +26,14 @@ CXXFLAGS = $(CFLAGS)
 #CFLAGS += -pg
 #LDOPT += -pg
 
+# OS detection: Cygwin vs Linux
+ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
+
+# OS dependant variables
+NASMFORMAT = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo coff || echo elf )
+GRFMERGE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo grfmerge.exe || echo grfmerge)
+
+
 # auxiliary sources to be linked with each of these programs
 GRFCODECSRC=grfcomm.c pcx.c sprites.c pcxsprit.c info.c \
 	error.c getopt.c path.c
@@ -47,20 +55,19 @@ grfdiff.exe:	grfdiff.obj $(GRFDIFFSRC:%.c=%.obj) grfmrg.obj
 grfmerge.exe:	grfmerge.obj $(GRFMERGESRC:%.c=%.obj)
 
 clean:
-	rm -rf *.o *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.ah
+	rm -rf *.o *.os *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.ah
 
 # grfmrg.bin (the binary code included in grfdiff) can be either BCC or GCC code
 grfmrg.bin:	grfmerge.exe
 	upx --best $< -o $@
 
 # remake grfmerge.exe optimized for size instead of speed
-grfmrgc.bin:	grfmerge
-	rm -f grfmerge.o $(GRFMERGESRC:%.c=%.o) $@
-	make -e CFLAGAPP="-Os" $<
-	strip $<
-	upx -qq --best $< -o $@
-	rm -f grfmerge.o $(GRFMERGESRC:%.c=%.o)
-	make grfmerge.o $(GRFMERGESRC:%.c=%.o)
+grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
+	rm -f $@
+	$(CC) -o grfmerge $(CFLAGS) -Os $^
+	strip $(GRFMERGE)
+	upx -qq --best $(GRFMERGE) -o $@
+	rm -f $(GRFMERGE)
 
 # making an assembly file which includes the above code; first for BCC
 grfmrg.ah:	grfmrg.bin 
@@ -72,7 +79,7 @@ grfmrg.obj:	grfmrg.asm grfmrg.ah
 
 # and then for GCC
 grfmrg.o:	grfmrgc.asm grfmrgc.bin
-	nasm -f elf $< -o $@
+	nasm -f $(NASMFORMAT) $< -o $@
 
 ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 	perl pal2c.pl $^ > $@
@@ -103,8 +110,10 @@ ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
 
 Makefile.dep:
+	[ -e ttdpal.h ] || touch ttdpal.h
 	$(CC) $(CFLAGS) -MM *.c *.cc > $@
 	perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
+	[ ! -s ttdpal.h ] && rm ttdpal.h
 
 # Borland compiler rules
 
