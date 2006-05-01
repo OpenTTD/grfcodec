@@ -69,7 +69,7 @@ int decoderegular(U8 *buffer, int sx, int sy, spritestorage *store, FILE *info);
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);
 
 U16 getlasttilesize();
-U16 encodetile(FILE *grf, U8 *image, long imgsize, U8 background, int sx, int sy, U8 inf[8], int docompress);
-U16 encoderegular(FILE *grf, U8 *image, long imgsize, U8 inf[8], int docompress);
+U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, const U8 inf[8], int docompress);
+U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int docompress);
 
 #endif /* _SPRITES_H */

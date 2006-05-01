@@ -302,7 +302,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
   return result;
 }
 
-long fakecompress(U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
+long fakecompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
 {
   long needsize = insize + ((insize + 0x7f) / 0x7f);
   if (outsize < needsize) {
@@ -332,7 +332,7 @@ long fakecompress(U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
 
 #ifdef OLDSTRATEGY
 // different compression strategies for identifying repetition
-multitype strategy1(U8* data, unsigned int datasize, unsigned int datamax)
+multitype strategy1(const U8* data, unsigned int datasize, unsigned int datamax)
 {
   int overlap;
   multitype ret;
@@ -381,12 +381,12 @@ multitype strategy1(U8* data, unsigned int datasize, unsigned int datamax)
 // datasize is how much has been processed so far, and can be used for
 //	the repetition finding
 // datamax is the entire size of the sprite data
-multitype strategy2(U8* data, unsigned int datasize, unsigned int datamax)
+multitype strategy2(const U8* data, unsigned int datasize, unsigned int datamax)
 {
   unsigned int overlap = 0, newoverlap, remain, minoverlap, maxoverlap;
   multitype ret;
   int foundofs = -1;
-  U8 *found;
+  const U8 *found;
 
   // can only find up to 11 bits back
   if (datasize >= (1 << 11)) {
@@ -444,14 +444,14 @@ multitype strategy2(U8* data, unsigned int datasize, unsigned int datamax)
   return ret;
 }
 
-multitype strategy3(U8* data, unsigned int datasize, unsigned int datamax);
+multitype strategy3(const U8* data, unsigned int datasize, unsigned int datamax);
 // in assembly optimized source if used
 
 #ifdef _MSC_VER
 #pragma warning(disable:4701)//chunk may be used uninitialized
 #endif
 
-long realcompress(U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
+long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
 {
   long inpos = 0, outpos = 0;
   long inposm8, outposm8;
@@ -534,7 +534,7 @@ U16 getlasttilesize()
   return lasttilesize;
 }
 
-U16 encodetile(FILE *grf, U8 *image, long imgsize, U8 background, int sx, int sy, U8 inf[8], int docompress)
+U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, const U8 inf[8], int docompress)
 {
   long tilesize = imgsize + 16L * sy;
 
@@ -610,7 +610,7 @@ U16 encodetile(FILE *grf, U8 *image, long imgsize, U8 background, int sx, int sy
   }
 }
 
-U16 encoderegular(FILE *grf, U8 *image, long imgsize, U8 inf[8], int docompress)
+U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int docompress)
 {
   long compsize = imgsize + 24 + 8, uncompsize = compsize + 8;
   unsigned int size;
