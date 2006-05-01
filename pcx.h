@@ -70,6 +70,7 @@ class singlefile : virtual public multifile {
 
 class bandnotify {	// used when a band is written to the PCX file
 	public:
+	virtual ~bandnotify(){}
 	virtual void newband(class pcxfile* /*pcx*/) { };
 };
 

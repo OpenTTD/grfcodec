@@ -47,6 +47,7 @@ class spriteinfowriter : virtual public bandnotify {
 
 class spritestorage {
 	public:
+	virtual ~spritestorage(){}
 	virtual void newsprite() {};
 	virtual void setsize(int /*sx*/, int /*sy*/) {};
 	virtual int  curspritex() {return 0;};
