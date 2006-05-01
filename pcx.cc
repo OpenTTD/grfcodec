@@ -27,7 +27,7 @@
 *			*
 \***********************/
 
-singlefile::singlefile(char *filename, char *mode, char *dir)
+singlefile::singlefile(const char *filename, const char *mode, const char *dir)
 {
   FILE *f = fopen(filename, mode);
   if (!f) {
@@ -43,7 +43,7 @@ singlefile::singlefile(char *filename, char *mode, char *dir)
 	directory = NULL;
 };
 
-singlefile::singlefile(FILE *file, char *dir)
+singlefile::singlefile(FILE *file, const char *dir)
 {
   if (!file) {
 	fperror("\nError opening file");

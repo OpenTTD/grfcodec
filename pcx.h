@@ -46,21 +46,21 @@ class multifile {
 	virtual ~multifile() {};
 	virtual FILE *curfile()  { return NULL; };
 	virtual FILE *nextfile() { return NULL; };
-	virtual char *filename() { return NULL; };
-	virtual char *getdirectory() { return NULL; };
+	virtual const char *filename() { return NULL; };
+	virtual const char *getdirectory() { return NULL; };
 };
 
 class singlefile : virtual public multifile {
 	public:
-	singlefile(char *filename, char *mode, char *dir);
-	singlefile(FILE *file, char *dir);
+	singlefile(const char *filename, const char *mode, const char *dir);
+	singlefile(FILE *file, const char *dir);
 	virtual ~singlefile();
 
 	void setfile(FILE *file);
 
 	virtual FILE *curfile()  { return thefile; };
-	virtual char *filename() { return thefilename; };
-	virtual char *getdirectory() { return directory; };
+	virtual const char *filename() { return thefilename; };
+	virtual const char *getdirectory() { return directory; };
 
 	private:
 	char *thefilename, *directory;

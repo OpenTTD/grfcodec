@@ -42,7 +42,7 @@ void usage(char *extratext)
 }
 
 
-int getspritefilename(char *filename, char *basefilename, char *subdirectory, char *ext, long spriteno)
+int getspritefilename(char *filename, const char *basefilename, char *subdirectory, const char *ext, long spriteno)
 {
   char *fullpath = strdup(basefilename);//_fullpath(NULL, basefilename, 0);
 
@@ -116,7 +116,7 @@ int getspritefilename(char *filename, char *basefilename, char *subdirectory, ch
   return 0;
 }
 
-char *spritefilename(char *basefilename, char *reldirectory, char *ext, int spriteno, char *mode, int mustexist)
+char *spritefilename(const char *basefilename, const char *reldirectory, const char *ext, int spriteno, const char *mode, int mustexist)
 {
   static char filename[128];
   char directory[128];
@@ -157,7 +157,7 @@ char *spritefilename(char *basefilename, char *reldirectory, char *ext, int spri
   return filename;
 }
 
-int doopen(char *grffile, char *dir, char *ext, char *mode,
+int doopen(const char *grffile, const char *dir, const char *ext, const char *mode,
 	char **filename, FILE **file, int mustexist)
 {
   char *fn;

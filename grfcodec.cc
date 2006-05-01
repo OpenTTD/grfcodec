@@ -210,16 +210,16 @@ class spritefiles : public multifile {
 	spritefiles(char *basename, char *directory);
 	virtual FILE *curfile()  { return thecurfile; };
 	virtual FILE *nextfile();
-	virtual char *filename() { return thecurfilename; };
-	virtual char *getdirectory() { return directory; };
+	virtual const char *filename() { return thecurfilename; };
+	virtual const char *getdirectory() { return directory; };
 	private:
 	void init () {
 		thecurfile = NULL;
-		thecurfilename = basename = directory = NULL;
+		basename = thecurfilename = directory = NULL;
 		filenum = 0; };
 	FILE *thecurfile;
-	char *thecurfilename;
-	char *basename, *directory;
+	char *thecurfilename, *directory;
+	const char *basename;
 	unsigned int filenum;
 };
 
@@ -301,7 +301,7 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 			fstat(fileno(bin), &stat_buf);
 			off_t fsize = stat_buf.st_size;
 
-			char *nameofs = info.bininclude + strlen(info.bininclude);
+			const char *nameofs = info.bininclude + strlen(info.bininclude);
 			while (nameofs > info.bininclude) {
 				nameofs--;
 				if (nameofs[0] == '\\' || nameofs[0] == '/') {
