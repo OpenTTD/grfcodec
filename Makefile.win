@@ -113,7 +113,7 @@ Makefile.dep:
 	[ -e ttdpal.h ] || touch ttdpal.h
 	$(CC) $(CFLAGS) -MM *.c *.cc > $@
 	perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
-	[ ! -s ttdpal.h ] && rm ttdpal.h
+	[ -s ttdpal.h ] || rm ttdpal.h
 
 # Borland compiler rules
 
