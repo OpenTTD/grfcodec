@@ -152,7 +152,7 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 }
 
 Sprite::unparseable::unparseable(string reason,size_t sprite){
-	this->reason="Error: "+reason+".\n\tWhile reading sprite:"+itoa((int)sprite);
+	this->reason="Error: "+reason+".\n\tWhile reading sprite:"+itoa((int)sprite)+'\n';
 }
 
 Real::Real(size_t sprite,int infover,const string&data){
