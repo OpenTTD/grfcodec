@@ -97,17 +97,27 @@ const char*const VALID_PSEUDO="0123456789ABCDEFabcdef \t\v\r\n",
 
 #define NPOS (string::npos)
 
+#define checkspriteno()\
+	if(spriteno!=-1&&spriteno!=(int)sprites.size()){\
+		printf("Warning: Found sprite %d looking for sprite %d.\n",spriteno,sprites.size());\
+	}else(void(0))
+
+
 #define flush_buffer()\
-	if(buffer!=""){\
-		sprites.push_back(Pseudo(sprites.size(),infover,buffer,claimed_size));\
-		buffer="";\
+	if(true){\
+		if(buffer!=""){\
+			checkspriteno();\
+			sprites.push_back(Pseudo(sprites.size(),infover,buffer,claimed_size));\
+			buffer="";\
+		}\
+		spriteno=temp;\
 	}else\
 		(void(0))
 
 void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 	string sprite,datapart,buffer;
 
-	int temp,claimed_size=1;
+	int temp=-1,spriteno=-1,claimed_size=1;
 	string::size_type firstnotpseudo;
 	while(true){
 		getline(in,sprite);
@@ -117,11 +127,15 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 		if(spritestream.peek()==EOF || // blank
 			strchr(COMMENT,spritestream.peek())){ // comment
 		}else{//sprite
-			if(!eat_white(spritestream>>temp))spritestream.clear();
+			if(!eat_white(spritestream>>temp)){
+				spritestream.clear();
+				temp=-1;
+			}
 			if(spritestream.peek()=='*'){
 				if(spritestream.ignore().peek()=='*'){
 					flush_buffer();
 					getline(eat_white(spritestream.ignore()),datapart);
+					checkspriteno();
 					sprites.push_back(Include(datapart));
 				}else{
 					flush_buffer();
@@ -140,6 +154,7 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 						buffer+=sprite+'\n';
 				}else{
 					flush_buffer();
+					checkspriteno();
 					sprites.push_back(Real(sprites.size(),infover,datapart));
 				}
 			}
