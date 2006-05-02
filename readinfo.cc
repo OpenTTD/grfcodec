@@ -259,6 +259,8 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 		}
 	}
 	packed=out.str();
+	if(!size())
+		throw Sprite::unparseable("Found a zero-byte pseudo-sprite",num);
 	if(size()!=(uint)claimed_size&&claimed_size!=0)
 		printf("Warning: Sprite %d reports %d bytes, but I found %d.\n",num,claimed_size,size());
 }
