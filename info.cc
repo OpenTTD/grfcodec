@@ -1,6 +1,7 @@
 /* A class for dealing with .NFO files */
 
 #include <ctype.h>
+#include <fstream>
 
 #include "info.h"
 #include "sprites.h"
@@ -19,196 +20,63 @@ int makeint(U8 low, S8 high)
   return combined;
 }
 
+void read_file(istream&in,int infover,AllocArray<Sprite>&sprites);
 
-inforeader::inforeader(FILE *fn)
+inforeader::inforeader(char *fn)
 {
-  f = fn;
+  ifstream f;
+  f.open(fn);
+  
+  string buffer;
+  int infover;
 
   pcx = NULL;
   pcxname = NULL;
-  buffer = NULL;
-  bininclude = NULL;
 
-  fseek(f, 0, SEEK_END);
-  filesize = ftell(f);
-  fseek(f, 0, SEEK_SET);
 
-  readline();		// read first line, a comment
+  getline(f,buffer);		// read first line, a comment
 
-  if (strncmp(buffer, "// ", 3)) {
+  if (strncmp(buffer.c_str(), "// ", 3)) {
 	printf("NFO file missing header lines and version info\n");
 	exit(1);
   }
-  readline();		// second line used to get info version
-  if (strncmp(buffer, "// (Info version ", 17)) {
+  getline(f,buffer);		// second line used to get info version
+  if (strncmp(buffer.c_str(), "// (Info version ", 17)) {
 	infover = 1;
-	fseek(f, 0, SEEK_SET);
-	readline();
+	f.seekg(0);
   } else
-	infover = atoi(buffer + 17);
+	infover = atoi(buffer.c_str() + 17);
 
   if (infover > 2)
-	readline();	// skip "format: " line
+	getline(f,buffer);	// skip "format: " line
 
-  lasty = -1;
 
   colourmap = NULL;
-  verbatim_str = 0;
+
+  try{
+	read_file(f,infover,file);
+  }catch(Sprite::unparseable e){
+	printf(e);
+	exit(1);
+  }
 }
 
-inforeader::~inforeader()
+inforeader::~inforeader() 
 {
-  if (buffer)
-	free(buffer);
-  if (pcxname)
-	free(pcxname);
-  if (bininclude)
-	free(bininclude);
-  fclose(f);
+  if (pcx)
+	delete(pcx);
 }
 
-int inforeader::makebufferlarger()
-{
-  int oldsize;
-
-  if (!buffer) {
-	buffersize = 128;
-	buffer = (char*) malloc(buffersize);
-	if (!buffer) {
-		printf("\nOut of memory.\n");
-		exit(2);
-	}
-	return buffersize;
-  }
-
-  oldsize = buffersize;
-  buffersize *= 2;
-  buffer = (char*) realloc(buffer, buffersize);
-  if (!buffer) {
-	printf("\nOut of memory.\n");
-	exit(2);
-  }
-
-  return oldsize;
-}
-
-int inforeader::readline(char *prepend)
-{
-  char *pos;
-  int readmore;
-
-  if (!buffer)
-	makebufferlarger();
-
-  if (prepend) {
-	readmore = strlen(prepend);
-	while (buffersize < readmore)
-		makebufferlarger();
-
-	strncpy(buffer, prepend, buffersize);
-	pos = buffer + readmore;
-	readmore = buffersize - readmore;
-  } else {
-	pos = buffer;
-	readmore = buffersize;
-  }
-
-  while (1) {
-	fgets(pos, readmore-1, f);
-	if ( feof(f) || strchr(pos, '\n') )
-		break;
-
-	// line didn't fit in buffer
-	readmore = makebufferlarger();
-	pos = buffer + readmore;
-	readmore = buffersize - readmore;
-  }
-
-  return 1;
-}
-
-int inforeader::next(int wantno)
-{
-  int i;
-  char linehead[8], *p;
-
-  if (feof(f)) return 0;
-
-  while (1) {
-	i = -1;
-	if (infover >= 2)
-		fscanf(f, "%5d ", &i);
-	if (i == -1) 
-		i = wantno;
-
-	fscanf(f, "%6s", linehead);
-	if ( (strlen(linehead) == 0) || feof(f) )
-		return 0;
-
-	if (!strchr("#/;", linehead[0]))
-		break;
-
-	// is a comment
-	readline();
-  }
-
-  if (i != wantno) {
-	printf("\nError: Sprite number mismatch, found %d but wanted %d\n", i, wantno);
-	exit(2);
-  }
-
-  if (bininclude) {
-	free(bininclude);
-	bininclude = NULL;
-  }
-
-  if (strcmp(linehead, "*") == 0) {
-	verbatim = 1;
-	fscanf(f, "%hd ", &size);	// read how many bytes
-	return 1;
-  }
-  if (strcmp(linehead, "**") == 0) {
-	verbatim = 1;
-	readline();		// read rest of line
-	p = buffer;
-	while (isspace(*p)) { p++; };
-	p[strcspn(p, "\r\n")] = 0;
-	bininclude = strdup(p);
-	return 1;
-  }
-
-  verbatim = 0;
-  readline(linehead);		// read rest of line
-  p = buffer-1;
-  while (1) {
-	p = strchr(p+1, '.');
-	if (!p) {
-		printf("\nCan't find file name in line\n%s\n", buffer);
-		exit(2);
-	}
-	if (strnicmp(p, ".pcx ", 4) == 0)
-		break;
-  }
-  p += 4;
-  p[0] = 0;
-  p++;
-
-  if ( !pcx || !pcxname || (stricmp(buffer, pcxname) != 0) ) {
+void inforeader::PrepareReal(const Real&sprite){
+  if ( !pcx || !pcxname || (stricmp(sprite.GetName(), pcxname) != 0) ) {
 	// new file
 
 	if (pcx)
 		delete(pcx);
-	if (pcxname)
-		free(pcxname);
 
-	printf("Loading %s\n", buffer);
+	printf("Loading %s\n", sprite.GetName());
 
-	pcxname = strdup(buffer);
-	if (!pcxname) {
-		printf("\nOut of memory.\n");
-		exit(2);
-	}
-
+	pcxname = sprite.GetName();
 	pcx = new pcxread(new singlefile(pcxname, "rb", NULL));
 	if (!pcx) {
 		printf("\nError: can't open %s\n", pcxname);
@@ -221,108 +89,14 @@ int inforeader::next(int wantno)
 	pcx->startimage(0, 0, 0, 0, NULL);
   }
 
-  int x, y;
+  inf = sprite.inf;
 
-  if (infover<3) {
-	sscanf(p, "%d %d %x %x %x %x %x %x %x %x",
-		&x, &y,
-		&(intinf[0]), &(intinf[1]), &(intinf[2]), &(intinf[3]),
-		&(intinf[4]), &(intinf[5]), &(intinf[6]), &(intinf[7]));
-  } else {
-	int rx, ry;
-	sscanf(p, "%d %d %x %d %d %d %d",
-		&x, &y,
-		&(intinf[0]), &(intinf[1]),
-		&sx, &rx, &ry);
-	intinf[2] = sx & 0xff;
-	intinf[3] = sx >> 8;
-	intinf[4] = rx & 0xff;
-	intinf[5] = rx >> 8;
-	intinf[6] = ry & 0xff;
-	intinf[7] = ry >> 8;
-  }
+  sx = (inf[3] << 8) | inf[2];
+  sy = inf[1];
 
-  sx = (intinf[3] << 8) | intinf[2];
-  sy = intinf[1];
-
-  for (i=0; i<8; i++)
-	inf[i] = intinf[i];
-
-  if (infover < 4)
-	y++;	// bug, had an extra line at the top
-
-  if (y < lasty) {
-	printf("\nError: y is %d, smaller than %d. Y can't decrease!\n", y, lasty);
-	exit(2);
-  }
-
-  lasty = y;
-
-  pcx->startsubimage(x, y, sx, sy);
+  pcx->startsubimage(sprite.x(), sprite.y(), sx, sy);
 
   imgsize = (long) sx * (long) sy;
-
-  return 1;
-}
-
-void inforeader::uncommentstream(int &byte)
-{
-	while (1) {
-		byte = fgetc(f);
-		//printf("%c", byte);
-		if ( feof(f) ) break;
-		if ( byte == '\n') {
-			do { byte = fgetc(f); } while (isspace(byte));
-			if ( feof(f) ) break;
-			if ( (byte == '/') || (byte == '#') || (byte == ';') ) {
-				//printf("%c", byte);
-			} else {
-				ungetc(byte, f);
-				break;
-			}
-		} 
-  	}
-}
-
-int inforeader::nextverb()
-{
-  int byte;
-  //printf(": ");
-  
-  checkagain:
-  byte = fgetc(f);
-  if (byte == '"') {
-	//printf("Switched quoting from %d\n", verbatim_str);
-	verbatim_str = !verbatim_str;
-
-	if (!verbatim_str) {
-		do { byte = fgetc(f); } while (isspace(byte));
-		if (byte == '"') {
-			verbatim_str = 1;
-		} else {
-			ungetc(byte, f);
-		}
-	}
-  } else {
-	ungetc(byte, f);
-  }
-
-  // remove comments from stream, handle comments on multiple lines aswell
-  if (!verbatim_str && ( (byte == '/') || (byte == '#') || (byte == ';') ) ) {
-	// a comment
-	uncommentstream(byte);
-	//http://kerneltrap.org/node/553 - And yes, I think it's more readable and much easier...
-	goto checkagain;
-  }
-
-  if (verbatim_str) {
-	byte = fgetc(f);
-	//printf("Read quoted byte %c\n", byte);
-  } else {
-        fscanf(f, "%2x ", &byte);
-	//printf("Read unquoted byte %d\n", byte);
-  }
-  return byte;
 }
 
 int inforeader::getsprite(U8 *sprite)

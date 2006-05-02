@@ -6,45 +6,31 @@
 
 #include "pcxsprit.h"
 #include "sprites.h"
+#include "nfosprite.h"
+#include "allocarray.h"
 
 class inforeader {
 	public:
-	inforeader(FILE *nf);
+	inforeader(char *nf);
         ~inforeader();
-	int next(int wantno);
+	const Sprite&operator[](int x)const{return *(file[x]);}
+	int size()const{return file.size();}
 
 	void installmap(int *map);
 
-	// for dealing with verbatim data
-	int verbatim;
-	int verbatim_str;
-	int nextverb();
-	void uncommentstream(int &byte);
-	char *bininclude;
-
-	// and for regular sprites
 	long imgsize;
-	int intinf[8], sx, sy;
-	U8 inf[8];
+	int sx, sy;
+	const U8 *inf;
+	void PrepareReal(const Real&);
 	int getsprite(U8 *sprite);
 
-	// for both types
-	U16 size;
-
-	FILE *f;
-	long filesize;
         pcxread *pcx;
 
 	protected:
-	int makebufferlarger();
-	int readline(char *prepend = NULL);
 
-	char *pcxname;
-	char *buffer;
-	int buffersize;
-	int infover, lasty;
+	const char *pcxname;
 	int *colourmap;
-
+	AllocArray<Sprite> file;
 };
 
 class infowriter : virtual public spriteinfowriter {

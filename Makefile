@@ -36,7 +36,7 @@ GRFMERGE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo grfmerge.exe || echo grfm
 
 # auxiliary sources to be linked with each of these programs
 GRFCODECSRC=grfcomm.c pcx.c sprites.c pcxsprit.c info.c \
-	error.c getopt.c path.c
+	error.c getopt.c path.c readinfo.c
 
 GRFDIFFSRC=grfcomm.c error.c sprites.c getopt.c
 
