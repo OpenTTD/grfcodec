@@ -149,6 +149,9 @@
 				RelativePath=".\pcxsprit.cc">
 			</File>
 			<File
+				RelativePath=".\readinfo.cc">
+			</File>
+			<File
 				RelativePath=".\sprites.cc">
 			</File>
 		</Filter>
@@ -156,6 +159,9 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
+			<File
+				RelativePath=".\AllocArray.h">
+			</File>
 			<File
 				RelativePath=".\conv.h">
 			</File>
@@ -173,6 +179,9 @@
 			</File>
 			<File
 				RelativePath=".\info.h">
+			</File>
+			<File
+				RelativePath=".\nfosprite.h">
 			</File>
 			<File
 				RelativePath=".\path.h">

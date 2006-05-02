@@ -47,6 +47,7 @@
 #include "error.h"
 #include "version.h"
 #include "conv.h"
+#include "nfosprite.h"
 
 #ifdef WIN32
 #	include "path.h"
@@ -255,15 +256,17 @@ FILE *spritefiles::nextfile()
 
 int encode(char *file, char *dir, int compress, int *colourmap)
 {
-  char *grfnew;
-  FILE *grf, *infofile;
+  char *grfnew, *infofile;
+  FILE *grf;
 
   doopen(file, "", ".new", "wb", &grfnew, &grf, 0);
-  doopen(file, dir, ".nfo", "rt", NULL, &infofile, 1);
+  doopen(file, dir, ".nfo", "rt", &infofile, NULL, 1);
 
   printf("Encoding in temporary file %s\n", grfnew);
 
   inforeader info(infofile);
+
+  free(infofile);
 
   if (colourmap)
 	info.installmap(colourmap);
@@ -274,7 +277,7 @@ int encode(char *file, char *dir, int compress, int *colourmap)
   int spriteno = 0;
 
 
-  while (info.next(spriteno)) {
+  for(int i=0;i<info.size();i++){
 	//int comp1 = totalcomp / totaluncomp;
 	int comp2 = (100L * totalcomp / totaluncomp);// % 100;
 
@@ -286,14 +289,15 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 
 	printf("\rSprite%5d  Done:%3d%%  "
 		"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
-		spriteno, (int) (ftell(info.f)*100L/info.filesize),
+		spriteno, (int) (i*100L/info.size()),
 		comp2, comp4, comp6);
 
-	if (info.verbatim) {		// non-sprite data, copy verbatim
-		if (info.bininclude) {		// include binary file
-			FILE *bin = fopen(info.bininclude, "rb");
+	switch(info[i].GetType()){
+	case Sprite::ST_INCLUDE:{
+		const char *bininclude=((const Include&)info[i]).GetName();
+			FILE *bin = fopen(bininclude, "rb");
 			if (!bin) {
-				fperror("Cannot read %s", info.bininclude);
+				fperror("Cannot read %s", bininclude);
 				exit(2);
 			}
 
@@ -301,8 +305,8 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 			fstat(fileno(bin), &stat_buf);
 			off_t fsize = stat_buf.st_size;
 
-			const char *nameofs = info.bininclude + strlen(info.bininclude);
-			while (nameofs > info.bininclude) {
+			const char *nameofs = bininclude + strlen(bininclude);
+			while (nameofs > bininclude) {
 				nameofs--;
 				if (nameofs[0] == '\\' || nameofs[0] == '/') {
 					nameofs++;
@@ -345,22 +349,30 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 			}
 			delete[]buffer;
 			fclose(bin);
-		} else {
-			totalcomp += info.size;
-			totaluncomp += info.size;
+	}
+		break;
+	case Sprite::ST_PSEUDO:{
+		const Pseudo&sprite=(const Pseudo&)info[i];
+			U16 size=sprite.size();
+			totalcomp += size;
+			totaluncomp += size;
 			spriteno++;
 
-			fwrite(&(info.size), 1, 2, grf);
+			fwrite(&size, 1, 2, grf);
 			fputc(0xff, grf);
-			for (int i=0; i<info.size; i++)
-				fputc(info.nextverb(), grf);
-			if (info.verbatim_str) {
-				/* XXX: Trailing quote mark. */
-				fgetc(info.f);
-				info.verbatim_str = 0;
+			fwrite(sprite.GetData(),1,size,grf);
+			if(spriteno == 1 && sprite.size() == 4){
+				int reported = *((S32*)sprite.GetData()) + 1;
+				if(reported != info.size())
+					printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
+						abs(info.size() - reported),
+						info.size()>reported?"more":"fewer");
 			}
-		}
-	} else {				// real sprite, encode it
+	}
+		break;
+	case Sprite::ST_REAL:{	// real sprite, encode it
+		const Real&sprite=(Real&)info[i];
+		info.PrepareReal(sprite);
 		U8 *image = (U8*) malloc(info.imgsize);
 		if (!image) {
 			printf("Error: can't allocate sprite memory (%ld bytes)\n", info.imgsize);
@@ -390,6 +402,11 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 		totaluncomp += info.imgsize;
 		spriteno++;
 		free(image);
+	}
+		break;
+	default:
+		printf("What type of sprite is that?");
+		exit(2);
 	}
   }
 
