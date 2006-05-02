@@ -295,79 +295,79 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 	switch(info[i].GetType()){
 	case Sprite::ST_INCLUDE:{
 		const char *bininclude=((const Include&)info[i]).GetName();
-			FILE *bin = fopen(bininclude, "rb");
-			if (!bin) {
-				fperror("Cannot read %s", bininclude);
-				exit(2);
-			}
+		FILE *bin = fopen(bininclude, "rb");
+		if (!bin) {
+			fperror("Cannot read %s", bininclude);
+			exit(2);
+		}
 
-			struct stat stat_buf;
-			fstat(fileno(bin), &stat_buf);
-			off_t fsize = stat_buf.st_size;
+		struct stat stat_buf;
+		fstat(fileno(bin), &stat_buf);
+		off_t fsize = stat_buf.st_size;
 
-			const char *nameofs = bininclude + strlen(bininclude);
-			while (nameofs > bininclude) {
-				nameofs--;
-				if (nameofs[0] == '\\' || nameofs[0] == '/') {
-					nameofs++;
-					break;
-				}
+		const char *nameofs = bininclude + strlen(bininclude);
+		while (nameofs > bininclude) {
+			nameofs--;
+			if (nameofs[0] == '\\' || nameofs[0] == '/') {
+				nameofs++;
+				break;
 			}
-			int namelen = strlen(nameofs);
-			if (namelen > 255) {
-				fprintf(stderr, "Error: binary include has too long filename %s\n", nameofs);
-				exit(2);
-			}
+		}
+		int namelen = strlen(nameofs);
+		if (namelen > 255) {
+			fprintf(stderr, "Error: binary include has too long filename %s\n", nameofs);
+			exit(2);
+		}
 
-			int spritesize = 3 + namelen + fsize;
-			if (spritesize < 5) {
-				fprintf(stderr, "Error: binary include %s is empty\n", nameofs);
-				exit(2);
-			}
-			if (spritesize > 65535) {
-				fprintf(stderr, "Error: binary include %s is too large\n", nameofs);
-				exit(2);
-			}
+		int spritesize = 3 + namelen + fsize;
+		if (spritesize < 5) {
+			fprintf(stderr, "Error: binary include %s is empty\n", nameofs);
+			exit(2);
+		}
+		if (spritesize > 65535) {
+			fprintf(stderr, "Error: binary include %s is too large\n", nameofs);
+			exit(2);
+		}
 
-			totalcomp += spritesize;
-			totaluncomp += spritesize;
-			spriteno++;
+		totalcomp += spritesize;
+		totaluncomp += spritesize;
+		spriteno++;
 
-			fwrite(&spritesize, 1, 2, grf);
-			fputc(0xff, grf);
-			fputc(0xff, grf);
-			fputc(namelen, grf);
-			fwrite(nameofs, namelen+1, 1, grf);
+		fwrite(&spritesize, 1, 2, grf);
+		fputc(0xff, grf);
+		fputc(0xff, grf);
+		fputc(namelen, grf);
+		fwrite(nameofs, namelen+1, 1, grf);
 
-			char *buffer = new char[16384];
-			while (fsize > 0) {
-				int chunk = 16384;
-				if (chunk > fsize) chunk=fsize;
-				fread(buffer, chunk, 1, bin);
-				fwrite(buffer, chunk, 1, grf);
-				fsize -= chunk;
-			}
-			delete[]buffer;
-			fclose(bin);
+		char *buffer = new char[16384];
+		while (fsize > 0) {
+			int chunk = 16384;
+			if (chunk > fsize) chunk=fsize;
+			fread(buffer, chunk, 1, bin);
+			fwrite(buffer, chunk, 1, grf);
+			fsize -= chunk;
+		}
+		delete[]buffer;
+		fclose(bin);
 	}
 		break;
 	case Sprite::ST_PSEUDO:{
 		const Pseudo&sprite=(const Pseudo&)info[i];
-			U16 size=sprite.size();
-			totalcomp += size;
-			totaluncomp += size;
-			spriteno++;
+		U16 size=sprite.size();
+		totalcomp += size;
+		totaluncomp += size;
+		spriteno++;
 
-			fwrite(&size, 1, 2, grf);
-			fputc(0xff, grf);
-			fwrite(sprite.GetData(),1,size,grf);
-			if(spriteno == 1 && sprite.size() == 4){
-				int reported = *((S32*)sprite.GetData()) + 1;
-				if(reported != info.size())
-					printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
-						abs(info.size() - reported),
-						info.size()>reported?"more":"fewer");
-			}
+		fwrite(&size, 1, 2, grf);
+		fputc(0xff, grf);
+		fwrite(sprite.GetData(),1,size,grf);
+		if(spriteno == 1 && sprite.size() == 4){
+			int reported = *((S32*)sprite.GetData()) + 1;
+			if(reported != info.size())
+				printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
+					abs(info.size() - reported),
+					info.size()>reported?"more":"fewer");
+		}
 	}
 		break;
 	case Sprite::ST_REAL:{	// real sprite, encode it
