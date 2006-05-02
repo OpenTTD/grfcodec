@@ -29,7 +29,7 @@ CXXFLAGS = $(CFLAGS)
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 
-# OS dependant variables
+# OS dependent variables
 NASMFORMAT = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo coff || echo elf )
 GRFMERGE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo grfmerge.exe || echo grfmerge)
 
@@ -111,7 +111,7 @@ ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 % :: %.os
 	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
 
-Makefile.dep:
+Makefile.dep: .remake_deps
 	[ -e ttdpal.h ] || touch ttdpal.h
 	$(CC) $(CFLAGS) -MM *.c *.cc > $@
 	perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
