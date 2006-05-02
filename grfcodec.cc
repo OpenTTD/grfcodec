@@ -302,7 +302,14 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 		}
 
 		struct stat stat_buf;
-		fstat(fileno(bin), &stat_buf);
+		if ( fstat(fileno(bin), &stat_buf) ) {
+			fperror("Could not stat %s", bininclude);
+			exit(2);
+		}
+		if ( stat_buf.st_mode & S_IFDIR ) {
+			printf("Cannot include %s: Is a directory.\n", bininclude);
+			exit(2);
+		}
 		off_t fsize = stat_buf.st_size;
 
 		const char *nameofs = bininclude + strlen(bininclude);
