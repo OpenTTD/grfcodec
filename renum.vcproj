@@ -171,13 +171,6 @@
 			</File>
 			<File
 				RelativePath=".\data.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						PrecompiledHeaderThrough=""/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\getopt.c">
