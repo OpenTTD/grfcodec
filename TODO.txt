@@ -1,0 +1,23 @@
+NFORenum v3.2.0
+NFO file re-numberer and linter
+
+TODO:
+- Finish linter:
+  - Varaction2s (variable ranges) (?)
+  - Value validation in action 0s.
+  - Multi-pass linting
+  - TextID usage
+- Split/combine action 0s and 4s.
+- Split(?)/combine action As and 12s.
+- Provide better interface for translation. (?)
+- Command line arguments to install/uninstall context menu support.
+- Beautifier options:
+  - Convert action Cs to comments (?)
+  - Eat all comments, not just messages (?)
+- Config file (!)
+- Readability enhancements:
+  - Express some things in decimal or big-endian hex.
+  - Express action 2, 7/9, D operators as C operators
+    Potential format for both: \<identifier><data>
+    <identifier> being a single character, eg B/W/D
+    <data> being the associated data, eg 600, x80000000, >, &c.

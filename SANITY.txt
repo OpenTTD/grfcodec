@@ -1,0 +1,554 @@
+The messages are sorted by number. Similar messages that have adjacent
+numbers are grouped together.
+
+The format is as follows:
+<num>: "Message" (severity/ies)
+Translation
+Fix
+[notes]
+
+Messages listed as starting with <off> will have "Offset <num>:" prepended to
+them; <num> is the 0-based (that is, the action byte is byte 0) decimal
+offset of the problem byte, or first byte of the problem bytes, if something
+longer than a single byte is invalid.
+
+41: "All <type> are <desc> bytes long." (Fatal/Warn 2)
+42: "Length does not match <variable[s]> of <val[s]> ..." (Fatal/Warn 2)
+This pseudosprite is too short (Fatal) or too long (Warn 2).
+Add or remove data and/or change <variable> (if applicable).
+
+43: "<off> Sanity checker requires <num> byte(s) ..." (Fatal)
+The sanity checker attempted to read bytes that didn't exist.
+Add the required bytes to the sprite.
+This is somewhat of a cop-out on my part, so given a good replacement error
+message and a sprite that causes it, I'll consider putting the better error
+message in.
+
+44: "Invalid feature byte." (Fatal/Error)
+The feature byte of this sprite is not valid.
+Change the feature byte to something between 00 and 0C.
+Which features are valid depends on which action you are coding. See the
+wiki for the meanings of the feature bytes.
+
+45: "Invalid nument1 or random-/variational-type byte" (Fatal)
+This action 2 has a type byte with no meaning.
+Change the type byte to 80-83, 85, 86, 89, or 8A for var/random, or 00-7F
+for standard.
+
+46: "Invalid action byte." (Fatal)
+This is not a valid action.
+Fix the action byte.
+
+47: "<off> Invalid property <prop>." (Fatal)
+The byte at offset <off> appears to be a property byte, but is not a
+known propery.
+Fix this byte and/or check preceeding properties for validity.
+
+48: "Action 6 appears to be missing terminating FF."
+The parser hit end-of-sprite before finding the expected FF terminating byte.
+Ensure that the FF exists and that the preceeding <param> <size> <offset>
+triplets are all valid.
+
+49: "Insufficient <type>. ..." (Error)
+50: "Extra <type>. ..." (Error)
+The number of <type> sprites (real/include) seen since the most recent
+action 1/5/A/11/12 does not match the number declared by that 1/5/A/11/12.
+Add/remove sprites and/or adjust the declaring action.
+Note that "-1 * 1 00" is interpreted as a real sprite in action 1 blocks and
+most action 5 blocks.
+
+51: "<type> unexpected here." (Error)
+There was no reason to expect a <type> sprite here; the immediately
+preceeding sprite was not an Action 1/5/A/11/12.
+Remove the sprite, or add an action 1/5/A/11/12.
+Note that "* 1 00" is interpreted as a real sprite in action 1 blocks and
+most action 5 blocks.
+
+52: "Feature byte does not match feature byte of preceding ..." (Error)
+This standard action 2 declares a cargoID for a different feature than the
+preceeding Action 1.  **OR**
+This override action 3 attempts to override for a feature other than the one
+the preceeding action 3 set sprites for.
+Change one or both of the feature bytes so they agree.
+
+53: "Rand02s require power-of-two sets to choose from." (Error)
+This random action 2 has an invalid nrand value.
+Set the nrand value to 02, 04, 08, 10, 20, 40, or 80.
+
+55: "<id> is neither callback nor cargo ID." (Error)
+This action 2/3 attempts to use an invalid ID.
+If you are trying to declare a callback, ensure that the high bit is set.
+Otherwise, ensure that you padded the ID with "00".
+
+56: "<off> Sprite set <set> does not appear in the preceeding ..." (Error)
+This standard action 2 attempts to use sets that are not defined by the
+preceeding action 1.
+Add sprites to the action 1 or choose a defined spriteset for the action 2.
+
+57: "<off> Invalid cargo type: ..." (Error)
+This action 3 declares a cargo-specific cargoID for a cargo-type that
+does not exist.
+Change the cargo type or remove the cargo type/cargoID pair.
+
+58: "Action 2 declaring no <type> sprites." (Error)
+This standard action 2 declares no sprites for loadstate/loadingstates/
+numlotssets.
+Although not strictly an error, this is asking for a divide-by-0 error.
+Change the offending byte.
+
+59: "Signals require 48, 112, or 240 (0x30, 0x70, or 0xF0) sprites." (Error)
+60: "Expected <num> (0x<hex>) sprites for this type." (Error)
+The numsprites declared by this action 5 does not agree with the feature for
+which these sprites will be used.
+Correct the sprite so numsprites and feature agree. Valid values for
+numsprites are listed.
+
+62: "<off> ID <id> has not been defined." (Error)
+This action 2/3 attempts to use an undefined ID.
+
+63: "Expected <num> more properties." (Error)
+This Action 0 ended before all properties declared were found.
+Add missing properties, or reduce the number of properties you are setting.
+
+64: "Expected more data for prop <prop>. (<num> bytes at <offset>.)" (Fatal)
+65: "Expected <num> more bytes for prop <prop>." (Error)
+Property <prop> does not have enough data.
+Add missing data.
+The action 0 parser thought it should be able to read <num> bytes at <offset>
+(or at the end of the sprite). This does not necessarily mean that just adding
+enough bytes to make that possible will fix the sprite.
+
+66: "Property data is missing terminating byte(s)." (Error)
+This sprite contains a variable-lengthed data that requires terminating
+byte(s), but they were not found.
+Check the sprite for variable-lengthed data, and make sure the terminator
+exists.
+
+67: "Action <num> already found at sprite <num>." (Error)
+This NFO file has two or more action 8/11s.
+Remove one of the action 8/11s.
+
+68: "An action 8 must preceed action <act>." (Error)
+No action 8 has been seen.
+Add an action 8 before this sprite.
+This error will only be issued once.
+Note that not all action Ds require a preceeding 8; this message will not be
+issued on non-resource-management Ds.
+
+69: "Invalid GRF version number."  (Error)
+This version number will not load into TTDPatch.
+Correct the version number.
+TTDPatch currently understands GRF versions 02-07.
+
+71: "Variable size <size> is invalid." (Fatal)
+72: "Condition <cond> is invalid." (Error)
+This Action 7 or 9 sets <size> or <cond> to invalid values.
+See the wiki for valid values and meanings.
+
+73: "Condition <cond> requires variable 88." (Error)
+74: "Variable 88 requires a GRFid condition." (Error)
+One of the five GRFid conditions was attempted on a variable other than 88,
+or vice versa.
+Change the condition and/or variable so they agree.
+
+75: "Variable <var> reqires a bit-test condition." (Error)
+A bit-test variable is paired with an non-bit-test condtion.
+Change the condition or the variable.
+
+76: "Variable <var> is <len> byte(s) long." (Warn 2)
+This variable/var-size pairing is invalid.
+Change the variable or the variable size.
+
+78: "<off> <real> was found where literal <exp> was expected." (Error)
+The byte at <off> was expected to be <exp>.
+Change the byte at <off>, and/or check the feature byte.
+
+79: "Expected %d more strings for this action 4." (Error)
+This action 4 contains too few "00" bytes for the number of strings it
+declares.
+Check that the strings are terminated, add strings, and/or reduce num-ent.
+
+80: "Value of <xoff>/<yoff> must not exceed 0Fh." (Warn2)
+<xoff> or <yoff> was set to too high a value.
+Reduce the offset.
+
+81: "<off>TTD only defines sprites up to 4984 (1E 13)." (Error)
+Access was attemted to a TTD sprite that TTD doesn't define.
+Reduce the sprite number.
+
+82: "Color translation mode 3 is undefined." (Error)
+A color translation of 3 was requested, but only 0-2 are valid.
+Change the color translation mode.
+
+83: "Sprite <num> is not a color translation sprite." (Warn 1)
+Color translation was requested, but a sprite that is not a color
+translation sprite was specified.
+Specify a color translation sprite or turn off color translation.
+
+84: "No ground sprite was specified." (Error)
+84: "No non-transparent sprite was specified." (Error)
+This house/industry tile was specified with neither a groundsprite nor
+non-transparent building sprite.
+Specify a ground sprite or at least one non-transparent building sprite.
+
+85: "No standard action 3 exists prior to this livery override..." (Error)
+A livery override action 3 was the first action 3 seen in the file.
+Correct this sprite, or add a standard action 3.
+This message will only be issued once, even if multiple override 3s preceed
+the first standard 3.
+
+86: "Testing nonexistant variable <var>." (Error/Warn 1)
+This variational action 2 or action 7 tests a variable that does not exist.
+Change the feature, type, and/or variable.
+
+87: "Action 6 attempts to modify data beyond the end of this sprite." (Error)
+The action 6 preceeding this message attempts to add data to the end of this
+sprite.
+Add padding to the end of this sprite, or fix the action 6.
+
+88: "There is no following sprite for this Action 6 to modify." (Error)
+An Action 6 is the last sprite in the file.
+Remove the action 6 or add additional sprites to the file.
+
+89: "Action 1/A/12 declaring no sets" (Warn 1)
+90: "Action 1 declaring sets with no sprites" (Warn 1)
+The values numsets or numsprites, respectively, are 0.
+Remove the Action 1/A/12, or set numsets/numsprites to their correct value.
+
+91: "<off> Set <set> contains no sprites" (Warn 1)
+This action A/12 declares a set with no sprites.
+Remove this spriteset, or set numsprites to a non-zero value.
+
+92: "Action 0 setting no properties." (Warn 1)
+93: "Action 0 setting properties for no IDs." (Warn 1)
+The num-props or num-info bytes are 0.
+Set the num-props and num-info bytes to non-zero values, or remove the
+action 0.
+
+94: "Redefining ID <id> not used since previous definition ..." (Warn 1)
+<id> has not been used since its previous definition
+Remove one definition, or add an Action 2/3 that references that ID between
+the two definitions.
+
+95: "For feature <feat> the following cargoIDs have not been used..." (Warn 1)
+The following list of cargoIDs were defined but never used.
+Remove the definition, or add an action 2/3 that references the CargoID
+
+97: "Set <id> defined by the previous Action 1 ..." (Warn 1)
+The previous Action 1 declared graphics that have not yet been referenced
+by an Action 2.
+Remove the unreferenced graphics or add an Action 2 that references them.
+
+98: "Variation <var> cannot be reached." (Warn 1/4)
+Variation <var> has minval>maxval, or is completely obscured by earlier
+variations.
+Remove this variation or change minval and/or maxval such that
+minval<=maxval.
+This warning is level 4 on the first variation (<var> = 1) and level 1 on all
+others. See also message 169.
+
+99: "<off> No more data was expected." (Warn 2)
+Extraneous data was found.
+Remove the extra bytes or increase <num-props>, <num-info>, or <num-ent>.
+
+100: "Default ID appears earlier in sprite" (Warn 1/3)
+The default CargoID for this variational action 2 or action 3 appears
+multiple times.
+Remove the earlier references to the default CargoID or change the default
+CargoID.
+
+101: "GRFIDs with a first byte of FF are reserved." (Warn 1)
+This action 8 declares GRFID with a first byte of FF.
+Change the GRFID.
+GRFIDs with a first byte of FF (with the exception of FFFFFFFF) are reserved
+for TTDPatch internal use, and must not be used by GRF files.
+
+103: "Shifting variable <var> past its length." (Warn 1/4)
+<shift-num> is shifting this variable further than its defined length.
+Reduce <shift-num> so defined data is being read.
+All 80+x variables are defined to be 1 byte long, even if TTD considers that
+location to contain a word or a double. Overshifting an 80+x is a level 4
+warning.
+
+104: "Action 6 does not make any changes." (Warn 1)
+105: "<off> This section does not make any changes." (Warn 1)
+This action 6, or a portion thereof, does not make any changes to the
+following sprite.
+Remove the action 6, or fix it and/or the offending subsection so it changes
+the next sprite.
+
+107: "Label <label> has not been goto'ed." (Warn 2)
+This action 10 defines a label that can only be used for looping.
+
+108: "Label <label> has not been goto'ed since previous ..." (Warn 1)
+No action 7/9 has pointed at this label since its previous definition,
+making this definition superfluous.
+Remove one of the action 10s, or change one of the labels.
+
+109: "<off> Property <prop> is previously defined at offset <off>." (Warn 2)
+This action 0 sets the same property twice.
+Remove one of the definitions.
+
+110: "<off> <value> exceeds 10h." (Warn 2)
+<value> (<xoff>+<xextent> or <yoff>+<yextent>) is too large, and places the
+building off the tile.
+Reduce the building size or offset to bring it back onto its tile.
+
+111: "Random 2 declaring only one choice." (Warn 3)
+112: "All random options have the same ID." (Warn 3)
+This random action 2 is not random, as only once choice is available.
+Add additional choices, change the existing ones, or remove the sprite.
+
+113: "Var2 accesses only constant variables (1A & 1C)." (Warn 4)
+This variational 2 only acesses variables 1A and 1C; the result is known in
+the previous var2.
+Check other variables or remove the sprite.
+
+115: "No preceding action 1." (Error)
+This standard action 2 attempts to return graphics, but there is no
+preceeding action 1.
+Add an action 1 or change the results to callback results.
+
+117: "<off> Invalid operation <op>." (Error)
+The byte at <off> is not a valid operation code.
+Change to a valid operation code.
+
+118: "Sprite set contains more sprites than given feature can use." (Warn 1)
+This action 1 defines more sprites per set than the feature will use.
+Remove the extraneous sprites or change the feature.
+
+119: "Sprite set contains an unusual number of sprites." (Warn 1)
+This action 1 defines a vehicle spriteset with 5..7 sprites.
+Fix the action 1 to declare 1..4 or 8 sprites.
+
+121: "<off> GRF ID at previously deactivated at offset <off> (<ID>)" (Warn 1)
+This action E deactivates the same GRF multiple times.
+Remove one of the deactivations.
+
+122: "Action E is not disabling any GRF files." (Warn 1)
+This action E does nothing.
+Remove the action E.
+
+123: "Source parameter <num> is invalid." (Error)
+Src1 or src2 (see <num>) is not a valid parameter.
+Read a different parameter.
+
+124: "Target parameter is invalid." (Error)
+The target parameter is not writable.
+Write to a writable parameter.
+
+125: "Only one of src1 and src2 may be 0xFF." (Error)
+Both src1 and src2 are FF.
+Change one or both of src1 and src2, or change the operation to 00.
+
+126: "<off> A name for <lang> was previously specified at ..." (Warn 2)
+This action F has already specified a name for language <lang>.
+Remove one of the definitions.
+
+127: "No fallback string was specified." (Warn 1)
+In version 6 format, this action F specifies no name for American.
+In version 7 format, this action F specifies no name for language 7F.
+Add an additional name for either American or all.
+
+128: "<off> Zero parts were specified." (Error)
+This action specified either 0 parts or 0 texts for one of the parts.
+Remove the part/action, or add parts in the appropriate location.
+
+129: "<off> Only <num> random bits are available." (Error)
+This action attempts to randomize on more bits than are available.
+Reduce either the number of bits requested or the first bit.
+
+130: "<off> <num> (hex) bits are required, but only ..." (Warn 1)
+More options are available that the allocated bits can randomize between.
+Reduce the probabilities or allocate more random bits.
+
+131: "<off> A probability of 0 was specified for this part." (Warn 1)
+This part has no probability.
+Remove this part, or increase its probability.
+
+132: "Parameter <num> out of valid range for variable <var>." (Error)
+60+x variable <var> does not accept parameters this large.
+Reduce the parameter.
+
+133: "<off> Building sprites may not be null." (Error)
+This action 2 specifies no building sprite here.
+Remove this sprite section, or set a building sprite.
+
+134: "Unexpected end-of-sprite reading building sprite <num>." (Fatal)
+The sprite ended before all specified building sprites were read.
+Add data or reduce the number of specified building sprites.
+
+135: "First building sprite attempts to share its bounding box ..." (Error)
+The first building sprite does not specify a bounding box.
+Change the first building sprite to specify a bounding box.
+
+136: "<off> Action <num> references reserved GRFid." (Warn 1)
+Action E attempts to disable a reserved GRFid (FF ?? ?? ??), or an action 11
+attempts to import from a reserved GRFid.
+Remove the offending GRFid.
+
+140: "Attempting to manage too many IDs." (Warn 1)
+This resource-management action D attempts to {reserve/mark/check/find} more
+IDs than are available for the corresponding feature.
+Request fewer IDs, or change the feature.
+ 
+141: "ID <ID> is out of valid range (<range>)." (Error)
+<ID> is out of range for the specified feature. The given range is valid.
+Check the feature, ID, and (if applicable) numIDs bytes.
+
+142: "<num-cid> must be 0 for this feature." (Warn 1)
+Only features 0..4 can usefully use a non-zero num-cids.
+Remove the extra cIDs.
+
+143: "<off> Using unspecified control character <ch>." (Warn 3)
+The given control code has no meaning.
+Remove the meaningless control codes.
+
+144: "<off> Control character <ch> should not be used in this string." (Warn 1)
+This control character does not belong in this string.
+Remove the control character.
+
+145: "<off> Control character <ch> does not match <data> ..." (Warn 1)
+146: "<off> Control character <ch> reads data from multiple ..." (Warn 1)
+147: "<off> Insufficient stack data for control character <ch>." (Warn 1)
+The stack information for this string does not match this control character.
+Check your use of code 86, and make sure that you're using the appropriate
+stack character.
+There are currently 5 recognized types of data: byte, word, textID, date,
+and dword.
+
+148: "<off> There is insufficient stack data to shuffle the stack." (Warn 1)
+The control character 0x86 was found, but the stack does not have the
+required 8 bytes of data.
+Remove the 0x86.
+For messages 143..148, <off> reports the *last* byte of a multi-byte
+sequence, not the first.
+
+149: "No terminating null found." (Warn 1)
+This string does not appear to have a terminating null.
+Add a 00 to the end of the sprite.
+
+150: "Invalid severity byte." (Error)
+This action B has an invalid severity byte.
+Set the severity to a value 00..03.
+
+151: "Unrecognized bit set in language-id byte." (Warn 2/3)
+In version 6 format, only one of bit 5 or 6 is set with out the low seven
+bits being 7F
+In both formats, bit 7 is set in an Action B or F.
+Unset those two (action 4) or three (action B/F) bits, or set all of the low
+seven bits.
+When Warn 2, following messages may indicate lang&7F rather than the actual
+value of the lang byte.
+
+152: "Invalid message id." (Fatal)
+The messageID specified in this action B is not recognized.
+Use a messageID in 00..03.
+
+153: "<off> <num> is not a GRF parameter." (Warn 1)
+The specified parameter is above 7F.
+Use a parameter in 00..7F.
+
+154: "Cannot override graphics for this feature." (Error)
+Livery overrides are not valid for this feature.
+Remove the livery override or fix the feature byte.
+
+155: "Condition 0B requires 4 byte(s)." (Warn 2)
+You're using condition 0B without specifing four bytes.
+Change the condition, or specify four bytes.
+
+156: "Metadata invalid. <data> must not be smaller than ..." (Error)
+157: "Metadata invalid. <data> must not be larger than ..." (Error)
+The specified metadata in not in the range that can be stored in a GRF file.
+Bring the metadata into range.
+
+158: "Metadata invalid. ypos must be non-decreasing." (Warn 1)
+This sprite has a smaller value for ypos than the preceeding sprite did.
+Change the filename if you need to go backwards in a PCX file.
+
+159: "Metadata invalid. compression must be one of ..." (Error/Warn 1)
+The compression byte is does not have one of the four valid values.
+Change the compression byte.
+Error if you attempt to set the compression to FF, Warn 1 otherwise.
+
+160: "Metadata invalid. Sprite size exceeds 64K." (Error)
+This line specifies a real sprite of over 65535 pixels.
+Reduce the size of the sprite, or split it into multiple parts.
+
+161: "<off> Text ID <ID> is not a valid text ID." (Error)
+The specified text ID is not valid.
+Specify a valid textID.
+In an action 4, if <off> specifies byte 3, then the ID (in bytes 4..5) is OK,
+but <num-ent> is too large.
+
+162: "Checking for double-word callback %2x with non-doubleword ..." (Warn1)
+The low byte or word of var 0C is being checked for a value > 3Fh.
+Change the var2 to type 89, and widen the B/W/D variables.
+Callbacks 10..3F are the only callbacks for which it is safe to check only
+the low byte of var 0C. For all others, all four bytes must be checked.
+
+163: "<off> Checking for var0C in the range [<min>,<max>]." (Warn 1)
+A check of var 0C has <min> not equal to <max>.
+Change one of <min> or <max> so they match.
+
+164: "<off> <callback> is not a valid callback for this feature." (Warn 1)
+The specified callback is not called for this feature.
+Change the callback or remove this <ID> <min> <max> triple.
+
+165: "<off> <font> is not a valid font." (Error)
+This action 12 specifies a font that doesn't exist.
+Correct the font byte.
+
+166: "<off> Set <num> declares glyphs across a block-break." (Error)
+This action 12 defines a set of glyphs that are in two or more 128-character
+blocks.
+Split this set into two or more smaller sets that do not span a block-break.
+
+167: "<off> The name for language(s) %2x has no terminating null." (Fatal)
+168: "The name-part starting at %d has no terminating null." (Fatal)
+The specified string does not have a terminating null.
+Check for errant control characters and/or add a terminating null.
+
+169: "Variation <num> is partially obscured." (Warn 1)
+An earlier variation in this varaction includes at least one of this
+variation's <min> or <max>.
+Reduce the range of either this variation or the obscuring variation.
+<num> is, like most other things, 0-based; the first variation (which can
+never be obscured) is variation 0. If the earlier variations obscure this one
+completely, message 98 is issued instead.
+
+170: "Default result cannot be reached." (Warn 1)
+Same meaning as message 98, but for the default.
+Make one or more of the variations default instead.
+
+171: "<off> var-adjust performs a divide-by-zero or modulo-zero ..." (Error)
+The <divide> or <modulo> portion of this var-adjust is 0.
+Change the <divide>/<modulo> or reduce the varadjust to shift-and.
+
+172: "<off> A shift-and var-adjust would suffice here." (Warn 2)
+The function of this <varadjust> could be duplicated with a shift-and
+<varadjust>.
+Use the powers of the shift-and-add-mod or shift-and-add-divide var-adjusts,
+or use a shift-and adjustment instead.
+
+173: "<off> shift may not have both high bits set." (Fatal)
+The high two bits of this <shift> are both set.
+Clear at least one of the high two bits.
+
+174: "Using an undefined trigger." (Warn 1)
+This random 2 uses a trigger that is not defined.
+Clear the undefined trigger bits.
+
+175: "Invalid UTF-8 sequence: Overlength representation." (Error)
+176: "Invalid UTF-8 sequence: First byte not followed by ..." (Warn 2)
+177: "Invalid UTF-8 sequence: Encodes a character beyond the BMP." (Error)
+An invalid UTF-8 sequence was encountered.
+Correct or remove the invalid UTF-8 sequence.
+Invalid UTF-8 sequences are parsed as a string of bytes (175, 176) or
+ignored (177). Note that "Unexpected continuation byte" is not present, to
+accomodate the use of unencoded 80..BF as TTD characters.
+
+179: "<off> Language <ID> is not defined." (Warn 2)
+http://wiki.ttdpatch.net/tiki-index.php?page=Action4 does not specifiy a
+language for this ID.
+Edit the wiki page or use a defined language byte.
