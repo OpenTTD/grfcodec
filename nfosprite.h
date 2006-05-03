@@ -55,12 +55,13 @@ public:
 	const char*GetName()const{return name.c_str();}
 	int x()const{return xpos;}
 	int y()const{return ypos;}
+	bool reopen()const{return forcereopen;}
 	U8 inf[8];
 private:
 	ostream&output(ostream&)const;
 	string name;
 	int xpos,ypos,imgsize;
-
+	bool forcereopen;
 	static string prevname;
 	static int prevy;
 };
