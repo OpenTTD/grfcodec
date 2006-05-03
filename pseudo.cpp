@@ -118,6 +118,7 @@ PseudoSprite::PseudoSprite(const string&sprite):orig(sprite),valid(true),useorig
 					}
 				}
 				SetText(next_pos());
+				newline=false;
 				out.put(ch);
 			}
 			break;
@@ -294,7 +295,6 @@ PseudoSprite::PseudoSprite(const string&sprite):orig(sprite),valid(true),useorig
 				}else
 					white+=(char)in.get();
 			else{
-				newline=false;
 				ch=(char)ReadHex(in,2);
 				if(!in){
 					in.clear();
@@ -303,6 +303,7 @@ PseudoSprite::PseudoSprite(const string&sprite):orig(sprite),valid(true),useorig
 					return;
 				}
 				ProcessWhite();
+				newline=false;
 				out.put(ch);
 			}
 		}
