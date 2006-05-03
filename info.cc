@@ -68,7 +68,7 @@ inforeader::~inforeader()
 }
 
 void inforeader::PrepareReal(const Real&sprite){
-  if ( !pcx || !pcxname || (stricmp(sprite.GetName(), pcxname) != 0) ) {
+  if ( sprite.reopen() || !pcx || !pcxname || (stricmp(sprite.GetName(), pcxname) != 0) ) {
 	// new file
 
 	if (pcx)

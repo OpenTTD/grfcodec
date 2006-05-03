@@ -222,7 +222,7 @@ Real::Real(size_t sprite,int infover,const string&data){
 		ypos++;	// bug, had an extra line at the top
 	if(xpos<0)throw Sprite::unparseable("xpos is too small",sprite);
 	if(ypos<0)throw Sprite::unparseable("ypos is too small",sprite);
-	else if(ypos<prevy)throw Sprite::unparseable("ypos is decreasing",sprite);
+	forcereopen=(ypos<prevy);
 	prevy=ypos;
 }
 
