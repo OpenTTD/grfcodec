@@ -1,0 +1,128 @@
+/*
+ * act79D.cpp
+ * Contains definitions for checking actions 7, 9, and D.
+ *
+ * Copyright 2005-2006 by Dale McCoy.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+#include<string>
+#include<cassert>
+#include<fstream>
+#include<errno.h>
+
+using namespace std;
+
+#include"renum.h"
+#include"inlines.h"
+#include"messages.h"
+#include"sanity_defines.h"
+#include"data.h"
+#include"pseudo.h"
+#include"command.h"
+
+uint numvars;
+class Vars:public Guintp{
+public:
+	bool canRead7(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x80));}
+	bool canReadD(uint v){return(v<0x80||v==0xFF||(v<numvars&&_p[v&0x7F]&0x40));}
+	bool canWriteD(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x20));}
+	uint len(uint v){return _p[v&0x7F]&0xF;}
+	SINGLETON(Vars)
+};
+
+class D:public Guintp{
+public:
+	uint maxpatchvar,maxop;
+	SINGLETON(D)
+};
+
+Vars::Vars(){
+	FILE*pFile=myfopen(79Dv);
+	_p=new uint[numvars=GetCheckByte(79Dv)];
+	for(uint i=0;i<numvars;i++)
+		_p[i]=GetCheckByte(79Dv);
+	fclose(pFile);
+	numvars|=0x80;
+}
+
+D::D(){
+	FILE*pFile=myfopen(D);
+	maxpatchvar=GetCheckByte(D);
+	maxop=GetCheckByte(D);
+	_p=new uint[MaxFeature()+1];
+	for(uint i=0;i<=MaxFeature();i++)
+		_p[i]=GetCheckWord(D);
+	fclose(pFile);
+}
+
+int Check7(PseudoSprite&data){
+	data.SetAllHex();
+	uint var=data.ExtractByte(1),var_size=data.ExtractByte(2),cond=data.ExtractByte(3);
+	if(cond>0xC)IssueMessage(ERROR,BAD_CONDITION,cond);
+	else if(cond>5&&cond<0xB){
+		if(var!=0x88)IssueMessage(ERROR,GRFCOND_NEEDS_GRFVAR,cond);
+		data.SetGRFID(4);
+	}else if(cond>0xA){
+		data.SetText(4);
+		data.SetText(5);
+		data.SetText(6);
+		data.SetText(7);
+	}
+	if(cond<6&&var==0x88)IssueMessage(ERROR,GRFVAR_NEEDS_GRFCOND);
+	if(cond<2)var_size=1;
+	if(!Vars::Instance().canRead7(var))IssueMessage(ERROR,NONEXISTANT_VARIABLE,var);
+	else if(var>0x7F&&cond>1&&!Vars::Instance().len(var))IssueMessage(ERROR,BITTEST_VARIABLE,var);
+	if(var_size==0||var_size>4){
+		IssueMessage(FATAL,BAD_VARSIZE,var_size);
+		return 0;
+	}else if((cond==0xB||cond==0xC)&&var_size!=4)
+		IssueMessage(WARNING2,COND_SIZE_MISMATCH,cond,4);
+	else if(var>0x7F&&cond>1&&var_size!=Vars::Instance().len(var))
+		IssueMessage(WARNING2,VARIABLE_SIZE_MISMATCH,var,Vars::Instance().len(var));
+	return data.ExtractByte(4+var_size);
+}
+
+bool CheckD(PseudoSprite&data,uint length){
+	if(length<5){IssueMessage(FATAL,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9);return false;}
+	data.SetAllHex();
+	uint target=data.ExtractByte(1),op=data.ExtractByte(2),src1=data.ExtractByte(3),src2=data.ExtractByte(4);
+	if(!Vars::Instance().canWriteD(target))IssueMessage(ERROR,INVALID_TARGET);
+	if((op&0x7F)>D::Instance().maxop)IssueMessage(ERROR,INVALID_OP,2,op);
+	if(!Vars::Instance().canReadD(src1))IssueMessage(ERROR,INVALID_SRC,1);
+	if(op&&src2!=0xFE&&!Vars::Instance().canReadD(src2))IssueMessage(ERROR,INVALID_SRC,2);
+	if(op&&src1==0xFF&&src2==0xFF)IssueMessage(ERROR,ONLY_ONE_DATA);
+	if(src1==0xFF||src2==0xFF||src2==0xFE){
+		if(CheckLength(length,9,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9))return false;
+		if(src2==0xFE){
+			uint info=data.ExtractDword(5);
+			if(op!=0)IssueMessage(ERROR,INVALID_OP,2,op);
+			if((info&0xFF)!=0xFF){
+				if(src1&0x80)IssueMessage(ERROR,INVALID_SRC,1);
+				data.SetGRFID(5);
+			}else if(info==0xFFFF){
+				if(src1>D::Instance().maxpatchvar)IssueMessage(ERROR,INVALID_SRC,1);
+			}else{
+				uint feat=(info>>8)&0xFF,count=info>>16;
+				if(src1>6)IssueMessage(ERROR,INVALID_SRC,1);
+				if(feat>MaxFeature()||!D::Instance()[feat])IssueMessage(ERROR,INVALID_FEATURE);
+				else if(count>D::Instance()[feat])IssueMessage(WARNING1,OOR_COUNT);
+				return true;
+			}
+		}
+	}else if(length>5)IssueMessage(WARNING2,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9);
+	return false;
+}

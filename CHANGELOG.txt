@@ -1,0 +1,646 @@
+Changelog:
+v3.1.4 to v3.2.0
+- (hotfix) TextIDs F900..F904.
+- (hotfix) Callbacks 3C and 3D.
+- (hotfix) Industry variable 63, industry tile variable 61,
+  vehicle variable 48.
+- (devel) Parse pseudos into strings of bytes, not strings of hex characters.
+  (~33% speed increase, ~50% memory usage reduction)
+- New format for lang bytes.
+- Check that lang byte contains a known language.
+- @@BEAUTIFY LINEBREAKS (see README[.txt])
+- @@BEAUTIFY CONVERTONLY (see README[.txt])
+- (devel) Use boost for current-function macro.
+- (devel) Split act123.cpp since I could never find anything in it.
+- (change) Ensure that Action 2s of at least three bytes always define
+  their ID.
+- (devel) Lose the goto that sometimes succeded at the above.
+- (devel) Merge the two forms of INTERNAL_ERROR (file/line)
+- Check for duplicate style-names for all languages.
+- Allow ON and OFF on the command line as + and -, resp.
+- @@CLEARACTION2
+- @@CLEARACTIONF
+
+v3.1.3 to v3.1.4
+- Action 02 feature 07/09 <xofs> and <yofs> no are longer limited to 00..0F.
+- (bugfix) Fix check for non-decreasing ypos in real sprites.
+
+v3.1.2 to v3.1.3
+- (bugfix) Bit 7 of <triggers> is not a trigger.
+- (hotfix) Add industry property 10.
+
+v3.1.1 to v3.1.2
+- Enable pretty-printing of overlength action 0s.
+- Tightened resultant range from shift-and-add-mod varadjusts in some cases.
+- (bugfix) Reinstate check for random 2 <nrand>s of 00.
+- Always check triggers and bits in random 2s, not just if <nrand> is valid.
+- (bugfix) Skip the offset byte after code 01 in strings.
+- (bugfix) Report correct offsets when random 2s misuse the available bits.
+- Complain about shift-and-add-mod when add%mod==0, not just when add==0.
+- (hotfix) Added station variable 65.
+
+v3.1.0 to v3.1.1
+- (bugfix) Check for UTF-8 in UTF-8 strings, not Latin-TTD strings.
+- Added 2.0.1a<num>, 25b<num>, and 2.5b<num> formats to VERSIONCHECK.
+
+v3.0.2 to v3.1.0
+- Varaction range checking now checks ranges for agreement with <var-adjust>.
+- Randactions are checked for using valid bits and triggers.
+- Added check for both high bits set in varaction <shift>s.
+- Reverted "Do not break if the remaining bytes are guaranteed to fit" in
+  favor of an explicit "no line break here" when line breaks do not belong.
+- (bugfix) Action F checker occasionally requested one too many random bits.
+- (devel) Data files now contain two meta-info bytes; format and version.
+- (hotfix) Pulled industry var 5F.
+- (hotfix) Added industry var 62.
+- (hotfix) Added type 0C action 5s.
+- (bugfix) Removed extraneous "m/" from message when a datafile read failed.
+- Fully functional UTF-8 parser:
+  - Encoded Thorn is C3 9E. (again, grr...)
+  - Encoded control characters are now checked.
+  - 7B..7E in UTF-8 strings are quoted.
+
+v3.0.1 to v3.0.2
+- (bugfix) Check proper range when checking default on type 89/8A varactions.
+- (bugfix) Action 0 feat 8 prop 10 is 384 bytes.
+- Added pretty-printing for action 0 feature 8 prop 10.
+
+v3.0.0 to v3.0.1
+- Added variational range accessibility checks.
+- 2.0.1 alpha 74 updates:
+  - Widened industry variable 61 to a word.
+  - General variables prop 10.
+- Added missing \n to --help message.
+
+v3.0.0 pre 2 to v3.0.0
+- Added pretty-printing for action 0 and F.
+- Several beautifier bugfixes/changes:
+  - Obey LINELENGTH.
+  - Add missing newline between <message> and <data> in action B.
+  - Whitespace between code and comment from the previous line(s) in a sprite
+    no longer added to the current line.
+  - Do not break if the remaining bytes are guaranteed to fit.
+- Action F updates:
+  - Uses the action 4/8/B string parsing routines.
+  - New language byte format applies to action F too.
+- Added --lock, to prevent NFO files from overriding the commandline.
+- (bugfix) "Unexpected EOF: Unused town name IDs" message goes to the
+  console, not the NFO.
+- (bugfix) Make -k not cause crashes.
+- Add check for presence of <description> in action 8.
+- (bugfix) Action Bs with message-id FF now check <data> ...
+
+v3.0.0 pre 1 to v3.0.0 pre 2
+- Added pretty-printing for all actions except 0 and F.
+- Added pretty-printing for recolor maps and binary imports.
+- All strings now obey QUOTEUTF8.
+- All GRFIDs now obey HEXGRFID.
+- Changed beautifier's cookie format.
+- Changed LEADINGSPACE to allow three independent settings.
+- Changed line breaks to start 15 characters before max.
+- (bugfix) GETCOOKIE returns a valid comment command.
+- (bugfix) Corrected NOPRESERVE's meaning when following @@BEAUTIFY
+- (bugfix) UTF-8 encoded Thorn is C3 9E, not C3 93.
+- (bugfix) Action 7/9 test 06 is a GRFid test.
+
+v2.8.5 to v2.8.6/v3.0.0 pre 1
+- Made comment commands case insensitive (except for variable names).
+- Made undef @@BEAUTIFY options and settings complain instead of set default.
+- More a73 updates:
+  - Callback 3B.
+  - Industry production callback's <again> may have any value.
+  - Industry variable 61.
+  - TextIDs F8FB..F8FF.
+- (3.0.0 pre 1 only) Enabled the beautifier.
+- (2.8.6 only) diked out @@BEAUTIFY, &c.
+
+v2.8.4 to v2.8.5
+- (bugfix) -? message now says @@REALSPRITES.
+- (bugfix) Checked to ensure that pseudo continuation lines were being
+   attached to pseudosprites, rather than turning into independent sprites.
+- Added @@BEAUTIFY/--beautify/-b. (No beautifier to control, though.)
+- Added '=' as an acceptable delimiter for comment commands.
+- Changed @@DIFF to imply @@LINT NONE.
+
+v2.8.3 to v2.8.4
+- (hotfix) Added industry variable 60.
+- Added support and checks for action 12.
+
+v2.8.2 to v2.8.3
+- Beginnings of sprite-rewriting system. No new functionality yet, though.
+- (devel) Moved data-file version bytes to data.cpp.
+- Changed "Length does not match ..." (#40) to contain more information.
+- (bugfix) Reverted "(bugfix) Checks length of extended house/industry tile
+  action2s before processing." from 2.4.8.
+- (bugfix) Callback 30 is for industry tiles, not industries.
+- Added check for action 8 before GRM action Ds.
+
+v2.8.1 to v2.8.2
+- More a72 and GRFv7 updates:
+  - Action 7 condition 0C
+  - Allow action 4s for industry tiles
+  - Allow line breaks in industry texts (hotfix)
+  - Industry property 22 (hotfix)
+- (bugfix) Actually add --real-sprites.
+- Add check for "looks like an NFO file" (override with -f).
+- (bugfix) Set EPARSE when encountering a file with a too-large version.
+
+v2.8.0 to v2.8.1
+- Up to date with 2.0.1 alpha 72 (all hotfix)
+  - Train variable 48 (still undocumented)
+  - House variable 62
+  - Industry tile variable 60 (widened to 4 bytes)
+  - Cargo properties 19..1A
+  - Callbacks 38..3A
+- (bugfix) Fixed hang when outputting a wider-than-specified value.
+
+v2.7.0 to v2.8.0
+- Added @@REALSPRITES/--real-sprites/-r.
+- Made sprite numbers optional most of the time.
+- Up to date with a70's action 7/9/10 handling.
+- Add checks for valid usage of variable 0C. (messages 163..165)
+- Made "-1 * 1 00" only parse as a real sprite when looking for real sprites.
+- (bugfix) Report proper ID range on invalid non-text ids.
+
+v2.6.4 to v2.7.0
+- Change @@DIFF to set sprite lengths to 0 and sprite 0 to "00 00 00 00".
+- Add several command-line arguments (see renum -?).
+- Look for .renum directory in HOME too, if defined.
+- (bugfix) Crash when directory could not be created.
+- (devel) Use GNU getopt for command-line parsing.
+- (devel) Split and sanify data directory location & creation.
+
+v2.6.3 to v2.6.4
+- Complain when DCxx IDs are included.
+- (bugfix) Allow changing class E0 TextIDs.
+- (devel) Revert %e format specifier.
+- Revert format/arguement agreement checks.
+- Make argument supercede format for width determination.
+
+v2.6.2 to v2.6.3
+- (hotfix) Add new class F8 TextIDs.
+- (bugfix) Allow including TextID C7FF (81 FF C7).
+- (bugfix) Format/argument agreement for some instances of INVALID_ID (141).
+- (bugfix) No longer die on (non-Text)IDs above FF.
+- (devel) Added %e format specifier, for extended bytes.
+- Added format/argument agreement checks. (non-fatal)
+- (bugfix) Re-write import sprites in canon format.
+- (bugfix) Allow setting properties for sound ID 49.
+
+v2.6.1 to v2.6.2
+- (bugfix) No warnings about backwards gotos when skipping 20..DF sprites.
+- (bugfix) Fixed hangs when using control characters where they are ignored.
+- (devel) Moved Action 0 feature 8 special-casing to 0f8.dat
+- Added checks for generic textIDs.
+- Checks for setting out-of-range texts using too-large <num-ent>.
+- Up to date with 2.0.1 alpha 69:
+  - (hotfix) Action D variable 9F.
+  - (hotfix) Action 0 feature 08 props 0A..0F.
+
+v2.6.0 to v2.6.1
+- Up to date with 2.0.1 alpha 68:
+  - Added UTF-8 support
+  - Action 5 type 0B
+  - Action D variable 9E
+- (bugfix) Really fixed the broken param checking for 60+x vars.
+- Added missing checks for extra data in action 8s.
+- Removed special casing in action 8s that permitted non-terminated strings.
+
+v2.5.5 to v2.6.0
+- Added RPN calculations in real sprites. (see README.RPN)
+- Added @@LET comment command.
+- (devel) s/setcode/SetCode/g.
+- (devel) split check_sprite into two functions.
+- (devel) removed a write-only string in verify_real.
+- Changed "Cannot read sprite metadata" message to report where it failed.
+
+v2.5.4 to v2.5.5
+- (devel) Split action 5 processing off to act5.cpp.
+- (devel) New datafile: 5.dat.
+- Added action 5 types 09 and 0A.
+- Added missing num-sprites checks for action 5.
+- Added support for recolor maps.
+- Accept recolor maps in action A blocks.
+- (bugfix) Correctly number pseudo/include sprites that precede real sprites.
+
+v2.5.3 to v2.5.4
+- Added 201a66 format to @@VERSIONCHECK.
+- (devel) More reworking of the message system.
+- (bugfix) Fixed a GPF on invalid real sprites.
+- (bugfix) Accept real sprites where ".pcx" is followed by a non-space
+  whitespace character.
+- Added numerous checks of the real sprite meta data. (156-60)
+- (hotfix) Fixed an off-by-one in GRM (D.dat).
+
+v2.5.2 to v2.5.3
+- Up to date with a66:
+  - General prop 09
+  - Cargo prop 17
+  - Action 2 variable 47 (vehicles)
+  - Action 3 cargo type checks
+  - Ignore high bit of action B severities.
+  - Changed @@VERSIONCHECK to agree more closely with the documentation.
+  - Action 7 condition 0B.
+- Fixed general variable ID checks
+- Added check for setting sound props for IDs <74 (4Ah)
+- (devel) Removed action 2 variable range data and associated loading code.
+- (bugfix) Check correct byte in "0*0 00 01 00 FF xx xx 01 1A".
+- (devel) New data-file loading #define, GetCheckEOF.
+- (bugfix) Add several missing fcloses.
+- (devel) Substantial rework of the message output system.
+- (bugfix) Remove an idiotic check in the message output system.
+
+v2.5.1 to v2.5.2
+- (bugfix) fixed @@VERSIONCHECK (also shortened the output by 3 bytes).
+- Added patch variable 9D.
+- Made patch variable 99 write-only.
+- (bugfix) Re-added action D operations 09..0C.
+
+v2.5.0 to v2.5.1
+- Added @@LINT command; deprecated @@SANITY.
+- Changed/fixed exit codes.
+- (bugfix) Fixed stack checking for data other than words.
+- Added @@VERSIONCHECK command.
+- Redid livery override checks (valid feature and follows std 3).
+- (bugfix) Added missing data-clearing between files for actions 1-3.
+- Downgraded the "Not a recolor sprite" message to Warn 1.
+- (devel) renamed defines.h to renum.h
+
+v2.4.9 to v2.5.0
+- (hotfix) Made variables 10 and 18 always accessible.
+- NFORenum will now automatically write its data files if old or not found.
+- (devel) Added versioning byte to beginning of every data file.
+- Added full recognition of all string control characters.
+- Added (some) string consistancy checking. (actions 4/8/B) (messages 144-9)
+- Added action B checking. (messages 150-3)
+- (devel) added %K, for stack types.
+- (devel) removed attempts at Mac compatibility (still endian-safe, though)
+- Reversed the file search order.
+- (bugfix) no longer append an 'L' to language names.
+- (devel) changed many of the global objects to singletons.
+- Up to date with alpha 63:
+  - Widened vehicle variable 43.
+  - Accept action 1 <num-ent>==0. (features 0-4 only, though)
+  - Action 7/9 tests 09 and 0A.
+  - GRM operation 06.
+- Updated the strings containing "Sanity".
+
+v2.4.8 to v2.4.9
+- (bugfix) Don't issue an invalid action byte message on import sprites.
+
+v2.4.7 to v2.4.8
+- (hotfix) Added houses variables 10 and 18.
+- (hotfix) Widened house var 44 to a dword.
+- Up to date with a61:
+  - Supports sound imports
+  - Action 0 <id> is now an extended byte
+- (devel) added %S to my *printf spec, for "expandable string".
+- Some message considation.
+- (devel) s/LengthCheck/CheckLength/g
+- (bugfix) Checks length of extended house/industry tile action2s before
+  processing.
+- (bugfix) Fixed callback result check (id&0x8000, not &0xF000)
+- Added check for valid transparent translation sprite.
+- Added offset leaders to three more messages
+- (devel) removed offset leaders from strings; added HAS_OFFSET bit instead.
+- (docs) removed suppression comment from SANITY.txt
+- Added check for using only constant variables (1A and 1C). (message 113)
+- Removed duplicate default warning if (and only if) nvar == 1 and the
+  referenced cargo ID checks variable 1C.
+
+v2.4.6 to v2.4.7
+- (devel) completed datafile reworking.
+- Up to date with a59:
+  - Added variables 1C, 5F.
+  - Added train variable 46.
+  - Added station variable 49.
+- (change) Added variable 42 to RVs, ships, planes. (only low byte, though)
+- Added property to message 65 (unexpected end-of-sprite).
+
+v2.4.5 to v2.4.6
+- (bugfix) Revert to 2.4.2's newline handling.
+  (My "fix" in 2.4.3 had a tightloop that would terminate in ENOMEMORY.)
+- (packing) Removed an old file from source dir.
+- (devel) started reworking of datafile handling
+- Up to date with a59pre3:
+  - Action 2 variable 7F
+  - Action 2 trains variable 46
+  - Action D operations 09..0C
+- Renumbered messages.
+
+v2.4.4 to v2.4.5
+- (bugfix) Added variables 10 and 18 to houses.
+- (bugfix) Enabled cargotypes 1D..1F in action 3s.
+
+v2.4.3 to v2.4.4
+- Up to date with a58:
+  - Newsounds properties
+
+v2.4.2 to v2.4.3
+- Removed check for not-variational action 2 (now it's a callback return).
+- (bugfix) Fatal errors on action 2s define the associated ID.
+- (devel) moved meat of LENGTH_CHECK into LengthCheck.
+- States version on startup.
+- (bugfix) Using standard in/out works again. Also, explicitly state that
+  stdin/out are being used.
+- (bugfix) Correct handling of quoted newlines.
+- Checks ID(s) given in actions 0,3,4 (1 byte IDs only in 4s) (message 139)
+- (bugfix) No longer errors on no-groundsprite house action 2s.
+- Checks for at least one non-transparent building sprite if no ground sprite
+  in house/industry tile action 2s.
+- (devel) "%#x" now safely produces little endian text, as XX XX ...
+  (bugfix) GRFids no longer come out reversed on LE systems. (message 119)
+- (bugfix) Reports the correct sprite number if an incorrect number of
+  reals follow an action 5.
+- (devel) Some cleanup in act123.cpp.
+  (bugfix?) Probably some fixes in standard action 2 handling.
+- Checks <num-cid> in action 3s (must be 0 for features 5,7,9..B).
+  (message 140)
+- Attempted to be up-to-date with a58:
+  - Train props 27..29
+  - RV props 1C..1E
+  - Ship props 17..19
+  - Plane props 17..19
+  - Cargo prop 16
+  - Variable 1B
+  - Industry tile variable 60
+- Checks that livery overrides are only used with features 0 and 3.
+
+v2.4.1 to v2.4.2
+- Added check for Action E disabling reserved GRFID (FF .. .. ..)
+  (message 134)
+- Increases nfo version, if necessary.
+- Up to date with documentation for alpha 57:
+  - Binary include sprites (and their pre-grfcodec 0.9.7 equivilants)
+    (messsages 135..137)
+  - Action 11
+- (bugfix) Fixed resource management feature check.
+- (bugfix) Now complains about 79Dv.dat, not 7Dv.dat.
+- (devel) Changed resouce management to use a data file.
+- Added <count> checks for resource management. (message 138)
+- (devel) Messages are now stored as char*s, not std::strings.
+- Removed the whole "Can disable following warnings/errors" concept.
+  (and some associated bugs.)
+- (bugfix) No longer eats NFO files with an unknown version.
+- (bugfix) No longer eats NFO files that follow a file with an unknown
+  version.
+
+v2.4.0 to v2.4.1
+- Cargo prop 15 (alpha 57)
+- (bugfix) Action 2s can refer to their own ID.
+- Train variable 60 (alpha 57)
+
+v2.3.6 to v2.4.0
+- Checks actions D, E, F (messages 119..129)
+- Up to date with alpha 55 vcs 3
+  - House props 1D, 1E (a55vcs2)
+  - Parameterized variable support (message 130)
+  - Station variables 48, 60..64
+  - House variables 60, 61
+  - New house/industry tile action 2 format (messages 131..133)
+- (bugfix) probable crash on incorrect length basic 07/09 standard 2s.
+- (bugfix) color translation checks didn't.
+- (devel) added 79Dv.dat for the 7/9/D variable information.
+- (devel) renamed 7.cpp 79D.cpp to more accurately reflect its purpose.
+
+v2.3.5 to v2.3.6
+- Up to date with alpha 55 vcs
+  - newcargos
+  - global variable 1A
+  - multiply, and, or, and xor operations
+- Added warning for too many sprites in set.
+- Added warning for an unusual set size (features 0-3, sizes 5-7)
+
+v2.3.4 to v2.3.5
+- (bugfix) Gives the correct offset for an incorrect operation code.
+- (bugfix) Enabled variable 80 for vehicles. (Used in AI callbacks.)
+- (bugfix) Reports correct location of preceeding action 1.
+
+v2.3.3 to v2.3.4
+- (bugfix) No longer overruns the sprite on variational action 2s where
+  <nvar> is greater than 1.
+
+v2.3.2 to v2.3.3
+- Parses a54's new variational action 2s.
+- Checks for valid operation in new variational action 2s.
+- Added <variable> to message 84. (Testing nonexistent variable)
+- (bugfix) Unused industry cargoIDs are now reported.
+- (bugfix) Message 23 (Unexpected EOF: Unused cargo ids...) now displays
+  feature in hex. (invisible)
+- Added variable 18 for industries.
+
+v2.3.1 to v2.3.2
+- (bugfix) Standard action 2s not preceded by an action 1 now returns a more
+  meaningful error.
+- (bugfix) Standard action 2s that do not require new graphics do not check
+  the preceding action 1 (if it exists)
+- Up to date with alpha 53 vcs:
+  - Industry production callbacks
+  - Industry tile properties 0E-11
+  - Industry tile variable 44
+  - Industry variables 40-42
+- Changed one more sprite-too-long type message to warning level 2.
+- (devel) Changed INTERNAL_ERROR to be more useful.
+- (devel) Cleared up gcc compilation.
+
+v2.3.0 to v2.3.1
+- Added station variables 46 and 47 (a51).
+- (bugfix) Now checking correct byte of action 7s for potential goto.
+- Changed all the sprite-too-long type messages to warning level 2.
+- Added checks for Action 6:
+  Changes following sprite
+  Does not attempt to extend following sprite
+  Following sprite exists
+- (packaging fix) Removed renum.tar.bz2 from the src/ dir (renum.rar and
+  renum.zip) Please don't ask me how it got there.
+
+v2.2.3 to v2.3.0
+- (devel) Moved action 1-3 checking to its own .cpp file
+- (bugfix) "Feature byte does not match..." message would output jibberish
+  instead of the location of the previous action 3.
+- Added checks:
+  Standard action 3 preceeds override action 3
+  Override action 3 closely follows standard 3
+  Variable in variational action 2 exists.
+  Variable in variational action 2 is not being shifted into oblivion.
+- (bugfixes) Validated 0.dat:
+  Fixed house props 11, 12, and 16
+  Fixed bridge props 0B-0D, added 0E
+  Added station props 14 (a47) and 15 (a51)
+  Fixed industry props 1B, 1C
+
+v2.2.2 to v2.2.3
+- Removed check for comments at the end of pseudo-sprite lines
+- (bugfix) '/' is now an acceptable directory separator
+- (bugfix) String support no longer breaks when high-ASCII characters are quoted.
+- (devel) fixed gcc 3.4.3 compilation
+
+v2.2.1 to v2.2.2
+- Added @@WARNING command.
+- Changed FAILURE to FATAL.
+- Changed/combined some strings.
+- (bugfix) No longer warns about "-1*6 00 00 01 00 ?? 1A" (Finally!)
+- Raised error messages to always.
+- Enabled var/rand action 2 and action 3 for feature 0A.
+- (devel) fixed gcc warnings when compiled -W -Wall.
+
+v2.2.0 to v2.2.1
+- (bugfix) TTD defines sprites up to #4894.
+- (bugfix) changing TTD's last sprite is permissible.
+
+v2.1.0 to v2.2.0
+- (bugfix) 0.dat can be updated for new features without changing the source.
+- (devel) Added MSVC .NET project files to src/
+- Up-to-date with alpha 49:
+  New action 0 properties for industry tiles and industries
+  Extended-byte <num-ent> for action 1 and <num-sprites> for action 5
+  Action 10
+- (bugfix) Terminated repetition now correctly handles multi-byte terminators.
+- Updated the action 1/2/3 linter:
+  Feature bytes larger than 07 are permissible.
+  Checks ALL standard action 2s
+  Accepts callback results in standard action 2s
+- Added detection for property repetition in an action 0.
+- Added string support (but only if "Info version 5" or no NFO header)
+- (devel) Cleaned up whitespace
+- Added @@PRESERVEMESSAGES and made @@REMOVEMESSAGES default.
+- Added checks:
+  Action 8:
+    Presence
+    Duplicate
+    Valid GRFID
+  Action 7/9:
+    <variable>, <varsize>, and <condition-type> agreement
+    Backwards goto
+  Action 10:
+    Duplicate
+    Usage
+  Action 4:
+    String count
+  Action A:
+    Sprite number
+- Adjusted some warning levels.
+- (bugfix) Feature 0A prop 1A is a dword, not a byte.
+- Do not lint NFO files where the first sprite is a real sprite.
+- (linter) Do not accept real sprites prior to the first Action 1/5/A.
+
+v2.0.4 to v2.1.0
+- Added checking of Action 0s
+- (Bugfix) Removed various incorrect messages that could be issued on an
+  overlength Action 3
+- Moved source files to the src/ directory
+
+v2.0.3 to v2.0.4
+- Changed supression of errors and warnings by failures.
+- Added a @@DIFF comment-command -- causes all sprites to be numbered -1, to
+  help produce useful diffs.
+- Changed "Invalid action byte" to a failure.
+- (devel) Removed ugly system calls; replaced with real file-handling funcs.
+- (Bugfix) removed "invalid ID" message for @@USEID2
+- (Bugfix) Added some missing "can't happen"s
+- (devel) Moved all messages to messages.h
+- Up-to-date with a43
+
+v2.0.2 to v2.0.3
+- Corrected number of sprites required for foundations.
+- Ensure that the sanity checker will never try to read bytes that do not
+  exist.
+
+v2.0.1 to v2.0.2
+- Added missing checks for Variational/Random Action 2s
+  Action 2 pointing to itself
+  All choices the same in random 2
+  Default ID appearing before the end of the sprite in var 2
+- Added missing check for action 3
+  Default ID appearing before the end of the sprite
+- Added a list of the sanity checker's messages (SANITY or SANITY.txt)
+- Downgraded severity of some messages.
+- Made sanity failures suppress following non-failure-level messages
+
+v2.0 to v2.0.1
+- Added sanity checking to ensure that there is a chain from all vehicle
+  sprites to an action 3.
+- Added a comment command (USESET) to work around unchecked Action 6s.
+- Fixed condition where pseudosprite continuations could be replaced with
+  real sprites.
+  This occured when the line could be parsed as a single decimal number.
+- (devel) passed memory allocation and bit-packing off to the vector class.
+
+v1.2.1 to v2.0
+- Added sanity checking for Actions 1-3, 5, and A.
+- Added comment commands.
+- Changed *nix version to look in the "sprites/" directory.
+- (devel) Split source yet again (hopefully for the last time)
+- (devel) Changed NFO output to a global ostream*
+- (devel) removed some outdated stuff from defines.h
+- (devel) Added an exit value of 3 to indicate internal failure.
+
+v1.2 to v1.2.1
+- Fixed real-sprite validity check to agree with GRFCodec.
+  Now properly handles whitespace in filenames and trailing comments.
+- Fixed condition where sprites could get numbered in hex.
+  This occured when renumbering a non-patch NFO after a patch NFO.
+- (devel) Changed message and error output to global ostream*s
+
+v1.1 to v1.2
+- Now adds missing NFO header.
+- Checks real sprites for validity. This mostly solves the problem of
+  destroying continuation lines of pseudo-sprites with invalid characters.
+- Changed backup and temp file names in some cases, to always use .NFO.BAK
+  and .NFO.NEW
+- (devel) code for checking sanity of actions 1, 5, and A included, but
+  #ifdef-ed out. NO_SANITY_CHECKING is the controlling symbol.
+- (devel) more source rearranging and cleanup.
+
+v1.0 to v1.1
+- Now processes all files listed on the command line, not just the last one.
+- Always produces output.
+- Warning and error messages will now be sent to both the console and the NFO.
+  In the NFO, messages are commented and prefixed with "!!"
+- Changed handling of invalid pseudo-sprites.
+    Instead of dying, comments the sprite out and continues.
+    Message to console and NFO.
+- (bugfix) Added a check to ensure that the output file got opened.
+- (devel) moved file processing to a separate function.
+- (devel) substantially cleaned up the i/o stream selection system.
+  It actually makes sense again.
+- (devel) general code cleaning and organizing
+- (devel) upgraded to UPX 1.25
+
+v0.4 to v1.0
+- Now handles multi-line pseudo-sprites correctly.
+- Now writes sprite 0 in the correct location.
+- More permissive TTDPatch NFO detection
+  If the first sprite is a pseudo-sprite, treat as a TTDPatch NFO.
+    If the first sprite claims to be 4 bytes long, discard and recreate.
+    Otherwise, comment old sprite 0 and create new sprite 0.
+- Successful runs no longer produce output, other than the fixed NFOs.
+- (devel) Now stores most of the NFO in memory while processing.
+
+v0.3.1 to v0.4
+- (devel) Now does its own file handling (disable by #defining NO_FILE_HANDLING)
+- Accepts absolute paths for .NFO locations.
+- Drag&drop from Windows explorer now works.
+- The executable is now UPX packed.
+- renum.bat is no longer necessary; the executable is now renum.exe.
+- GNU/Linux systems (GNU fileutils) receive a new backup everytime the NFO is
+  renumbered.
+
+v0.3 to v0.3.1(bugfix)
+- No longer destroys real sprites.
+
+v0.2 to v0.3
+- Now also reports on potential continued pseudo-sprites with trailing comments
+- No longer eats whitespace before comments
+- No longer eats blank lines
+
+v0.1 to v0.2
+- No longer silently destroys data in multi-line pseudo-sprites.
+- Return value of 1 now indicates potential data destruction.
+- (side effect) Renum.bat will not delete the old version of the NFO if
+  pseudosprite data may have been destroyed.
+- Detects TTDPatch NFOs, and reports size stats.
+- In TTDPatch NFOs, if sprite 0 does not report the exact size of the NFO,
+  outputs corrected sprite 0 to the console, and, commented, as the last line
+  of the NFO.
+- Now returns 2 to indicate error.
