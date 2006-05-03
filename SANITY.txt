@@ -168,7 +168,7 @@ This action 4 contains too few "00" bytes for the number of strings it
 declares.
 Check that the strings are terminated, add strings, and/or reduce num-ent.
 
-80: "Value of <xoff>/<yoff> must not exceed 0Fh." (Warn2)
+80: "Value of <xoff>/<yoff> must not exceed 0Fh." (Warn3)
 <xoff> or <yoff> was set to too high a value.
 Reduce the offset.
 
@@ -288,11 +288,6 @@ Remove one of the action 10s, or change one of the labels.
 109: "<off> Property <prop> is previously defined at offset <off>." (Warn 2)
 This action 0 sets the same property twice.
 Remove one of the definitions.
-
-110: "<off> <value> exceeds 10h." (Warn 2)
-<value> (<xoff>+<xextent> or <yoff>+<yextent>) is too large, and places the
-building off the tile.
-Reduce the building size or offset to bring it back onto its tile.
 
 111: "Random 2 declaring only one choice." (Warn 3)
 112: "All random options have the same ID." (Warn 3)

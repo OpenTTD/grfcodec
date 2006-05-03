@@ -241,7 +241,7 @@ NFO_MESSAGE(DOES_NOT_MODIFY,"This section does not make any changes.\n",USE_PREF
 NFO_MESSAGE(UNUSED_LABEL_NO_PREV_DEF,"Label %2x has not been goto'ed.\n",USE_PREFIX)
 NFO_MESSAGE(UNUSED_LABEL_PREV_DEF,"Label %2x has not been goto'ed since previous definition at sprite %d.\n",USE_PREFIX)
 NFO_MESSAGE(REPEATED_PROP,"Property %2x is previously defined at offset %d.\n",USE_PREFIX|HAS_OFFSET)
-NFO_MESSAGE(OFF_TILE,"%s exceeds 10h.\n",USE_PREFIX|HAS_OFFSET)
+ MESSAGE_UNUSED(OFF_TILE)
 
 //WARNING3
 NFO_MESSAGE(ONLY_ONE_CHOICE,"Random 2 declaring only one choice.\n",USE_PREFIX)
