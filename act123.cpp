@@ -190,7 +190,6 @@ void Check2(PseudoSprite&data){
 					IssueMessage(WARNING1,CHECK_0C_RANGE,i+2,min,max);
 				else{
 					CheckCallback(i+2,feature,min);
-					if(min>0x40&&extract!=8)IssueMessage(WARNING1,DWORD_CALLBACK,min);
 				}
 			}
 		}
