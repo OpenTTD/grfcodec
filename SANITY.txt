@@ -481,12 +481,6 @@ Specify a valid textID.
 In an action 4, if <off> specifies byte 3, then the ID (in bytes 4..5) is OK,
 but <num-ent> is too large.
 
-162: "Checking for double-word callback %2x with non-doubleword ..." (Warn1)
-The low byte or word of var 0C is being checked for a value > 3Fh.
-Change the var2 to type 89, and widen the B/W/D variables.
-Callbacks 10..3F are the only callbacks for which it is safe to check only
-the low byte of var 0C. For all others, all four bytes must be checked.
-
 163: "<off> Checking for var0C in the range [<min>,<max>]." (Warn 1)
 A check of var 0C has <min> not equal to <max>.
 Change one of <min> or <max> so they match.
