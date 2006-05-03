@@ -110,10 +110,8 @@ ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
 
 Makefile.dep: .remake_deps
-	[ -e ttdpal.h ] || touch ttdpal.h
-	$(CC) $(CFLAGS) -MM *.c *.cc > $@
+	$(CC) $(CFLAGS) -MM -MG *.c *.cc > $@
 	perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
-	[ -s ttdpal.h ] || rm ttdpal.h
 
 # Borland compiler rules
 
