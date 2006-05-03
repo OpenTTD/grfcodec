@@ -340,7 +340,7 @@ Define2::~Define2(){
 
 Callbacks::Callbacks(){
 	FILE*pFile=myfopen(callbacks);
-	_p=new uchar[numcallbacks=GetCheckByte(callbacks)];
+	_p=new uchar[numcallbacks=GetCheckWord(callbacks)];
 	for(uint i=0;i<numcallbacks;i++)
 		_p[i]=(uchar)GetCheckByte(callbacks);
 }
