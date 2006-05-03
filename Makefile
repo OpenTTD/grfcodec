@@ -16,7 +16,7 @@ CC = g++
 CXX = g++
 
 # use 386 instructions but optimize for pentium II/III
-CFLAGS = -g -DWIN32 -O3 -I$(BOOST_INCLUDE) $(CFLAGAPP) -Wall
+CFLAGS = -g -DWIN32 -O1 -I$(BOOST_INCLUDE) $(CFLAGAPP) -Wall
 CXXFLAGS = $(CFLAGS)
 #LDOPT = -g -Wl,--subsystem,console -luser32 -lgdi32 -lwinmm -lcomdlg32 -lcomctl32
 #LDOPT = -Wl,--subsystem,console,-s
