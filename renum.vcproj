@@ -267,6 +267,21 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 		</Filter>
+		<File
+			RelativePath=".\CHANGELOG.txt">
+		</File>
+		<File
+			RelativePath=".\README.RPN.txt">
+		</File>
+		<File
+			RelativePath=".\README.txt">
+		</File>
+		<File
+			RelativePath=".\SANITY.txt">
+		</File>
+		<File
+			RelativePath=".\TODO.txt">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
