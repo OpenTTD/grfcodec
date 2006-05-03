@@ -243,12 +243,13 @@ void Check2(PseudoSprite&data){
 						CheckSpriteNum(building,off-6,act123::Instance().act1,feature,mismatch,hasGround);
 						if(!building)IssueMessage(ERROR,NO_BUILDING_SPRITE,off-6);
 						if(zoff!=0x80){
-							uint x=data.ExtractByte(++off),y=data.ExtractByte(++off);
-							++off;//zextent
-							if(xoff>15)IssueMessage(WARNING2,TOO_LARGE,"xoff");
-							else if(xoff+x>16)IssueMessage(WARNING2,OFF_TILE,off-5,"xoff+xextent");
-							if(yoff>15)IssueMessage(WARNING2,TOO_LARGE,"yoff");
-							else if(yoff+y>16)IssueMessage(WARNING2,OFF_TILE,off-4,"yoff+yextent");
+							uint x=data.ExtractByte(++off),y=data.ExtractByte(++off);//,z=data.ExtractByte(++off);
+							++off;
+							if(xoff>15)IssueMessage(WARNING3,TOO_LARGE,off-5,"xoff",15);
+							else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,off-5,"xoff+xextent",16);
+							if(yoff>15)IssueMessage(WARNING3,TOO_LARGE,off-4,"yoff",15);
+							else if(yoff+y>16)IssueMessage(WARNING3,TOO_LARGE,off-4,"yoff+yextent",16);
+							//if(zoff+z>0x87)IssueMessage(WARNING1,TOO_LARGE,off-3,"zoff+zextent",0x87);
 						}else if(i==0)IssueMessage(ERROR,FIRST_SPRITE_CANNOT_SHARE);
 						if(++i!=nument1)data.SetEol(off,2);
 					}catch(...){
@@ -262,13 +263,14 @@ void Check2(PseudoSprite&data){
 				if(!ground)IssueMessage(ERROR,NO_GROUNDSPRITE,GROUND);
 				if(CheckLength(length,17,INVALID_LENGTH,TYPE,BASICSTD2,HOUSE_INSTYTILE,17))break;
 				uint building=data.ExtractDword(8),xoff=data.ExtractByte(12),yoff=data.ExtractByte(13),
-					x=data.ExtractByte(14),y=data.ExtractByte(15);
+					x=data.ExtractByte(14),y=data.ExtractByte(15);//,z=data.ExtractByte(16);
 				if(building){
 					CheckSpriteNum(building,8,act1,feature,mismatch,hasGround);
-					if(xoff>15)IssueMessage(ERROR,TOO_LARGE,"xoff");
-					else if(xoff+x>16)IssueMessage(WARNING2,OFF_TILE,12,"xoff+xextent");
-					if(yoff>15)IssueMessage(ERROR,TOO_LARGE,"yoff");
-					else if(yoff+y>16)IssueMessage(WARNING2,OFF_TILE,13,"yoff+yextent");
+					if(xoff>15)IssueMessage(WARNING3,TOO_LARGE,12,"<xoff>",15);
+					else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,12,"xoff+xextent",16);
+					if(yoff>15)IssueMessage(WARNING3,TOO_LARGE,13,"yoff",15);
+					else if(yoff+y>16)IssueMessage(WARNING3,TOO_LARGE,13,"yoff+yextent",16);
+					//if(z>0x87)IssueMessage(WARNING1,TOO_LARGE,16,"zextent",0x87);
 				}
 			}
 		}else if(feature==10){
