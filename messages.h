@@ -312,9 +312,9 @@ NFO_MESSAGE(UNDEFINED_TRIGGER,"Using an undefined trigger.\n",USE_PREFIX)
 NFO_MESSAGE(OVERLENGTH_UTF8,"Invalid UTF-8 sequence: Overlength representation.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_UTF8,"Invalid UTF-8 sequence: First byte not followed by sufficient continuation bytes.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(OUTOFRANGE_UTF8,"Invalid UTF-8 sequence: Encodes a character beyond the BMP.\n",USE_PREFIX|HAS_OFFSET)
-
   MESSAGE_UNUSED(UNEXPECTED_UTF8_CONT)
 NFO_MESSAGE(UNKNOWN_LANGUAGE,"Language %2x is not defined.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(INCLUDING_00_ID,"Including TextID %4x, which contains a 00 byte.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs here. */
 

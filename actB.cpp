@@ -66,7 +66,7 @@ void CheckB(PseudoSprite&data){
 		return;
 	}
 	if(messageid==0xFF)
-		specials=CheckString(data,offset,CTRL_NEWLINE,MakeStack(4,STACK_TEXT,STACK_TEXT,STACK_DWORD,STACK_DWORD),RETURN_STACK);
+		specials=CheckString(data,offset,CTRL_NEWLINE,false,MakeStack(4,STACK_TEXT,STACK_TEXT,STACK_DWORD,STACK_DWORD),RETURN_STACK);
 	else
 		specials=B::Instance()[messageid];
 	if(specials==-1)return;

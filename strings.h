@@ -38,7 +38,7 @@ enum{RETURN_NULL,RETURN_STACK};
 class PseudoSprite;
 
 void Check4(PseudoSprite&);
-int CheckString(PseudoSprite&,uint&,int,string="",int =0);
+int CheckString(PseudoSprite&,uint&,int,bool =false,string="",int =0);
 string MakeStack(int,...);
 string GetLangName(uint);
 void CheckLangID(uint,uint);
