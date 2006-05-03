@@ -541,3 +541,11 @@ accomodate the use of unencoded 80..BF as TTD characters.
 http://wiki.ttdpatch.net/tiki-index.php?page=Action4 does not specifiy a
 language for this ID.
 Edit the wiki page or use a defined language byte.
+
+180: "<off> Including TextID <id>, which contains a 00 byte" (Warn 1)
+The textID <id> contains a 00 byte.
+If this is a Dx00 ID, change its ID. Otherwise, find a different text to
+include, define your own in the D000 range, or make this the last string
+defined by this action 4.
+Including a TextID with a 00 byte causes that 00 byte to be parsed as an
+end-of-string character.

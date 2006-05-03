@@ -75,7 +75,7 @@ void Check4(PseudoSprite&data){
 		:(check4::Instance().*(lang&0x80?&check4::GetGenericPerms:&check4::GetNamePerms))(feature);
 	if(feature==0x0B){
 		for(;nument--;){
-			int result=CheckString(data,i,perms,MakeStack(1,STACK_WORD));
+			int result=CheckString(data,i,perms,!nument,MakeStack(1,STACK_WORD));
 			if(result){
 				if(result!=-1)nument--;
 				break;
@@ -86,7 +86,7 @@ void Check4(PseudoSprite&data){
 		}
 	}else
 		for(;nument--;){
-			int result=CheckString(data,i,perms);
+			int result=CheckString(data,i,perms,!nument);
 			if(result){
 				if(result!=-1)nument--;
 				break;
@@ -121,7 +121,7 @@ void Check4(PseudoSprite&data){
  * (RETURN_NULL), or the number of stack-accessing control characters
  * encountered or -1 if the stack was smashed (RETURN_STACK)
  */
-int CheckString(PseudoSprite&data,uint&offs,int perms,string stack,const int retInfo){
+int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,string stack,const int retInfo){
 	const uint length=data.Length();
 	if(offs>=length)return -1;
 	uint stackoffs=0,ret=0,ch;
@@ -173,8 +173,10 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,string stack,const int ret
 		}else if(ch<0x20)IssueMessage(WARNING3,UNUSED_CONTROL,offs,ch);
 		else if(ch<0x7B);
 		else if(ch==0x81){
-			++offs;
-			CheckTextID(0x49,data.ExtractWord(offs),offs);
+			int id=data.ExtractWord(++offs);
+			CheckTextID(0x49,id,offs);
+			if((!(id&0xFF)||!(id&0xFF00))&&!include_00_safe)
+				IssueMessage(WARNING1,INCLUDING_00_ID,offs,id);
 			++offs;
 		}else if(ch==0x86){
 			if(~perms&CTRL_NO_STACK_CHECK){
