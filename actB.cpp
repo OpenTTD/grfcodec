@@ -77,7 +77,15 @@ void CheckB(PseudoSprite&data){
 		}catch(uint){}
 		CheckString(data,offset,CTRL_NEWLINE);
 	}
-	if(specials>2&&data.ExtractByte(offset++)>0x7F)IssueMessage(ERROR,INVALID_PARAM,offset);
-	if(specials>3&&data.ExtractByte(offset++)>0x7F)IssueMessage(ERROR,INVALID_PARAM,offset);
+	if(specials>2){
+		if(data.ExtractByte(offset)>0x7F)
+			IssueMessage(ERROR,INVALID_PARAM,offset,data.ExtractByte(offset));
+		offset++;
+	}
+	if(specials>3){
+		if(data.ExtractByte(offset)>0x7F)
+			IssueMessage(ERROR,INVALID_PARAM,offset,data.ExtractByte(offset));
+		offset++;
+	}
 	if(offset!=data.Length())IssueMessage(WARNING2,EXTRA_DATA,offset);
 }
