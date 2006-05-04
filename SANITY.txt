@@ -163,7 +163,7 @@ Change the variable or the variable size.
 The byte at <off> was expected to be <exp>.
 Change the byte at <off>, and/or check the feature byte.
 
-79: "Expected %d more strings for this action 4." (Error)
+79: "Expected <num> more strings for this action 4." (Error)
 This action 4 contains too few "00" bytes for the number of strings it
 declares.
 Check that the strings are terminated, add strings, and/or reduce num-ent.
@@ -493,8 +493,8 @@ This action 12 defines a set of glyphs that are in two or more 128-character
 blocks.
 Split this set into two or more smaller sets that do not span a block-break.
 
-167: "<off> The name for language(s) %2x has no terminating null." (Fatal)
-168: "The name-part starting at %d has no terminating null." (Fatal)
+167: "<off> The name for language(s) <ID> has no terminating null." (Fatal)
+168: "The name-part starting at <offset> has no terminating null." (Fatal)
 The specified string does not have a terminating null.
 Check for errant control characters and/or add a terminating null.
 
