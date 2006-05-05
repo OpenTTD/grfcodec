@@ -34,7 +34,6 @@ struct act123{
 	}act1;
 	class IDarray{
 	public:
-		IDarray(){init();}
 		void init(){used.resize(0);sprite.resize(0);v1C.resize(0);}
 		bool is_defined(int id)const{return sprite[id]!=0;}
 		bool is_used(int id)const{return used[id];}
