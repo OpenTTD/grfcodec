@@ -712,5 +712,5 @@ int main(int argc, char **argv)
 	return decode(grffile, directory, palette, box, width, height, colourmap, useplaintext);
   }
 
-  return 1;
+  return 0;
 }
