@@ -364,3 +364,15 @@ void sanity_use_id(int feature,int id){
 void sanity_use_set(int set){
 	act123::Instance().act1.use(set);
 }
+
+void sanity_test_id(int feature,int id){
+	act123::Instance().defined2IDs[feature].test(0,id&0xFF);
+}
+
+int sanity_locate_id(int feature,int id){
+	return act123::Instance().defined2IDs[feature].defined_at(id&0xFF);
+}
+
+void sanity_define_id(int feature,int id){
+	act123::Instance().defined2IDs[feature].define(id&0xFF,true);
+}
