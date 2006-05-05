@@ -369,6 +369,35 @@ bool parse_comment(const string&line){
 			return true;
 		}
 		break;
+	case TESTID2:{
+		int feature;
+		commandstream>>setbase(16)>>feature>>id;
+		if(!IsValidFeature(ACT2,feature)){
+			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
+			return true;
+		}
+		sanity_test_id(feature,id);
+		return true;
+	}case DEFINEID2:{
+		int feature;
+		commandstream>>setbase(16)>>feature>>id;
+		if(!IsValidFeature(ACT2,feature)){
+			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
+			return true;
+		}
+		sanity_define_id(feature,id);
+		return true;
+	}case LOCATEID2:{
+		int feature;
+		commandstream>>setbase(16)>>feature>>id;
+		if(!IsValidFeature(ACT2,feature)){
+			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
+			return true;
+		}
+		inject(mysprintf("\\!!LOCATEID2 %2x %2x: %d",feature,id,sanity_locate_id(feature,id)));
+		break;
+	}
+
 	/*case VERBOSE:{
 		uint level;
 		if(!(commandstream>>level)||level>2){
