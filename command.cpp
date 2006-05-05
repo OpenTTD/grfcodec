@@ -394,7 +394,9 @@ bool parse_comment(const string&line){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
 		}
-		inject(mysprintf("\\!!LOCATEID2 %2x %2x: %d",feature,id,sanity_locate_id(feature,id)));
+		inject("//@@PRESERVEMESSAGES NOPRESERVE");
+		inject(mysprintf("//!!LOCATEID2 %2x %2x: %d",feature,id,sanity_locate_id(feature,id)));
+		if(GetState(REMOVEMESSAGES))inject("//@@REMOVEMESSAGES NOPRESERVE");
 		break;
 	}
 
