@@ -42,6 +42,7 @@ struct act123{
 		void define(unsigned int id,bool checks1C);
 		bool checks1C(int id)const{return v1C[id];}
 		void use(int id){used[id]=true;}
+		bool test(uint,uint)const;
 	private:
 		Expanding0Array<bool>used;
 		Expanding0Array<bool>v1C;

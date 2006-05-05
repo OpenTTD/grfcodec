@@ -57,6 +57,14 @@ void act123::IDarray::define(unsigned int id,bool checks1C){
 	v1C[id]=checks1C;
 }
 
+bool act123::IDarray::test(uint offset,uint id)const{
+	if(!is_defined(id)){
+		IssueMessage(ERROR,UNDEFINED_ID,offset,id);
+		return false;
+	}
+	return true;
+}
+
 //****************************************
 // Check2v
 //****************************************

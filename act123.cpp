@@ -72,13 +72,8 @@ bool check_id(uint offset,unsigned int id,act123::IDarray&IDs){
 	else if(id>>8){
 		IssueMessage(ERROR,NEITHER_ID_CALLBACK,id,CID);
 		return true;
-	}else if(!IDs.is_defined(id)){
-		IssueMessage(ERROR,UNDEFINED_ID,offset,id);
-		return true;
-	}else{
-		IDs.use(id);
-		return IDs.checks1C(id);
 	}
+	return IDs.test(offset,id)?(IDs.use(id),IDs.checks1C(id)):true;
 }
 
 void invalidate_act3(){
