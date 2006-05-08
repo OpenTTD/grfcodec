@@ -63,7 +63,6 @@ inforeader::inforeader(char *fn)
 
 inforeader::~inforeader() 
 {
-  if (pcx)
 	delete(pcx);
 }
 
@@ -71,8 +70,7 @@ void inforeader::PrepareReal(const Real&sprite){
   if ( sprite.reopen() || !pcx || !pcxname || (stricmp(sprite.GetName(), pcxname) != 0) ) {
 	// new file
 
-	if (pcx)
-		delete(pcx);
+	delete(pcx);
 
 	printf("Loading %s\n", sprite.GetName());
 

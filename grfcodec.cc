@@ -243,9 +243,9 @@ FILE *spritefiles::nextfile()
   if (thecurfile) {	// new open succeeded, close old one
 	if (oldfile)
 		fclose(oldfile);
-	if (oldname)
-		free(oldname);
+	free(oldname);
   } else {		// retain old one
+    free(thecurfilename);
 	thecurfile = oldfile;
 	thecurfilename = oldname;
   }
