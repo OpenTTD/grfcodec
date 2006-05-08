@@ -69,7 +69,7 @@ struct command{
 	command();
 	uint sanity_messages,extensions;//,verbose;
 	int real:2;
-	bool remove_messages,beautifier,diff,locked;
+	bool remove_messages,beautifier,diff,locked,useoldnums;
 	uint beauty;
 	Expanding0Array<int>warnstate;
 }_commandState,_CLstate;
@@ -129,6 +129,7 @@ void CLCommand(int command){
 	case'b':parse_comment("//@@BEAUTIFY "+GetOnOffString(optarg));break;
 	case'p':_commandState.remove_messages=false;break;
 	case'e':parse_comment("//@@EXTENTIONS "+GetOnOffString(optarg));break;
+	case'o':parse_comment("//@@USEOLDSPRITENUMS "+GetOnOffString(optarg));break;
 	case 256:locked=true;break;
 	case'w':case'W':{
 		istringstream arg(optarg);
@@ -398,8 +399,18 @@ bool parse_comment(const string&line){
 		inject(mysprintf("//!!LOCATEID2 %2x %2x: %d",feature,id,sanity_locate_id(feature,id)));
 		if(GetState(REMOVEMESSAGES))inject("//@@REMOVEMESSAGES NOPRESERVE");
 		break;
-	}
-
+	}case USEOLDSPRITENUMS:
+		commandstream>>command_part;
+		if(!commandstream)return true;
+		id=find_command(command_part,ext);
+		if(id==ON)_commandState.useoldnums=true;
+		else if(id==OFF)_commandState.useoldnums=false;
+		else{
+			IssueMessage(0,COMMAND_INVALID_ARG,gen[EXTENSIONS].name);
+			return true;
+		}
+		break;
+	
 	/*case VERBOSE:{
 		uint level;
 		if(!(commandstream>>level)||level>2){
@@ -431,6 +442,7 @@ int GetState(enum gen type){
 		CASE(REALSPRITES,real);
 		CASE(BEAUTIFY,beautifier);
 		CASE(EXTENSIONS,extensions);
+		CASE(USEOLDSPRITENUMS,useoldnums);
 //		CASE(VERBOSE,verbose);
 /* Add CASE(COMMAND,variable) macros for new comment commands here.
  * The order in this function should be the same as the order in command.h.*/

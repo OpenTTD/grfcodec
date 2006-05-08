@@ -55,7 +55,7 @@ using namespace std;
 #endif
 
 int process_file(istream&);
-void output_buffer(const string&,bool);
+void output_buffer(const string&,bool,int);
 void comment_sprite(const string&);
 bool verify_real(string&);
 void reset_real();
@@ -113,6 +113,7 @@ void ShowHelp(){
 		"   --lint -l                   @@LINT\n"
 		"   --preserve-messages -p      @@PRESERVEMESSAGES\n"
 		"   --real-sprites -r           @@REALSPRITES\n"
+		"   --use-old-nums -o           @@USEOLDSPRITENUMS\n"
 		"   --warning-disable -w        @@WARNING DISABLE\n"
 		"   --warning-enable -W         @@WARNING ENABLE\n"
 		"       -w and -W (and their long counterparts) also accept a comma-separated\n"
@@ -145,6 +146,7 @@ int __cdecl main(const int argc,char**argv){
 		{"lint",optional_argument,NULL,'l'},
 		{"preserve-messages",no_argument,NULL,'P'},
 		{"real-sprites",required_argument,NULL,'r'},
+		{"use-old-nums",required_argument,NULL,'o'},
 		{"warning-disable",required_argument,NULL,'w'},
 		{"warning-enable",required_argument,NULL,'W'},
 		{NULL,0,0,0}
@@ -236,10 +238,14 @@ int __cdecl main(const int argc,char**argv){
 }
 
 #define flush_buffer()\
-	if(buffer!=""){\
-		output_buffer(buffer,isPatch);\
-		buffer="";\
-	}else
+	if(true){\
+		if(buffer!=""){\
+			output_buffer(buffer,isPatch,spriteno);\
+			buffer="";\
+		}\
+		spriteno=temp;\
+	}else\
+		(void(0))
 
 #define SetVersion(x)\
 	(NFOversion=max((x),NFOversion))
@@ -290,7 +296,7 @@ int process_file(istream&in){
 	}
 
 
-	int temp;
+	int temp=-1,size,spriteno=-1;
 	_spritenum=(unsigned)-1;
 	string::size_type firstnotpseudo;
 	bool isPatch=false;
@@ -310,7 +316,10 @@ int process_file(istream&in){
 			if(parse_comment(sprite))
 				buffer+=sprite+'\n';
 		}else{//sprite
-			if(!eat_white(spritestream>>temp))spritestream.clear();
+			if(!eat_white(spritestream>>temp)){
+				spritestream.clear();
+				temp=-1;
+			}
 			if(spritestream.peek()=='*'){
 				if(spritestream.ignore().peek()=='*'){
 					SetVersion(6);
@@ -321,11 +330,11 @@ int process_file(istream&in){
 					_spritenum++;
 					(*pNfo)<<setw(5)<<spritenum()<<" **\t "<<datapart<<'\n';
 				}else{
-					eat_white(spritestream>>temp);
+					eat_white(spritestream>>size);
 					flush_buffer();
 					if(_spritenum==(uint)-1){
 						isPatch=true;
-						if(temp!=4)
+						if(size!=4)
 							outbuffer<<COMMENT_PREFIX<<sprite<<endl;
 						_spritenum=0;
 					}else{
@@ -449,8 +458,8 @@ bool verify_real(string&data){
 	return true;
 }
 
-void output_buffer(const string&sprite,bool isPatch){
-	PseudoSprite data(sprite);
+void output_buffer(const string&sprite,bool isPatch,int spriteno){
+	PseudoSprite data(sprite,spriteno);
 	if(data.IsValid()){
 		_spritenum++;
 		if(isPatch)check_sprite(data);

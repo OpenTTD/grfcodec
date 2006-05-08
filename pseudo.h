@@ -29,7 +29,7 @@
 class PseudoSprite{
 public:
 	//PseudoSprite();
-	PseudoSprite(const string&);
+	PseudoSprite(const string&,int);
 
 	uint operator[](uint offs)const{return ExtractByte(offs);}
 	uint Length()const;
@@ -84,6 +84,7 @@ private:
 	Expanding0Array<char>beauty;
 	ExpandingArray<string>context;
 	bool valid,useorig;
+	const int spriteno;
 };
 
 #endif//_RENUM_PSEUDO_H_INCLUDED_

@@ -59,7 +59,12 @@ enum{HEX,TEXT,UTF8,ENDQUOTE,NOBREAK=4};
 	}else ((void)0)
 
 
-PseudoSprite::PseudoSprite(const string&sprite):orig(sprite),valid(true),useorig(false){
+PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
+	orig(sprite),
+	valid(true),
+	useorig(false),
+	spriteno(spriteno)
+{
 	istringstream in(sprite);
 	ostringstream out;
 	char ch;
