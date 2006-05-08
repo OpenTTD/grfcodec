@@ -259,6 +259,12 @@ until the next definition. $feature and $id both MUST be two characters long,
 and written in hex. NFORenum's behaviour is undefined otherwise.
 
 
+@@USEOLDSPRITENUMS {ON|OFF}
+
+Turning this on instructs NFORenum not to fix the sprite numbers in the NFO,
+but to instead output the original sprite numbers. @@DIFF will override this.
+
+
 @@USESET $set
 
 This is a work-around for NFORenum's current inability to correctly parse the
