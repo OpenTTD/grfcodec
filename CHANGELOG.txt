@@ -1,4 +1,26 @@
 Changelog:
+
+v3.2.0 to v3.2.1
+- @@USEOLDSPRITENUMS
+- @@DEFINEID2
+- @@LOCATEID2
+- @@TESTID2
+- (bugfix) Error message when Action B contains an invalid parameter now
+  reports correct offset and parameter.
+- Check for including textIDs with a 00 byte.
+- (bugfix) Prevent beautifier from inserting extraneous blank lines a line
+  that contains only quoted characters.
+- Merge the <xoff>/<yoff> checks with the <xoff>+<xextent>/<yoff>+<yextent>
+  checks, and reduce them to Warn3. 
+- Remove the check requiring that callbacks 40..FF be checked with a
+  doubleword var2. 1) It's a word var2, and 2) they're invalid anyway.
+- New properties, variables, and callbacks:
+  - Station properties: 16, 17, 18
+  - Station variables: 4A, 66
+  - Callbacks: 140, 141, 142
+- New action 5 type 0D
+
+Changelog:
 v3.1.4 to v3.2.0
 - (hotfix) TextIDs F900..F904.
 - (hotfix) Callbacks 3C and 3D.
