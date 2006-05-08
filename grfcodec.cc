@@ -186,6 +186,7 @@ int movetoreal(char *newfile, char *realfile)
   }
 
   if (tmp) fclose(tmp);
+  free(bakfile);
 
   // delete grf if it exists
   if (access(realfile, F_OK) == 0) {
@@ -486,12 +487,12 @@ int decode(char *file, char *dir, U8 *palette, int box, int width, int height, i
 
   pcx->setcolours(255, 0, 0);
 
-  infowriter *writer = new infowriter(info, (width + box - 1) / box, useplaintext);
+  infowriter writer(info, (width + box - 1) / box, useplaintext);
 
   if (colourmap)
 	pcx->installwritemap(colourmap);
 
-  pcx->startimage(width, height, box, box, writer);
+  pcx->startimage(width, height, box, box, &writer);
 
   count = 0;
 
@@ -506,14 +507,14 @@ int decode(char *file, char *dir, U8 *palette, int box, int width, int height, i
 	}
 
 	count++;
-	result = decodesprite(grf, pcx, writer);
+	result = decodesprite(grf, pcx, &writer);
   } while (result);
   count--;
 
   pcx->endimage();
   delete(pcx);	// closes output file
 
-  writer->done(count);
+  writer.done(count);
 
   fclose(info);
 
