@@ -60,10 +60,8 @@ singlefile::~singlefile()
 {
   if (autoclose && thefile)
 	fclose(thefile);
-  if (thefilename)
-	free(thefilename);
-  if (directory)
-	free(directory);
+  free(thefilename);
+  free(directory);
 };
 
 void singlefile::setfile(FILE *file)
@@ -107,13 +105,11 @@ pcxfile::pcxfile()
 
 pcxfile::~pcxfile()
 {
-  if (mfile)
-	delete(mfile);
+  delete(mfile);
 
   if (band) {
 	for (int i=0; i<bandlines; i++)
-		if (band[i])
-			delete(band[i]);
+		delete(band[i]);
 	delete(band);
   }
 }
@@ -203,8 +199,7 @@ void pcxfile::alloclines(int newlines)
 	}
   }
 
-  if (band)
-	delete(band);
+  delete(band);
 
   band = newband;
   i = bandlines;
@@ -245,8 +240,7 @@ void pcxfile::endimage()
   if (band) {
 	int i;
 	for (i=0; i<bandlines; i++)
-		if (band[i])
-			delete(band[i]);
+		delete(band[i]);
 	delete(band);
 	band = NULL;
   }
