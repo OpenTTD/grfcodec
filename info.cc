@@ -166,6 +166,7 @@ void infowriter::newband(pcxfile *pcx)
 					exit(2);
 				}
 				fwrite(d->data+3+namelen, d->size-3-namelen, 1, bin);
+				delete[]filename;
 				fclose(bin);
 			} else {
 			    fprintf(info, "* %d\t", d->size);
