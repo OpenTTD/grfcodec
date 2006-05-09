@@ -379,6 +379,13 @@ PseudoSprite&PseudoSprite::SetGRFID(uint i){
 	return*this;
 }
 
+PseudoSprite&PseudoSprite::SetByteAt(uint off,uint byte){
+	VERIFY(byte<256,byte);
+	VERIFY(off<packed.length(),off);
+	packed[off]=(uchar)byte;
+	return*this;
+}
+
 PseudoSprite&PseudoSprite::PadAfter(uint i,uint width){
 	if(context[i]=="")context[i]=string(width,' ');
 	return*this;
