@@ -48,7 +48,7 @@ public:
 	PseudoSprite&SetDec(uint,uint){return*this;}
 	PseudoSprite&SetBE(uint,uint){return*this;}
 
-	PseudoSprite&SetByteAt(uint,uint);
+	PseudoSprite&SetByteAt(uint,uchar);
 
 	PseudoSprite&PadAfter(uint,uint);
 
