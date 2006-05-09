@@ -48,6 +48,8 @@ public:
 	PseudoSprite&SetDec(uint,uint){return*this;}
 	PseudoSprite&SetBE(uint,uint){return*this;}
 
+	PseudoSprite&SetByteAt(uint,uint);
+
 	PseudoSprite&PadAfter(uint,uint);
 
 	uint ExtractByte(uint offs)const;
