@@ -177,8 +177,8 @@ int __cdecl main(const int argc,char**argv){
 		case'?':
 			ShowHelp();
 			return 0;
-		case'f':_force=1;break;
-		case'a':_autocorrect=true;
+		case'f':_force=1;continue;
+		case'a':_autocorrect=true;continue;
 		case EOF:
 			if(optind==argc)doexit();
 			basename=argv[optind++];break;
