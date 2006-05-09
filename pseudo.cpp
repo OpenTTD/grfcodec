@@ -379,10 +379,9 @@ PseudoSprite&PseudoSprite::SetGRFID(uint i){
 	return*this;
 }
 
-PseudoSprite&PseudoSprite::SetByteAt(uint off,uint byte){
-	VERIFY(byte<256,byte);
+PseudoSprite&PseudoSprite::SetByteAt(uint off,uchar byte){
 	VERIFY(off<packed.length(),off);
-	packed[off]=(uchar)byte;
+	packed[off]=byte;
 	return*this;
 }
 
