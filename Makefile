@@ -8,7 +8,19 @@
 # If you do not have boost, create a boost/ directory and place
 #	current_function.hpp in it. Set BOOST_INCLUDE to the directory
 #	containing the boost directory. Or get boost: www.boost.org
-BOOST_INCLUDE=/usr/include/boost-1_33_1
+#
+# Set these as appropriate; BOOST_VERSION is used to help automatically
+# locate your boost include directory. The usual format is x_yy for x.yy.0
+# versions and x_yy_z for x.yy.z releases
+BOOST_VERSION = 1_33_1
+# If that fails, set your boost include folder here.
+#BOOST_INCLUDE = 
+
+# OS detection: Cygwin vs Linux
+ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
+
+# OS dependent variables
+NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo renum.exe || echo renum)
 
 # Gnu compiler settings
 SHELL = /bin/sh
@@ -26,11 +38,14 @@ CXXFLAGS = $(CFLAGS)
 #CFLAGS += -pg
 #LDOPT += -pg
 
-# OS detection: Cygwin vs Linux
-ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
-
-# OS dependant variables
-NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo renum.exe || echo renum)
+# Somewhat automatic detection of the correct boost include folder
+ifndef BOOST_INCLUDE
+BOOST_INCLUDE=$(shell \
+( [ -d /usr/local/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/local/include/boost-$(BOOST_VERSION) ) || \
+( [ -d /usr/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/include/boost-$(BOOST_VERSION) ) || \
+( [ -d ./boost ] && echo . ) || \
+echo CANNOT_FIND_BOOST_INCLUDE_DIRECTORY )
+endif
 
 
 # sources to be compiled and linked
@@ -40,9 +55,8 @@ NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
   utf8.cpp getopt.cpp
 
 
-# default targets
+# targets
 all: renum
-
 remake: clean all
 
 renum:	$(NFORENUMSRC:%.cpp=%.o)
