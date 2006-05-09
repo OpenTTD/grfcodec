@@ -32,7 +32,7 @@
 extern const char*const VALID_PSEUDO,*const WHITESPACE;
 extern const string COMMENT;
 extern string datadir;
-extern bool dosleep;
+extern bool dosleep,_autocorrect;
 extern const char*COMMENT_PREFIX;
 #define NPOS (basic_string<char>::npos)
 
