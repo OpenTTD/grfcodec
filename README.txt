@@ -36,10 +36,9 @@ processing will continue.
 
 NFORenum will look for the NFO in the following locations, in this order:
 filename
-filename.NFO
+filename.nfo
 sprites/filename
-sprites/filename.NFO
-(The *nix version uses lower-case extensions instead)
+sprites/filename.nfo
 
 The old verson, that uses standard input and standard output, can be invoked
 by starting renum with no command-line arguements.
@@ -62,7 +61,7 @@ Codes 1 and 2 are reserved pending discussion; see http://tinyurl.com/acudt.
 
 Known Issues:
 - An Action 6 modifying any checked sprite can cause erroneous sanity messages.
-  Status: Medium priority, probably hard to do correctly.
+  Status: Low priority, hard to do correctly.
   Workaround: use the @@USEID2 and @@USESET commands to supress incorrect
     messages.
 - @@VERSIONCHECK does not put its second action 9 in the correct place.
