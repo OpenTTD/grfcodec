@@ -101,6 +101,8 @@ void ShowHelp(){
 		"       Do not replace the old NFO file; write new file to file.new.nfo.\n"
 		"       Default: Use file[.nfo].new as temporary, rename it to file[.nfo]\n"
 		"       when done.\n"
+		"   --auto-correct -a\n"
+		"       Perform some rudimentary automatic correction of broken sprites.\n"
 		"The following options cause NFORenum to behave as if all files started with\n"
 		"the associated command. The readme has full details on the comment commands.\n"
 		"Options associated with comment commands that require additional information\n"
@@ -139,6 +141,7 @@ int __cdecl main(const int argc,char**argv){
 		{"no-replace",no_argument,&replace,0},
 		{"keep-old",no_argument,&replace,0},
 		{"help",no_argument,NULL,'?'},
+		{"auto-correct",no_argument,NULL,'a'},
 		{"beautify",required_argument,NULL,'b'},
 		{"diff",no_argument,NULL,'d'},
 		{"extentions",required_argument,NULL,'e'},
@@ -156,7 +159,7 @@ int __cdecl main(const int argc,char**argv){
 	ifstream fin;
 	ofstream fout;
 	while(argc>1){
-		if(opt!=EOF)opt=getopt_long(argc,argv,"D::k?c:f" "dL:l:pw:W:r:b:e:",optlist,&longind);
+		if(opt!=EOF)opt=getopt_long(argc,argv,"D::k?c:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
 		switch(opt){
 		case 0:continue;
 		case'D':
@@ -175,6 +178,7 @@ int __cdecl main(const int argc,char**argv){
 			ShowHelp();
 			return 0;
 		case'f':_force=1;break;
+		case'a':_autocorrect=true;
 		case EOF:
 			if(optind==argc)doexit();
 			basename=argv[optind++];break;

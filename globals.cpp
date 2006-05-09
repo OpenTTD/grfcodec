@@ -32,5 +32,5 @@ const char*const VALID_PSEUDO="0123456789ABCDEFabcdef \t\v\r\n",*const WHITESPAC
 const string COMMENT="/;#";
 string datadir;
 const char*COMMENT_PREFIX="//";
-bool dosleep=true;
+bool dosleep=true,_autocorrect=false;
 unsigned int _spritenum,_grfver;
