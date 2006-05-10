@@ -83,6 +83,10 @@ Action 2 <nrand>: Only corrected if a corrected value exists that makes the
 In all cases, the parsing logic changes; in some cases substantially. If the
 resultant error/warning messages are illogical, try again without -a, and you
 may get better messages.
+The beautifier must be on for auto-correction to work. If the beautifier is
+off when -a/--auto-correct is seen, NFORenum will behave as if the option
+--beautify=convertonly+ immediately followed it on the command line. You are
+free to turn the beautifier back off, but this is not recommended.
 
 
 --------------------------------------------------------------------------
