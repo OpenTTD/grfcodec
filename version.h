@@ -1,1 +1,1 @@
-#define GRFCODECVER "0.9.7"
+#define GRFCODECVER "0.9.8"

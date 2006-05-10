@@ -1,3 +1,25 @@
+Changes in 0.9.8 (r197)
+- By DaleStan:
+  - (devel) grfcodec (but not grfdiff or grfmerge) can now be built in
+    MS Visual Studio 2003.
+  - Slightly change the plaintext quoting algorithm.
+  - (devel) Change several memcpy()s to pointer assignments.
+  - (devel) Plug several memory leaks
+  - (devel) Source code and Makefile changes to grfdiff and grfmerge build
+    with both Makefiles, on both Cygwin and Linux.
+  - Make code gcc 4 -Wall clean.
+  - Use NFORenum's NFO reading engine:
+    - Sprite numbers are now optional, and need not be correct if present.
+    - Sprite lengths need not be correct. Set to 0 to supress the incorrect
+      length warnings.
+    - Real sprites are checked for format compliance.
+  - Make 0-byte pseudo sprites an error.
+  - (bugfix) Prevent binary includes from including directories on OSes that
+    would othewise allow it.
+  - (bugfix) It is now possible for a real sprite to start above the
+    preceeding sprite (the infamous decreasing ypos bug)
+  - grfcodec now exits with 0 on success.
+
 Changes in 0.9.7
 - support including binary files using "  4 ** data/dingdong.wav" syntax
 - by Oskar: support // and # comments within pseudo-sprites
