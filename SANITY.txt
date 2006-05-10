@@ -163,12 +163,12 @@ Change the variable or the variable size.
 The byte at <off> was expected to be <exp>.
 Change the byte at <off>, and/or check the feature byte.
 
-79: "Expected %d more strings for this action 4." (Error)
+79: "Expected <num> more strings for this action 4." (Error)
 This action 4 contains too few "00" bytes for the number of strings it
 declares.
 Check that the strings are terminated, add strings, and/or reduce num-ent.
 
-80: "Value of <xoff>/<yoff> must not exceed 0Fh." (Warn2)
+80: "Value of <xoff>/<yoff> must not exceed 0Fh." (Warn3)
 <xoff> or <yoff> was set to too high a value.
 Reduce the offset.
 
@@ -288,11 +288,6 @@ Remove one of the action 10s, or change one of the labels.
 109: "<off> Property <prop> is previously defined at offset <off>." (Warn 2)
 This action 0 sets the same property twice.
 Remove one of the definitions.
-
-110: "<off> <value> exceeds 10h." (Warn 2)
-<value> (<xoff>+<xextent> or <yoff>+<yextent>) is too large, and places the
-building off the tile.
-Reduce the building size or offset to bring it back onto its tile.
 
 111: "Random 2 declaring only one choice." (Warn 3)
 112: "All random options have the same ID." (Warn 3)
@@ -481,12 +476,6 @@ Specify a valid textID.
 In an action 4, if <off> specifies byte 3, then the ID (in bytes 4..5) is OK,
 but <num-ent> is too large.
 
-162: "Checking for double-word callback %2x with non-doubleword ..." (Warn1)
-The low byte or word of var 0C is being checked for a value > 3Fh.
-Change the var2 to type 89, and widen the B/W/D variables.
-Callbacks 10..3F are the only callbacks for which it is safe to check only
-the low byte of var 0C. For all others, all four bytes must be checked.
-
 163: "<off> Checking for var0C in the range [<min>,<max>]." (Warn 1)
 A check of var 0C has <min> not equal to <max>.
 Change one of <min> or <max> so they match.
@@ -504,8 +493,8 @@ This action 12 defines a set of glyphs that are in two or more 128-character
 blocks.
 Split this set into two or more smaller sets that do not span a block-break.
 
-167: "<off> The name for language(s) %2x has no terminating null." (Fatal)
-168: "The name-part starting at %d has no terminating null." (Fatal)
+167: "<off> The name for language(s) <ID> has no terminating null." (Fatal)
+168: "The name-part starting at <offset> has no terminating null." (Fatal)
 The specified string does not have a terminating null.
 Check for errant control characters and/or add a terminating null.
 
@@ -552,3 +541,11 @@ accomodate the use of unencoded 80..BF as TTD characters.
 http://wiki.ttdpatch.net/tiki-index.php?page=Action4 does not specifiy a
 language for this ID.
 Edit the wiki page or use a defined language byte.
+
+180: "<off> Including TextID <id>, which contains a 00 byte" (Warn 1)
+The textID <id> contains a 00 byte.
+If this is a Dx00 ID, change its ID. Otherwise, find a different text to
+include, define your own in the D000 range, or make this the last string
+defined by this action 4.
+Including a TextID with a 00 byte causes that 00 byte to be parsed as an
+end-of-string character.
