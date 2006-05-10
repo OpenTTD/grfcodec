@@ -549,3 +549,9 @@ include, define your own in the D000 range, or make this the last string
 defined by this action 4.
 Including a TextID with a 00 byte causes that 00 byte to be parsed as an
 end-of-string character.
+
+182: "<off> Embedded null byte." (Warn 1)
+The byte at <off> is 00, but is not the last byte in the string, or in
+the last string in this action 4.
+Find some way to change this.
+See also 180.

@@ -316,6 +316,7 @@ NFO_MESSAGE(OUTOFRANGE_UTF8,"Invalid UTF-8 sequence: Encodes a character beyond 
 NFO_MESSAGE(UNKNOWN_LANGUAGE,"Language %2x is not defined.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INCLUDING_00_ID,"Including TextID %4x, which contains a 00 byte.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(AUTOCORRECTING,"Auto-correcting %s from %2x to %2x.\n",HAS_OFFSET)
+NFO_MESSAGE(EMBEDDED_00,"Embedded null byte.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs here. */
 
