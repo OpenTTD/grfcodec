@@ -241,9 +241,9 @@ void Check0::Check(PseudoSprite&str){
 				i++;
 				for(uint j=0;j<IDs;j++){
 					switch((len>>4)&3){
-					case 1:str.SetText(i,len&7);
-					case 2:str.SetDec(i,len&7);
-					case 3:str.SetBE(i,len&7);
+					case 1:str.SetText(i,len&7);break;
+					case 2:str.SetDec(i,len&7);break;
+					case 3:str.SetBE(i,len&7);break;
 					}
 					i+=(len&7);
 				}
