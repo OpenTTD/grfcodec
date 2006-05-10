@@ -182,7 +182,13 @@ int __cdecl main(const int argc,char**argv){
 			ShowHelp();
 			return 0;
 		case'f':_force=1;continue;
-		case'a':_autocorrect=true;continue;
+		case'a':
+			_autocorrect=true;
+			if(!GetState(BEAUTIFY)){
+				optarg=(char*)"convertonly+";
+				CLCommand('b');
+			}
+			continue;
 		case EOF:
 			if(optind==argc)doexit();
 			basename=argv[optind++];break;
