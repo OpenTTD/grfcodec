@@ -70,6 +70,23 @@ Known Issues:
 
 --------------------------------------------------------------------------
 
+NFORenum is capable of performing some automated correction of your
+pseudo-sprites.
+The following items can be corrected, with the following limitations:
+
+Action 2 <nvar>: Only corrected if a corrected value exists that makes the
+  sprite length agree with nvar.
+Action 2 <nrand>: Only corrected if a corrected value exists that makes the
+  sprite length agree with nrand, and the corrected value has exactly one bit
+  set.
+
+In all cases, the parsing logic changes; in some cases substantially. If the
+resultant error/warning messages are illogical, try again without -a, and you
+may get better messages.
+
+
+--------------------------------------------------------------------------
+
 NFORenum can be controlled by adding the following commands to the NFO file.
 All of them must be commented out and prefixed with "@@". Commands take
 effect immediately, but do not affect previous lines. To place a command in
