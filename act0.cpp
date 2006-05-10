@@ -207,23 +207,43 @@ void Check0::Check(PseudoSprite&str){
 	feature!=8&&IDs&&CheckID(feature,firstID)&&CheckID(feature,maxID);
 	Expanding0Array<uint>propLoc;
 	try{
-		while(propsRemain){
+		while(propsRemain||_autocorrect){
 			try{
 				prop=str.ExtractByte(i);
-				if(feature==8){
-					if(firstID>Feat8::Instance()[prop].maxfirst)
-						IssueMessage(ERROR,INVALID_ID,firstID,0,Feat8::Instance()[prop].maxfirst);
-					if(maxID>Feat8::Instance()[prop].maxlast)
-						IssueMessage(ERROR,INVALID_ID,maxID,0,Feat8::Instance()[prop].maxlast);
-				}
 			}catch(unsigned int){
-				IssueMessage(ERROR,INSUFFICIENT_PROPS,propsRemain);
+				if(propsRemain>0)IssueMessage(ERROR,INSUFFICIENT_PROPS,propsRemain);
+				if(_autocorrect){
+					if(i>str.Length()){
+						i=propLoc[prop];
+						propsRemain++;
+					}
+					if(propsRemain){
+						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+						IssueMessage(0,AUTOCORRECTING,2,"num-info",str.ExtractByte(2),str.ExtractByte(2)-propsRemain);
+						str.SetByteAt(2,uchar(str.ExtractByte(2)-propsRemain));
+					}
+					break;
+				}
 				return;
 			}
 			len=_p[feature].GetData(prop);
 			if(len==0xFF){
 				IssueMessage(FATAL,INVALID_PROP,i,prop);
+				if(_autocorrect){
+					if(propsRemain){
+						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+						IssueMessage(0,AUTOCORRECTING,2,"num-info",str.ExtractByte(2),str.ExtractByte(2)-propsRemain);
+						str.SetByteAt(2,uchar(str.ExtractByte(2)-propsRemain));
+					}
+					break;
+				}
 				return;
+			}
+			if(feature==8){
+				if(firstID>Feat8::Instance()[prop].maxfirst)
+					IssueMessage(ERROR,INVALID_ID,firstID,0,Feat8::Instance()[prop].maxfirst);
+				if(IDs&&maxID>Feat8::Instance()[prop].maxlast)
+					IssueMessage(ERROR,INVALID_ID,maxID,0,Feat8::Instance()[prop].maxlast);
 			}
 			if(propLoc[prop])
 				IssueMessage(WARNING2,REPEATED_PROP,i,prop,propLoc[prop]);
@@ -253,8 +273,28 @@ void Check0::Check(PseudoSprite&str){
 		if(i>str.Length())
 			IssueMessage(ERROR,INSUFFICIENT_DATA2,i-str.Length(),prop);
 		else{
-			if(i<str.Length())
-				IssueMessage(WARNING2,EXTRA_DATA,i);
+			if(i<str.Length()){
+				len=_p[feature].GetData(str.ExtractByte(4+str.ExtendedLen(4)));
+				if(_autocorrect&&str.ExtractByte(2)==1&&(len&7)<5){
+					while(i+((len&7)==3?str.ExtendedLen(i):(len&7))<=str.Length()&&IDs<0xFF){
+						switch((len>>4)&3){
+						case 1:str.SetText(i,len&7);break;
+						case 2:str.SetDec(i,len&7);break;
+						case 3:str.SetBE(i,len&7);break;
+						}
+						IDs++;
+						if(len==3)i+=str.ExtendedLen(i);
+						else i+=len&7;
+					}
+					if(IDs!=str.ExtractByte(3)){
+						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+						IssueMessage(0,AUTOCORRECTING,3,"num-IDs",str.ExtractByte(3),IDs);
+						str.SetByteAt(3,(uchar)IDs);
+					}
+				}
+				if(i<str.Length())
+					IssueMessage(WARNING2,EXTRA_DATA,i);
+			}
 			bool linebreaks=(IDs>1||GetState(LINEBREAKS)==3)&&str.ExtractByte(2)>1;
 			uint maxwidth=2,data,width;
 			for(i=0;i<propLoc.size();i++)

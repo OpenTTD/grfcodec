@@ -74,6 +74,13 @@ NFORenum is capable of performing some automated correction of your
 pseudo-sprites.
 The following items can be corrected, with the following limitations:
 
+Action 0 <num-props>: Changed to the number of valid property bytes with the
+  sufficient following data for <new-info>. This can fail in very interesting
+  ways if <num-info> is not correct.
+Action 0 <num-info>: Corrected after <num-props>, and only if <num-props> is
+  01 and the property being set is not variably lengthed. For these purposes,
+  "variably-lengthed" means anything that is not a byte, extended byte, word,
+  or doubleword.
 Action 2 <nvar>: Only corrected if a corrected value exists that makes the
   sprite length agree with nvar.
 Action 2 <nrand>: Only corrected if a corrected value exists that makes the
