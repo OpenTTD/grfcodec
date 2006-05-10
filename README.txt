@@ -210,6 +210,12 @@ are marked as undefined.
 As CLEARACTION2, but for the action F parser and town name IDs instead.
 
 
+@@DEFINEID2 <feature> <id>
+
+Marks <id> as defined for <feature>. Tests for unused previous definition
+are not run.
+
+
 @@DIFF
 
 This will cause the NFO to be formatted in an attempt to help produce useful
@@ -245,6 +251,14 @@ This does not effect parse error messages, which alert you to things GRFCodec
 will not accept.
 
 
+@@LOCATEID2 <feature> <id>
+
+Issues a message of the form //!!LOCATEID2 <feature> <id>: <spritenum>, where
+<spritenum> is the most recent definition of <id>.
+If the most recent definition of <id> was made by a @@DEFINEID2, <spritenum>
+is undefined.
+
+
 @@REALSPRITES {RPNON|RPNOFF|COMMENTON|COMMENTOFF}
 
 This controls the real-sprite checker.
@@ -259,12 +273,23 @@ commented; parsing them as real sprites risks losing data if they are
 instead continuations of pseudosprites with an invalid character.
 
 
+@@TESTID2 <feature> <id>
+
+Test to see if <id> is defined for <feature> but does not mark it as used.
+
+
 @@USEID2 $feature $id
 
 This is a work-around for NFORenum's current inability to correctly parse the
 Action 6s; it will supress "Unused ID" messages for that feature/id pair,
 until the next definition. $feature and $id both MUST be two characters long,
 and written in hex. NFORenum's behaviour is undefined otherwise.
+
+
+@@USEOLDSPRITENUMS {ON|OFF}
+
+Turning this on instructs NFORenum not to fix the sprite numbers in the NFO,
+but to instead output the original sprite numbers. @@DIFF will override this.
 
 
 @@USESET $set
