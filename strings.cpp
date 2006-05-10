@@ -157,7 +157,8 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 		}
 		if(ch==1){
 			if(~perms&CTRL_SPACE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
-			offs++;
+			if(!data.ExtractByte(++offs)&&!include_00_safe)
+				IssueMessage(WARNING1,EMBEDDED_00,offs);
 		}else if(ch==0x0D){
 			if(~perms&CTRL_NEWLINE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
 			try{
@@ -169,7 +170,10 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 		else if(ch==0x0F){if(~perms&CTRL_FONT_LARGE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);}
 		else if(ch==0x1F){
 			if(~perms&CTRL_SPACE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
-			offs+=2;
+			if(!data.ExtractByte(++offs)&&!include_00_safe)
+				IssueMessage(WARNING1,EMBEDDED_00,offs);
+			if(!data.ExtractByte(++offs)&&!include_00_safe)
+				IssueMessage(WARNING1,EMBEDDED_00,offs);
 		}else if(ch<0x20)IssueMessage(WARNING3,UNUSED_CONTROL,offs,ch);
 		else if(ch<0x7B);
 		else if(ch==0x81){
