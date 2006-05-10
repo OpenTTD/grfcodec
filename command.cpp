@@ -112,9 +112,14 @@ void reset_commands(){
 	_varmap=_CLvar;
 }
 
-string GetOnOffString(const string&str){
-	if(str=="+")return "ON";
-	if(str=="-")return "OFF";
+string GetOnOffString(string str){
+	if(str[str.length()-1]=='+'){
+		str[str.length()-1]=' ';
+		str+="ON";
+	}else if(str[str.length()-1]=='-'){
+		str[str.length()-1]=' ';
+		str+="OFF";
+	}
 	return str;
 }
 
