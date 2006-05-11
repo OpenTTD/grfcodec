@@ -292,6 +292,11 @@ void check_sprite(PseudoSprite&data){
 		data.SetAllHex();
 		status.state=UNKNOWN;
 		status.seensprites=data.ExtractByte(1);
+		if(_autocorrect&&length%3==2&&length/3!=status.seensprites&&length/3<256){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECTING,1,"num-sets",data.ExtractByte(1),length/3);
+			data.SetByteAt(1,uchar(status.seensprites=length/3));
+		}
 		if(!status.seensprites)IssueMessage(WARNING1,NO_SETS,0x0A);
 		if(CheckLength(length,2+3*status.seensprites,BAD_LENGTH,"byte 1","%2x",status.seensprites,2+3*status.seensprites))
 			return;
