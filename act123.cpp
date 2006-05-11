@@ -317,7 +317,13 @@ void Check3(PseudoSprite&data){
 		act123::Instance().act3feature=feature;
 		act123::Instance().act3spritenum=_spritenum;
 	}else if(!act123::Instance().act3spritenum)IssueMessage(ERROR,NO_STD_3);
-	if(CheckLength(length,6+numIDs+3*numCIDs,BAD_LENGTH,VARS,"n-id","num-cid",VALS,numIDs,numCIDs,6+numIDs+3*numCIDs))return;
+	bool ret=CheckLength(length,6+numIDs+3*numCIDs,BAD_LENGTH,VARS,"n-id","num-cid",VALS,numIDs,numCIDs,6+numIDs+3*numCIDs);
+	uint newCIDs=(length-6-numIDs)/3;
+	if(_autocorrect&&!((length-numIDs)%3)&&newCIDs<256){
+		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+		IssueMessage(0,AUTOCORRECTING,3+numIDs,"num-cid",numCIDs,newCIDs);
+		data.SetByteAt(3+numIDs,uchar(numCIDs=newCIDs));
+	}else if(ret)return;
 	unsigned int id,def=data.ExtractWord(4+numIDs+3*numCIDs),i,j;
 	for(i=3;i<3+numIDs;i++)
 		CheckID(feature,data.ExtractByte(i));
