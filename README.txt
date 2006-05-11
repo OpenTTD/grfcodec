@@ -81,11 +81,14 @@ Action 0 <num-info>: Corrected after <num-props>, and only if <num-props> is
   01 and the property being set is not variably lengthed. For these purposes,
   "variably-lengthed" means anything that is not a byte, extended byte, word,
   or doubleword.
-Action 2 <nvar>: Only corrected if a corrected value exists that makes the
-  sprite length agree with nvar.
-Action 2 <nrand>: Only corrected if a corrected value exists that makes the
-  sprite length agree with nrand, and the corrected value has exactly one bit
-  set.
+House/industry tile action 2 <num-sprites>: Changed to the number of valid
+  sprite blocks (<sprite> followed by 3 or 6 bytes of meta-deta), but not if
+  either the original or new values are 00.
+Variational action 2 <nvar>: Only corrected if a corrected value exists that
+  makes the sprite length agree with nvar.
+Random action 2 <nrand>: Only corrected if a corrected value exists that
+  makes the sprite length agree with nrand, and the corrected value has
+  exactly one bit set.
 
 In all cases, the parsing logic changes; in some cases substantially. If the
 resultant error/warning messages are illogical, try again without -a, and you
@@ -93,7 +96,11 @@ may get better messages.
 The beautifier must be on for auto-correction to work. If the beautifier is
 off when -a/--auto-correct is seen, NFORenum will behave as if the option
 --beautify=convertonly+ immediately followed it on the command line. You are
-free to turn the beautifier back off, but this is not recommended.
+free to turn the beautifier back off, which is useful for doing dry runs of
+the auto-corrector. If you want to do this, -ab- is one of the many command
+line arguments that can be used. Add a  --lock if you want to be sure that no
+@@BEAUTIFY commands from the NFO will cause the autocorrecter to make
+corrections.
 
 
 --------------------------------------------------------------------------
