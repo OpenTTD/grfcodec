@@ -126,14 +126,12 @@ void Check2(PseudoSprite&data){
 		if((nument2-1)&nument2/*tests for only one bit set*/||!nument2)IssueMessage(ERROR,RAND_2_NUMSETS);
 		else if(nument2==1)IssueMessage(WARNING3,ONLY_ONE_CHOICE);
 		rand2::Instance().CheckRand(feature,nument1,data.ExtractByte(4),data.ExtractByte(5),nument2);
-		bool ret=CheckLength(length,7+2*nument2,BAD_LENGTH,"nrand","%2x",nument2,7+2*nument2);
-		if(!_autocorrect||!(length%2)){
-			if(ret)return;
-		}else if(nument2*2!=(length-7)&&(length-7)/2<256&&!(((length-7)/2-1)&(length-7)/2)){
+		if(_autocorrect&&length%2&&nument2*2!=(length-7)&&(length-7)/2<256&&!(((length-7)/2-1)&(length-7)/2)){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 			IssueMessage(0,AUTOCORRECTING,6,"nrand",nument2,(length-7)/2);
 			data.SetByteAt(6,uchar(nument2=(length-7)/2));
 		}
+		if(CheckLength(length,7+2*nument2,BAD_LENGTH,"nrand","%2x",nument2,7+2*nument2))return;
 		for(i=0;i<nument2;i++){
 			rID=data.SetNoEol(7+2*i).ExtractWord(7+2*i);
 			check_id(7*i+2,rID,act123::Instance().defined2IDs[feature]);
@@ -172,14 +170,14 @@ void Check2(PseudoSprite&data){
 		else if(nument2>1)data.SetEol(off,1);
 		if(!isvar)IssueMessage(WARNING4,NOT_VARIATIONAL);
 		uint width=2+extract*2,end=++off+width*nument2;
-		bool ret=CheckLength(length,end+2,BAD_LENGTH,"nvar","%2x",nument2,end+2);
 		int change=int(length-end-2)/int(width);
-		if(end+2!=length&&_autocorrect&&!((length-end-2)%width)&&nument2+change<256){
+		if(change&&_autocorrect&&!((length-end-2)%width)&&nument2+change<256){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 			IssueMessage(0,AUTOCORRECTING,off-1,"nvar",nument2,nument2+change);
 			data.SetByteAt(off-1,uchar(nument2+=change));
 			end=length-2;
-		}else if(ret)return;
+		}
+		if(CheckLength(length,end+2,BAD_LENGTH,"nvar","%2x",nument2,end+2))return;
 		uint def=data.ExtractWord(end),vID;
 		for(i=off;i<end;i+=width){//read <ID> <min> <max> [...]
 			vID=data.ExtractWord(i);
@@ -312,18 +310,18 @@ void Check3(PseudoSprite&data){
 	bool isOverride=((data.ExtractByte(2)&0x80)!=0);
 	if(isOverride&&!IsValidFeature(OVERRIDE3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	unsigned int numIDs=data.ExtractByte(2)&0x7F,numCIDs=data.ExtractByte(3+numIDs);
-	if(numCIDs&&feature>4)IssueMessage(WARNING1,NO_CARGOTYPES);
 	if(!isOverride){
 		act123::Instance().act3feature=feature;
 		act123::Instance().act3spritenum=_spritenum;
 	}else if(!act123::Instance().act3spritenum)IssueMessage(ERROR,NO_STD_3);
-	bool ret=CheckLength(length,6+numIDs+3*numCIDs,BAD_LENGTH,VARS,"n-id","num-cid",VALS,numIDs,numCIDs,6+numIDs+3*numCIDs);
 	uint newCIDs=(length-6-numIDs)/3;
-	if(_autocorrect&&!((length-numIDs)%3)&&newCIDs<256){
+	if(_autocorrect&&!((length-numIDs)%3)&&newCIDs!=numCIDs&&newCIDs<256){
 		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 		IssueMessage(0,AUTOCORRECTING,3+numIDs,"num-cid",numCIDs,newCIDs);
 		data.SetByteAt(3+numIDs,uchar(numCIDs=newCIDs));
-	}else if(ret)return;
+	}
+	if(numCIDs&&feature>4)IssueMessage(WARNING1,NO_CARGOTYPES);
+	if(CheckLength(length,6+numIDs+3*numCIDs,BAD_LENGTH,VARS,"n-id","num-cid",VALS,numIDs,numCIDs,6+numIDs+3*numCIDs))return;
 	unsigned int id,def=data.ExtractWord(4+numIDs+3*numCIDs),i,j;
 	for(i=3;i<3+numIDs;i++)
 		CheckID(feature,data.ExtractByte(i));
