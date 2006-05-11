@@ -263,7 +263,7 @@ void Check2(PseudoSprite&data){
 						}else if(i==0)IssueMessage(ERROR,FIRST_SPRITE_CANNOT_SHARE);
 						off+=7;
 						if(++i!=nument1)data.SetEol(off,2);
-						if(i==255&&_autocorrect)throw 0;
+						if(i==0x7F&&_autocorrect)throw 0;
 					}catch(...){
 						if(_autocorrect&&i){
 							if(i!=nument1){
