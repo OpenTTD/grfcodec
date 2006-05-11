@@ -245,25 +245,36 @@ void Check2(PseudoSprite&data){
 				data.SetEol(3,3);//EOL before ground sprite
 				data.SetEol(7,1);//EOL after ground sprite
 				uint off=7;
-				for(i=0;i<nument1;/*increment in last statement in try block*/){
+				for(i=0;i<nument1||_autocorrect;/*increment in last statement in try block*/){
 					try{
-						uint building=data.ExtractDword(++off),xoff=data.ExtractByte(off+=4),
-							yoff=data.ExtractByte(++off),zoff=data.ExtractByte(++off);
-						CheckSpriteNum(building,off-6,act123::Instance().act1,feature,mismatch,hasGround);
-						if(!building)IssueMessage(ERROR,NO_BUILDING_SPRITE,off-6);
+						uint building=data.ExtractDword(off+1),xoff=data.ExtractByte(off+5),
+							yoff=data.ExtractByte(off+6),zoff=data.ExtractByte(off+7);
+						CheckSpriteNum(building,off+1,act123::Instance().act1,feature,mismatch,hasGround);
+						if(!building)IssueMessage(ERROR,NO_BUILDING_SPRITE,off+1);
 						if(zoff!=0x80){
-							uint x=data.ExtractByte(++off),y=data.ExtractByte(++off);//,z=data.ExtractByte(++off);
-							++off;
-							if(xoff>15)IssueMessage(WARNING3,TOO_LARGE,off-5,"xoff",15);
-							else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,off-5,"xoff+xextent",16);
-							if(yoff>15)IssueMessage(WARNING3,TOO_LARGE,off-4,"yoff",15);
-							else if(yoff+y>16)IssueMessage(WARNING3,TOO_LARGE,off-4,"yoff+yextent",16);
-							//if(zoff+z>0x87)IssueMessage(WARNING1,TOO_LARGE,off-3,"zoff+zextent",0x87);
+							uint x=data.ExtractByte(off+8),y=data.ExtractByte(off+9);
+							data.ExtractByte(off+10);
+							off+=3;
+							if(xoff>15)IssueMessage(WARNING3,TOO_LARGE,off+2,"xoff",15);
+							else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,off+2,"xoff+xextent",16);
+							if(yoff>15)IssueMessage(WARNING3,TOO_LARGE,off+3,"yoff",15);
+							else if(yoff+y>16)IssueMessage(WARNING3,TOO_LARGE,off+3,"yoff+yextent",16);
+							//if(zoff+z>0x87)IssueMessage(WARNING1,TOO_LARGE,off+4,"zoff+zextent",0x87);
 						}else if(i==0)IssueMessage(ERROR,FIRST_SPRITE_CANNOT_SHARE);
+						off+=7;
 						if(++i!=nument1)data.SetEol(off,2);
 					}catch(...){
-						IssueMessage(FATAL,OVERRAN_SPRITE,i);
-						return;
+						if(_autocorrect&&i){
+							if(i!=nument1){
+								IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+								IssueMessage(0,AUTOCORRECTING,3,"num-sprites",nument1,i);
+								data.SetByteAt(3,(uchar)i);
+							}
+							break;
+						}else{
+							IssueMessage(FATAL,OVERRAN_SPRITE,i);
+							return;
+						}
 					}
 				}
 				if(++off!=length)IssueMessage(WARNING2,EXTRA_DATA,off);
