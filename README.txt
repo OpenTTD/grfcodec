@@ -89,6 +89,9 @@ Variational action 2 <nvar>: Only corrected if a corrected value exists that
 Random action 2 <nrand>: Only corrected if a corrected value exists that
   makes the sprite length agree with nrand, and the corrected value has
   exactly one bit set.
+Action 3 <num-cid>: Only corrected if a corrected value exists that makes the
+  sprite length agree with num-cid. This can fail in very interesting ways if
+  <num-ids> is not correct.
 
 In all cases, the parsing logic changes; in some cases substantially. If the
 resultant error/warning messages are illogical, try again without -a, and you
@@ -98,7 +101,7 @@ off when -a/--auto-correct is seen, NFORenum will behave as if the option
 --beautify=convertonly+ immediately followed it on the command line. You are
 free to turn the beautifier back off, which is useful for doing dry runs of
 the auto-corrector. If you want to do this, -ab- is one of the many command
-line arguments that can be used. Add a  --lock if you want to be sure that no
+line arguments that can be used. Add a --lock if you want to be sure that no
 @@BEAUTIFY commands from the NFO will cause the autocorrecter to make
 corrections.
 
