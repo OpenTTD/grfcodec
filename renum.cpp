@@ -236,9 +236,16 @@ int __cdecl main(const int argc,char**argv){
 		fout.close();
 		if(result)unlink(outfilename.c_str());
 		else if(replace){
-			if(rename(infilename.c_str(),bakfilename.c_str())&&errno==EEXIST)unlink(infilename.c_str());
+			if(rename(infilename.c_str(),bakfilename.c_str())&&errno==EEXIST){
+				if(unlink(infilename.c_str())){
+					IssueMessage(0,DELETE_FAILED,infilename.c_str(),errno);
+					perror(NULL);
+					SetCode(EFILE);
+				}
+			}
 			if(rename(outfilename.c_str(),infilename.c_str())){
 				IssueMessage(0,REPLACE_FAILED,infilename.c_str(),outfilename.c_str(),errno);
+				perror(NULL);
 				SetCode(EFILE);
 			}
 		}
