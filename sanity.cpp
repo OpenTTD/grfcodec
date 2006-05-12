@@ -322,6 +322,11 @@ void check_sprite(PseudoSprite&data){
 		break;
 	case 0xE:{
 		uint numids=data.SetHex(1).ExtractByte(1);
+		if(_autocorrect&&length%4==2&&length/4!=numids&&length/4<256){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECTING,1,"num",numids,length/4);
+			data.SetByteAt(1,uchar(numids=length/4));
+		}
 		if(CheckLength(length,2+4*numids,BAD_LENGTH,"<num>","%2x",numids,2+4*numids))return;
 		if(!numids)IssueMessage(WARNING1,NO_GRFIDS);
 		if(numids<2)return;
