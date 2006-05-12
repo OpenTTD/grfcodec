@@ -89,10 +89,6 @@ string mysprintf(const char*,...);
 #define DAT2 "%2x %2x"
 #define DAT3 "%2x %2x %2x"
 
-#define UNKNOWN_FAIL "Unknown reason"
-#define IS_FILE "Exists as a file"
-#define NO_SUCH_DIR "No such directory"
-
 #define EOF_READING_NAME "EOF while reading name %2x."
 #define OVERLENGTH_NAME "Name %2x exceeds 100 characters long."
 
@@ -126,8 +122,8 @@ ERR_MESSAGE(NO_INPUT_FILE,"Could not open \"%s\" specified on the command line.\
 ERR_MESSAGE(NO_OUTPUT_FILE,"Could not open output file \"%s\" for input \"%s\".\n",0)
 ERR_MESSAGE(REPLACE_FAILED,"Could not replace old file (%s) with new file (%s). (%d)\n",0)
 ERR_MESSAGE(DATAFILE_ERROR,"Failed to %s data file: \"%s\". %S\n",0)
-ERR_MESSAGE(CREATE_FAILED,"Could not create .renum directory in %s. (%d)\n\t%s.\n",0)
-  MESSAGE_UNUSED(INTERNAL_SWITCH_ERROR)//,"%s(%d): Function %s is missing case for %s==%d.\n",0)
+ERR_MESSAGE(CREATE_FAILED,"Could not create .renum directory in %s. (%d)\n",0)
+ERR_MESSAGE(DELETE_FAILED,"Could not remove old file %s. (%d)\n",0)
 
 OUT_MESSAGE(CREATED_DIR,"Created .renum directory in %s.\n",0)
 OUT_MESSAGE(PROCESSING,"Processing from standard input.\n",0)

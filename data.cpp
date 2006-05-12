@@ -196,7 +196,8 @@ bool makedir(const string&dir,bool dieonfail=false){
 		return false;
 	}
 	if(mkdir((dir+"/.renum").c_str(),0755)){
-		IssueMessage(0,CREATE_FAILED,dir.c_str(),errno,errno==ENOENT?NO_SUCH_DIR:errno==EEXIST?IS_FILE: UNKNOWN_FAIL);
+		IssueMessage(0,CREATE_FAILED,dir.c_str(),errno);
+		perror(NULL);
 		if(dosleep)sleep(5);
 		if(dieonfail)exit(EDATA);
 		return false;
@@ -234,6 +235,7 @@ FILE*tryopen(const char*name,const char*mode,bool allownull=false){
 	FILE*pFile=fopen((dir+name).c_str(),mode);
 	if(pFile||allownull)return pFile;
 	IssueMessage(0,DATAFILE_ERROR,OPEN,name+1,"(%d)",errno);
+	perror(NULL);
 	assert(false);
 	exit(EDATA);
 }
