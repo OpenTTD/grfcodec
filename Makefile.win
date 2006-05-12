@@ -1,19 +1,16 @@
+# Makefile for GRFCodec using a MinGW cross compiler on Linux or on Cygwin
+# in MinGW mode
 
-# Makefile for GRFCodec using a MinGW cross compiler on Linux
-
-# Should also work for MinGW on cygwin if you set PREFIX=
-
-# Order of the palettes compiled in
-# (note, this must match the text in grfcodec.cc and grftut.txt)
-PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars
-
-# OS detection: Cygwin vs Linux
-ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
+include Makefile.setup
 
 # OS dependent variables
-PREFIX = $(shell [ \( $(ISCYGWIN) -eq 0 \) ] && echo i686-pc-mingw32- )
-CP = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo true || echo cp )
-GRFMERGE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo grfmerge.exe || echo grfmerge)
+NASMFORMAT = coff
+PREFIX = $(shell \
+( [ \( $(ISCYGWIN) -eq 1 \) ] ) || \
+( [ -e /usr/bin/i586-mingw32msvc-g++ ] && echo i586-mingw32msvc- ) || \
+( echo i686-pc-mingw- ) \
+)
+CP_TO_EXE = $(shell [ \( $(ISCYGWIN) -eq 0 \) ] && echo cp \$@ \$@.exe )
 NOCYGWIN = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo -mno-cygwin )
 
 # Gnu compiler settings
@@ -31,97 +28,4 @@ CXXFLAGS = $(CFLAGS)
 #CFLAGS += -pg
 #LDOPT += -pg
 
-# auxiliary sources to be linked with each of these programs
-GRFCODECSRC=grfcomm.c pcx.c sprites.c pcxsprit.c info.c \
-	error.c getopt.c path.c readinfo.c
-
-GRFDIFFSRC=grfcomm.c error.c sprites.c getopt.c
-
-GRFMERGESRC=getopt.c
-
-# default targets
-all: grfcodec grfdiff grfmerge
-allb: grfcodec.exe grfdiff.exe grfmerge.exe
-
-grfcodec:	grfcodec.o $(GRFCODECSRC:%.c=%.o) path.o 
-grfdiff:	grfdiff.o $(GRFDIFFSRC:%.c=%.o) grfmrg.o path.o
-grfmerge:	grfmerge.o $(GRFMERGESRC:%.c=%.o)
-
-grfcodec.exe:	grfcodec.obj $(GRFCODECSRC:%.c=%.obj)
-grfdiff.exe:	grfdiff.obj $(GRFDIFFSRC:%.c=%.obj) grfmrg.obj
-grfmerge.exe:	grfmerge.obj $(GRFMERGESRC:%.c=%.obj)
-
-clean:
-	rm -rf *.o *.os *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.ah
-
-remake: clean all
-
-# grfmrg.bin (the binary code included in grfdiff) can be either BCC or GCC code
-grfmrg.bin:	grfmerge.exe
-	upx --best $< -o $@
-
-# remake grfmerge.exe optimized for size instead of speed
-grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
-	rm -f $@
-	$(CC) -o grfmerge $(CFLAGS) -Os $^
-	strip $(GRFMERGE)
-	upx -qq --best $(GRFMERGE) -o $@
-	rm -f $(GRFMERGE)
-
-# making an assembly file which includes the above code; first for BCC
-grfmrg.ah:	grfmrg.bin 
-	perl mkmrg.pl "db " '0$${_}h' < $< > $@
-	perl -le "print '_grfmrgsize dd ', (stat '$<')[7]" >> $@
-
-grfmrg.obj:	grfmrg.asm grfmrg.ah
-	tasm32 /dM32 /ml $< -c -o $@
-
-# and then for GCC
-grfmrg.o:	grfmrgc.asm grfmrgc.bin
-	nasm -f coff $< -o $@
-
-ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
-	perl pal2c.pl $^ > $@
-
-# Gnu compiler rules
-
-%.o : %.c
-	$(CC) -c -o $@ $(CFLAGS) $<
-
-%.o : %.cc
-	$(CXX) -c -o $@ $(CXXFLAGS) $<
-
-% : %.o
-	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
-	$(CP) $@ $@.exe
-
-%.S : %.c
-	$(CC) -S -o $@ $(CFLAGS) $<
-
-%.S : %.cc
-	$(CC) -S -o $@ $(CXXFLAGS) $<
-
-
-# same as above but optimized for size not speed
-%.os : %.c
-	$(CC) -c -o $@ $(CFLAGS) -Os $<
-
-% :: %.os
-	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
-
-Makefile.dep: .remake_deps
-	$(CC) $(CFLAGS) -MM -MG *.c *.cc > $@
-	perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
-
-# Borland compiler rules
-
-%.obj : %.c
-	$(BCC) $(COPTS) -c $< -o$@
-
-%.obj : %.cc
-	$(BCC) -P $(CPPOPTS) -c $< -o$@
-
-%.exe : %.obj
-	$(BCC) $(LOPTS) $^ -e$@
-
-include Makefile.dep
+include Makefile.common

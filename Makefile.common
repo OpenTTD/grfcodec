@@ -1,0 +1,71 @@
+# Common commands for both Makefile and Makefile.win
+
+# grfmrg.bin (the binary code included in grfdiff) can be either BCC or GCC code
+grfmrg.bin:	grfmerge.exe
+	upx --best $< -o $@
+
+# remake grfmerge.exe optimized for size instead of speed
+grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
+	rm -f $@
+	$(CC) -o grfmerge $(CFLAGS) -Os $^
+	strip grfmerge$(EXE)
+	upx -qq --best grfmerge$(EXE) -o $@
+	rm -f grfmerge$(EXE)
+
+# making an assembly file which includes the above code; first for BCC
+grfmrg.ah:	grfmrg.bin 
+	perl mkmrg.pl "db " '0$${_}h' < $< > $@
+	perl -le "print '_grfmrgsize dd ', (stat '$<')[7]" >> $@
+
+grfmrg.obj:	grfmrg.asm grfmrg.ah
+	tasm32 /dM32 /ml $< -c -o $@
+
+# and then for GCC
+grfmrg.o:	grfmrgc.asm grfmrgc.bin
+	nasm -f $(NASMFORMAT) $< -o $@
+
+ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
+	perl pal2c.pl $^ > $@
+
+# Gnu compiler rules
+
+%.o : %.c
+	$(CC) -c -o $@ $(CFLAGS) $<
+
+%.o : %.cc
+	$(CXX) -c -o $@ $(CXXFLAGS) $<
+
+% : %.o
+	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
+	$(CP_TO_EXE)
+
+%.S : %.c
+	$(CC) -S -o $@ $(CFLAGS) $<
+
+%.S : %.cc
+	$(CC) -S -o $@ $(CXXFLAGS) $<
+
+
+# same as above but optimized for size not speed
+%.os : %.c
+	$(CC) -c -o $@ $(CFLAGS) -Os $<
+
+% :: %.os
+	$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
+
+# Borland compiler rules
+
+%.obj : %.c
+	$(BCC) $(COPTS) -c $< -o$@
+
+%.obj : %.cc
+	$(BCC) -P $(CPPOPTS) -c $< -o$@
+
+%.exe : %.obj
+	$(BCC) $(LOPTS) $^ -e$@
+
+Makefile.dep: .remake_deps
+	$(CC) $(CFLAGS) -MM -MG *.c *.cc > $@
+	perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
+
+-include Makefile.dep
