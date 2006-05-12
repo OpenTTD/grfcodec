@@ -329,7 +329,7 @@ void check_sprite(PseudoSprite&data){
 		for(uint i=0;i<numids;i++){
 			if(((id[i]=data.SetGRFID(2+i*4).ExtractDword(2+i*4))&0xFF)==0xFF)IssueMessage(WARNING1,INVALID_GRFID,2+i*4,0xE);
 			for(uint j=0;j<i;j++)
-				if(id[i]==id[j])IssueMessage(WARNING1,DUPLICATE_GRFID,2+i*4,2+j*4);
+				if(id[i]==id[j])IssueMessage(WARNING1,DUPLICATE_GRFID,2+i*4,2+j*4,id[i]);
 		}
 		delete[]id;
 		break;
