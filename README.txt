@@ -96,6 +96,8 @@ Action A <num-sets>: Only corrected if a corrected value exists that makes
   the sprite length agree with num-sets.
 Action E <num>: Only corrected if a corrected value exists that makes the
   sprite length agree with num.
+Action 12 <num-deff>: Only corrected if a corrected value exists that makes
+  the sprite length agree with num.
 
 In all cases, the parsing logic changes; in some cases substantially. If the
 resultant error/warning messages are illogical, try again without -a, and you
