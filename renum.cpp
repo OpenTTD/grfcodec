@@ -103,8 +103,8 @@ void ShowHelp(){
 		"       when done.\n"
 		"   --auto-correct -a\n"
 		"       Perform some rudimentary automatic correction of incorrect pseudo sprites.\n"
-		"       The following items are (sometimes) corrected:\n"
-		"           Action 2: nvar, nrand\n"
+		"       This may be specified twice to enable the corrections that are more likely\n"
+		"       to be incorrect.\n"
 		"       See the README for detailed information on the auto-correcter.\n"
 		"\n"
 		"The following options cause NFORenum to behave as if all files started with\n"
@@ -183,7 +183,7 @@ int __cdecl main(const int argc,char**argv){
 			return 0;
 		case'f':_force=1;continue;
 		case'a':
-			_autocorrect=true;
+			_autocorrect++;
 			if(!GetState(BEAUTIFY)){
 				optarg=(char*)"convertonly+";
 				CLCommand('b');

@@ -76,7 +76,8 @@ The following items can be corrected, with the following limitations:
 
 Action 0 <num-props>: Changed to the number of valid property bytes with the
   sufficient following data for <new-info>. This can fail in very interesting
-  ways if <num-info> is not correct.
+  ways if <num-info> is not correct. [*] when corrected value is 00, 01, or
+  more than 2 below the old value.
 Action 0 <num-info>: Corrected after <num-props>, and only if <num-props> is
   01 and the property being set is not variably lengthed. For these purposes,
   "variably-lengthed" means anything that is not a byte, extended byte, word,
@@ -91,7 +92,7 @@ Random action 2 <nrand>: Only corrected if a corrected value exists that
   exactly one bit set.
 Action 3 <num-cid>: Only corrected if a corrected value exists that makes the
   sprite length agree with num-cid. This can fail in very interesting ways if
-  <num-ids> is not correct.
+  <num-ids> is not correct. [*]
 Action 4 <num-ent>: Count of strings found in the action 4. This includes the
   last one, even if its terminating null is missing.
 Action 7/9 <varsize>: Only corrected if the sprite length, variable, and
@@ -104,6 +105,9 @@ Action E <num>: Only corrected if a corrected value exists that makes the
 Action 12 <num-def>: Only corrected if a corrected value exists that makes
   the sprite length agree with num-def.
 
+[*] These can be unsafe, and are not enabled unless -a/--autocorrect is
+    specified twice.
+
 In all cases, the parsing logic changes; in some cases substantially. If the
 resultant error/warning messages are illogical, try again without -a, and you
 may get better messages.
@@ -111,10 +115,11 @@ The beautifier must be on for auto-correction to work. If the beautifier is
 off when -a/--auto-correct is seen, NFORenum will behave as if the option
 --beautify=convertonly+ immediately followed it on the command line. You are
 free to turn the beautifier back off, which is useful for doing dry runs of
-the auto-corrector. If you want to do this, -ab- is one of the many command
-line arguments that can be used. Add a --lock if you want to be sure that no
-@@BEAUTIFY commands from the NFO will cause the autocorrecter to make
-corrections.
+the auto-corrector. If you want to do this, -aab- is one of the many command
+line arguments that can be used. (NOTE: -ab- -a should not be used. The
+second -a will turn the beautifier back on again, which is almost certainly
+not what you wanted.) Add a --lock if you want to be sure that no @@BEAUTIFY
+commands from the NFO will cause the autocorrecter to make corrections.
 
 
 --------------------------------------------------------------------------
