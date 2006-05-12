@@ -69,32 +69,58 @@ D::D(){
 	fclose(pFile);
 }
 
+#define SetSize(x)\
+	if(desiredSize!=x)desiredSize=0;\
+	else(void(0))
+
 int Check7(PseudoSprite&data){
+	uint desiredSize=data.Length()-5;
 	data.SetAllHex();
 	uint var=data.ExtractByte(1),var_size=data.ExtractByte(2),cond=data.ExtractByte(3);
 	if(cond>0xC)IssueMessage(ERROR,BAD_CONDITION,cond);
 	else if(cond>5&&cond<0xB){
-		if(var!=0x88)IssueMessage(ERROR,GRFCOND_NEEDS_GRFVAR,cond);
+		if(var!=0x88){
+			IssueMessage(ERROR,GRFCOND_NEEDS_GRFVAR,cond);
+			desiredSize=0;
+		}
 		data.SetGRFID(4);
 	}else if(cond>0xA){
-		data.SetText(4);
-		data.SetText(5);
-		data.SetText(6);
-		data.SetText(7);
+		data.SetText(4,4);
+		SetSize(4);
 	}
-	if(cond<6&&var==0x88)IssueMessage(ERROR,GRFVAR_NEEDS_GRFCOND);
-	if(cond<2)var_size=1;
+	if(cond<6&&var==0x88){
+		IssueMessage(ERROR,GRFVAR_NEEDS_GRFCOND);
+		desiredSize=0;
+	}
+	if(cond<2){
+		SetSize(1);
+		var_size=1;
+	}
 	if(!Vars::Instance().canRead7(var))IssueMessage(ERROR,NONEXISTANT_VARIABLE,var);
-	else if(var>0x7F&&cond>1&&!Vars::Instance().len(var))IssueMessage(ERROR,BITTEST_VARIABLE,var);
+	else if(var>0x7F&&cond>1&&!Vars::Instance().len(var)){
+		IssueMessage(ERROR,BITTEST_VARIABLE,var);
+		desiredSize=0;
+	}
 	if(var_size==0||var_size>4){
 		IssueMessage(FATAL,BAD_VARSIZE,var_size);
 		return 0;
 	}else if((cond==0xB||cond==0xC)&&var_size!=4)
 		IssueMessage(WARNING2,COND_SIZE_MISMATCH,cond,4);
-	else if(var>0x7F&&cond>1&&var_size!=Vars::Instance().len(var))
-		IssueMessage(WARNING2,VARIABLE_SIZE_MISMATCH,var,Vars::Instance().len(var));
+	else if(var>0x7F&&cond>1){
+		SetSize(Vars::Instance().len(var));
+		if(var_size!=Vars::Instance().len(var))
+			IssueMessage(WARNING2,VARIABLE_SIZE_MISMATCH,var,Vars::Instance().len(var));
+	}
+	if(_autocorrect&&desiredSize&&desiredSize!=data.ExtractByte(2)){
+        IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+		IssueMessage(0,AUTOCORRECTING,2,"varsize",data.ExtractByte(2),desiredSize);
+		data.SetByteAt(2,uchar(var_size=desiredSize));
+	}
+	if(CheckLength(data.Length(),5+var_size,BAD_LENGTH,"varsize","%2x",data.ExtractByte(2),var_size+5))return 0;
 	return data.ExtractByte(4+var_size);
 }
+
+#undef SetSize
 
 bool CheckD(PseudoSprite&data,uint length){
 	if(length<5){IssueMessage(FATAL,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9);return false;}
