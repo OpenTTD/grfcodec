@@ -106,7 +106,7 @@ static const char _dat2v[]="\x09\x04"
 "\x0C\x80\x80"
 "\x0D\x80\x80";
 //Format: Low nibble: width (1/2/4) high nibble: bitmask: Read in 7, read in D, write in D, reserved
-//                                      80                              88                              90                              98                              A0
+//                                          80                              88                              90                              98                              A0
 static const char _dat79Dv[]="\x1F\x00\x20\x00\x00\x00\xC1\xC1\x80\x80\x00\x84\x00\x00\xC4\x00\xC1\xE1\xE4\x00\x00\xC1\xE2\xE2\xE2\xE2\xE1\x00\x24\x00\x00\x00\xC4\xE4\x24";
 static const char _datD[]="\x13\x00"
 	"\x10\x0C"                      "\x74\x00\x58\x00\x0B\x00\x29\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1E\x13\x00\x00\x25\x00\x40\x00\x00\x00\x00\x00";
@@ -118,7 +118,7 @@ static const char _dat4[]="\x02\x00"
 static const char _datB[]="\x01\x00\x03\x04\x02\x02\x02\x03";
 //                                         05      06              08                              0C
 static const char _dat5[]="\x02\x01\x0D\x30\x00\x4A\x00\x49\x00\x41\x00\x06\x00\x00\x01\x4C\x00\x85\x00\x10\x00";
-//Count of IDs in class:               -0000-                          -2000-                          -4000-                          -6000-                          -8000-                          -A000-                          -C000-                          -E000-
+//Count of IDs in class:                   -0000-                          -2000-                          -4000-                          -6000-                          -8000-                          -A000-                          -C000-                          -E000-
 static const char _datTextIDs[]="\x04\x02\x35\x03\x11\x00\x25\x00\x19\x00\x5D\x00\x11\x00\x6D\x00\x08\x00\x11\x00\x3C\x00\x2A\x00\x08\x00\x19\x00\x39\x00\x80\x00\x00\x00\x08\x01\x6C\x00\x38\x00\x43\x00\x44\x00\x00\x00\x06\x00\x00\x00\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x4D\x00\x00\x00\x00\x00\x05\x01"
 	"\x03\xC4\xC5\xC9";
 //                                     --08--                          --0C--                          --10--
