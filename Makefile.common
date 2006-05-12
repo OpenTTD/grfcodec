@@ -1,5 +1,12 @@
 # Common commands for both Makefile and Makefile.win
 
+FORCE:
+release: FORCE
+	rm -rf grfcodec$(EXE) grfdiff$(EXE) grfmerge$(EXE)
+	make -f $(MAKEFILE) all
+	strip  grfcodec$(REL_EXE) grfdiff$(REL_EXE) grfmerge$(REL_EXE)
+	upx -qq --best  grfcodec$(REL_EXE) grfdiff$(REL_EXE) grfmerge$(REL_EXE)
+
 # grfmrg.bin (the binary code included in grfdiff) can be either BCC or GCC code
 grfmrg.bin:	grfmerge.exe
 	upx --best $< -o $@
