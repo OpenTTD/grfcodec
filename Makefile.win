@@ -3,6 +3,9 @@
 
 include Makefile.setup
 
+# Makefile name, so we can reference it in Makefile.common
+MAKEFILE = Makefile.win
+
 # OS dependent variables
 NASMFORMAT = coff
 PREFIX = $(shell \
@@ -11,6 +14,7 @@ PREFIX = $(shell \
 ( echo i686-pc-mingw- ) \
 )
 CP_TO_EXE = $(shell [ \( $(ISCYGWIN) -eq 0 \) ] && echo cp \$@ \$@.exe )
+REL_EXE = .exe
 NOCYGWIN = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo -mno-cygwin )
 
 # Gnu compiler settings

@@ -2,8 +2,12 @@
 
 include Makefile.setup
 
+# Makefile name, so we can reference it in Makefile.common
+MAKEFILE = Makefile
+
 # OS dependent variables
 NASMFORMAT = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo coff || echo elf )
+REL_EXE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo .exe )
 
 # Borland compiler settings
 BCC=bcc32
