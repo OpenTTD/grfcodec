@@ -92,12 +92,14 @@ Random action 2 <nrand>: Only corrected if a corrected value exists that
 Action 3 <num-cid>: Only corrected if a corrected value exists that makes the
   sprite length agree with num-cid. This can fail in very interesting ways if
   <num-ids> is not correct.
+Action 4 <num-ent>: Count of strings found in the action 4. This includes the
+  last one, even if its terminating null is missing.
 Action A <num-sets>: Only corrected if a corrected value exists that makes
   the sprite length agree with num-sets.
 Action E <num>: Only corrected if a corrected value exists that makes the
   sprite length agree with num.
-Action 12 <num-deff>: Only corrected if a corrected value exists that makes
-  the sprite length agree with num.
+Action 12 <num-def>: Only corrected if a corrected value exists that makes
+  the sprite length agree with num-def.
 
 In all cases, the parsing logic changes; in some cases substantially. If the
 resultant error/warning messages are illogical, try again without -a, and you

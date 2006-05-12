@@ -85,7 +85,7 @@ void Check4(PseudoSprite&data){
 			}catch(uint){}
 		}
 	}else
-		for(;nument--;){
+		for(;nument--||_autocorrect;){
 			int result=CheckString(data,i,perms,!nument);
 			if(result){
 				if(result!=-1)nument--;
@@ -96,7 +96,14 @@ void Check4(PseudoSprite&data){
 				else data.SetNoEol(i-1);
 			}catch(uint){}
 		}
-	if(nument>=0)IssueMessage(ERROR,INSUFFICIENT_STRINGS,nument+1);
+	if(++nument){
+		if(_autocorrect){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECTING,3,"num-ent",data.ExtractByte(3),data.ExtractByte(3)-nument);
+			data.SetByteAt(3,uchar(data.ExtractByte(3)-nument));
+		}else
+			IssueMessage(ERROR,INSUFFICIENT_STRINGS,nument);
+	}
 	if(i<data.Length())IssueMessage(WARNING2,EXTRA_DATA,i);
 }
 
