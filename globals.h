@@ -32,11 +32,11 @@
 extern const char*const VALID_PSEUDO,*const WHITESPACE;
 extern const string COMMENT;
 extern string datadir;
-extern bool dosleep,_autocorrect;
+extern bool dosleep;
 extern const char*COMMENT_PREFIX;
 #define NPOS (basic_string<char>::npos)
 
-extern unsigned int _spritenum,_grfver;
+extern unsigned int _spritenum,_grfver,_autocorrect;
 
 //TODO: add command-line arguments to set these appropriately.
 extern ostream*pNfo,*pOut,*pErr;

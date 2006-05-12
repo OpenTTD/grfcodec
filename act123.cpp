@@ -315,7 +315,7 @@ void Check3(PseudoSprite&data){
 		act123::Instance().act3spritenum=_spritenum;
 	}else if(!act123::Instance().act3spritenum)IssueMessage(ERROR,NO_STD_3);
 	uint newCIDs=(length-6-numIDs)/3;
-	if(_autocorrect&&!((length-numIDs)%3)&&newCIDs!=numCIDs&&newCIDs<256){
+	if(_autocorrect>=2&&!((length-numIDs)%3)&&newCIDs!=numCIDs&&newCIDs<256){
 		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 		IssueMessage(0,AUTOCORRECTING,3+numIDs,"num-cid",numCIDs,newCIDs);
 		data.SetByteAt(3+numIDs,uchar(numCIDs=newCIDs));

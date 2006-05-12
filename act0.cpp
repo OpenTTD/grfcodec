@@ -212,7 +212,7 @@ void Check0::Check(PseudoSprite&str){
 				prop=str.ExtractByte(i);
 			}catch(unsigned int){
 				if(propsRemain>0)IssueMessage(ERROR,INSUFFICIENT_PROPS,propsRemain);
-				if(_autocorrect){
+				if(_autocorrect>=2||(_autocorrect&&propsRemain<3&&str.ExtractByte(2)-propsRemain>1)){
 					if(i>str.Length()){
 						i=propLoc[prop];
 						propsRemain++;
