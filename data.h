@@ -58,11 +58,12 @@ DATA_FILE(langs)
  *
  * Open the file with FILE*pFile=myfopen(name);. myfopen (re)writes, if
  * necessary, name.dat and returns a non-null input FILE*.
- * Read from the file using standard C file IO functions, or the three
+ * Read from the file using standard C file IO functions, or the four
  * #defines below. CheckEOF errors if ch==EOF and returns ch. GetCheck*
  * returns a byte/word read from pFile, and will error if insufficient data
  * is present. GetCheckWord (and ...Dword, if/when implemented) read
- * words/dwords little-endian.
+ * words/dwords little-endian. myfread uses fread to read count bytes into
+ * pch, and errors if insufficient bytes are present.
  * name is used to generate proper error messages.
  *
  * Close the file with fclose(), as normal.
@@ -76,8 +77,11 @@ END_DATA()
 FILE*_myfopen(files);
 int _CheckEOF(int,files,const char*,int);
 int _GetCheckWord(FILE*,files,const char*,int);
+void _myfread(FILE*,uchar*,uint,files,const char*,int);
+
 #define CheckEOF(ch,name) _CheckEOF(ch,dat##name,__FILE__,__LINE__)
 #define GetCheckByte(name) CheckEOF(fgetc(pFile),name)
 #define GetCheckWord(name) _GetCheckWord(pFile,dat##name,__FILE__,__LINE__)
+#define myfread(pch,count,name) _myfread(pFile,pch,count,dat##name,__FILE__,__LINE__)
 
 #endif//_RENUM_DATA_H_INCLUDED_

@@ -272,3 +272,11 @@ int _GetCheckWord(FILE*pFile,files file,const char*src,int line){
 	int ret=fgetc(pFile);
 	return ret|(_CheckEOF(fgetc(pFile),file,src,line)<<8);
 }
+
+void _myfread(FILE*pFile,uchar*target,uint count,files file,const char*src,int line){
+	if(fread(target,1,count,pFile)!=count){
+		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+8,"(%s:%d)",src,line);
+		assert(false);
+		exit(EDATA);
+	}
+}
