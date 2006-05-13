@@ -38,20 +38,19 @@ using namespace std;
 #include"strings.h"
 #include"pseudo.h"
 
-class features:public auto_array<uint>{
+class features{
 public:
 	uint maxFeat;
+	AUTO_ARRAY(uchar);
 	SINGLETON(features)
 };
 
 features::features(){
 	FILE*pFile=myfopen(feat);
 	maxFeat=GetCheckByte(feat);
-	_p=new uint[maxFeat+1];
-	for(uint i=0;i<=maxFeat;i++)
-		_p[i]=fgetc(pFile);
+	_p=new uchar[maxFeat+1];
+	myfread(_p,maxFeat+1,feat);
 	fclose(pFile);
-	CheckEOF(_p[maxFeat],feat);
 }
 
 bool IsValidFeature(enum ActBit act,uint feat){

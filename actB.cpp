@@ -33,18 +33,18 @@ using namespace std;
 #include"pseudo.h"
 #include"command.h"
 
-class B:public Guintp{
+class B{
 public:
 	uint maxSeverity,numMessages;
+	AUTO_ARRAY(uchar);
 	SINGLETON(B);
 };
 
 B::B(){
 	FILE*pFile=myfopen(B);
 	maxSeverity=GetCheckByte(B);
-	_p=new uint[numMessages=GetCheckByte(B)];
-	for(uint i=0;i<numMessages;i++)
-		_p[i]=GetCheckByte(B);
+	_p=new uchar[numMessages=GetCheckByte(B)];
+	myfread(_p,numMessages,B);
 	fclose(pFile);
 }
 
