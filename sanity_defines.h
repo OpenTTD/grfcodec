@@ -57,12 +57,10 @@ private:
 
 typedef auto_array<uint> Guintp;
 
-#define INHERIT_ASSIGN(type)\
-	const type*operator=(type*p){return auto_array<type>::operator=(p);}
-
-#define INHERIT_ASSIGN2(type)\
-	const type*operator=(type*p){return _p=p;}
-
+#define AUTO_ARRAY(type)\
+	auto_array<type>_p;\
+	type&operator[](uint x){return _p[x];}\
+	type operator[](uint x)const{return _p[x];}\
 
 class apWrapper{
 private:
