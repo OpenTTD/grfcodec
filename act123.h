@@ -70,7 +70,6 @@ class Check2v{
 	};
 public:
 	void Check(uint,uint,uint,uint,uint)const;
-	INHERIT_ASSIGN2(FeatData);
 	SINGLETON(Check2v)
 private:
 	ExpandingArray<VarData>globvars;
