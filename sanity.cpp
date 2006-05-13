@@ -104,7 +104,13 @@ void invalidate_act3();
 void reset_sanity(){
 	status.init();
 	Init123();
+	Init7();
 	InitF();
+}
+
+bool IsLabel(uint x){
+	VERIFY(x<0x100,x);
+	return status.defined10IDs.is_defined(x);
 }
 
 void Seen8(int action){
@@ -431,5 +437,6 @@ void final_sanity(){
 	if(status.minnextlen)
 		IssueMessage(ERROR,NO_FOLLOWING_SPRITE);
 	final123();
+	final7();
 	finalF();
 }

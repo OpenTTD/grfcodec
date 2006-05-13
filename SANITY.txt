@@ -555,3 +555,7 @@ The byte at <off> is 00, but is not the last byte in the string, or in
 the last string in this action 4.
 Find some way to change this.
 See also 180.
+
+183: "The following Action 7/9s jump past the end of this file:" (Warn 2)
+An action 7 or 9 jumps past the end of this file.
+Change the last byte of the referenced 7 or 9 to a 00.

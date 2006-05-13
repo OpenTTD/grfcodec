@@ -73,6 +73,14 @@ D::D(){
 	if(desiredSize!=x)desiredSize=0;\
 	else(void(0))
 
+struct act7{
+	act7();
+	act7(uint act,uint skips):act(act),spriteno(_spritenum),skips(skips){}
+	uint act,spriteno,skips;
+};
+
+static vector<act7>jumps;
+
 int Check7(PseudoSprite&data){
 	uint desiredSize=data.Length()-5;
 	data.SetAllHex();
@@ -117,10 +125,28 @@ int Check7(PseudoSprite&data){
 		data.SetByteAt(2,uchar(var_size=desiredSize));
 	}
 	if(CheckLength(data.Length(),5+var_size,BAD_LENGTH,"varsize","%2x",data.ExtractByte(2),var_size+5))return 0;
+	jumps.push_back(act7(data.ExtractByte(0),data.ExtractByte(4+var_size)));
 	return data.ExtractByte(4+var_size);
 }
 
 #undef SetSize
+
+void Init7(){
+	jumps.clear();
+}
+
+void final7(){
+	bool header=false;
+	for(uint i=0;i<jumps.size();i++)
+		if(!IsLabel(jumps[i].skips)&&jumps[i].skips+jumps[i].spriteno>_spritenum){
+			if(!header){
+				header=true;
+				IssueMessage(WARNING2,LONG_JUMPLEAD);
+				IssueMessage(WARNING2,UNEXP_EOF_LONGJUMP);
+			}
+			IssueMessage(WARNING2,LONG_JUMP,jumps[i].act,jumps[i].spriteno);
+		}
+}
 
 bool CheckD(PseudoSprite&data,uint length){
 	if(length<5){IssueMessage(FATAL,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9);return false;}

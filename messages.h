@@ -143,6 +143,7 @@ OUT_MESSAGE(CONSOLE_AUTOCORRECT,"Attempting to autocorrect sprite %d.\n",0)
 MESSAGE_EX(UNEXP_EOF_STD2,"Unexpected EOF: Expected additional standard Action 2s.\n",0,OUT,UNUSED_SET)
 MESSAGE_EX(UNEXP_EOF_CARGOID,"Unexpected EOF: Unused CargoIDs detected for feature %x.\n",0,OUT,UNUSED_ID)
 MESSAGE_EX(UNEXP_EOF_TOWNNAMES,"Unexpected EOF: Unused town name IDs detected.\n",0,OUT,UNUSED_ID)
+MESSAGE_EX(UNEXP_EOF_LONGJUMP,"Unexpected EOF: Action 7/9 jumps past EOF.\n",0,OUT,LONG_JUMPLEAD)
 OUT_MESSAGE(STARTUP,"NFORenum " VERSION " - Copyright " YEARS " Dale McCoy.\n",0)
 
 NFO_MESSAGE(BAD_RPN,"Invalid RPN expression while reading character %c.\n",0)
@@ -156,7 +157,6 @@ NFO_MESSAGE(COMMAND_REVERT_DEFAULT,"Assuming \"DEFAULT\".\n",0)
 NFO_MESSAGE(INVALID_CHARACTER,"Invalid character: \"%c\".\n",0)
 NFO_MESSAGE(INVALID_EXTENSION,"Invalid escape sequence.\n",0)
 NFO_MESSAGE(UNTERMINATED_STRING,"Unterminated literal string.\n",0)
-  MESSAGE_UNUSED(OFFSET_EXTENSION)//,"Format extention found after an odd number of hex characters.\n",0)
   MESSAGE_UNUSED(BAD_SIZE)//,"Could not determine size.\n",0)
 MESSAGE(REAL_NO_FILENAME,"Apparent real sprite does not contain a file name.\n",TO_NULL|MAKE_COMMENT)
 NFO_MESSAGE(REAL_MISSING_DATA,"Could not read %s from apparent real sprite.\n",0)
@@ -313,6 +313,8 @@ NFO_MESSAGE(UNKNOWN_LANGUAGE,"Language %2x is not defined.\n",USE_PREFIX|HAS_OFF
 NFO_MESSAGE(INCLUDING_00_ID,"Including TextID %4x, which contains a 00 byte.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(AUTOCORRECTING,"Auto-correcting %s from %2x to %2x.\n",HAS_OFFSET)
 NFO_MESSAGE(EMBEDDED_00,"Embedded null byte.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(LONG_JUMPLEAD,"The following Action 7/9s jump past the end of this file:\n",USE_PREFIX|NO_CONSOLE)
+MESSAGE_EX(LONG_JUMP,"Action %x at sprite %d.\n",MAKE_COMMENT|NO_CONSOLE,NFO,LONG_JUMPLEAD)
 
 /* Insert new NFO_MESSAGEs here. */
 
