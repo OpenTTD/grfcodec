@@ -30,9 +30,12 @@ bool CheckID(uint,uint);
 
 void Init123();
 void final123();
+void Init7();
+void final7();
 void InitF();
 void finalF();
 
+bool IsLabel(uint);
 //int GetBit(const string&);
 
 enum ActBit{ACT0=1,ACT1=2,ACT2=4,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20};
