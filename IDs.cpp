@@ -47,10 +47,11 @@ IDs::IDs(){
 	fclose(pFile);
 }
 
-class TextIDs:public Guintp{
+class TextIDs{
 public:
 	uint idClasses[0x20],numspecials;
 	bool CheckID(uint,uint);
+	AUTO_ARRAY(uchar);
 	SINGLETON(TextIDs);
 };
 
@@ -59,9 +60,8 @@ TextIDs::TextIDs(){
 	uint i=0;
 	for(;i<0x20;i++)
 		idClasses[i]=GetCheckWord(TextIDs);
-	_p=new uint[numspecials=GetCheckByte(TextIDs)];
-	for(i=0;i<numspecials;i++)
-		_p[i]=GetCheckByte(TextIDs);
+	_p=new uchar[numspecials=GetCheckByte(TextIDs)];
+	myfread(_p,numspecials,TextIDs);
 	fclose(pFile);
 }
 

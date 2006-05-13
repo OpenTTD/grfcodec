@@ -35,12 +35,13 @@ using namespace std;
 #include"command.h"
 
 uint numvars;
-class Vars:public Guintp{
+class Vars{
 public:
 	bool canRead7(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x80));}
 	bool canReadD(uint v){return(v<0x80||v==0xFF||(v<numvars&&_p[v&0x7F]&0x40));}
 	bool canWriteD(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x20));}
 	uint len(uint v){return _p[v&0x7F]&0xF;}
+	AUTO_ARRAY(uchar)
 	SINGLETON(Vars)
 };
 
@@ -52,9 +53,8 @@ public:
 
 Vars::Vars(){
 	FILE*pFile=myfopen(79Dv);
-	_p=new uint[numvars=GetCheckByte(79Dv)];
-	for(uint i=0;i<numvars;i++)
-		_p[i]=GetCheckByte(79Dv);
+	_p=new uchar[numvars=GetCheckByte(79Dv)];
+	myfread(_p,numvars,79Dv);
 	fclose(pFile);
 	numvars|=0x80;
 }
