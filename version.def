@@ -1,0 +1,8 @@
+# Version number
+VER = 0.9.8
+
+
+VERSIONSTR = $(VER) r${SVNREV}
+ifneq ($(NOREV),0)
+VERSIONSTR = $(VER)
+endif
