@@ -320,6 +320,7 @@ rand2::rand2(){
 		_p[i].numtriggers=fgetc(pFile);
 	}
 	CheckEOF(_p[MaxFeature()].numtriggers,2r);
+	fclose(pFile);
 }
 
 void rand2::CheckRand(uint feat,uint type,uint triggers,uint first,uint nrand){
@@ -351,6 +352,7 @@ Callbacks::Callbacks(){
 	_p=new uchar[numcallbacks=GetCheckWord(callbacks)];
 	for(uint i=0;i<numcallbacks;i++)
 		_p[i]=(uchar)GetCheckByte(callbacks);
+	fclose(pFile);
 }
 
 //****************************************

@@ -62,6 +62,7 @@ TextIDs::TextIDs(){
 	_p=new uint[numspecials=GetCheckByte(TextIDs)];
 	for(i=0;i<numspecials;i++)
 		_p[i]=GetCheckByte(TextIDs);
+	fclose(pFile);
 }
 
 bool TextIDs::CheckID(uint feature,uint ID){
