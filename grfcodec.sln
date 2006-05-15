@@ -6,13 +6,22 @@ EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
+		Debug-NoVer = Debug-NoVer
 		Release = Release
+		Release-NoRev = Release-NoRev
+		Release-NoVer = Release-NoVer
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Debug.ActiveCfg = Debug|Win32
 		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Debug.Build.0 = Debug|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Debug-NoVer.ActiveCfg = Debug-NoVer|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Debug-NoVer.Build.0 = Debug-NoVer|Win32
 		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release.ActiveCfg = Release|Win32
 		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release.Build.0 = Release|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release-NoRev.ActiveCfg = Release-NoRev|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release-NoRev.Build.0 = Release-NoRev|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release-NoVer.ActiveCfg = Release-NoVer|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release-NoVer.Build.0 = Release-NoVer|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
