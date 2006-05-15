@@ -156,12 +156,12 @@ static const char _datcallbacks[]="\x05\x00\x43\x01"
 //                                    --  00  --                                      --  04  --                                      --  08  --                                      --  0C  --
 static const char _dat2r[]="\x01\x00\x08\x08\x05\x08\x08\x05\x08\x08\x05\x08\x08\x05\x20\x00\x06\x00\x00\x00\x00\x00\x00\x08\x00\x02\x00\x00\x00\x08\x10\x03\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
-static const char _datlangs[]="\x00\x00"
+static const char _datlangs[]="\x00\x01"
 //		x0				x1				x2				x3				x4				x5				x6				x7				x8				x9				xA				xB				xC				xD				xE				xF
 /*0x*/	"American\n"	"English\n"		"German\n"		"French\n"		"Spanish\n"		"\n"			"\n"			"Russian\n"		"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
-/*1x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"Czech\n"		"Slovak\n"		"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"Deutch\n"
+/*1x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"Czech\n"		"Slovak\n"		"\n"			"\n"			"\n"			"\n"			"Afrikaans\n"	"\n"			"\n"			"Greek\n"		"Dutch\n"
 /*2x*/	"\n"			"\n"			"Catalan\n"		"\n"			"Hungarian\n"	"\n"			"\n"			"Italian\n"		"Romanian\n"	"Icelandic\n"	"Latvian\n"		"Lithuanian\n"	"Slovenian\n"	"Danish\n"		"Swedish\n"		"Norwegian\n"
-/*3x*/	"Polish\n"		"Galician\n"	"Frisian\n"		"\n"			"Estonian\n"	"Finnish\n"		"Portuguese\n"	"Brazilian Portuguese\n\n"		"\n"			"\n"			"\n"			"\n"			"\n"			"Turkish\n"		"\n"
+/*3x*/	"Polish\n"		"Galician\n"	"Frisian\n"		"Ukrainian\n"	"Estonian\n"	"Finnish\n"		"Portuguese\n"	"Brazilian Portuguese\nCroatian\n\n"			"\n"			"\n"			"\n"			"\n"			"Turkish\n"		"\n"
 /*4x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
 /*5x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
 /*6x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
