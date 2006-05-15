@@ -612,6 +612,8 @@ U8* findpal(char *grffile)
 
 //extern "C" void debugint(void);
 
+bool _force=false;
+
 int main(int argc, char **argv)
 {
   char directory[128];
@@ -632,7 +634,7 @@ int main(int argc, char **argv)
 
   // parse option arguments
   while (1) {
-	char opt = getopt(argc, argv, "dew:h:b:cup:m:t");
+	char opt = getopt(argc, argv, "dew:h:b:cup:m:tf");
 
 	if (opt == (char) EOF)
 		break;
@@ -685,6 +687,9 @@ int main(int argc, char **argv)
 			break;
 		case 't':
 			useplaintext = 0;
+			break;
+		case 'f':
+			_force=true;
 			break;
 		default:
 			usage();
