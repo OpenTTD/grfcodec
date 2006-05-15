@@ -252,13 +252,15 @@ void pcxread::setline(U8 *band)
   decodebytes(band, sx);
 }
 
+extern bool _force;
+extern U8 defaultpalettes[6][256*3];
+
 void pcxread::readheader()
 {
   long oldpos = ftell(curfile);
   fseek(curfile, 0, SEEK_SET);
 
   fread(&header, sizeof(pcxheader), 1, curfile);
-  fseek(curfile, oldpos, SEEK_SET);
 
   if (header.nplanes == 3) {
 	fprintf(stderr, "Cannot read truecolour PCX files!\n");
@@ -268,6 +270,30 @@ void pcxread::readheader()
 	fprintf(stderr, "PCX file is not a 256 colour file!\n");
 	exit(2);
   }
+
+  fseek(curfile,-768,SEEK_END);
+  U8 palette[768];
+
+  if ( fread(palette,1,768,curfile) != 768 ) {
+	fprintf(stderr, "Could not read palette from PCX file!\n");
+	exit(2);
+  }
+
+  int i=0;
+  for(;i<6;i++)
+	if(!memcmp(palette,defaultpalettes[i],768)) break;
+
+  if ( i == 6 ) {
+	if ( _force )
+		fprintf(stderr, "Warning: Encoding despite unrecognized palette.\n");
+	else{
+		fprintf(stderr, "Error: Unrecognized palette, aborting.\n"
+						"Specify -f on the command line to override this check.\n");
+		exit(2);
+	}
+  }
+		
+  fseek(curfile, oldpos, SEEK_SET);
 
   sx = header.window[2] + 1;
   totaly = 0;
