@@ -30,7 +30,7 @@ Version 3: Change real-sprite format
 Version 4: Fix bug in real-sprite format
 Version 5: Add literal strings
 Version 6: Add binary includes
-
+Version 7: Add backslash escapes
 */
 
 
@@ -39,6 +39,16 @@ Version 6: Add binary includes
 #include<sstream>
 
 using namespace std;
+
+#ifndef NO_BOOST
+// grfcodec requires boost::date_time for its processing of the \wYMD and
+// \wDMY formats. Get boost from www.boost.org
+// If you are not capable of downloading or installing boost,
+// #define NO_BOOST before compiling grfcodec.
+#include<boost/date_time/gregorian/gregorian_types.hpp>
+using namespace boost::gregorian;
+
+#endif//NO_BOOST
 
 #include"nfosprite.h"
 #include"allocarray.h"
@@ -266,6 +276,159 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 		case'/':case'#':case';'://comment
 			in.ignore(INT_MAX,'\n');
 			break;
+		case'\\':
+			if(infover>6){
+				uint x;
+				switch(in.get()){
+				case'2':{
+					bool sign=true;
+					if(in.peek()=='u'){
+						sign=false;
+						in.ignore();
+					}
+					switch(in.get()){
+					case'+':out.put(0x00);continue;
+					case'-':out.put(0x01);continue;
+					case'<':out.put(sign?0x02:0x04);continue;
+					case'>':out.put(sign?0x03:0x05);continue;
+					case'/':out.put(sign?0x06:0x08);continue;
+					case'%':out.put(sign?0x07:0x09);continue;
+					case'*':out.put(0x0A);continue;
+					case'&':out.put(0x0B);continue;
+					case'|':out.put(0x0C);continue;
+					case'^':out.put(0x0D);continue;
+					}
+					break;
+				}case'7':{
+					switch(in.get()){
+					case'1':out.put(0x00);continue;
+					case'0':out.put(0x01);continue;
+					case'=':out.put(0x02);continue;
+					case'!':out.put(0x03);continue;
+					case'<':out.put(0x04);continue;
+					case'>':out.put(0x05);continue;
+					case'G':
+						if(in.get()=='G'){// \7GG Is or will be active
+							out.put(0x09);
+							continue;
+						}
+						in.unget();
+						out.put(0x06);// \7G Is active
+						continue;
+					case'g':
+						switch(in.get()){
+						case'g':out.put(0x0A);continue;// \7gg is not and will not be active
+						case'G':out.put(0x08);continue;// \7gG is not active but will be
+						default:// \7g is not active
+							in.unget();
+							out.put(0x07);
+							continue;
+						}
+					case'C':out.put(0x0B);continue;
+					case'c':out.put(0x0C);continue;
+					}
+					break;
+				}case'D':{
+					bool sign=true;
+					if(in.peek()=='u'){
+						sign=false;
+						in.ignore();
+					}
+					switch(in.get()){
+					//<operation>
+					case'=':out.put(0x00);continue;
+					case'+':out.put(0x01);continue;
+					case'-':out.put(0x02);continue;
+					case'*':out.put(sign?0x04:0x03);continue;
+					case'<':
+						if(in.get()=='<'){
+							out.put(sign?0x06:0x05);
+							continue;
+						}
+						break;
+					case'|':out.put(0x07);continue;
+					case'&':out.put(0x08);continue;
+					case'/':out.put(sign?0x0A:0x09);continue;
+					case'%':out.put(sign?0x0C:0x0B);continue;
+					//GRM <operation>
+					case'R':out.put(0x00);continue;
+					case'F':out.put(0x01);continue;
+					case'M':out.put(0x02);continue;
+					case'C':out.put(0x03);continue;
+					case'n'://no fail
+						switch(in.get()){
+						case'F':out.put(0x04);continue; //\DnF
+						case'C':out.put(0x05);continue; //\DnC
+						}
+						break;
+					case'O':out.put(0x06);continue;
+					}
+				}case'b':
+					if(in.peek()=='*'){// \b*
+						in.ignore()>>x;
+						if(!in||x>0xFFFF)break;//invalid
+						if(x>0xFE){
+							out.put('\xFF');
+							out.put(x);
+							out.put(x>>8);
+						}else out.put((char)x);
+						continue;
+					}
+					in>>x;
+					if(x>=1920)x-=1920;//remap years
+					if(!in||x>0xFF)break;//invalid
+					out.put((char)x);
+					continue;
+				case'w':
+					if(in.peek()=='x'){// \wx
+						in.ignore();
+						x=ReadHex(in,4);
+					}else{
+						in>>x;
+						//delay fail check until after date parsing.
+#ifndef NO_BOOST
+						if(in.peek()=='/'||in.peek()=='-'){//date
+							in.ignore();
+							unsigned short y,z;
+							in>>y;
+							if(/*!in||*/(in.peek()!='/'&&in.peek()!='-'))//in.peek will return eof if !in
+								break;
+							in.ignore();
+							in>>z;
+							if(x==0)x=2000;
+							if(x>31&&x<100)x+=1900;
+							if(z==0)z=2000;
+							if(z>31&&z<100)z+=1900;
+							date d;
+							try{
+								if(x>1919)d=date((unsigned short)x,y,z);
+								else d=date(z,y,(unsigned short)x);
+							}catch(std::out_of_range){
+								break;
+							}
+							x=(d-date(1920,1,1)).days();
+						}
+#endif//NO_BOOST
+					}
+					if(!in)break;
+					if(x>0xFFFF)break;//invalid
+					out.put(x);
+					out.put(x>>8);
+					continue;
+				case'd':
+					if(in.peek()=='x'){// \wx
+						in.ignore();
+						x=ReadHex(in,8);
+					}else in>>x;
+					if(!in)break;
+					out.put(x);
+					out.put(x>>8);
+					out.put(x>>16);
+					out.put(x>>24);
+					continue;
+				}
+				throw Sprite::unparseable("Could not parse unquoted escape sequence",num);
+			}
 		default:
 			ch=(char)ReadHex(in,2);
 			if(!in)

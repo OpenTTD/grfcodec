@@ -10,11 +10,31 @@ PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars
 SVNVERSION = svnversion .	# standard SVN client (e.g. cygwin)
 # SVNVERSION = SubWCRev.exe .	# TortoiseSVN
 
+# Optional parts of grfcodec are dependent on boost::date_time
+# Get boost from www.boost.org
+# If you do not have boost, make should detect this, and compile a version
+# of grfcodec that does not include the boost-dependent parts.
+#
+# Set these as appropriate; BOOST_VERSION is used to help automatically
+# locate your boost include directory. The usual format is x_yy for x.yy.0
+# versions and x_yy_z for x.yy.z releases
+BOOST_VERSION = 1_33_1
+# If that fails, set your boost include folder here.
+#BOOST_INCLUDE = 
+
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 
 # .exe extension (Because Cygwin's gcc adds .exe for us)
 EXE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo .exe )
+
+# Somewhat automatic detection of the correct boost include folder
+ifndef BOOST_INCLUDE
+BOOST_INCLUDE=$(shell \
+( [ -d /usr/local/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/local/include/boost-$(BOOST_VERSION) ) || \
+( [ -d /usr/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/include/boost-$(BOOST_VERSION) ) || \
+echo CANNOT_FIND_BOOST_INCLUDE_DIRECTORY )
+endif
 
 # auxiliary sources to be linked with each of these programs
 GRFCODECSRC=grfcomm.c pcx.c sprites.c pcxsprit.c info.c \
@@ -26,6 +46,12 @@ GRFMERGESRC=getopt.c
 
 ifndef NOREV
 NOREV = 0
+endif
+
+ifeq ($(BOOST_INCLUDE),CANNOT_FIND_BOOST_INCLUDE_DIRECTORY)
+BOOST_CMD=-DNO_BOOST
+else
+BOOST_CMD=-I$(BOOST_INCLUDE)
 endif
 
 # default targets
