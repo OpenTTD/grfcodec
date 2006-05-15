@@ -208,9 +208,11 @@ bool makedir(const string&dir,bool dieonfail=false){
 	}
 }
 
-bool finddir(const string&dir){
+bool finddir(string&dir){
 	if(dir=="")return false;
 	struct stat Stat;
+	if(dir[dir.length()-1]=='\\'||dir[dir.length()-1]=='/')
+		dir+='.';
 	if(stat((dir+"/.renum").c_str(),&Stat))return false;
 	else if(Stat.st_mode&S_IFREG)return false;
 	return true;
@@ -224,7 +226,8 @@ string getdir(){
 		INTERNAL_ERROR(makedir(datadir,true),false);
 	}
 	char*pcwd=getcwd(NULL,0);
-	string cwd=pcwd,ret;
+	const string cwd=pcwd;
+	string ret;
 	free(pcwd);
 	if(finddir(ret=cwd)||finddir(ret=safetostring(getenv("HOME")))||makedir(ret)||makedir(ret=cwd,true))return ret;
 	INTERNAL_ERROR(makedir(cwd,true),false);
