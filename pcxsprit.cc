@@ -1,5 +1,6 @@
 
 #include "pcxsprit.h"
+#include "ttdpal.h"
 
 /***********************\
 *			*
@@ -280,10 +281,10 @@ void pcxread::readheader()
   }
 
   int i=0;
-  for(;i<6;i++)
+  for(;i<NUM_PALS;i++)
 	if(!memcmp(palette,defaultpalettes[i],768)) break;
 
-  if ( i == 6 ) {
+  if ( i == NUM_PALS ) {
 	if ( _force )
 		fprintf(stderr, "Warning: Encoding despite unrecognized palette.\n");
 	else{
