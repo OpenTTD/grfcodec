@@ -79,6 +79,6 @@ clean:
 	touch .remake_deps
 
 Makefile.dep: .remake_deps
-	$(CC) $(CFLAGS) -MM *.c *.cpp | sed -e "s/[-a-zA-Z0-9_/]*boost\/[-a-zA-Z0-9_/]*\.hpp//g" -e "s/[a-zA-Z0-9_]*\.cpp//g" > $@
+	$(CC) $(CFLAGS) -MM -MG *.c *.cpp | sed -e "s/[-a-zA-Z0-9_/]*boost\/[-a-zA-Z0-9_/]*\.hpp//g" -e "s/[a-zA-Z0-9_]*\.cpp//g" > $@
 
-include Makefile.dep
+-include Makefile.dep
