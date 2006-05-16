@@ -1,0 +1,11 @@
+# Makefile for building extra dependencies from Visual Studio.
+
+# The grfcodec source directory, in Cygwin
+SOURCE_DIR = ~/nforenum
+
+all:
+ifneq ($(NOREV),0)
+	/bin/sh -c "export PATH=\"/bin\" && rm -f version.h && make -C $(SOURCE_DIR) version.h && touch .rev"
+else
+	/bin/sh -c "export PATH=\"/bin\" && make -C $(SOURCE_DIR) version.h"
+endif
