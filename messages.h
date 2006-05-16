@@ -315,6 +315,7 @@ NFO_MESSAGE(AUTOCORRECTING,"Auto-correcting %s from %2x to %2x.\n",HAS_OFFSET)
 NFO_MESSAGE(EMBEDDED_00,"Embedded null byte.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(LONG_JUMPLEAD,"The following Action 7/9s jump past the end of this file:\n",USE_PREFIX|NO_CONSOLE)
 MESSAGE_EX(LONG_JUMP,"Action %x at sprite %d.\n",MAKE_COMMENT|NO_CONSOLE,NFO,LONG_JUMPLEAD)
+NFO_MESSAGE(NO_TEXTS,"Action 4 declaring no strings.\n",USE_PREFIX)
 
 /* Insert new NFO_MESSAGEs here. */
 
