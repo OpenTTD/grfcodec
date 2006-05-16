@@ -254,7 +254,6 @@ void pcxread::setline(U8 *band)
 }
 
 extern bool _force;
-extern U8 defaultpalettes[6][256*3];
 
 void pcxread::readheader()
 {
