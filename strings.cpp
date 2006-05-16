@@ -68,9 +68,10 @@ void Check4(PseudoSprite&data){
 		i=6;
 		CheckTextID(0x48,data.ExtractWord(4),4)&&CheckTextID(0x48,data.ExtractWord(4)+nument-1,3);
 	}else if(feature==0x48)IssueMessage(ERROR,INVALID_FEATURE);
-	else{
+	else if(nument!=0){
 		CheckID(feature,data.ExtractByte(4))&&CheckID(feature,data.ExtractByte(4)+nument-1);
-	}
+	}else
+		IssueMessage(WARNING1,NO_TEXTS);
 	int perms=feature==0x48?CTRL_ALL|CTRL_NO_STACK_CHECK
 		:(check4::Instance().*(lang&0x80?&check4::GetGenericPerms:&check4::GetNamePerms))(feature);
 	if(feature==0x0B){
