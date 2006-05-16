@@ -66,6 +66,12 @@ renum:	$(NFORENUMSRC:%.cpp=%.o)
 clean:
 	rm -rf *.o *.exe *.EXE renum
 
+release:
+	rm -f $(NFORENUM)
+	make
+	strip $(NFORENUM)
+	upx --best $(NFORENUM)
+
 # Gnu compiler rules
 
 %.o : %.c
