@@ -5,9 +5,23 @@ use File::Basename;
 
 my @files = map glob, @ARGV;
 
-print "  U8 defaultpalettes[".@files."][256*3] = {\n";
+print "#define NUM_PALS ".@files."\n\n";
+
+print "extern U8 defaultpalettes[NUM_PALS][256*3];\n\n";
 
 my $palind = 0;
+
+for (@files) {
+	$_ = basename $_;
+	s/\..*//;
+	print "#define PAL_$_ $palind\n";
+	$palind++;
+}
+
+print "\n#ifdef DEFINE_PALS\n\n";
+print "  U8 defaultpalettes[NUM_PALS][256*3] = {\n";
+
+@files = map glob, @ARGV;
 
 for (@files) {
 	open FILE, "<$_" or die "Can't open $_: $!";
@@ -17,8 +31,7 @@ for (@files) {
 
 	$_ = basename $_;
 	s/\..*//;
-	print "#define PAL_$_ $palind\n";
-	$palind++;
+	print "// PAL_$_\n";
 
 	print "    {\n";
 
@@ -32,3 +45,4 @@ for (@files) {
 	print "    },\n";
 }
 printf("  };\n");
+print "\n#endif // DEFINE_PALS\n"

@@ -37,6 +37,7 @@
 #endif//_MSC_VER
 
 #define DOCHECK
+#define DEFINE_PALS
 
 #include "pcx.h"
 #include "sprites.h"
