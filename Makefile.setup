@@ -2,7 +2,7 @@
 
 # Order of the palettes compiled in
 # (note, this must match the text in grfcodec.cc and grftut.txt)
-PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars
+PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars&ttw_pb_pal1&ttw_pb_pal2
 
 # A command to return the current SVN revision of the source tree; it should
 # it in the format [##:]##, where the second set of digits is the current
