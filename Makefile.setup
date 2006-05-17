@@ -50,6 +50,7 @@ endif
 
 ifeq ($(BOOST_INCLUDE),CANNOT_FIND_BOOST_INCLUDE_DIRECTORY)
 BOOST_CMD=-DNO_BOOST
+BOOST_WARN = @echo " ** Warning: This GRFCodec is being built without \\w<YMD> or \\w<DMY> support."
 else
 BOOST_CMD=-I$(BOOST_INCLUDE)
 endif
