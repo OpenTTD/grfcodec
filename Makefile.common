@@ -75,4 +75,6 @@ Makefile.dep: .remake_deps
 	$(CC) $(CFLAGS) -MM -MG *.c *.cc > $@
 	perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
 
+ifndef NO_MAKEFILE_DEP
 -include Makefile.dep
+endif
