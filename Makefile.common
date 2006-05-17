@@ -36,6 +36,10 @@ ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 
 # Gnu compiler rules
 
+readinfo.o: readinfo.cc
+	$(BOOST_WARN)	
+	$(CXX) -c -o $@ $(CXXFLAGS) $<
+
 %.o : %.c
 	$(CC) -c -o $@ $(CFLAGS) $<
 
