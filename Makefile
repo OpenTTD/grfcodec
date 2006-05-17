@@ -111,4 +111,6 @@ version.h: version.def .rev
 Makefile.dep: .remake_deps
 	$(CC) $(CFLAGS) -MM -MG *.c *.cpp | sed -e "s/[-a-zA-Z0-9_/]*boost\/[-a-zA-Z0-9_/]*\.hpp//g" -e "s/[a-zA-Z0-9_]*\.cpp//g" > $@
 
+ifndef NO_MAKEFILE_DEP
 -include Makefile.dep
+endif
