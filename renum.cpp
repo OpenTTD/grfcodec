@@ -56,7 +56,6 @@ using namespace std;
 
 int process_file(istream&);
 void output_buffer(const string&,bool,int);
-void comment_sprite(const string&);
 bool verify_real(string&);
 void reset_real();
 
@@ -272,8 +271,6 @@ int __cdecl main(const int argc,char**argv){
 	(NFOversion=max((x),NFOversion))
 
 int NFOversion;
-
-enum{INVALID_CHAR=1,UNTERM_STR,OFFSET_STR};
 
 string smash(const string&,int&);
 
