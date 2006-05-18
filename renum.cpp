@@ -270,7 +270,15 @@ int __cdecl main(const int argc,char**argv){
 #define SetVersion(x)\
 	(NFOversion=max((x),NFOversion))
 
+static bool hasHeader;
 int NFOversion;
+
+bool TrySetVersion(int x){
+	if(hasHeader&&NFOversion>=x)return true;
+	if(hasHeader&&NFOversion<=6&&x>=7)return false;
+	SetVersion(x);
+	return true;
+}
 
 string smash(const string&,int&);
 
@@ -292,12 +300,14 @@ int process_file(istream&in){
 //from grfcodec: http://www.ttdpatch.net/grfcodec
 //grfcodec is Copyright 2000-2003 Josef Drexler
 	getline(in,sprite);//Info header or first sprite
+	hasHeader=false;
 	if (sprite.substr(0,3)=="// "){
+		hasHeader=true;
 		getline(in,sprite);//Info version (first sprite for ancient NFO versions)
 		if(sscanf(sprite.c_str(),"// (Info version %d)",&NFOversion)){
-			if(NFOversion<4||NFOversion>6){
+			if(NFOversion<4||NFOversion>7){
 				IssueMessage(0,UNKNOWN_VERSION,NFOversion);
-				if(NFOversion>6){
+				if(NFOversion>7){
 					IssueMessage(0,SKIPPING_FILE);
 					SetCode(EPARSE);
 					return-1;
@@ -364,7 +374,7 @@ int process_file(istream&in){
 				getline(spritestream,datapart);
 				firstnotpseudo=datapart.find_first_not_of(VALID_PSEUDO);
 				if(!spritestream||firstnotpseudo==NPOS||(datapart[firstnotpseudo]=='"'?(SetVersion(5),true):false)||
-					(datapart[firstnotpseudo]=='\\'&&GetState(EXTENSIONS))||COMMENT.find_first_of(datapart[firstnotpseudo])!=NPOS){
+					(datapart[firstnotpseudo]=='\\'?TrySetVersion(7):false)||COMMENT.find_first_of(datapart[firstnotpseudo])!=NPOS){
 					if(PseudoSprite::MayBeSprite(buffer)){
 						buffer+=sprite+'\n';
 					}else{
