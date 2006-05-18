@@ -66,7 +66,10 @@ void Check4(PseudoSprite&data){
 	if(_grfver>6)CheckLangID(lang,2);
 	if(lang&0x80){
 		i=6;
-		CheckTextID(0x48,data.ExtractWord(4),4)&&CheckTextID(0x48,data.ExtractWord(4)+nument-1,3);
+		if(nument!=0)
+			CheckTextID(0x48,data.ExtractWord(4),4)&&CheckTextID(0x48,data.ExtractWord(4)+nument-1,3);
+		else
+			IssueMessage(WARNING1,NO_TEXTS);
 	}else if(feature==0x48)IssueMessage(ERROR,INVALID_FEATURE);
 	else if(nument!=0){
 		CheckID(feature,data.ExtractByte(4))&&CheckID(feature,data.ExtractByte(4)+nument-1);
