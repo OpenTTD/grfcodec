@@ -124,7 +124,9 @@ int Check7(PseudoSprite&data){
 		IssueMessage(0,AUTOCORRECTING,2,"varsize",data.ExtractByte(2),desiredSize);
 		data.SetByteAt(2,uchar(var_size=desiredSize));
 	}
-	if(CheckLength(data.Length(),5+var_size,BAD_LENGTH,"varsize","%2x",data.ExtractByte(2),var_size+5))return 0;
+	if(cond<2?
+		CheckLength(data.Length(),6,BAD_LENGTH,"cond","%2x",cond,6):
+		CheckLength(data.Length(),5+var_size,BAD_LENGTH,"varsize","%2x",data.ExtractByte(2),var_size+5))return 0;
 	jumps.push_back(act7(data.ExtractByte(0),data.ExtractByte(4+var_size)));
 	return data.ExtractByte(4+var_size);
 }
