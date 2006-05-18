@@ -1,4 +1,4 @@
-NFORenum v3.2.1
+NFORenum v3.3.0
 NFO file re-numberer and linter
 
 Known to compile with g++ 3.4.x and VS.NET, assuming the Boost headers are
