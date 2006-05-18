@@ -67,7 +67,7 @@ struct commandData{
 
 struct command{
 	command();
-	uint sanity_messages,extensions;//,verbose;
+	uint sanity_messages;//,verbose;
 	int real:2;
 	bool remove_messages,beautifier,diff,locked,useoldnums;
 	uint beauty;
@@ -84,7 +84,6 @@ command::command(){
 	sanity_messages=WARNING3;
 	real=0;
 	beauty=686031766;
-	extensions=0;
 //	verbose=0;
 }
 
@@ -364,17 +363,6 @@ bool parse_comment(const string&line){
 		InitF();
 		AutoConsoleMessages();//finalF calls ManualConsoleMessages();
 		break;
-	case EXTENSIONS:
-		commandstream>>command_part;
-		if(!commandstream)return true;
-		id=find_command(command_part,ext);
-		if(id==ON)_commandState.extensions=1;
-		else if(id==OFF)_commandState.extensions=0;
-		else{
-			IssueMessage(0,COMMAND_INVALID_ARG,gen[EXTENSIONS].name);
-			return true;
-		}
-		break;
 	case TESTID2:{
 		int feature;
 		commandstream>>setbase(16)>>feature>>id;
@@ -411,11 +399,10 @@ bool parse_comment(const string&line){
 		if(id==ON)_commandState.useoldnums=true;
 		else if(id==OFF)_commandState.useoldnums=false;
 		else{
-			IssueMessage(0,COMMAND_INVALID_ARG,gen[EXTENSIONS].name);
+			IssueMessage(0,COMMAND_INVALID_ARG,gen[USEOLDSPRITENUMS].name);
 			return true;
 		}
 		break;
-	
 	/*case VERBOSE:{
 		uint level;
 		if(!(commandstream>>level)||level>2){
@@ -446,7 +433,6 @@ int GetState(enum gen type){
 		CASE(DIFF,diff);
 		CASE(REALSPRITES,real);
 		CASE(BEAUTIFY,beautifier);
-		CASE(EXTENSIONS,extensions);
 		CASE(USEOLDSPRITENUMS,useoldnums);
 //		CASE(VERBOSE,verbose);
 /* Add CASE(COMMAND,variable) macros for new comment commands here.

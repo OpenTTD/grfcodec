@@ -41,9 +41,10 @@ using namespace std;
 #include"utf8.h"
 
 extern int NFOversion;
-#define SetVersion(x)\
-	(NFOversion=max((x),NFOversion))
+//#define SetVersion(x)\ 
+//	(NFOversion=max((x),NFOversion))
 
+bool TrySetVersion(int);
 
 enum{HEX,TEXT,UTF8,ENDQUOTE,NOBREAK=4};
 
@@ -83,21 +84,13 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 					return;
 				}
 				if(ch=='"')break;
-				if(ch=='\\'&&GetState(EXTENSIONS)){
+				if(ch=='\\'&&TrySetVersion(7)){
 					switch(ch=(char)in.get()){
 					case'n':
 						ch='\r';//TTD uses Mac-style linefeeds (\r)
 						break;
 					case'"':
 					case'\\':
-						break;
-					case'x':
-						ch=(char)ReadHex(in,2);
-						if(!in){
-							IssueMessage(0,INVALID_EXTENSION);
-							Invalidate();
-							return;
-						}
 						break;
 					case'U':{
 						uint x=ReadHex(in,4);
@@ -117,9 +110,13 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 						}
 						break;
 					}default:
-						IssueMessage(0,INVALID_EXTENSION);
-						Invalidate();
-						return;
+						ch=(char)ReadHex(in,2);
+						if(!in){
+							IssueMessage(0,INVALID_EXTENSION);
+							Invalidate();
+							return;
+						}
+						break;
 					}
 				}
 				SetText(next_pos());
@@ -138,8 +135,8 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 			newline=true;
 			break;
 		}case'\\':
-			ProcessWhite();
-			if(GetState(EXTENSIONS)){
+			if(TrySetVersion(7)){
+				ProcessWhite();
 				newline=false;
 				in.ignore();
 				uint x;
