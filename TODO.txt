@@ -1,4 +1,4 @@
-NFORenum v3.2.1
+NFORenum v3.3.0
 NFO file re-numberer and linter
 
 TODO:
@@ -16,8 +16,7 @@ TODO:
   - Eat all comments, not just messages (?)
 - Config file (!)
 - Readability enhancements:
-  - Express some things in decimal or big-endian hex.
-  - Express action 2, 7/9, D operators as C operators
-    Potential format for both: \<identifier><data>
-    <identifier> being a single character, eg B/W/D
-    <data> being the associated data, eg 600, x80000000, >, &c.
+  (moved to Info version 7 TODO)
+- Auto-correction:
+  - Action 7/9 num-sprites if it jumps to or past EOF.
+- Multiple backups

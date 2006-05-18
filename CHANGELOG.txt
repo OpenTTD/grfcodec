@@ -1,4 +1,22 @@
 Changelog:
+v3.2.1 to v3.3.0
+- Add an auto corrector, which will attempt to correct some portions of some
+  pseudo-sprites when enabled. (See README)
+- (bugfix) Specifying -f could potentially cause undefined behaviour.
+- Allow + and - in more places on the commandline. Specifically, in eg
+  "-b convertonly+", rather than just "-b-".
+- (devel, docs) fixed release scripts that caused breakage in the 3.2.1 docs,
+  and repaired the breakage.
+- Also check for embedded 00 bytes after the 01 and 1F control characters.
+- Add a length-check for actions 7 and 9.
+- Produce more useful and reliable messages when a file-system-related call
+  fails.
+- If the input file can't be deleted, report about that, instead of just
+  reporting that the rename failed.
+- Check that action 7/9 don't jump past the end of the file.
+- (bugfix) Fix an issue creating the .renum folder on Win9x
+- Update langs.dat for the new languages.
+- (bugfix) Warn about action 4s that declare no texts, rather than dying.
 
 v3.2.0 to v3.2.1
 - @@USEOLDSPRITENUMS
