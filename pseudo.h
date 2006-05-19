@@ -66,9 +66,9 @@ public:
 
 	void NoBeautify();
 
-	friend ostream&operator<<(ostream&,const PseudoSprite&);
+	friend ostream&operator<<(ostream&,PseudoSprite&);
 private:
-	ostream&output(ostream&)const;
+	ostream&output(ostream&);
 
 public:
 	static bool CanQuote(uint);

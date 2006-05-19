@@ -468,12 +468,12 @@ void PseudoSprite::NoBeautify(){
 	useorig=true;
 }
 
-ostream&operator<<(ostream&out,const PseudoSprite&sprite){
+ostream&operator<<(ostream&out,PseudoSprite&sprite){
 	sprite.output(out);
 	return out;
 }
 
-ostream&PseudoSprite::output(ostream&out)const{
+ostream&PseudoSprite::output(ostream&out){
 	if(!valid){
 		istringstream datastream(orig);
 		string line;
@@ -530,7 +530,9 @@ ostream&PseudoSprite::output(ostream&out)const{
 			out<<'"';
 			instr=false;
 		}
-		if(context[i]!=""){
+		if(context[i]==" "&&instr&&i+1<Length()&&(IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8))))
+			context[i]="";
+		else if(context[i]!=""){
 			if(instr){
 				out<<'"';
 				instr=false;
