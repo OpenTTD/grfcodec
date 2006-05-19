@@ -49,6 +49,7 @@ public:
 	PseudoSprite&SetBE(uint,uint){return*this;}
 
 	PseudoSprite&SetByteAt(uint,uchar);
+	PseudoSprite&Append(uchar);
 
 	PseudoSprite&PadAfter(uint,uint);
 

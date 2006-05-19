@@ -382,6 +382,11 @@ PseudoSprite&PseudoSprite::SetByteAt(uint off,uchar byte){
 	return*this;
 }
 
+PseudoSprite&PseudoSprite::Append(uchar byte){
+	packed.append(1,byte);
+	return*this;
+}
+
 PseudoSprite&PseudoSprite::PadAfter(uint i,uint width){
 	if(context[i]=="")context[i]=string(width,' ');
 	return*this;
