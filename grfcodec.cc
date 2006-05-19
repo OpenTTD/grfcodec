@@ -79,7 +79,11 @@ char *usagetext=
 	"              minimum 16)\n"
 	"    -b <num>  Organize sprites in boxes of this size (default 16)\n"
 	"    -p <pal>  Use this palette instead of the default.  See -p ? for a list.\n"
-	"    -t        Disable decoding of plain text characters as strings\n"
+	"    -t        Disable decoding of plain text characters as strings.\n"
+	"    -x        Disable production of unquoted escape sequences.\n"
+	"    -xx       Disable production of both quoted and unquoted escape sequences.\n"
+	"              This has the side effect of producing a version 6 .nfo, instead\n"
+	"              of a version 7 .nfo.\n"
 	"\n"
 	"Options for encoding:\n"
 	"    -u        Save uncompressed data (probably not a good idea)\n"
@@ -614,6 +618,7 @@ U8* findpal(char *grffile)
 //extern "C" void debugint(void);
 
 bool _force=false;
+int _useexts=2;
 
 int main(int argc, char **argv)
 {
@@ -635,7 +640,7 @@ int main(int argc, char **argv)
 
   // parse option arguments
   while (1) {
-	char opt = getopt(argc, argv, "dew:h:b:cup:m:tf");
+	char opt = getopt(argc, argv, "dew:h:b:cup:m:tfx");
 
 	if (opt == (char) EOF)
 		break;
@@ -691,6 +696,9 @@ int main(int argc, char **argv)
 			break;
 		case 'f':
 			_force=true;
+			break;
+		case 'x':
+			if(_useexts)_useexts--;
 			break;
 		default:
 			usage();
