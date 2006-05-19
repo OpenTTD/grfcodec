@@ -239,6 +239,20 @@ Real::Real(size_t sprite,int infover,const string&data){
 string Real::prevname;
 int Real::prevy=0;
 
+#define CHAR(x) (char(((ch>>((x)*6))&0x3F)|0x80))
+
+string GetUtf8Encode(uint ch){
+	if(ch<0x80)return string()+char(ch);
+	if(ch<0x8000)return string()+char(((ch>>6 )&0x1F)|0xC0)+CHAR(0);
+	/*if(ch<0x10000)*/return string()+char(((ch>>12)&0x0F)|0xE0)+CHAR(1)+CHAR(0);
+	//if(ch<0x200000)return string()+char(((ch>>18)&0x07)|0xF0)+CHAR(2)+CHAR(1)+CHAR(0);
+	//if(ch<0x4000000)return string()+char(((ch>>24)&0x03)|0xF8)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
+	//if(ch<0x80000000)return string()+char(((ch>>30)&0x01)|0xFC)+CHAR(4)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
+	//INTERNAL_ERROR(ch,ch);
+}
+
+#undef CHAR
+
 Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 	istringstream in(sprite);
 	ostringstream out;
@@ -262,6 +276,17 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 					case'"':
 					case'\\':
 						break;
+					case'U':{
+						uint x=ReadHex(in,4);
+						if(!in)
+							throw Sprite::unparseable("Could not parse quoted escape sequence",num);
+						if(x>0x7FF)
+							out.write(GetUtf8Encode(x).c_str(),3);
+						else if(x>0x7F)
+							out.write(GetUtf8Encode(x).c_str(),2);
+						else out.put(x);
+						continue;
+						}
 					default:
 						in.unget();
 						ch=(char)ReadHex(in,2);
