@@ -46,6 +46,19 @@ CALLBACK_AD(IsGRM){
 	return len==9&&data[2]==0&&data[4]==0xFE&&data[5]==0xFF;
 }
 
+CALLBACK_OVR(Is2Op){
+	if(pos<7||!(data[3]&0x80)||data[3]==0x80||data[3]==0x80)return false;
+	uint w = 1<<((data[3]>>2)&3);
+	uint loc=5;//Start at first <shift>
+	while(true){
+		if(!(data[loc]&0x20))return false;//not advanced
+		if(data[loc++/*<shift>*/]&0xC0)
+			loc+=2*w;//<add> and <div>/<mod>
+		loc+=w;//<and>
+		if(loc==pos)return true;//This is an operation byte
+		if(loc>pos||len<loc+2)return false;//past proposed op byte or insuffucient data
+	}
+}
 
 START_ESCAPES()
 
@@ -63,6 +76,21 @@ START_ESCAPES()
 // EXCAPE_OVR takes an argument in place of off, the CALLBACK to call
 // instead of running the off check.
 // ***********************************************************************
+
+ESCAPE_OVR(00,"2+",2,Is2Op)
+ESCAPE_OVR(01,"2-",2,Is2Op)
+ESCAPE_OVR(02,"2<",2,Is2Op)
+ESCAPE_OVR(03,"2>",2,Is2Op)
+ESCAPE_OVR(04,"2u<",2,Is2Op)
+ESCAPE_OVR(05,"2u>",2,Is2Op)
+ESCAPE_OVR(06,"2/",2,Is2Op)
+ESCAPE_OVR(07,"2%",2,Is2Op)
+ESCAPE_OVR(08,"2u/",2,Is2Op)
+ESCAPE_OVR(09,"2u%",2,Is2Op)
+ESCAPE_OVR(0A,"2*",2,Is2Op)
+ESCAPE_OVR(0B,"2&",2,Is2Op)
+ESCAPE_OVR(0C,"2|",2,Is2Op)
+ESCAPE_OVR(0D,"2^",2,Is2Op)
 
 ESCAPE_79(00,"71",3)
 ESCAPE_79(01,"70",3)
