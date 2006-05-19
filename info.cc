@@ -6,6 +6,7 @@
 #include "info.h"
 #include "sprites.h"
 #include "error.h"
+#include "escapes.h"
 
 const char *infoline = "%s %d %d %02X %d %d %d %d";
 //		<PCX-File> <X> <Y> <info[0..7]>
@@ -194,7 +195,17 @@ void infowriter::newband(pcxfile *pcx)
 					if (instr) {
 						fputs("\"", info); instr = 0;
 					}
-					fprintf(info, " %02X", d->data[j]);
+					int k=0;
+					for(;k<num_esc;k++)
+						if(escapes[k].byte==d->data[j]&&
+							escapes[k].action==d->data[0]&&
+							(escapes[k].override?escapes[k].override(d->data,d->size,j):escapes[k].pos==j)&&
+							(escapes[k].additional==NULL||escapes[k].additional(d->data,d->size))){
+							fprintf(info," %s",escapes[k].str);
+							break;
+						}
+					if(k==num_esc)
+						fprintf(info, " %02X", d->data[j]);
 				}
 
 				// break lines after 32 non-text characters
