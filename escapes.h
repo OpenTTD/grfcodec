@@ -66,7 +66,7 @@ START_ESCAPES()
 // Define escape sequences here.
 // The arguments to ESCAPE* are:
 //   byte:   the byte value for this escape sequence, in hex
-//   str:    the string for this escape sequence, excluding the \
+//   str:    the string for this escape sequence, excluding the \ 
 //   action: the action for this escape sequence, eg 2, 7, D, &c.
 //           Note that 7 and 9 are usually paired, with ESCAPE_79, which does
 //           not take an action argument.
