@@ -105,6 +105,8 @@ Action E <num>: Only corrected if a corrected value exists that makes the
   sprite length agree with num.
 Action 12 <num-def>: Only corrected if a corrected value exists that makes
   the sprite length agree with num-def.
+All actions containing strings (4, 8, B, F): A trailing 00 will be added if
+  end-of-sprite is encountered while parsing a string.
 
 [*] These can be unsafe, and are not enabled unless -a/--autocorrect is
     specified twice.
