@@ -232,7 +232,14 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 		}else if(ch<0x9E)IssueMessage(WARNING3,UNUSED_CONTROL,offs,ch);
 		if(++offs>=length)break;
 	}
-	if(ch)IssueMessage(WARNING1,NO_NULL_FOUND);
+	if(ch)
+		if(_autocorrect){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECT_ADD,0);
+			data.Append(0);
+			ch=0;
+			offs++;
+		}else IssueMessage(WARNING1,NO_NULL_FOUND);
 	if(retInfo==RETURN_NULL)return ch;
 	if(retInfo==RETURN_STACK)return(perms&CTRL_NO_STACK_CHECK)?(unsigned)-1:ret;
 	INTERNAL_ERROR(retInfo,retInfo);
