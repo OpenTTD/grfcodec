@@ -278,6 +278,7 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 			break;
 		case'\\':
 			if(infover>6){
+				in.ignore();
 				uint x;
 				switch(in.get()){
 				case'2':{
