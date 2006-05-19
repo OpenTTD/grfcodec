@@ -501,8 +501,16 @@ ostream&PseudoSprite::output(ostream&out)const{
 				count+=3-((GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0);// count close-quote here.
 				instr=true;
 			}
-			out<<(char)(*this)[i];
-			count++;
+			if(NFOversion>6&&(*this)[i]=='"'){
+				out<<"\\\"";
+				count+=2;
+			}else if(NFOversion>6&&(*this)[i]=='\\'){
+				out<<"\\\\";
+				count+=2;
+			}else{
+				out<<(char)(*this)[i];
+				count++;
+			}
 			noendl=false;
 		} else {
 			if(instr){
@@ -561,9 +569,9 @@ ostream&PseudoSprite::output(ostream&out)const{
 bool PseudoSprite::CanQuote(uint byte){
 	VERIFY(byte<0x100,byte);
 	return(byte<0x80||GetState(QUOTEHIGHASCII))&&
-	//non-printable ASCII are 00..1F, 22, 7F..9F.
+	//non-printable ASCII are 00..1F, 22(sometimes), 7F..9F.
 	//(String parser is responsible for marking others text/hex/UTF8 as appropriate)
-		byte>0x1F&&byte!='"'&&(byte<0x7F||byte>0x9F);
+		byte>0x1F&&(byte!='"'||NFOversion>6)&&(byte<0x7F||byte>0x9F);
 }
 
 void PseudoSprite::Invalidate(){
