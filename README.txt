@@ -95,6 +95,7 @@ Action 3 <num-cid>: Only corrected if a corrected value exists that makes the
   <num-ids> is not correct. [*]
 Action 4 <num-ent>: Count of strings found in the action 4. This includes the
   last one, even if its terminating null is missing.
+Action 6: A trailing FF will be added if doing so will make the sprite valid.
 Action 7/9 <varsize>: Only corrected if the sprite length, variable, and
   condition all agree on the correct value. For bit-tests, this value is
   corrected to 01.
