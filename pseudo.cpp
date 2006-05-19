@@ -383,6 +383,9 @@ PseudoSprite&PseudoSprite::SetByteAt(uint off,uchar byte){
 }
 
 PseudoSprite&PseudoSprite::Append(uchar byte){
+	context.resize(Length()+1);
+	context[Length()]=context[Length()-1];
+	context[Length()-1].clear();
 	packed.append(1,byte);
 	return*this;
 }
