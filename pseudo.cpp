@@ -214,8 +214,8 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 					//GRM <operation>
 					case'R':out.put(0x00);continue;
 					case'F':out.put(0x01);continue;
-					case'M':out.put(0x02);continue;
-					case'C':out.put(0x03);continue;
+					case'C':out.put(0x02);continue;
+					case'M':out.put(0x03);continue;
 					case'n'://no fail
 						switch(in.get()){
 						case'F':out.put(0x04);continue; //\DnF
