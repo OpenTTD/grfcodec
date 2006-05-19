@@ -34,19 +34,28 @@ using namespace std;
 uint Check6(PseudoSprite&data){
 	assert(data.ExtractByte(0)==0x06);
 	uint ofs=1,minlen=0;
+	bool canCorrect=true;
 	try{
 		while(data.ExtractByte(ofs++)!=0xFF){
+			canCorrect=false;
 			int num=data.ExtractByte(ofs++);
 			if(num)minlen=std::max(minlen,num+data.ExtractExtended(ofs));
 			else IssueMessage(WARNING1,DOES_NOT_MODIFY,ofs-1);
 			ofs+=data.ExtendedLen(ofs);
+			canCorrect=true;
 		}
 		if(ofs==2)
 			IssueMessage(WARNING1,NO_MODIFICATIONS);
 		if(ofs!=data.Length())
 			IssueMessage(WARNING2,EXTRA_DATA,ofs);
 	}catch(...){
-		IssueMessage(FATAL,UNTERM_ACT6);
+		if(_autocorrect&&canCorrect){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECT_ADD,0xFF);
+			data.Append(0xFF);
+		}else{
+			IssueMessage(FATAL,UNTERM_ACT6);
+		}
 	}
 	return minlen;
 }
