@@ -6,14 +6,10 @@
 SVNVERSION = svnversion .	# standard SVN client (e.g. cygwin)
 # SVNVERSION = SubWCRev.exe .	# TortoiseSVN
 
-# NFORenum requires some boost headers
-# As of the current writing, only current_function.hpp is required
-# It is included in the source distribution.
-# If you have boost, set BOOST_INCLUDE below to the directory containing
-#	your boost headers.
-# If you do not have boost, create a boost/ directory and place
-#	current_function.hpp in it. Set BOOST_INCLUDE to the directory
-#	containing the boost directory. Or get boost: www.boost.org
+# Optional parts of NFORenum are dependent on boost::date_time
+# If you do not have boost, make should detect this, and compile a version
+# of grfcodec that does not include the boost-dependent parts.
+# Get boost from www.boost.org
 #
 # Set these as appropriate; BOOST_VERSION is used to help automatically
 # locate your boost include directory. The usual format is x_yy for x.yy.0
@@ -34,7 +30,7 @@ CC = g++
 CXX = g++
 
 # use 386 instructions but optimize for pentium II/III
-CFLAGS = -g -DWIN32 -O1 -I$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
+CFLAGS = -g -DWIN32 -O1 $(BOOST_CMD) -Wall -Wno-uninitialized $(CFLAGAPP)
 CXXFLAGS = $(CFLAGS)
 #LDOPT = -g -Wl,--subsystem,console -luser32 -lgdi32 -lwinmm -lcomdlg32 -lcomctl32
 #LDOPT = -Wl,--subsystem,console,-s
@@ -49,7 +45,6 @@ ifndef BOOST_INCLUDE
 BOOST_INCLUDE=$(shell \
 ( [ -d /usr/local/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/local/include/boost-$(BOOST_VERSION) ) || \
 ( [ -d /usr/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/include/boost-$(BOOST_VERSION) ) || \
-( [ -d ./boost ] && echo . ) || \
 echo CANNOT_FIND_BOOST_INCLUDE_DIRECTORY )
 endif
 
@@ -62,6 +57,13 @@ NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
 
 ifndef NOREV
 NOREV = 0
+endif
+
+ifeq ($(BOOST_INCLUDE),CANNOT_FIND_BOOST_INCLUDE_DIRECTORY)
+BOOST_CMD=-DNO_BOOST
+BOOST_WARN = @echo " ** Warning: This NFORenum is being built without \\w<YMD> or \\w<DMY> support."
+else
+BOOST_CMD=-I$(BOOST_INCLUDE)
 endif
 
 # targets
@@ -104,6 +106,9 @@ version.h: version.def .rev
 %.o : %.cpp
 	$(CXX) -c -o $@ $(CXXFLAGS) $<
 
+pseudo.o: pseudo.cpp
+	$(BOOST_WARN)
+	$(CXX) -c -o $@ $(CXXFLAGS) $<	
 
 .remake_deps:
 	touch .remake_deps
