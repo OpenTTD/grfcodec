@@ -49,14 +49,16 @@ CALLBACK_AD(IsGRM){
 CALLBACK_OVR(Is2Op){
 	if(pos<7||!(data[3]&0x80)||data[3]==0x80||data[3]==0x80)return false;
 	uint w = 1<<((data[3]>>2)&3);
-	uint loc=5;//Start at first <shift>
-	while(true){
-		if(!(data[loc]&0x20))return false;//not advanced
+	uint loc=4;//Start at first <var>
+	while(true){//read <var> [<param>] <varadjust> [<op> ...]. loc reports byte to be checked.
+		if((data[loc++/*<var>*/]&0xE0)==0x60)loc++;//<param>
+		if(loc>=pos)return false;
+		if(!(data[loc]&0x20))return false;//end of advanced
 		if(data[loc++/*<shift>*/]&0xC0)
 			loc+=2*w;//<add> and <div>/<mod>
 		loc+=w;//<and>
 		if(loc==pos)return true;//This is an operation byte
-		if(loc>pos||len<loc+2)return false;//past proposed op byte or insuffucient data
+		if(loc++/*<op>*/>pos)return false;//past proposed op byte
 	}
 }
 
