@@ -9,7 +9,7 @@
 		char action;\
 		uint pos;\
 		bool (*additional)(const U8*,uint);\
-		bool (*override)(const U8*,uint,uint);\
+		bool (*override)(const U8*,uint);\
 	}escapes[]={
 
 #define ESCAPE(byte,str,action,off)\
@@ -30,7 +30,7 @@
 #define CALLBACK_AD(name)\
 	bool __ESC_AD__##name(const U8*data,uint len)
 #define CALLBACK_OVR(name)\
-	bool __ESC_OVR__##name(const U8*data,uint len,uint pos)
+	bool __ESC_OVR__##name(const U8*data,uint pos)
 
 // ***********************************************************************
 // Define callback functions for ESCAPE_* here
@@ -39,7 +39,7 @@
 // The signature for CALLBACK_AD is:
 // bool func(const U8*data, uint len)
 // The signature for CALLBACK_OVR is:
-// bool func(const U8*data, uint len, uint pos)
+// bool func(const U8*data, uint pos)
 // ***********************************************************************
 
 CALLBACK_AD(IsGRM){
