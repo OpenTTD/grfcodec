@@ -24,13 +24,15 @@
 #include<iomanip>
 #include<cstdarg>
 
+#ifndef NO_BOOST
 /* If your compiler errors on the following line, boost::date_time is not
  * properly installed.
  * Get boost from http://www.boost.org */
-//#include<boost/date_time/gregorian/gregorian_types.hpp>
+#include<boost/date_time/gregorian/gregorian_types.hpp>
+using namespace boost::gregorian;
+#endif
 
 using namespace std;
-//using namespace boost::gregorian;
 
 #include"renum.h"
 #include"pseudo.h"
@@ -41,8 +43,6 @@ using namespace std;
 #include"utf8.h"
 
 extern int NFOversion;
-//#define SetVersion(x)\ 
-//	(NFOversion=max((x),NFOversion))
 
 bool TrySetVersion(int);
 
@@ -244,7 +244,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 					}else{
 						in>>x;
 						//delay fail check until after date parsing.
-#if 0
+#ifndef NO_BOOST
 						if(in.peek()=='/'||in.peek()=='-'){//date
 							in.ignore();
 							ushort y,z;
@@ -266,7 +266,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 							}
 							x=(d-date(1920,1,1)).days();
 						}
-#endif
+#endif//NO_BOOST
 					}
 					if(!in)break;
 					if(x>0xFFFF)break;//invalid

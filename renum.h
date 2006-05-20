@@ -23,11 +23,7 @@
 #ifndef _RENUM_RENUM_H_INCLUDED_
 #define _RENUM_RENUM_H_INCLUDED_
 
-// NFORenum now requires the boost headers.
-// Get boost from http://www.boost.org
-// Or change the <> to "", and use the included copy.
-#include<boost/current_function.hpp>
-
+#include"boost/current_function.hpp"
 #include"getopt.h"
 
 /* file handling defs:
