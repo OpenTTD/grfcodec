@@ -201,7 +201,7 @@ void infowriter::newband(pcxfile *pcx)
 						for(;k<num_esc;k++)
 							if(escapes[k].byte==d->data[j]&&
 								escapes[k].action==d->data[0]&&
-								(escapes[k].override?escapes[k].override(d->data,d->size,j):escapes[k].pos==j)&&
+								(escapes[k].override?escapes[k].override(d->data,j):escapes[k].pos==j)&&
 								(escapes[k].additional==NULL||escapes[k].additional(d->data,d->size))){
 								fprintf(info," %s",escapes[k].str);
 								break;
