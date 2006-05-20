@@ -423,9 +423,9 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			DEFAULT(ch)
 			}
 			switch((ch>>4)&3){
-			case 1:str.SetText(str_loc-1-ch&7,ch&7);
-			case 2:str.SetDec(str_loc-1-ch&7,ch&7);
-			case 3:str.SetBE(str_loc-1-ch&7,ch&7);
+			case 1:str.SetText(str_loc-1-ch&7,ch&7);break;
+			case 2:str.SetDec(str_loc-1-ch&7,ch&7);break;
+			case 3:str.SetBE(str_loc-1-ch&7,ch&7);break;
 			}
 			if(ch>>6==3){
 				str.SetEol(str_loc-1,2);
