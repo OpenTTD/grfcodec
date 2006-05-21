@@ -116,7 +116,8 @@ string mysprintf(const char*,...);
 
 START_MESSAGES()
 ERR_MESSAGE(FATAL_MESSAGE_ERROR,"Fatal error issuing message ",0)
-ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%s(%d): (in function %s) %s cannot equal %d.\n",0)
+ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%s(%d): Fatal error parsing sprite %d: %s cannot equal %d.\n"
+			"\t(function %s).\n",0)
 ERR_MESSAGE(INVALID_DATAFILE,"Data file \"%s\" contains invalid data. (%S)\n",0)
 ERR_MESSAGE(NO_INPUT_FILE,"Could not open \"%s\" specified on the command line.\n",0)
 ERR_MESSAGE(NO_OUTPUT_FILE,"Could not open output file \"%s\" for input \"%s\".\n",0)

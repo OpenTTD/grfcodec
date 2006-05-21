@@ -13,6 +13,7 @@
 #include "utf8.h"
 #include "messages.h"
 #include "command.h"
+#include "globals.h"
 
 #define CONT(i) ((data[off+i]&0xc0) == 0x80)
 #define VAL(i, s) ((data[off+i]&0x3f) << s)

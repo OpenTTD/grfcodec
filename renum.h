@@ -54,7 +54,7 @@ void SetCode(int);
 
 #define INTERNAL_ERROR(var,val)\
 	if(true){\
-		IssueMessage(0,INTERNAL_ERROR_TEXT,__FILE__,__LINE__,BOOST_CURRENT_FUNCTION,#var,_FORCE_INT_(val));\
+		IssueMessage(0,INTERNAL_ERROR_TEXT,__FILE__,__LINE__,_spritenum,#var,_FORCE_INT_(val),BOOST_CURRENT_FUNCTION);\
 		assert(false);\
 		exit(EFATAL);\
 	}else\
