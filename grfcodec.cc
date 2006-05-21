@@ -109,12 +109,13 @@ void showpalettetext()
 	"	%d  TT Original, Mars landscape\n"
 	"\n"
 	"External palette files: use -p [type:]filename.\n"
-	"[type:] can be bcp or psp.  (Other formats may become available later.)\n"
+	"[type:] can be bcp, psp, or gpl.  (Other formats may become available later.)\n"
 	"If the type is omitted, bcp is assumed.\n"
 	"\n"
 	"bcp	binary coded palette with the same format as the palette in a PCX\n"
 	"	file: 256 triples of red, green and blue encoded in bytes.\n"
 	"psp	the palette format output by Paintshop Pro\n"
+	"gpl	the palette format output by The GIMP.\n"
 	"\n",
 
 	// note, -p values are the array index plus one (so that 0 is not
@@ -538,7 +539,7 @@ int decode(char *file, char *dir, U8 *palette, int box, int width, int height, i
 
 U8 *readpal(char *filearg)
 {
-  enum paltype { UNK, BCP, PSP };
+  enum paltype { UNK, BCP, PSP, GPL };
   paltype type = UNK;
   static U8 pal[256*3];
 
@@ -546,6 +547,8 @@ U8 *readpal(char *filearg)
 	type = BCP;
   else if (!strnicmp(filearg, "psp:", 4))
 	type = PSP;
+  else if (!strnicmp(filearg, "gpl:", 4))
+	type = GPL;
 
   if (type != UNK)
 	filearg += 4;	// remove type: from filename
@@ -583,6 +586,27 @@ U8 *readpal(char *filearg)
 				printf("Error reading palette.\n");
 				exit(1);
 			}
+		}
+		break;
+	case GPL:
+		fgets(fmt, sizeof(fmt), f);
+		if (strcmp(fmt, "GIMP Palette\r\n")) {
+			printf("%s is not a GIMP palette file.\n", filearg);
+			exit(1);
+		}
+		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Name: ...
+		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Columns: ...
+		fgets(fmt, sizeof(fmt), f); // #
+		uint r, g, b;
+		for (int i=0; i<256; i++) {
+			if (!fscanf(f, "%d %d %d\n", &r, &g, &b) || r > 255 || g > 255 || b > 255) {
+				printf("Error reading palette.\n");
+				exit(1);
+			}
+			pal[3*i] = (U8) r;
+			pal[3*i+1] = (U8) g;
+			pal[3*i+2] = (U8) b;
+			do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// color name
 		}
 		break;
   }
