@@ -1,5 +1,15 @@
 Changelog:
-v3.2.1 to v3.3.0
+v3.3.0 to v3.3.1 (r320)
+- Recognize Info version 7.
+- Warn about generic action 4s that declare no texts.
+- More auto-corrector changes:
+  - Append an FF to action 6s.
+  - Append a 00 to strings.
+- @@BEAUTIFY CONVERTONLY now converts hex to "strings", not "s" "t" "r" ...
+- (bugfix) Action4s declaring texts for language FF could cause NFORenum to
+  abort.
+
+v3.2.1 to v3.3.0 (r284)
 - Add an auto corrector, which will attempt to correct some portions of some
   pseudo-sprites when enabled. (See README)
 - (bugfix) Specifying -f could potentially cause undefined behaviour.
@@ -18,7 +28,7 @@ v3.2.1 to v3.3.0
 - Update langs.dat for the new languages.
 - (bugfix) Warn about action 4s that declare no texts, rather than dying.
 
-v3.2.0 to v3.2.1
+v3.2.0 to v3.2.1 (r187)
 - @@USEOLDSPRITENUMS
 - @@DEFINEID2
 - @@LOCATEID2
@@ -39,7 +49,7 @@ v3.2.0 to v3.2.1
 - New action 5 type 0D
 
 Changelog:
-v3.1.4 to v3.2.0
+v3.1.4 to v3.2.0 (r156)
 - (hotfix) TextIDs F900..F904.
 - (hotfix) Callbacks 3C and 3D.
 - (hotfix) Industry variable 63, industry tile variable 61,

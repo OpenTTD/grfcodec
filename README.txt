@@ -1,9 +1,10 @@
-NFORenum v3.3.0
+NFORenum v3.3.1
 NFO file re-numberer and linter
 
-Known to compile with g++ 3.4.x and VS.NET, assuming the Boost headers are
+Known to compile with g++ 3.4.4, g++ 4.0.2, and VS .NET, assuming Boost is
 installed. Get Boost from www.boost.org.
-The required boost header is currently included, but this may change.
+The required boost header is included. If you do not have the rest of boost,
+make should detect this and remove the boost dependency.
 
 To install, copy renum.exe into any directory, preferably one in your path.
 NFORenum will (if necessary) create a .renum directory in the current
