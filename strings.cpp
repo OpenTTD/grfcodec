@@ -63,7 +63,7 @@ void Check4(PseudoSprite&data){
 	int nument=(signed)data.ExtractByte(3);
 	if(!IsValidFeature(ACT4,feature)&&feature!=0x48)IssueMessage(ERROR,INVALID_FEATURE);
 	if(_grfver<7&&lang&0x60&&(lang&0x7F)!=0x7F)IssueMessage(WARNING3,UNKNOWN_LANG_BIT,2,lang);
-	if(_grfver>6)CheckLangID(lang,2);
+	if(_grfver>6)CheckLangID(lang&0x7F,2);
 	if(lang&0x80){
 		i=6;
 		if(nument!=0)
