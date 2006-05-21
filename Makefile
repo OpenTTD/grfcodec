@@ -78,7 +78,7 @@ renum:	$(NFORENUMSRC:%.cpp=%.o)
 clean:
 	rm -rf *.o *.exe *.EXE renum
 
-release:
+release: FORCE
 	rm -f $(NFORENUM) version.h
 	make NOREV=$(NOREV)
 	strip $(NFORENUM)
