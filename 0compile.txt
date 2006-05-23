@@ -22,6 +22,8 @@ BOOST_INCLUDE is the directory where your boost headers can be found. If you
 You may also set the following varibles:
 NOREV: Set to 0 by default, set to 1 to remove the "rXXX" from the version
     number
+NO_BOOST: Set to 0 by default; set to 1 if make erroneously finds a boost
+    install
 SVNVERSION: Set to svnversion . by default. If you're using TortoiseSVN,
     change Makefile.setup to set it to SubECRev.exe . instead.
 
