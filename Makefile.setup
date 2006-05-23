@@ -21,6 +21,9 @@ SVNVERSION = svnversion .	# standard SVN client (e.g. cygwin)
 BOOST_VERSION = 1_33_1
 # If that fails, set your boost include folder here.
 #BOOST_INCLUDE = 
+# If make is convinced that you do have boost installed when you do not,
+# uncomment the following line:
+#NO_BOOST = 1
 
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
@@ -48,11 +51,20 @@ ifndef NOREV
 NOREV = 0
 endif
 
+ifndef NO_BOOST
+NO_BOOST = 0
+endif
+
 ifeq ($(BOOST_INCLUDE),CANNOT_FIND_BOOST_INCLUDE_DIRECTORY)
 BOOST_CMD=-DNO_BOOST
 BOOST_WARN = @echo " ** Warning: This GRFCodec is being built without \\w<YMD> or \\w<DMY> support."
 else
 BOOST_CMD=-I$(BOOST_INCLUDE)
+endif
+
+ifneq ($(NO_BOOST),0)
+BOOST_CMD=-DNO_BOOST
+BOOST_WARN = @echo " ** Warning: This GRFCodec is being built without \\w<YMD> or \\w<DMY> support."
 endif
 
 # default targets
