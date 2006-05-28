@@ -3,7 +3,7 @@
 # A command to return the current SVN revision of the source tree; it should
 # it in the format [##:]##, where the second set of digits is the current
 # revision (used for adding the revision to the version string)
-SVNVERSION = svnversion .	# standard SVN client (e.g. cygwin)
+SVNVERSION = svnversion -c .	# standard SVN client (e.g. cygwin)
 # SVNVERSION = SubWCRev.exe .	# TortoiseSVN
 
 # Optional parts of NFORenum are dependent on boost::date_time
