@@ -58,6 +58,7 @@ class pcxread : virtual public pcxfile {
 	void readheader();
 
 	private:
+	int filey;
 	multifile *mfile;
 	pcxread(const pcxread&); //not copyable: pcxfile::colormap
 	void operator=(const pcxread&); //not assignable: pcx::colormap

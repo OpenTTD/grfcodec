@@ -227,6 +227,14 @@ void pcxread::startsubimage(int x, int y, int sx, int sy)
 {
   subx = x;
 
+//  printf("Reading image at %d - %d of %d \n", y, sy, filey);
+
+  if (y + sy > filey) {
+	printf("\nError: Sprite y extends beyond end of PCX file.\nFile has %d lines, sprite wants %d..%d\n.",
+		filey, y, y + sy - 1);
+	exit(2);
+  }
+
   if (sy > bandlines) {	// don't have enough lines in memory, read rest
 	alloclines(sy);
   }
@@ -296,6 +304,7 @@ void pcxread::readheader()
   fseek(curfile, oldpos, SEEK_SET);
 
   sx = header.window[2] + 1;
+  filey = header.window[3] + 1;
   totaly = 0;
 
   thisbandy = 0;
