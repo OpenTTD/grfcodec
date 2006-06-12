@@ -239,7 +239,8 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			if(~perms&CTRL_COLOR)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
 		}else if(ch==0x99){
 			if(~perms&CTRL_COLOR)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
-			offs++;
+			if(!data.ExtractByte(++offs)&&!include_00_safe)
+				IssueMessage(WARNING1,EMBEDDED_00,offs);
 		}else if(ch<0x9E)IssueMessage(WARNING3,UNUSED_CONTROL,offs,ch);
 		if(++offs>=length)break;
 	}
