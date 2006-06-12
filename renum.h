@@ -23,7 +23,12 @@
 #ifndef _RENUM_RENUM_H_INCLUDED_
 #define _RENUM_RENUM_H_INCLUDED_
 
-#include"boost/current_function.hpp"
+#ifdef NO_BOOST
+# include"boost/current_function.hpp"
+#else
+# include<boost/current_function.hpp>
+#endif
+
 #include"getopt.h"
 
 /* file handling defs:
