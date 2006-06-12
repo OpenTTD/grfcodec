@@ -339,8 +339,8 @@ This will insert a TTDPatch version check.
  3a) The coloquial version number, either dotted or undotted (201a<num>, 
     2.0.1a<num>, 25b<num>, or 2.5b<num>), eg 201a66 for 2.0.1 alpha 66, for
     TTDPatch versions 2.5b5 and earlier.
- 3b) The coloquial version number, either dotted or undotted (2<beta>r<rev>
-    or 2.<beta>r<num>), for TTDPatch revisions r418 and later.
+ 3b) The coloquial version number, either dotted or undotted (2<minor>r<rev>
+    or 2.<minor>r<num>), for TTDPatch revisions r418 and later.
 Note that 3a cannot be used to specify a version that is not in the 2.0.1
 alpha or 2.5 beta series, nor a non-official version.
 <name> is the human-readable name of that version, either as a series of hex
