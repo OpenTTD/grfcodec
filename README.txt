@@ -336,9 +336,12 @@ This will insert a TTDPatch version check.
 <ver> can be in one of three different formats:
  1) The dotted-decimal version number, eg 2.0.10.640 for 2.0.1 alpha 64.
  2) The 8-character version code, best acquired by copying from switches.xml.
- 3) The coloquial version number, either dotted or undotted (201a<num>, 
-    2.0.1a<num>, 25b<num>, or 2.5b<num>), eg 201a66 for 2.0.1 alpha 66.
-Note that #3 cannot be used to specify a version that is not in the 2.0.1
+ 3a) The coloquial version number, either dotted or undotted (201a<num>, 
+    2.0.1a<num>, 25b<num>, or 2.5b<num>), eg 201a66 for 2.0.1 alpha 66, for
+    TTDPatch versions 2.5b5 and earlier.
+ 3b) The coloquial version number, either dotted or undotted (2<beta>r<rev>
+    or 2.<beta>r<num>), for TTDPatch revisions r418 and later.
+Note that 3a cannot be used to specify a version that is not in the 2.0.1
 alpha or 2.5 beta series, nor a non-official version.
 <name> is the human-readable name of that version, either as a series of hex
 characters or as a quoted string. A 00 will be appended by NFORenum.

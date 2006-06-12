@@ -220,8 +220,10 @@ bool parse_comment(const string&line){
 				ver=M<<24|m<<20|r<<16|b;
 			else if((sscanf(command_part.c_str(),"201a%u",&b)==1||sscanf(command_part.c_str(),"2.0.1a%u",&b)==1)&&b<6553)
 				ver=0x020A0000|(b*10);
-			else if((sscanf(command_part.c_str(),"25b%u",&b)==1||sscanf(command_part.c_str(),"2.5b%u",&b)==1)&&b<6553)
+			else if((sscanf(command_part.c_str(),"25b%u",&b)==1||sscanf(command_part.c_str(),"2.5b%u",&b)==1)&&b<6)
 				ver=0x02500000|(b*10);
+			else if((sscanf(command_part.c_str(),"2%ur%u",&m,&b)==2||sscanf(command_part.c_str(),"2.%ur%u",&m,&b)==2)&&m<16&&b>417)
+				ver=0x02000000|(m<<20)|b;
 			else{
 				IssueMessage(0,COMMAND_INVALID_ARG,gen[VERSIONCHECK].name);
 				return true;
