@@ -207,7 +207,15 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					swap(stack[3],stack[5]);
 				}
 			}
-		}else if(ch<0x88){
+		}else if(ch<0x88||ch==0x9A){
+			if(ch==0x9A){
+				ch=data.ExtractByte(++offs);
+				if(ch){
+					IssueMessage(ERROR,INVALID_EXT_CODE,offs,ch);
+					perms|=CTRL_NO_STACK_CHECK;
+				}else if(!include_00_safe)
+					IssueMessage(WARNING1,EMBEDDED_00,offs);
+			}
 			if(~perms&CTRL_NO_STACK_CHECK){
 				switch(ch){
 				case 0x7D:
@@ -220,6 +228,9 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					STACK_CHECK(STACK_TEXT,2)
 				case 0x7B:case 0x7F:
 					STACK_CHECK(STACK_DWORD,4)
+				//Extended format codes (9A XX) 
+				case 0x00:
+					STACK_CHECK(STACK_QWORD,8)
 				DEFAULT(ch)
 				}
 				++ret;
@@ -245,7 +256,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 	INTERNAL_ERROR(retInfo,retInfo);
 }
 
-static const uchar stackSize[]={0,2,2,2,4,2};
+static const uchar stackSize[]={0,2,2,2,4,2,8};
 
 string MakeStack(int items,...){
 	string ret;
