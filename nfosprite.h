@@ -92,4 +92,4 @@ private:
 	string name;
 };
 
-#endif
+#endif /* _NFOSPRITE_H */

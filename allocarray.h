@@ -71,4 +71,4 @@ private:
 	void operator=(const _Myt&right);
 };
 
-#endif//_ALLOC_ARRAY_H
+#endif /* _ALLOC_ARRAY_H */
