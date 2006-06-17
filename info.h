@@ -70,4 +70,4 @@ class infowriter : virtual public spriteinfowriter {
 
 int makeint(U8 low, S8 high);
 
-#endif /* _GRFCOMM_H */
+#endif /* _INFO_H */
