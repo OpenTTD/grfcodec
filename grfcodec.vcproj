@@ -332,6 +332,9 @@
 				RelativePath=".\error.h">
 			</File>
 			<File
+				RelativePath=".\escapes.h">
+			</File>
+			<File
 				RelativePath=".\getopt.h">
 			</File>
 			<File
@@ -354,6 +357,9 @@
 			</File>
 			<File
 				RelativePath=".\sprites.h">
+			</File>
+			<File
+				RelativePath=".\ttdpal.h">
 			</File>
 			<File
 				RelativePath=".\typesize.h">
