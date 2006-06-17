@@ -67,6 +67,8 @@ BOOST_CMD=-DNO_BOOST
 BOOST_WARN = @echo " ** Warning: This GRFCodec is being built without \\w<YMD> or \\w<DMY> support."
 endif
 
+PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
+
 # default targets
 all: grfcodec grfdiff grfmerge
 allb: grfcodec.exe grfdiff.exe grfmerge.exe

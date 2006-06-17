@@ -31,8 +31,8 @@ grfmrg.obj:	grfmrg.asm grfmrg.ah
 grfmrg.o:	grfmrgc.asm grfmrgc.bin
 	nasm -f $(NASMFORMAT) $< -o $@
 
-ttdpal.h:	pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
-	perl pal2c.pl $^ > $@
+ttdpal.h:	$(PAL_FILES) pal2c.pl
+	perl pal2c.pl $(PAL_FILES) > $@
 
 # Gnu compiler rules
 
