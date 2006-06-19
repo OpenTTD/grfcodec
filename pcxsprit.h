@@ -5,7 +5,7 @@
 #include "pcx.h"
 #include "sprites.h"
 
-class pcxwrite : virtual public pcxfile, virtual public spritestorage {
+class pcxwrite : public pcxfile, public spritestorage {
 	public:
 	pcxwrite(multifile *mfile);
 
@@ -47,7 +47,7 @@ class pcxwrite : virtual public pcxfile, virtual public spritestorage {
 	void operator=(const pcxwrite&);//not assignable: pcxfile::colormap
 };
 
-class pcxread : virtual public pcxfile {
+class pcxread : public pcxfile {
 	public:
 	pcxread(singlefile *mfile);
 
