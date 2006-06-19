@@ -165,10 +165,11 @@ class pcxfile {
 		colourmap(const colourmap&);// not copyable
 	} getcolourmap, putcolourmap;
 
+	U8 **band;
+
 	private:
 
 	multifile *mfile;
-	U8 **band;
 
 	U8 last;
 	U8 run;

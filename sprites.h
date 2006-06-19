@@ -53,6 +53,7 @@ class spritestorage {
 	virtual int  curspritex() {return 0;};
 	virtual void newrow() {};
 	virtual void nextpixel(U8 /*colour*/) {};
+	virtual void spritedone(int /*sx*/, int /*sy*/) {};
 	virtual void spritedone() {};
 };
 

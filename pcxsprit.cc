@@ -177,6 +177,21 @@ void pcxwrite::setline(U8 *band)
   memset(band, background, sx);
 }
 
+void pcxwrite::spritedone(int sx, int sy){
+	spritedone();
+
+	bool maybeGlyph=true;
+
+	for(int cx=0, x=subofsx(cx,0);cx<sx&&maybeGlyph;cx++,x++)
+		for(int cy=0, y=subofsy(cy,0);cy<sy;cy++,y++)
+			maybeGlyph &= (band[y][x] < 3);
+
+	if (!maybeGlyph)
+		for(int cx=0, x=subofsx(cx,0);cx<sx;cx++,x++)
+			for(int cy=0, y=subofsy(cy,0);cy<sy;cy++,y++)
+				band[y][x] = putcolourmap[band[y][x]];
+}
+
 void pcxwrite::writeheader()
 {
   long oldpos = ftell(curfile);

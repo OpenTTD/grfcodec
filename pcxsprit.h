@@ -22,6 +22,7 @@ class pcxwrite : virtual public pcxfile, virtual public spritestorage {
 	virtual void newrow() { newline(); };
 	virtual void nextpixel(U8 colour) { streamputpixel(colour); };
 	virtual void spritedone() { endsubimage(); };
+	virtual void spritedone(int sx, int sy);
 
 
 	void writeheader();

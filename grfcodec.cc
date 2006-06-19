@@ -89,7 +89,8 @@ char *usagetext=
 	"    -u        Save uncompressed data (probably not a good idea)\n"
 	"\n"
 	"Options for both encoding and decoding:\n"
-	"    -m <num>  Apply colour translation (-m ? for a list)\n"
+	"    -m <num>  Apply colour translation to all sprites except character-glyphs.\n"
+	"        (-m ? for a list of colour translations.)\n"
 	"\n"
 	"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>\n"
 	"You may copy and redistribute it under the terms of the GNU General Public\n"
@@ -643,7 +644,7 @@ U8* findpal(char *grffile)
 
 //extern "C" void debugint(void);
 
-bool _force=false;
+bool _force=false,_mapAll=false;
 int _useexts=2;
 
 int main(int argc, char **argv)
@@ -666,7 +667,7 @@ int main(int argc, char **argv)
 
   // parse option arguments
   while (1) {
-	char opt = getopt(argc, argv, "dew:h:b:cup:m:tfx");
+	char opt = getopt(argc, argv, "dew:h:b:cup:m:M:tfx");
 
 	if (opt == (char) EOF)
 		break;
@@ -700,6 +701,8 @@ int main(int argc, char **argv)
 				palette = readpal(optarg);
 			break;
 		case 'm':
+		case 'M':
+			_mapAll= opt=='M';
 			unsigned int mapnum;
 			mapnum = atoi(optarg);
 			if (*optarg == '?') {

@@ -266,7 +266,7 @@ void pcxfile::streamputpixel(U8 colour)
 	exit(2);
   }
 
-  band[y][x] = putcolourmap[colour];
+  band[y][x] = colour; // Colour mapping moved to pcxwrite::spritedone
   cx++;
 }
 
