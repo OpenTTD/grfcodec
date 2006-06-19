@@ -87,6 +87,8 @@ char *usagetext=
 	"\n"
 	"Options for encoding:\n"
 	"    -u        Save uncompressed data (probably not a good idea)\n"
+	"\n"
+	"Options for both encoding and decoding:\n"
 	"    -m <num>  Apply colour translation (-m ? for a list)\n"
 	"\n"
 	"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>\n"
