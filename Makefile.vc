@@ -4,8 +4,4 @@
 SOURCE_DIR = ~/grfcodec
 
 all:
-ifneq ($(NOREV),0)
-	/bin/sh -c "export PATH=\"/bin\" && rm -f version.h && make -C $(SOURCE_DIR) ttdpal.h version.h NO_MAKEFILE_DEP=1 && touch .rev"
-else
 	/bin/sh -c "export PATH=\"/bin\" && make -C $(SOURCE_DIR) ttdpal.h version.h NO_MAKEFILE_DEP=1"
-endif
