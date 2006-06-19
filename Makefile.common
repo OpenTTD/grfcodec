@@ -2,7 +2,7 @@
 
 FORCE:
 release: FORCE
-	rm -rf grfcodec$(EXE) grfdiff$(EXE) grfmerge$(EXE) version.h
+	rm -rf grfcodec$(EXE) grfdiff$(EXE) grfmerge$(EXE)
 	$(_C)make -f $(MAKEFILE) $(_S) all
 	$(_E) [STRIP/UPX] grfcodec$(REL_EXE) grfdiff$(REL_EXE) grfmerge$(REL_EXE)
 	$(_C)strip  grfcodec$(REL_EXE) grfdiff$(REL_EXE) grfmerge$(REL_EXE)
