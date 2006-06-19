@@ -39,7 +39,7 @@
 
 
 
-class spriteinfowriter : virtual public bandnotify {
+class spriteinfowriter : public bandnotify {
 	public:
 	virtual void addsprite(int /*x*/, U8 /*info*/[8]) { };
 	virtual void adddata(U16 /*size*/, U8 * /*data*/) { };

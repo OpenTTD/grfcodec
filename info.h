@@ -33,7 +33,7 @@ class inforeader {
 	AllocArray<Sprite> file;
 };
 
-class infowriter : virtual public spriteinfowriter {
+class infowriter :  public spriteinfowriter {
 	public:
 	infowriter(FILE *info, int maxboxes, int useplaintext);
 

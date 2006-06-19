@@ -50,7 +50,7 @@ class multifile {
 	virtual const char *getdirectory() { return NULL; };
 };
 
-class singlefile : virtual public multifile {
+class singlefile : public multifile {
 	public:
 	singlefile(const char *filename, const char *mode, const char *dir);
 	singlefile(FILE *file, const char *dir);
