@@ -286,7 +286,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
   else
 	result = decoderegular(outbuffer, sx, sy, store);
 
-  store->spritedone();
+  store->spritedone(sx, sy);
 
 
   if (sy > maxy)
