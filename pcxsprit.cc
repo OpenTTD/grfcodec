@@ -2,6 +2,8 @@
 #include "pcxsprit.h"
 #include "ttdpal.h"
 
+extern bool _mapAll;
+
 /***********************\
 *			*
 * class pcxwrite	*
@@ -180,7 +182,7 @@ void pcxwrite::setline(U8 *band)
 void pcxwrite::spritedone(int sx, int sy){
 	spritedone();
 
-	bool maybeGlyph=true;
+	bool maybeGlyph=!_mapAll;
 
 	for(int cx=0, x=subofsx(cx,0);cx<sx&&maybeGlyph;cx++,x++)
 		for(int cy=0, y=subofsy(cy,0);cy<sy;cy++,y++)
