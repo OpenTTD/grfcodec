@@ -31,8 +31,8 @@ inforeader::inforeader(char *fn)
   string buffer;
   int infover;
 
-  pcx = NULL;
-  pcxname = NULL;
+  imgfile = NULL;
+  imgname = NULL;
 
 
   getline(f,buffer);		// read first line, a comment
@@ -55,7 +55,7 @@ inforeader::inforeader(char *fn)
   colourmap = NULL;
 
   try{
-	read_file(f,infover,file);
+	read_file(f,infover,nfofile);
   }catch(Sprite::unparseable e){
 	printf(e);
 	exit(1);
@@ -64,28 +64,28 @@ inforeader::inforeader(char *fn)
 
 inforeader::~inforeader() 
 {
-	delete(pcx);
+	delete imgfile;
 }
 
 void inforeader::PrepareReal(const Real&sprite){
   if ( sprite.reopen() || !pcx || !pcxname || (stricmp(sprite.GetName(), pcxname) != 0) ) {
 	// new file
 
-	delete(pcx);
+	delete imgfile;
 
 	printf("Loading %s\n", sprite.GetName());
 
-	pcxname = sprite.GetName();
-	pcx = new pcxread(new singlefile(pcxname, "rb", NULL));
-	if (!pcx) {
-		printf("\nError: can't open %s\n", pcxname);
+	imgname = sprite.GetName();
+	imgfile = MakeReader();
+	if (!imgfile) {
+		printf("\nError: can't open %s\n", imgname);
 		exit(2);
 	}
 
 	if (colourmap)
-		pcx->installreadmap(colourmap);
+		imgfile->installreadmap(colourmap);
 
-	pcx->startimage(0, 0, 0, 0, NULL);
+	imgfile->startimage(0, 0, 0, 0, NULL);
   }
 
   inf = sprite.inf;
@@ -93,14 +93,21 @@ void inforeader::PrepareReal(const Real&sprite){
   sx = (inf[3] << 8) | inf[2];
   sy = inf[1];
 
-  pcx->startsubimage(sprite.x(), sprite.y(), sx, sy);
+  imgfile->startsubimage(sprite.x(), sprite.y(), sx, sy);
 
   imgsize = (long) sx * (long) sy;
 }
 
+pcxread* inforeader::MakeReader()const{
+	//if(toupper(name[strlen(name)-1])=='X')//pcx
+		return new pcxread(new singlefile(imgname, "rb", NULL));
+	//else //png
+	//	return new pngread(new singlefile(name, "rb", NULL));
+}
+
 int inforeader::getsprite(U8 *sprite)
 {
-  pcx->streamgetpixel(sprite, imgsize);
+  imgfile->streamgetpixel(sprite, imgsize);
   return 1;
 }
 

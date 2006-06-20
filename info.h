@@ -13,8 +13,8 @@ class inforeader {
 	public:
 	inforeader(char *nf);
         ~inforeader();
-	const Sprite&operator[](int x)const{return *(file[x]);}
-	int size()const{return file.size();}
+	const Sprite&operator[](int x)const{return *(nfofile[x]);}
+	int size()const{return nfofile.size();}
 
 	void installmap(int *map);
 
@@ -24,13 +24,15 @@ class inforeader {
 	void PrepareReal(const Real&);
 	int getsprite(U8 *sprite);
 
-        pcxread *pcx;
+	pcxread *imgfile;
 
 	protected:
 
-	const char *pcxname;
+	const char *imgname;
 	int *colourmap;
-	AllocArray<Sprite> file;
+	AllocArray<Sprite> nfofile;
+private:
+	pcxread* MakeReader()const;
 };
 
 class infowriter :  public spriteinfowriter {
