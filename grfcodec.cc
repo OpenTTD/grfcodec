@@ -102,43 +102,43 @@ ENDC
 
 void showpalettetext()
 {
-  printf(
-	"Options for the -p parameter:\n"
-	"\n"
-	"Built-in palettes: use -p <number>, where <number> is one of the following:\n"
-	"	%d  DOS TTD\n"
-	"	%d  Windows TTD\n"
-	"	%d  DOS TTD, Candyland\n"
-	"	%d  Windows TTD, Candyland\n"
-	"	%d  TT Original\n"
-	"	%d  TT Original, Mars landscape\n"
-	"\n"
-	"External palette files: use -p [type:]filename.\n"
-	"[type:] can be bcp, psp, or gpl.  (Other formats may become available later.)\n"
-	"If the type is omitted, bcp is assumed.\n"
-	"\n"
-	"bcp	binary coded palette with the same format as the palette in a PCX\n"
-	"	file: 256 triples of red, green and blue encoded in bytes.\n"
-	"psp	the palette format output by Paintshop Pro\n"
-	"gpl	the palette format output by The GIMP.\n"
-	"\n",
+	printf(
+		"Options for the -p parameter:\n"
+		"\n"
+		"Built-in palettes: use -p <number>, where <number> is one of the following:\n"
+		"	%d  DOS TTD\n"
+		"	%d  Windows TTD\n"
+		"	%d  DOS TTD, Candyland\n"
+		"	%d  Windows TTD, Candyland\n"
+		"	%d  TT Original\n"
+		"	%d  TT Original, Mars landscape\n"
+		"\n"
+		"External palette files: use -p [type:]filename.\n"
+		"[type:] can be bcp, psp, or gpl.  (Other formats may become available later.)\n"
+		"If the type is omitted, bcp is assumed.\n"
+		"\n"
+		"bcp	binary coded palette with the same format as the palette in a PCX\n"
+		"	file: 256 triples of red, green and blue encoded in bytes.\n"
+		"psp	the palette format output by Paintshop Pro\n"
+		"gpl	the palette format output by The GIMP.\n"
+		"\n",
 
-	// note, -p values are the array index plus one (so that 0 is not
-	// a valid number, which makes the atoi easier)
-	PAL_ttd_norm+1, PAL_ttw_norm+1, PAL_ttd_cand+1, PAL_ttw_cand+1,
-	PAL_tt1_norm+1, PAL_tt1_mars+1
-  );
+		// note, -p values are the array index plus one (so that 0 is not
+		// a valid number, which makes the atoi easier)
+		PAL_ttd_norm+1, PAL_ttw_norm+1, PAL_ttd_cand+1, PAL_ttw_cand+1,
+		PAL_tt1_norm+1, PAL_tt1_mars+1
+		);
 }
 
 void showcolourmaps()
 {
-  printf(
-	"Options for the -m parameter:\n"
-	"\n"
-	"	0  Convert a TTD-DOS file to TTD-Windows\n"
-	"	1  Convert a TTD-Windows file to TTD-DOS\n"
-	"\n"
-  );
+	printf(
+		"Options for the -m parameter:\n"
+		"\n"
+		"	0  Convert a TTD-DOS file to TTD-Windows\n"
+		"	1  Convert a TTD-Windows file to TTD-DOS\n"
+		"\n"
+		);
 }
 
 struct defpal {
@@ -147,501 +147,501 @@ struct defpal {
 };
 
 defpal defpals[] =
-    {
-		// DOS TTD
+{
+	// DOS TTD
 	{ "TRG1",	PAL_ttd_norm },
 	{ "TRGC",	PAL_ttd_norm },
 	{ "TRGH",	PAL_ttd_norm },
 	{ "TRGI",	PAL_ttd_norm },
 	{ "TRGT",	PAL_ttd_cand },
 
-		// Windows TTD
+	// Windows TTD
 	{ "TRG1R",	PAL_ttw_norm },
 	{ "TRGCR",	PAL_ttw_norm },
 	{ "TRGHR",	PAL_ttw_norm },
 	{ "TRGIR",	PAL_ttw_norm },
 	{ "TRGTR",	PAL_ttw_cand },
 
-		// DOS TTO or TT+WB
+	// DOS TTO or TT+WB
 	{ "TREDIT",	PAL_tt1_norm },
 	{ "TREND",	PAL_tt1_norm },
 	{ "TRTITLE",	PAL_tt1_norm },
 	{ "TRHCOM",	PAL_tt1_norm },
 	{ "TRHCOM2",	PAL_tt1_mars },
 
-		// TTDPatch
+	// TTDPatch
 	{ "TTDPATCH",	PAL_ttd_norm },
 	{ "TTDPATCHW",	PAL_ttw_norm },
-    };
+};
 
 int *colourmaps[] = { palmap0, palmap1 };
 
 
 int movetoreal(char *newfile, char *realfile)
 {
-  // rename original to bak if bak doesn't exist
-  char *bakfile = (char*) malloc(strlen(realfile) + 4);
-  char *c;
-  FILE *tmp;
+	// rename original to bak if bak doesn't exist
+	char *bakfile = (char*) malloc(strlen(realfile) + 4);
+	char *c;
+	FILE *tmp;
 
-  strcpy(bakfile, realfile);
-  c = strrchr(bakfile, '.');
-  if (!c) c = bakfile + strlen(bakfile);
-  strcpy(c, ".bak");
+	strcpy(bakfile, realfile);
+	c = strrchr(bakfile, '.');
+	if (!c) c = bakfile + strlen(bakfile);
+	strcpy(c, ".bak");
 
-  tmp = fopen(bakfile, "rb");
+	tmp = fopen(bakfile, "rb");
 
-  if (!tmp && (errno == ENOENT)) {
-	// .bak doesn't exist, rename orig to .bak
-	// XXX: Shouldn't we rename orig to .bak even if .bak already exists? --pasky
-	printf("\nRenaming %s to %s", realfile, bakfile);
-	if (rename(realfile, bakfile)) {
-		errno = EEXIST;		// go delete it
-	} else {
-		errno = ENOENT;		// don't try to delete it
+	if (!tmp && (errno == ENOENT)) {
+		// .bak doesn't exist, rename orig to .bak
+		// XXX: Shouldn't we rename orig to .bak even if .bak already exists? --pasky
+		printf("\nRenaming %s to %s", realfile, bakfile);
+		if (rename(realfile, bakfile)) {
+			errno = EEXIST;		// go delete it
+		} else {
+			errno = ENOENT;		// don't try to delete it
+		}
 	}
-  }
 
-  if (tmp) fclose(tmp);
-  free(bakfile);
+	if (tmp) fclose(tmp);
+	free(bakfile);
 
-  // delete grf if it exists
-  if (access(realfile, F_OK) == 0) {
-	printf("\nDeleting %s",realfile);
-	if (remove(realfile))
-		fperror("\nError deleting %s", realfile);
-  }
+	// delete grf if it exists
+	if (access(realfile, F_OK) == 0) {
+		printf("\nDeleting %s",realfile);
+		if (remove(realfile))
+			fperror("\nError deleting %s", realfile);
+	}
 
-  // rename tmp to grf
+	// rename tmp to grf
 
-  printf("\nReplacing %s with %s\n", realfile, newfile);
+	printf("\nReplacing %s with %s\n", realfile, newfile);
 
-  if (rename(newfile, realfile)) {
-	fperror("Error renaming %s to %s", newfile, realfile);
-	exit(2);
-  }
-  return 1;
+	if (rename(newfile, realfile)) {
+		fperror("Error renaming %s to %s", newfile, realfile);
+		exit(2);
+	}
+	return 1;
 }
 
 class spritefiles : public multifile {
-	public:
+public:
 	spritefiles() { init(); };
 	spritefiles(char *basename, char *directory);
 	virtual FILE *curfile()  { return thecurfile; };
 	virtual FILE *nextfile();
 	virtual const char *filename() { return thecurfilename; };
 	virtual const char *getdirectory() { return directory; };
-	private:
+private:
 	void init () {
 		thecurfile = NULL;
 		basename = thecurfilename = directory = NULL;
 		filenum = 0; };
-	FILE *thecurfile;
-	char *thecurfilename, *directory;
-	const char *basename;
-	unsigned int filenum;
+		FILE *thecurfile;
+		char *thecurfilename, *directory;
+		const char *basename;
+		unsigned int filenum;
 };
 
 spritefiles::spritefiles(char *basename, char *directory)
 {
-  init();
-  spritefiles::basename = basename;
-  spritefiles::directory = directory;
+	init();
+	spritefiles::basename = basename;
+	spritefiles::directory = directory;
 }
 
 FILE *spritefiles::nextfile()
 {
-  FILE *oldfile = thecurfile;
-  char *oldname = thecurfilename;
+	FILE *oldfile = thecurfile;
+	char *oldname = thecurfilename;
 
-  thecurfilename = strdup(spritefilename(basename, directory, ".PCX", filenum++, "wb", 1));
-  thecurfile = fopen(thecurfilename, "wb");
+	thecurfilename = strdup(spritefilename(basename, directory, ".PCX", filenum++, "wb", 1));
+	thecurfile = fopen(thecurfilename, "wb");
 
-  if (thecurfile) {	// new open succeeded, close old one
-	if (oldfile)
-		fclose(oldfile);
-	free(oldname);
-  } else {		// retain old one
-    free(thecurfilename);
-	thecurfile = oldfile;
-	thecurfilename = oldname;
-  }
+	if (thecurfile) {	// new open succeeded, close old one
+		if (oldfile)
+			fclose(oldfile);
+		free(oldname);
+	} else {		// retain old one
+		free(thecurfilename);
+		thecurfile = oldfile;
+		thecurfilename = oldname;
+	}
 
-  return thecurfile;
+	return thecurfile;
 }
 
 
 
 int encode(char *file, char *dir, int compress, int *colourmap)
 {
-  char *grfnew, *infofile;
-  FILE *grf;
+	char *grfnew, *infofile;
+	FILE *grf;
 
-  doopen(file, "", ".new", "wb", &grfnew, &grf, 0);
-  doopen(file, dir, ".nfo", "rt", &infofile, NULL, 1);
+	doopen(file, "", ".new", "wb", &grfnew, &grf, 0);
+	doopen(file, dir, ".nfo", "rt", &infofile, NULL, 1);
 
-  printf("Encoding in temporary file %s\n", grfnew);
+	printf("Encoding in temporary file %s\n", grfnew);
 
-  inforeader info(infofile);
+	inforeader info(infofile);
 
-  free(infofile);
+	free(infofile);
 
-  if (colourmap)
-	info.installmap(colourmap);
+	if (colourmap)
+		info.installmap(colourmap);
 
-  long totaluncomp = 1, totalcomp = 1;
-  long totaltransp = 1, totaluntransp = 1;
-  long totalreg = 1, totalunreg = 1;
-  int spriteno = 0;
+	long totaluncomp = 1, totalcomp = 1;
+	long totaltransp = 1, totaluntransp = 1;
+	long totalreg = 1, totalunreg = 1;
+	int spriteno = 0;
 
 
-  for(int i=0;i<info.size();i++){
-	//int comp1 = totalcomp / totaluncomp;
-	int comp2 = (100L * totalcomp / totaluncomp);// % 100;
+	for(int i=0;i<info.size();i++){
+		//int comp1 = totalcomp / totaluncomp;
+		int comp2 = (100L * totalcomp / totaluncomp);// % 100;
 
-	//int comp3 = totaltransp / totaluntransp;
-	int comp4 = (100L * totaltransp / totaluntransp);// % 100;
+		//int comp3 = totaltransp / totaluntransp;
+		int comp4 = (100L * totaltransp / totaluntransp);// % 100;
 
-	//int comp5 = totalreg / totalunreg;
-	int comp6 = (100L * totalreg / totalunreg);// % 100;
+		//int comp5 = totalreg / totalunreg;
+		int comp6 = (100L * totalreg / totalunreg);// % 100;
 
-	printf("\rSprite%5d  Done:%3d%%  "
-		"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
-		spriteno, (int) (i*100L/info.size()),
-		comp2, comp4, comp6);
+		printf("\rSprite%5d  Done:%3d%%  "
+			"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
+			spriteno, (int) (i*100L/info.size()),
+			comp2, comp4, comp6);
 
-	switch(info[i].GetType()){
-	case Sprite::ST_INCLUDE:{
-		const char *bininclude=((const Include&)info[i]).GetName();
-		FILE *bin = fopen(bininclude, "rb");
-		if (!bin) {
-			fperror("Cannot read %s", bininclude);
-			exit(2);
-		}
-
-		struct stat stat_buf;
-		if ( fstat(fileno(bin), &stat_buf) ) {
-			fperror("Could not stat %s", bininclude);
-			exit(2);
-		}
-		if ( stat_buf.st_mode & S_IFDIR ) {
-			printf("Cannot include %s: Is a directory.\n", bininclude);
-			exit(2);
-		}
-		off_t fsize = stat_buf.st_size;
-
-		const char *nameofs = bininclude + strlen(bininclude);
-		while (nameofs > bininclude) {
-			nameofs--;
-			if (nameofs[0] == '\\' || nameofs[0] == '/') {
-				nameofs++;
-				break;
-			}
-		}
-		int namelen = strlen(nameofs);
-		if (namelen > 255) {
-			fprintf(stderr, "Error: binary include has too long filename %s\n", nameofs);
-			exit(2);
-		}
-
-		int spritesize = 3 + namelen + fsize;
-		if (spritesize < 5) {
-			fprintf(stderr, "Error: binary include %s is empty\n", nameofs);
-			exit(2);
-		}
-		if (spritesize > 65535) {
-			fprintf(stderr, "Error: binary include %s is too large\n", nameofs);
-			exit(2);
-		}
-
-		totalcomp += spritesize;
-		totaluncomp += spritesize;
-		spriteno++;
-
-		fwrite(&spritesize, 1, 2, grf);
-		fputc(0xff, grf);
-		fputc(0xff, grf);
-		fputc(namelen, grf);
-		fwrite(nameofs, namelen+1, 1, grf);
-
-		char *buffer = new char[16384];
-		while (fsize > 0) {
-			int chunk = 16384;
-			if (chunk > fsize) chunk=fsize;
-			fread(buffer, chunk, 1, bin);
-			fwrite(buffer, chunk, 1, grf);
-			fsize -= chunk;
-		}
-		delete[]buffer;
-		fclose(bin);
-	}
-		break;
-	case Sprite::ST_PSEUDO:{
-		const Pseudo&sprite=(const Pseudo&)info[i];
-		U16 size=sprite.size();
-		totalcomp += size;
-		totaluncomp += size;
-		spriteno++;
-
-		fwrite(&size, 1, 2, grf);
-		fputc(0xff, grf);
-		fwrite(sprite.GetData(),1,size,grf);
-		if(spriteno == 1 && sprite.size() == 4){
-			int reported = *((S32*)sprite.GetData()) + 1;
-			if(reported != info.size())
-				printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
-					abs(info.size() - reported),
-					info.size()>reported?"more":"fewer");
-		}
-	}
-		break;
-	case Sprite::ST_REAL:{	// real sprite, encode it
-		const Real&sprite=(Real&)info[i];
-		info.PrepareReal(sprite);
-		U8 *image = (U8*) malloc(info.imgsize);
-		if (!image) {
-			printf("Error: can't allocate sprite memory (%ld bytes)\n", info.imgsize);
-			exit(2);
-		}
-
-		info.getsprite(image);
-
-		U16 compsize;
-		if (info.inf[0] & 8) {
-			compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress);
-			totaltransp += getlasttilesize();	// how much after transparency removed
-			totaluntransp += info.imgsize;		// how much with transparency
-
-			totalreg += compsize;			// how much after transp&redund removed
-			totalunreg += getlasttilesize();	// how much with redund
-		} else {
-			compsize = encoderegular(grf, image, info.imgsize, info.inf, compress);
-			totaltransp += info.imgsize;
-			totaluntransp += info.imgsize;
-
-			totalreg += compsize;
-			totalunreg += info.imgsize;
-		}
-
-		totalcomp += compsize;
-		totaluncomp += info.imgsize;
-		spriteno++;
-		free(image);
-	}
-		break;
-	default:
-		printf("What type of sprite is that?");
+		switch(info[i].GetType()){
+case Sprite::ST_INCLUDE:{
+	const char *bininclude=((const Include&)info[i]).GetName();
+	FILE *bin = fopen(bininclude, "rb");
+	if (!bin) {
+		fperror("Cannot read %s", bininclude);
 		exit(2);
 	}
-  }
 
-  U16 endoffile = 0;
-  U32 checksum = 0;
-  fwrite(&endoffile, 1, 2, grf);
-  fwrite(&checksum, 1, 4, grf);
+	struct stat stat_buf;
+	if ( fstat(fileno(bin), &stat_buf) ) {
+		fperror("Could not stat %s", bininclude);
+		exit(2);
+	}
+	if ( stat_buf.st_mode & S_IFDIR ) {
+		printf("Cannot include %s: Is a directory.\n", bininclude);
+		exit(2);
+	}
+	off_t fsize = stat_buf.st_size;
 
-  fclose(grf);
+	const char *nameofs = bininclude + strlen(bininclude);
+	while (nameofs > bininclude) {
+		nameofs--;
+		if (nameofs[0] == '\\' || nameofs[0] == '/') {
+			nameofs++;
+			break;
+		}
+	}
+	int namelen = strlen(nameofs);
+	if (namelen > 255) {
+		fprintf(stderr, "Error: binary include has too long filename %s\n", nameofs);
+		exit(2);
+	}
 
-  movetoreal(grfnew, spritefilename(file, "", ".grf", -1, "r+b", 0));
+	int spritesize = 3 + namelen + fsize;
+	if (spritesize < 5) {
+		fprintf(stderr, "Error: binary include %s is empty\n", nameofs);
+		exit(2);
+	}
+	if (spritesize > 65535) {
+		fprintf(stderr, "Error: binary include %s is too large\n", nameofs);
+		exit(2);
+	}
 
-  free(grfnew);
+	totalcomp += spritesize;
+	totaluncomp += spritesize;
+	spriteno++;
 
-  printf("\nDone!\n");
-  return 1;
+	fwrite(&spritesize, 1, 2, grf);
+	fputc(0xff, grf);
+	fputc(0xff, grf);
+	fputc(namelen, grf);
+	fwrite(nameofs, namelen+1, 1, grf);
+
+	char *buffer = new char[16384];
+	while (fsize > 0) {
+		int chunk = 16384;
+		if (chunk > fsize) chunk=fsize;
+		fread(buffer, chunk, 1, bin);
+		fwrite(buffer, chunk, 1, grf);
+		fsize -= chunk;
+	}
+	delete[]buffer;
+	fclose(bin);
+						}
+						break;
+case Sprite::ST_PSEUDO:{
+	const Pseudo&sprite=(const Pseudo&)info[i];
+	U16 size=sprite.size();
+	totalcomp += size;
+	totaluncomp += size;
+	spriteno++;
+
+	fwrite(&size, 1, 2, grf);
+	fputc(0xff, grf);
+	fwrite(sprite.GetData(),1,size,grf);
+	if(spriteno == 1 && sprite.size() == 4){
+		int reported = *((S32*)sprite.GetData()) + 1;
+		if(reported != info.size())
+			printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
+			abs(info.size() - reported),
+			info.size()>reported?"more":"fewer");
+	}
+					   }
+					   break;
+case Sprite::ST_REAL:{	// real sprite, encode it
+	const Real&sprite=(Real&)info[i];
+	info.PrepareReal(sprite);
+	U8 *image = (U8*) malloc(info.imgsize);
+	if (!image) {
+		printf("Error: can't allocate sprite memory (%ld bytes)\n", info.imgsize);
+		exit(2);
+	}
+
+	info.getsprite(image);
+
+	U16 compsize;
+	if (info.inf[0] & 8) {
+		compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress);
+		totaltransp += getlasttilesize();	// how much after transparency removed
+		totaluntransp += info.imgsize;		// how much with transparency
+
+		totalreg += compsize;			// how much after transp&redund removed
+		totalunreg += getlasttilesize();	// how much with redund
+	} else {
+		compsize = encoderegular(grf, image, info.imgsize, info.inf, compress);
+		totaltransp += info.imgsize;
+		totaluntransp += info.imgsize;
+
+		totalreg += compsize;
+		totalunreg += info.imgsize;
+	}
+
+	totalcomp += compsize;
+	totaluncomp += info.imgsize;
+	spriteno++;
+	free(image);
+					 }
+					 break;
+default:
+	printf("What type of sprite is that?");
+	exit(2);
+		}
+	}
+
+	U16 endoffile = 0;
+	U32 checksum = 0;
+	fwrite(&endoffile, 1, 2, grf);
+	fwrite(&checksum, 1, 4, grf);
+
+	fclose(grf);
+
+	movetoreal(grfnew, spritefilename(file, "", ".grf", -1, "r+b", 0));
+
+	free(grfnew);
+
+	printf("\nDone!\n");
+	return 1;
 }
 
 int decode(char *file, char *dir, U8 *palette, int box, int width, int height, int *colourmap, int useplaintext)
 {
-  int count, result, lastpct = -1;
-  FILE *grf, *info;
-  char *realdir;
-  struct stat statbuf;
+	int count, result, lastpct = -1;
+	FILE *grf, *info;
+	char *realdir;
+	struct stat statbuf;
 
-  long fsize;
+	long fsize;
 
-  grf = fopen(file, "rb");
-  if (!grf) {
-	fperror(e_openfile, file);
-	exit(2);
-  }
-
-  // make sure the directory exists, or create it if not
-  realdir = spritefilename(file, dir, "", -1, "rb", 0);	// make fake filename
-  *strrchr(realdir, '/') = 0;	// cut off filename
-
-  if (stat(realdir, &statbuf)) {
-	// error during stat
-	if (errno != ENOENT) {
-		fperror("Error accessing %s", realdir);
+	grf = fopen(file, "rb");
+	if (!grf) {
+		fperror(e_openfile, file);
 		exit(2);
 	}
 
-	if (mkdir(realdir, 0755)) {
-		fperror("Error making %s", realdir);
+	// make sure the directory exists, or create it if not
+	realdir = spritefilename(file, dir, "", -1, "rb", 0);	// make fake filename
+	*strrchr(realdir, '/') = 0;	// cut off filename
+
+	if (stat(realdir, &statbuf)) {
+		// error during stat
+		if (errno != ENOENT) {
+			fperror("Error accessing %s", realdir);
+			exit(2);
+		}
+
+		if (mkdir(realdir, 0755)) {
+			fperror("Error making %s", realdir);
+			exit(2);
+		}
+	}
+
+	doopen(file, dir, ".nfo", "wt", NULL, &info, 0);
+
+	fseek(grf, 0, SEEK_END);
+	fsize = ftell(grf);
+	fseek(grf, 0, SEEK_SET);
+
+	pcxwrite *pcx;
+
+	if (height == -1)
+		pcx = new pcxwrite(new singlefile(spritefilename(file, dir, ".pcx", -2, "wb", 1),"wb", dir));
+	else
+		pcx = new pcxwrite(new spritefiles(file, dir));
+
+	if (!pcx) {
+		printf("Error opening PCX file\n");
 		exit(2);
 	}
-  }
 
-  doopen(file, dir, ".nfo", "wt", NULL, &info, 0);
+	pcx->setpalette(palette);
 
-  fseek(grf, 0, SEEK_END);
-  fsize = ftell(grf);
-  fseek(grf, 0, SEEK_SET);
+	pcx->setcolours(255, 0, 0);
 
-  pcxwrite *pcx;
+	infowriter writer(info, (width + box - 1) / box, useplaintext);
 
-  if (height == -1)
-	pcx = new pcxwrite(new singlefile(spritefilename(file, dir, ".pcx", -2, "wb", 1),"wb", dir));
-  else
-	pcx = new pcxwrite(new spritefiles(file, dir));
+	if (colourmap)
+		pcx->installwritemap(colourmap);
 
-  if (!pcx) {
-	printf("Error opening PCX file\n");
-	exit(2);
-  }
+	pcx->startimage(width, height, box, box, &writer);
 
-  pcx->setpalette(palette);
+	count = 0;
 
-  pcx->setcolours(255, 0, 0);
+	printf("Decoding:\n");
 
-  infowriter writer(info, (width + box - 1) / box, useplaintext);
+	do {
+		int newpct = 100L*ftell(grf)/fsize;
 
-  if (colourmap)
-	pcx->installwritemap(colourmap);
+		if (newpct != lastpct) {
+			lastpct = newpct;
+			printf("Sprite %d at %lX, %3d%% done\r", count, ftell(grf), lastpct);
+		}
 
-  pcx->startimage(width, height, box, box, &writer);
+		count++;
+		result = decodesprite(grf, pcx, &writer);
+	} while (result);
+	count--;
 
-  count = 0;
+	pcx->endimage();
+	delete(pcx);	// closes output file
 
-  printf("Decoding:\n");
+	writer.done(count);
 
-  do {
-	int newpct = 100L*ftell(grf)/fsize;
+	fclose(info);
 
-	if (newpct != lastpct) {
-		lastpct = newpct;
-		printf("Sprite %d at %lX, %3d%% done\r", count, ftell(grf), lastpct);
-	}
+	printf("%s has %d sprites, maxx %d, maxy %d, maxs %d.\n",
+		file, count, maxx, maxy, maxs);
+	fclose(grf);
 
-	count++;
-	result = decodesprite(grf, pcx, &writer);
-  } while (result);
-  count--;
-
-  pcx->endimage();
-  delete(pcx);	// closes output file
-
-  writer.done(count);
-
-  fclose(info);
-
-  printf("%s has %d sprites, maxx %d, maxy %d, maxs %d.\n",
-	file, count, maxx, maxy, maxs);
-  fclose(grf);
-
-  return 0;
+	return 0;
 }
 
 U8 *readpal(char *filearg)
 {
-  enum paltype { UNK, BCP, PSP, GPL };
-  paltype type = UNK;
-  static U8 pal[256*3];
+	enum paltype { UNK, BCP, PSP, GPL };
+	paltype type = UNK;
+	static U8 pal[256*3];
 
-  if (!strnicmp(filearg, "bcp:", 4))
-	type = BCP;
-  else if (!strnicmp(filearg, "psp:", 4))
-	type = PSP;
-  else if (!strnicmp(filearg, "gpl:", 4))
-	type = GPL;
+	if (!strnicmp(filearg, "bcp:", 4))
+		type = BCP;
+	else if (!strnicmp(filearg, "psp:", 4))
+		type = PSP;
+	else if (!strnicmp(filearg, "gpl:", 4))
+		type = GPL;
 
-  if (type != UNK)
-	filearg += 4;	// remove type: from filename
+	if (type != UNK)
+		filearg += 4;	// remove type: from filename
 
-  FILE *f = fopen(filearg, "rb");
-  if (!f) {
-	fperror(e_openfile, filearg);
-	exit(1);
-  }
+	FILE *f = fopen(filearg, "rb");
+	if (!f) {
+		fperror(e_openfile, filearg);
+		exit(1);
+	}
 
-  switch (type) {
-	case BCP:
-	case UNK:
-		if (fread(pal, 1, 256*3, f) != 256*3) {
-			printf("%s is not a BCP file.\n", filearg);
+	switch (type) {
+case BCP:
+case UNK:
+	if (fread(pal, 1, 256*3, f) != 256*3) {
+		printf("%s is not a BCP file.\n", filearg);
+		exit(1);
+	}
+	break;
+case PSP:
+	char fmt[16];
+	fgets(fmt, sizeof(fmt), f);
+	if (strcmp(fmt, "JASC-PAL\r\n")) {
+		printf("%s is not a PSP palette file.\n", filearg);
+		exit(1);
+	}
+	int nument, nument2;
+	fscanf(f, "%x\n", &nument);
+	fscanf(f, "%d\n", &nument2);
+	if ( (nument != nument2) || (nument != 256) ) {
+		printf("GRFCodec supports only 256 colour palette files.\n");
+		exit(1);
+	}
+	for (int i=0; i<nument; i++) {
+		if (!fscanf(f, "%cd %cd %cd\n", pal + i*3, pal+i*3+1, pal+i*3+2)) {
+			printf("Error reading palette.\n");
 			exit(1);
 		}
-		break;
-	case PSP:
-		char fmt[16];
-		fgets(fmt, sizeof(fmt), f);
-		if (strcmp(fmt, "JASC-PAL\r\n")) {
-			printf("%s is not a PSP palette file.\n", filearg);
+	}
+	break;
+case GPL:
+	fgets(fmt, sizeof(fmt), f);
+	if (strcmp(fmt, "GIMP Palette\r\n")) {
+		printf("%s is not a GIMP palette file.\n", filearg);
+		exit(1);
+	}
+	do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Name: ...
+	do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Columns: ...
+	fgets(fmt, sizeof(fmt), f); // #
+	uint r, g, b;
+	for (int i=0; i<256; i++) {
+		if (!fscanf(f, "%d %d %d\n", &r, &g, &b) || r > 255 || g > 255 || b > 255) {
+			printf("Error reading palette.\n");
 			exit(1);
 		}
-		int nument, nument2;
-		fscanf(f, "%x\n", &nument);
-		fscanf(f, "%d\n", &nument2);
-		if ( (nument != nument2) || (nument != 256) ) {
-			printf("GRFCodec supports only 256 colour palette files.\n");
-			exit(1);
-		}
-		for (int i=0; i<nument; i++) {
-			if (!fscanf(f, "%cd %cd %cd\n", pal + i*3, pal+i*3+1, pal+i*3+2)) {
-				printf("Error reading palette.\n");
-				exit(1);
-			}
-		}
-		break;
-	case GPL:
-		fgets(fmt, sizeof(fmt), f);
-		if (strcmp(fmt, "GIMP Palette\r\n")) {
-			printf("%s is not a GIMP palette file.\n", filearg);
-			exit(1);
-		}
-		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Name: ...
-		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Columns: ...
-		fgets(fmt, sizeof(fmt), f); // #
-		uint r, g, b;
-		for (int i=0; i<256; i++) {
-			if (!fscanf(f, "%d %d %d\n", &r, &g, &b) || r > 255 || g > 255 || b > 255) {
-				printf("Error reading palette.\n");
-				exit(1);
-			}
-			pal[3*i] = (U8) r;
-			pal[3*i+1] = (U8) g;
-			pal[3*i+2] = (U8) b;
-			do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// color name
-		}
-		break;
-  }
-  fclose(f);
+		pal[3*i] = (U8) r;
+		pal[3*i+1] = (U8) g;
+		pal[3*i+2] = (U8) b;
+		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// color name
+	}
+	break;
+	}
+	fclose(f);
 
-  return pal;
+	return pal;
 }
 
 // find default palette
 U8* findpal(char *grffile)
 {
-  char base[12];
-  char *bs;
-  unsigned int i;
+	char base[12];
+	char *bs;
+	unsigned int i;
 
-  bs = strrchr(grffile, '\\');
-  if (!bs) bs = strrchr(grffile, '/');
-  if (!bs) bs = grffile;
+	bs = strrchr(grffile, '\\');
+	if (!bs) bs = strrchr(grffile, '/');
+	if (!bs) bs = grffile;
 
-  strncpy(base, grffile, sizeof(base)-1);
+	strncpy(base, grffile, sizeof(base)-1);
 
-  bs = strchr(base, '.');
-  if (bs) *bs = 0;
+	bs = strchr(base, '.');
+	if (bs) *bs = 0;
 
-  for (i=0; i<sizeof(defpals)/sizeof(defpals[0]); i++) {
-	if (!stricmp(defpals[i].grffile, base))
-		return defaultpalettes[defpals[i].defpalno];
-  }
+	for (i=0; i<sizeof(defpals)/sizeof(defpals[0]); i++) {
+		if (!stricmp(defpals[i].grffile, base))
+			return defaultpalettes[defpals[i].defpalno];
+	}
 
-  return defaultpalettes[0];
+	return defaultpalettes[0];
 }
 
 //extern "C" void debugint(void);
@@ -651,30 +651,30 @@ int _useexts=2;
 
 int main(int argc, char **argv)
 {
-  char directory[128];
-  char *grffile = NULL;
-  int action = 0;
-  int width = 800, height = -1, box = 16, compress = 1;
-  U8 *palette = NULL;
-  int *colourmap = NULL;
-  int useplaintext = 1;
+	char directory[128];
+	char *grffile = NULL;
+	int action = 0;
+	int width = 800, height = -1, box = 16, compress = 1;
+	U8 *palette = NULL;
+	int *colourmap = NULL;
+	int useplaintext = 1;
 
-  puts("GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler");
+	puts("GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler");
 
-  checksizes();
+	checksizes();
 
 #ifdef WIN32
-//  debugint();
+	//  debugint();
 #endif
 
-  // parse option arguments
-  while (1) {
-	char opt = getopt(argc, argv, "dew:h:b:cup:m:M:tfx");
+	// parse option arguments
+	while (1) {
+		char opt = getopt(argc, argv, "dew:h:b:cup:m:M:tfx");
 
-	if (opt == (char) EOF)
-		break;
+		if (opt == (char) EOF)
+			break;
 
-	switch (opt) {
+		switch (opt) {
 		case 'e':
 			action = 1;
 			break;
@@ -694,14 +694,14 @@ int main(int argc, char **argv)
 			unsigned int palnum;
 			palnum = atoi(optarg);
 			if ( (palnum > 0) &&
-			     (palnum <= sizeof(defaultpalettes)/sizeof(defaultpalettes[0])) ) {
-				palette = defaultpalettes[palnum-1];
-			} else if (*optarg == '?') {
-				showpalettetext();
-				exit(1);
-			} else
-				palette = readpal(optarg);
-			break;
+				(palnum <= sizeof(defaultpalettes)/sizeof(defaultpalettes[0])) ) {
+					palette = defaultpalettes[palnum-1];
+				} else if (*optarg == '?') {
+					showpalettetext();
+					exit(1);
+				} else
+					palette = readpal(optarg);
+				break;
 		case 'm':
 		case 'M':
 			_mapAll= opt=='M';
@@ -711,11 +711,11 @@ int main(int argc, char **argv)
 				showcolourmaps();
 				exit(1);
 			} else if ( (mapnum >= 0) &&
-			     (mapnum <= sizeof(colourmaps)/sizeof(colourmaps[0])) ) {
-				colourmap = colourmaps[mapnum];
-			} else
-				usage();
-			break;
+				(mapnum <= sizeof(colourmaps)/sizeof(colourmaps[0])) ) {
+					colourmap = colourmaps[mapnum];
+				} else
+					usage();
+				break;
 		case 'c':
 			printf("Warning: Compression is enabled by default, disable with -u\n");
 			break;
@@ -733,36 +733,36 @@ int main(int argc, char **argv)
 			break;
 		default:
 			usage();
+		}
 	}
-  }
 
-  // non-option arguments: filename and potentially directory
-  if (optind < argc)
-	grffile = argv[optind++];
+	// non-option arguments: filename and potentially directory
+	if (optind < argc)
+		grffile = argv[optind++];
 
-  if (optind < argc)
-	strcpy(directory, argv[optind++]);
-  else
-	strcpy(directory, "sprites");
+	if (optind < argc)
+		strcpy(directory, argv[optind++]);
+	else
+		strcpy(directory, "sprites");
 
-  if (directory[strlen(directory) - 1] != '/')
-	strcat(directory, "/");
+	if (directory[strlen(directory) - 1] != '/')
+		strcat(directory, "/");
 
-  if (!action || !grffile || (width < 16) ||
-	( (height < 16) && (height != -1) ) ||
-	(strlen(directory) < 1) ||
-	(strlen(grffile) < 1) ||
-	(box < 1))
-	usage();
+	if (!action || !grffile || (width < 16) ||
+		( (height < 16) && (height != -1) ) ||
+		(strlen(directory) < 1) ||
+		(strlen(grffile) < 1) ||
+		(box < 1))
+		usage();
 
-  if (action == 1) {
-	return encode(grffile, directory, compress, colourmap);
-  } else if (action == 2) {
-	if (!palette)
-		palette = findpal(grffile);
+	if (action == 1) {
+		return encode(grffile, directory, compress, colourmap);
+	} else if (action == 2) {
+		if (!palette)
+			palette = findpal(grffile);
 
-	return decode(grffile, directory, palette, box, width, height, colourmap, useplaintext);
-  }
+		return decode(grffile, directory, palette, box, width, height, colourmap, useplaintext);
+	}
 
-  return 0;
+	return 0;
 }
