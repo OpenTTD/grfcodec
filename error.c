@@ -6,13 +6,13 @@
 
 void fperror(const char *format, ...)
 {
-  char buffer[256];
+	char buffer[256];
 
-  va_list argptr;
+	va_list argptr;
 
-  va_start(argptr, format);
-  vsprintf(buffer, format, argptr);
-  va_end(argptr);
+	va_start(argptr, format);
+	vsprintf(buffer, format, argptr);
+	va_end(argptr);
 
-  perror(buffer);
+	perror(buffer);
 }

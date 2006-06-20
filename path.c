@@ -39,31 +39,31 @@ void fnmerge(register char *pathP, const char *driveP,
 	const char *dirP, const char *nameP, const char *extP)
 {
 	if (driveP && *driveP)
-	    {
+		{
 		*pathP++ = *driveP++;
 		*pathP++ = ':';
-	    }
+		}
 	if (dirP && *dirP)
-	    {
+		{
 		pathP = stpcopy(pathP,dirP);
 		if (*(pathP-1) != '\\' && *(pathP-1) != '/') *pathP++ = '/';
-	    }
+		}
 	if (nameP)
 	pathP = stpcopy(pathP,nameP);
 	if (extP && *extP)
-	    {
+		{
 		if (*extP != '.') *pathP++ = '.';
 		pathP = stpcopy(pathP,extP);
-	    }
+		}
 	*pathP = 0;
 }
 
 int fnsplit(const char *pathP, char *driveP, char *dirP,
-		char *nameP, char *extP)
+	char *nameP, char *extP)
 {
-	register char   *pB;
-	register int    Wrk;
-	int     Ret;
+	register char	*pB;
+	register int	Wrk;
+	int		Ret;
 
 	char buf[ MAXPATH+2 ];
 
@@ -81,69 +81,69 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 		*extP = 0;
 
 	/*
-          Copy filename into template up to MAXPATH characters
-        */
-        pB = buf;
-        while (*pathP == ' ')
-                pathP++;
-        if ((Wrk = strlen(pathP)) > MAXPATH)
-                Wrk = MAXPATH;
-        *pB++ = 0;
-        strncpy(pB, pathP, Wrk);
-        *(pB += Wrk) = 0;
+		Copy filename into template up to MAXPATH characters
+	*/
+	pB = buf;
+	while (*pathP == ' ')
+		pathP++;
+	if ((Wrk = strlen(pathP)) > MAXPATH)
+		Wrk = MAXPATH;
+	*pB++ = 0;
+	strncpy(pB, pathP, Wrk);
+	*(pB += Wrk) = 0;
 
-        /*
+	/*
 	  Split the filename and fill corresponding nonzero pointers
-        */
-        Wrk = 0;
-        for (; ; ) {
-                switch (*--pB) {
-                case '.'  :
-                        if (!Wrk && (*(pB+1) == '\0'))
-                                Wrk = DotFound(pB);
-                        if ((!Wrk) && ((Ret & EXTENSION) == 0)) {
+	*/
+	Wrk = 0;
+	for (; ; ) {
+		switch (*--pB) {
+		case '.'  :
+			if (!Wrk && (*(pB+1) == '\0'))
+				Wrk = DotFound(pB);
+			if ((!Wrk) && ((Ret & EXTENSION) == 0)) {
 				Ret |= EXTENSION;
 				CopyIt(extP, pB, MAXEXT - 1);
-                                *pB = 0;
-                        }
-                        continue;
-                case ':'  :
+				*pB = 0;
+			}
+			continue;
+		case ':'  :
 			if (pB != &buf[2])
-                                continue;
-                case '\0' :
-                        if (Wrk) {
-                                if (*++pB)
-                                        Ret |= DIRECTORY;
-                                CopyIt(dirP, pB, MAXDIR - 1);
-                                *pB-- = 0;
-                                break;
-                        }
-                case '/'  :
-                case '\\' :
-                        if (!Wrk) {
-                                Wrk++;
-                                if (*++pB)
-                                        Ret |= FILENAME;
-                                CopyIt(nameP, pB, MAXFILE - 1);
-                                *pB-- = 0;
-                                if (*pB == 0 || (*pB == ':' && pB == &buf[2]))
-                                        break;
-                        }
-                        continue;
-                case '*'  :
-                case '?'  :
-                        if (!Wrk)
-                                Ret |= WILDCARDS;
+				continue;
+		case '\0' :
+			if (Wrk) {
+				if (*++pB)
+					Ret |= DIRECTORY;
+				CopyIt(dirP, pB, MAXDIR - 1);
+				*pB-- = 0;
+				break;
+			}
+		case '/'  :
+		case '\\' :
+			if (!Wrk) {
+				Wrk++;
+				if (*++pB)
+					Ret |= FILENAME;
+					CopyIt(nameP, pB, MAXFILE - 1);
+					*pB-- = 0;
+					if (*pB == 0 || (*pB == ':' && pB == &buf[2]))
+						break;
+			}
+			continue;
+		case '*'  :
+		case '?'  :
+			if (!Wrk)
+				Ret |= WILDCARDS;
                 default :
-                        continue;
-                }
-                break;
+			continue;
+		}
+		break;
 	}
-        if (*pB == ':') {
-                if (buf[1])
-                        Ret |= DRIVE;
-                CopyIt(driveP, &buf[1], MAXDRIVE - 1);
-        }
+	if (*pB == ':') {
+		if (buf[1])
+			Ret |= DRIVE;
+		CopyIt(driveP, &buf[1], MAXDRIVE - 1);
+	}
 
-        return (Ret);
+	return (Ret);
 }
