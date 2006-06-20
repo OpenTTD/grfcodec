@@ -68,7 +68,7 @@ inforeader::~inforeader()
 }
 
 void inforeader::PrepareReal(const Real&sprite){
-  if ( sprite.reopen() || !pcx || !pcxname || (stricmp(sprite.GetName(), pcxname) != 0) ) {
+  if ( sprite.reopen() || !imgfile || !imgname || (stricmp(sprite.GetName(), imgname) != 0) ) {
 	// new file
 
 	delete imgfile;
