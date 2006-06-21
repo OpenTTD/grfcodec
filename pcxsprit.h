@@ -2,7 +2,7 @@
 #define _PCXSPRIT_H
 
 
-#include "pcx.h"
+#include "pcxfile.h"
 #include "sprites.h"
 
 class pcxwrite : public pcxfile, public spritestorage {

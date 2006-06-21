@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#include "pcx.h"
+#include "pcxfile.h"
 #include "typesize.h"
 
 #ifdef _SPRITES_C

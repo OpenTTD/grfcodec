@@ -291,6 +291,9 @@
 				RelativePath=".\error.c">
 			</File>
 			<File
+				RelativePath=".\file.cc">
+			</File>
+			<File
 				RelativePath=".\getopt.c">
 			</File>
 			<File
@@ -306,7 +309,7 @@
 				RelativePath=".\path.c">
 			</File>
 			<File
-				RelativePath=".\pcx.cc">
+				RelativePath=".\pcxfile.cc">
 			</File>
 			<File
 				RelativePath=".\pcxsprit.cc">
@@ -335,6 +338,9 @@
 				RelativePath=".\escapes.h">
 			</File>
 			<File
+				RelativePath=".\file.h">
+			</File>
+			<File
 				RelativePath=".\getopt.h">
 			</File>
 			<File
@@ -350,7 +356,7 @@
 				RelativePath=".\path.h">
 			</File>
 			<File
-				RelativePath=".\pcx.h">
+				RelativePath=".\pcxfile.h">
 			</File>
 			<File
 				RelativePath=".\pcxsprit.h">
