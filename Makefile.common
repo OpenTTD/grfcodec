@@ -17,11 +17,10 @@ grfmrg.bin:	grfmerge.exe
 grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
 	$(_C)rm -f $@
 	$(_E) [LD] $@
-	$(_C)$(CC) -o grfmerge $(CFLAGS) -Os $^
+	$(_C)$(CC) -o $@ $(CFLAGS) -Os $^
 	$(_E) [STRIP/UPX] $@
-	$(_C)strip grfmerge$(EXE)
-	$(_C)upx $(_Q) --best grfmerge$(EXE) -o $@
-	$(_C)rm -f grfmerge$(EXE)
+	$(_C)strip $@
+	$(_C)upx $(_Q) --best $@
 
 # making an assembly file which includes the above code; first for BCC
 grfmrg.ah:	grfmrg.bin 
