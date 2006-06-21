@@ -459,18 +459,18 @@ int mkdiff()
 				difflistfrom = strtol(difflist, &difflist, 0);
 				difflistto = -1;
 				switch (difflist[0]) {
-case ',':
-	difflist++;
-case 0:
-	difflistto = difflistfrom;
-	break;
-case '-':
-	difflist++;
-	difflistto = strtol(difflist, &difflist, 0);
-	break;
-default:
-	printf("Invalid number format at %s\n", difflist);
-	myexit(2);
+				case ',':
+					difflist++;
+				case 0:
+					difflistto = difflistfrom;
+					break;
+				case '-':
+					difflist++;
+					difflistto = strtol(difflist, &difflist, 0);
+					break;
+				default:
+					printf("Invalid number format at %s\n", difflist);
+					myexit(2);
 				}
 			}
 			isdiff = ( (spriteno >= difflistfrom) && (spriteno <= difflistto) );
