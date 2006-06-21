@@ -311,127 +311,127 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 			comp2, comp4, comp6);
 
 		switch(info[i].GetType()){
-case Sprite::ST_INCLUDE:{
-	const char *bininclude=((const Include&)info[i]).GetName();
-	FILE *bin = fopen(bininclude, "rb");
-	if (!bin) {
-		fperror("Cannot read %s", bininclude);
-		exit(2);
-	}
+		case Sprite::ST_INCLUDE:{
+			const char *bininclude=((const Include&)info[i]).GetName();
+			FILE *bin = fopen(bininclude, "rb");
+			if (!bin) {
+				fperror("Cannot read %s", bininclude);
+				exit(2);
+			}
 
-	struct stat stat_buf;
-	if ( fstat(fileno(bin), &stat_buf) ) {
-		fperror("Could not stat %s", bininclude);
-		exit(2);
-	}
-	if ( stat_buf.st_mode & S_IFDIR ) {
-		printf("Cannot include %s: Is a directory.\n", bininclude);
-		exit(2);
-	}
-	off_t fsize = stat_buf.st_size;
+			struct stat stat_buf;
+			if ( fstat(fileno(bin), &stat_buf) ) {
+				fperror("Could not stat %s", bininclude);
+				exit(2);
+			}
+			if ( stat_buf.st_mode & S_IFDIR ) {
+				printf("Cannot include %s: Is a directory.\n", bininclude);
+				exit(2);
+			}
+			off_t fsize = stat_buf.st_size;
 
-	const char *nameofs = bininclude + strlen(bininclude);
-	while (nameofs > bininclude) {
-		nameofs--;
-		if (nameofs[0] == '\\' || nameofs[0] == '/') {
-			nameofs++;
-			break;
+			const char *nameofs = bininclude + strlen(bininclude);
+			while (nameofs > bininclude) {
+				nameofs--;
+				if (nameofs[0] == '\\' || nameofs[0] == '/') {
+					nameofs++;
+					break;
+				}
+			}
+			int namelen = strlen(nameofs);
+			if (namelen > 255) {
+				fprintf(stderr, "Error: binary include has too long filename %s\n", nameofs);
+				exit(2);
+			}
+
+			int spritesize = 3 + namelen + fsize;
+			if (spritesize < 5) {
+				fprintf(stderr, "Error: binary include %s is empty\n", nameofs);
+				exit(2);
+			}
+			if (spritesize > 65535) {
+				fprintf(stderr, "Error: binary include %s is too large\n", nameofs);
+				exit(2);
+			}
+
+			totalcomp += spritesize;
+			totaluncomp += spritesize;
+			spriteno++;
+
+			fwrite(&spritesize, 1, 2, grf);
+			fputc(0xff, grf);
+			fputc(0xff, grf);
+			fputc(namelen, grf);
+			fwrite(nameofs, namelen+1, 1, grf);
+
+			char *buffer = new char[16384];
+			while (fsize > 0) {
+				int chunk = 16384;
+				if (chunk > fsize) chunk=fsize;
+				fread(buffer, chunk, 1, bin);
+				fwrite(buffer, chunk, 1, grf);
+				fsize -= chunk;
+			}
+			delete[]buffer;
+			fclose(bin);
 		}
-	}
-	int namelen = strlen(nameofs);
-	if (namelen > 255) {
-		fprintf(stderr, "Error: binary include has too long filename %s\n", nameofs);
-		exit(2);
-	}
+			break;
+		case Sprite::ST_PSEUDO:{
+			const Pseudo&sprite=(const Pseudo&)info[i];
+			U16 size=sprite.size();
+			totalcomp += size;
+			totaluncomp += size;
+			spriteno++;
 
-	int spritesize = 3 + namelen + fsize;
-	if (spritesize < 5) {
-		fprintf(stderr, "Error: binary include %s is empty\n", nameofs);
-		exit(2);
-	}
-	if (spritesize > 65535) {
-		fprintf(stderr, "Error: binary include %s is too large\n", nameofs);
-		exit(2);
-	}
+			fwrite(&size, 1, 2, grf);
+			fputc(0xff, grf);
+			fwrite(sprite.GetData(),1,size,grf);
+			if(spriteno == 1 && sprite.size() == 4){
+				int reported = *((S32*)sprite.GetData()) + 1;
+				if(reported != info.size())
+					printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
+					abs(info.size() - reported),
+					info.size()>reported?"more":"fewer");
+			}
+		}
+			break;
+		case Sprite::ST_REAL:{	// real sprite, encode it
+			const Real&sprite=(Real&)info[i];
+			info.PrepareReal(sprite);
+			U8 *image = (U8*) malloc(info.imgsize);
+			if (!image) {
+				printf("Error: can't allocate sprite memory (%ld bytes)\n", info.imgsize);
+				exit(2);
+			}
 
-	totalcomp += spritesize;
-	totaluncomp += spritesize;
-	spriteno++;
+			info.getsprite(image);
 
-	fwrite(&spritesize, 1, 2, grf);
-	fputc(0xff, grf);
-	fputc(0xff, grf);
-	fputc(namelen, grf);
-	fwrite(nameofs, namelen+1, 1, grf);
+			U16 compsize;
+			if (info.inf[0] & 8) {
+				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress);
+				totaltransp += getlasttilesize();	// how much after transparency removed
+				totaluntransp += info.imgsize;		// how much with transparency
 
-	char *buffer = new char[16384];
-	while (fsize > 0) {
-		int chunk = 16384;
-		if (chunk > fsize) chunk=fsize;
-		fread(buffer, chunk, 1, bin);
-		fwrite(buffer, chunk, 1, grf);
-		fsize -= chunk;
-	}
-	delete[]buffer;
-	fclose(bin);
-						}
-						break;
-case Sprite::ST_PSEUDO:{
-	const Pseudo&sprite=(const Pseudo&)info[i];
-	U16 size=sprite.size();
-	totalcomp += size;
-	totaluncomp += size;
-	spriteno++;
+				totalreg += compsize;			// how much after transp&redund removed
+				totalunreg += getlasttilesize();	// how much with redund
+			} else {
+				compsize = encoderegular(grf, image, info.imgsize, info.inf, compress);
+				totaltransp += info.imgsize;
+				totaluntransp += info.imgsize;
 
-	fwrite(&size, 1, 2, grf);
-	fputc(0xff, grf);
-	fwrite(sprite.GetData(),1,size,grf);
-	if(spriteno == 1 && sprite.size() == 4){
-		int reported = *((S32*)sprite.GetData()) + 1;
-		if(reported != info.size())
-			printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
-			abs(info.size() - reported),
-			info.size()>reported?"more":"fewer");
-	}
-					   }
-					   break;
-case Sprite::ST_REAL:{	// real sprite, encode it
-	const Real&sprite=(Real&)info[i];
-	info.PrepareReal(sprite);
-	U8 *image = (U8*) malloc(info.imgsize);
-	if (!image) {
-		printf("Error: can't allocate sprite memory (%ld bytes)\n", info.imgsize);
-		exit(2);
-	}
+				totalreg += compsize;
+				totalunreg += info.imgsize;
+			}
 
-	info.getsprite(image);
-
-	U16 compsize;
-	if (info.inf[0] & 8) {
-		compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress);
-		totaltransp += getlasttilesize();	// how much after transparency removed
-		totaluntransp += info.imgsize;		// how much with transparency
-
-		totalreg += compsize;			// how much after transp&redund removed
-		totalunreg += getlasttilesize();	// how much with redund
-	} else {
-		compsize = encoderegular(grf, image, info.imgsize, info.inf, compress);
-		totaltransp += info.imgsize;
-		totaluntransp += info.imgsize;
-
-		totalreg += compsize;
-		totalunreg += info.imgsize;
-	}
-
-	totalcomp += compsize;
-	totaluncomp += info.imgsize;
-	spriteno++;
-	free(image);
-					 }
-					 break;
-default:
-	printf("What type of sprite is that?");
-	exit(2);
+			totalcomp += compsize;
+			totaluncomp += info.imgsize;
+			spriteno++;
+			free(image);
+		}
+			break;
+		default:
+			printf("What type of sprite is that?");
+			exit(2);
 		}
 	}
 
@@ -565,55 +565,55 @@ U8 *readpal(char *filearg)
 	}
 
 	switch (type) {
-case BCP:
-case UNK:
-	if (fread(pal, 1, 256*3, f) != 256*3) {
-		printf("%s is not a BCP file.\n", filearg);
-		exit(1);
-	}
-	break;
-case PSP:
-	char fmt[16];
-	fgets(fmt, sizeof(fmt), f);
-	if (strcmp(fmt, "JASC-PAL\r\n")) {
-		printf("%s is not a PSP palette file.\n", filearg);
-		exit(1);
-	}
-	int nument, nument2;
-	fscanf(f, "%x\n", &nument);
-	fscanf(f, "%d\n", &nument2);
-	if ( (nument != nument2) || (nument != 256) ) {
-		printf("GRFCodec supports only 256 colour palette files.\n");
-		exit(1);
-	}
-	for (int i=0; i<nument; i++) {
-		if (!fscanf(f, "%cd %cd %cd\n", pal + i*3, pal+i*3+1, pal+i*3+2)) {
-			printf("Error reading palette.\n");
+	case BCP:
+	case UNK:
+		if (fread(pal, 1, 256*3, f) != 256*3) {
+			printf("%s is not a BCP file.\n", filearg);
 			exit(1);
 		}
-	}
-	break;
-case GPL:
-	fgets(fmt, sizeof(fmt), f);
-	if (strcmp(fmt, "GIMP Palette\r\n")) {
-		printf("%s is not a GIMP palette file.\n", filearg);
-		exit(1);
-	}
-	do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Name: ...
-	do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Columns: ...
-	fgets(fmt, sizeof(fmt), f); // #
-	uint r, g, b;
-	for (int i=0; i<256; i++) {
-		if (!fscanf(f, "%d %d %d\n", &r, &g, &b) || r > 255 || g > 255 || b > 255) {
-			printf("Error reading palette.\n");
+		break;
+	case PSP:
+		char fmt[16];
+		fgets(fmt, sizeof(fmt), f);
+		if (strcmp(fmt, "JASC-PAL\r\n")) {
+			printf("%s is not a PSP palette file.\n", filearg);
 			exit(1);
 		}
-		pal[3*i] = (U8) r;
-		pal[3*i+1] = (U8) g;
-		pal[3*i+2] = (U8) b;
-		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// color name
-	}
-	break;
+		int nument, nument2;
+		fscanf(f, "%x\n", &nument);
+		fscanf(f, "%d\n", &nument2);
+		if ( (nument != nument2) || (nument != 256) ) {
+			printf("GRFCodec supports only 256 colour palette files.\n");
+			exit(1);
+		}
+		for (int i=0; i<nument; i++) {
+			if (!fscanf(f, "%cd %cd %cd\n", pal + i*3, pal+i*3+1, pal+i*3+2)) {
+				printf("Error reading palette.\n");
+				exit(1);
+			}
+		}
+		break;
+	case GPL:
+		fgets(fmt, sizeof(fmt), f);
+		if (strcmp(fmt, "GIMP Palette\r\n")) {
+			printf("%s is not a GIMP palette file.\n", filearg);
+			exit(1);
+		}
+		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Name: ...
+		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Columns: ...
+		fgets(fmt, sizeof(fmt), f); // #
+		uint r, g, b;
+		for (int i=0; i<256; i++) {
+			if (!fscanf(f, "%d %d %d\n", &r, &g, &b) || r > 255 || g > 255 || b > 255) {
+				printf("Error reading palette.\n");
+				exit(1);
+			}
+			pal[3*i] = (U8) r;
+			pal[3*i+1] = (U8) g;
+			pal[3*i+2] = (U8) b;
+			do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// color name
+		}
+		break;
 	}
 	fclose(f);
 
