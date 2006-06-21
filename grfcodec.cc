@@ -39,7 +39,7 @@
 #define DOCHECK
 #define DEFINE_PALS
 
-#include "pcx.h"
+#include "pcxfile.h"
 #include "sprites.h"
 #include "pcxsprit.h"
 #include "ttdpal.h"

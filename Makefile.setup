@@ -83,8 +83,8 @@ export _I
 
 
 # auxiliary sources to be linked with each of these programs
-GRFCODECSRC=grfcomm.c pcx.c sprites.c pcxsprit.c info.c \
-	error.c getopt.c path.c readinfo.c
+GRFCODECSRC=grfcomm.c pcxfile.c sprites.c pcxsprit.c info.c \
+	error.c getopt.c path.c readinfo.c file.c
 
 GRFDIFFSRC=grfcomm.c error.c sprites.c getopt.c
 

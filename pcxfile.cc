@@ -18,64 +18,14 @@
 #include <stdlib.h>
 //#include <mem.h>
 
-#include "pcx.h"
+#include "pcxfile.h"
 #include "error.h"
 
-/***********************\
-*						*
-* class singlefile		*
-*						*
-\***********************/
-
-singlefile::singlefile(const char *filename, const char *mode, const char *dir)
-{
-	FILE *f = fopen(filename, mode);
-	if (!f) {
-		fperror("\nCan't read %s", filename);
-		exit(1);
-	}
-	setfile(f);
-	thefilename = strdup(filename);
-	autoclose = 1;
-	if (dir)
-		directory = strdup(dir);
-	else
-		directory = NULL;
-};
-
-singlefile::singlefile(FILE *file, const char *dir)
-{
-	if (!file) {
-		fperror("\nError opening file");
-		exit(1);
-	}
-	setfile(file);
-	if (dir)
-		directory = strdup(dir);
-	else
-		directory = NULL;
-};
-
-singlefile::~singlefile()
-{
-	if (autoclose && thefile)
-		fclose(thefile);
-	free(thefilename);
-	free(directory);
-};
-
-void singlefile::setfile(FILE *file)
-{
-	thefile = file;
-	thefilename = NULL;
-	autoclose = 0;
-}
-
 
 /***********************\
-*			*
-* class pcxfile		*
-*			*
+*						*
+* class pcxfile			*
+*						*
 \***********************/
 
 pcxfile::pcxfile()

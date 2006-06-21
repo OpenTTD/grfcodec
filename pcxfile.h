@@ -1,9 +1,9 @@
-#ifndef _PCX_H
-#define _PCX_H
+#ifndef _PCXFILE_H
+#define _PCXFILE_H
 
 /*****************************************\
 *                                         *
-* PCX.H - A class to combine several      *
+* PCXFILE.H - A class to combine several  *
 *         small images in one pcx file    *
 *         as well as read them out        *
 *                                         *
@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "typesize.h"
+#include "file.h"
 
 struct pcxheader {
 	U8 manuf;	// 10
@@ -38,34 +39,6 @@ struct pcxheader {
 	S16 palinfo;	// 1=colour
 	S16 screen[2];	// x,y
 	U8 filler[54];
-};
-
-class multifile {
-	public:
-	multifile() {};
-	virtual ~multifile() {};
-	virtual FILE *curfile()  { return NULL; };
-	virtual FILE *nextfile() { return NULL; };
-	virtual const char *filename() { return NULL; };
-	virtual const char *getdirectory() { return NULL; };
-};
-
-class singlefile : public multifile {
-	public:
-	singlefile(const char *filename, const char *mode, const char *dir);
-	singlefile(FILE *file, const char *dir);
-	virtual ~singlefile();
-
-	void setfile(FILE *file);
-
-	virtual FILE *curfile()  { return thefile; };
-	virtual const char *filename() { return thefilename; };
-	virtual const char *getdirectory() { return directory; };
-
-	private:
-	char *thefilename, *directory;
-	FILE *thefile;
-	int autoclose;
 };
 
 class bandnotify {	// used when a band is written to the PCX file
@@ -176,4 +149,4 @@ class pcxfile {
 };
 
 
-#endif /* _PCX_H */
+#endif /* _PCXFILE_H */
