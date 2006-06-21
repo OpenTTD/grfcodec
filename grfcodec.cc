@@ -315,13 +315,13 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 			const char *bininclude=((const Include&)info[i]).GetName();
 			FILE *bin = fopen(bininclude, "rb");
 			if (!bin) {
-				fperror("Cannot read %s", bininclude);
+				fperror("Cannot include %s: Could not open.\n", bininclude);
 				exit(2);
 			}
 
 			struct stat stat_buf;
 			if ( fstat(fileno(bin), &stat_buf) ) {
-				fperror("Could not stat %s", bininclude);
+				fperror("Could not stat %s.\n", bininclude);
 				exit(2);
 			}
 			if ( stat_buf.st_mode & S_IFDIR ) {
