@@ -1,19 +1,22 @@
 # Common commands for both Makefile and Makefile.win
 
 FORCE:
-release: FORCE
-	rm -rf grfcodec$(EXE) grfdiff$(EXE) grfmerge$(EXE)
-	$(_C)make -f $(MAKEFILE) $(_S) all
-	$(_E) [STRIP/UPX] grfcodec$(REL_EXE) grfdiff$(REL_EXE) grfmerge$(REL_EXE)
-	$(_C)strip  grfcodec$(REL_EXE) grfdiff$(REL_EXE) grfmerge$(REL_EXE)
-	$(_C)upx $(_Q) --best  grfcodec$(REL_EXE) grfdiff$(REL_EXE) grfmerge$(REL_EXE)
+%_r: FORCE
+	$(_E) [REBUILD] $(@:%_r=%)
+	$(_C)rm -f $(@:%_r=%)$(EXE)
+	$(_C)make -f $(MAKEFILE) $(_S) $(@:%_r=%)
+	$(_E) [STRIP/UPX] $(@:%_r=%)
+	$(_C)strip  $(@:%_r=%)$(REL_EXE)
+	$(_C)upx $(_Q) --best  $(@:%_r=%)$(REL_EXE)
+
+release: grfcodec_r grfdiff_r grfmerge_r
 
 # grfmrg.bin (the binary code included in grfdiff) can be either BCC or GCC code
 grfmrg.bin:	grfmerge.exe
 	$(_E) [UPX] $@
 	$(_C)upx $(_Q) --best $< -o $@
 
-# remake grfmerge.exe optimized for size instead of speed
+# make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
 grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
 	$(_C)rm -f $@
 	$(_E) [LD] $@
