@@ -447,7 +447,7 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 	free(grfnew);
 
 	printf("\nDone!\n");
-	return 1;
+	return 0;
 }
 
 int decode(char *file, char *dir, U8 *palette, int box, int width, int height, int *colourmap, int useplaintext)
