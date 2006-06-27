@@ -6,7 +6,7 @@ quantities of automation, with MSVC (sort of -- see notes below), Cygwin's
 gcc (using Makefile for a cygwin-dependant binary, and Makefile.win for a
 cygwin-independent binary), any Linux gcc (using Makefile, for a Linux
 binary), or any Linux gcc cross compiler (using Makefile.win, for a Win32
-binary)
+binary).
 
 It may also be possible to build with Makefile using the Borland C Compiler,
 but I am unable to test this.
@@ -31,9 +31,9 @@ BOOST_INCLUDE is the directory where your boost headers can be found. If you
 
 You may also set the following varibles:
 NOREV: Set to 0 by default, set to 1 to remove the "rXXX" from the version
-    number
+    number.
 NO_BOOST: Set to 0 by default; set to 1 if make erroneously finds a boost
-    install
+    install.
 SVNVERSION: Set to svnversion . by default. If you're using TortoiseSVN,
     change Makefile.setup to set it to SubECRev.exe . instead.
 
@@ -50,6 +50,8 @@ allb		Will compile grfcodec, grfdiff, and grfmerge, using BCC
 grfcodec
 grfdiff
 grfmerge	Will compile the program in question, using gcc.
+		Append _r to any of these to also strip/upx the resultant
+		binary.
 
 grfcodec.exe
 grfdiff.exe
@@ -85,5 +87,5 @@ version.h. Instructions on how to do this live right next to the
 If you do not have boost, #define NO_BOOST near the beginning of readinfo.cc,
 or add NO_BOOST to the preprocessor defines in the project settings.
 
-All Release targets expect to find upx in your PATH.
+All Release* targets expect to find upx in your PATH.
 
