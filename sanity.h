@@ -30,10 +30,10 @@ void reset_sanity();
 void check_sprite(SpriteType);//real/include
 void check_sprite(PseudoSprite&);//Pseudo
 void final_sanity();
-void sanity_use_id(int,int);
+void sanity_use_id(int);
 void sanity_use_set(int);
-void sanity_test_id(int,int);
-int sanity_locate_id(int,int);
+void sanity_test_id(int);
+int sanity_locate_id(int);
 void sanity_define_id(int,int);
 
 #endif//_RENUM_SANITY_H_DEFINED
