@@ -564,6 +564,7 @@ Change the last byte of the referenced 7 or 9 to a 00.
 This action 4 has a num-ent of 00.
 Remove the action 4, or increase num-ent.
 
-186: "<off> Undefined extended format code <byte>." (Error)
+187: "<off> Undefined extended format code <byte>." (Error)
 An unrecognized 9A XX sequence was found.
 Remove the 9A or correct the XX.
+
