@@ -37,29 +37,15 @@ template<typename _Ty>class ExpandingArray:public vector<_Ty>{
 	typedef ExpandingArray<_Ty> _MyT;
 	typedef vector<_Ty> _Mybase;
 public:
-	const _Ty&operator[](unsigned int x)const{
-		if(x>=_MyT::size())return def;
-		return vector<_Ty>::operator[](x);
-	}
-	_Ty&operator[](unsigned int x){
-		if(x>=_MyT::size())_MyT::resize(x+1);
-		return _Mybase::operator[](x);
-	}
-private:
-	_Ty def;
-};
-
-template<typename _Ty>class ExpandingFillArray:public vector<_Ty>{
-	typedef ExpandingFillArray<_Ty> _MyT;
-public:
-	ExpandingFillArray(const _Ty&_fill):m_fill(_fill){}
+	ExpandingArray(){}
+	ExpandingArray(const _Ty&_fill):m_fill(_fill){}
 	const _Ty&operator[](unsigned int x)const{
 		if(x>=_MyT::size())return m_fill;
 		return vector<_Ty>::operator[](x);
 	}
 	_Ty&operator[](unsigned int x){
-		if(x>=_MyT::size())_MyT::resize(x+1,m_fill);
-		return vector<_Ty>::operator[](x);
+		if(x>=_MyT::size())_MyT::resize(x+1);
+		return _Mybase::operator[](x);
 	}
 	void ChangeFill(const _Ty&_fill){m_fill=_fill;}
 private:
