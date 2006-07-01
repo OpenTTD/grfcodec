@@ -187,7 +187,7 @@ bool parse_comment(const string&line){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[USEID2].name);
 			return true;
 		}
-		sanity_use_id(feature,id);
+		sanity_use_id(id);
 		return true;
 	}case USESET:
 		commandstream>>setbase(16)>>id;
@@ -372,7 +372,7 @@ bool parse_comment(const string&line){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
 		}
-		sanity_test_id(feature,id);
+		sanity_test_id(id);
 		return true;
 	}case DEFINEID2:{
 		int feature;
@@ -391,7 +391,7 @@ bool parse_comment(const string&line){
 			return true;
 		}
 		inject("//@@PRESERVEMESSAGES NOPRESERVE");
-		inject(mysprintf("//!!LOCATEID2 %2x %2x: %d",feature,id,sanity_locate_id(feature,id)));
+		inject(mysprintf("//!!LOCATEID2 %2x %2x: %d",feature,id,sanity_locate_id(id)));
 		if(GetState(REMOVEMESSAGES))inject("//@@REMOVEMESSAGES NOPRESERVE");
 		break;
 	}case USEOLDSPRITENUMS:

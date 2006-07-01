@@ -319,6 +319,8 @@ MESSAGE_EX(LONG_JUMP,"Action %x at sprite %d.\n",MAKE_COMMENT|NO_CONSOLE,NFO,LON
 NFO_MESSAGE(NO_TEXTS,"Action 4 declaring no strings.\n",USE_PREFIX)
 NFO_MESSAGE(AUTOCORRECT_ADD,"Adding a trailing %2x byte.\n",0)
 NFO_MESSAGE(INVALID_EXT_CODE,"Undefined extended format code %2x.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(FEATURE_LINK_MISMATCH,"ID %2x is defined with feature %2x.\n",USE_PREFIX|HAS_OFFSET)
+
 
 /* Insert new NFO_MESSAGEs here. */
 

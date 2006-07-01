@@ -67,10 +67,14 @@ void CheckSpriteNum(uint num,uint offset,act123::Act1&act1,uint feature,bool&mis
 		IssueMessage(WARNING1,INVALID_COLOR_SPRITE,offset+2,color);
 }
 
-bool check_id(uint offset,unsigned int id,act123::IDarray&IDs){
+bool check_id(uint offset,unsigned int id,uint feature){
+	act123::IDarray&IDs=act123::Instance().defined2IDs;
 	if(id&0x8000)return false;//callback
 	else if(id>>8){
 		IssueMessage(ERROR,NEITHER_ID_CALLBACK,id,CID);
+		return true;
+	}else if(IDs.GetFeature(id)!=feature){
+		IssueMessage(ERROR,FEATURE_LINK_MISMATCH,offset,id,IDs.GetFeature(id));
 		return true;
 	}
 	return IDs.test(offset,id)?(IDs.use(id),IDs.checks1C(id)):true;
@@ -134,7 +138,7 @@ void Check2(PseudoSprite&data){
 		if(CheckLength(length,7+2*nument2,BAD_LENGTH,"nrand","%2x",nument2,7+2*nument2))return;
 		for(i=0;i<nument2;i++){
 			rID=data.SetNoEol(7+2*i).ExtractWord(7+2*i);
-			check_id(7*i+2,rID,act123::Instance().defined2IDs[feature]);
+			check_id(7*i+2,rID,feature);
 			if(prevID!=(unsigned)-1)
 				isRand|=(prevID!=rID);
 			prevID=rID;
@@ -181,7 +185,7 @@ void Check2(PseudoSprite&data){
 		uint def=data.ExtractWord(end),vID;
 		for(i=off;i<end;i+=width){//read <ID> <min> <max> [...]
 			vID=data.ExtractWord(i);
-			isvar=check_id(i,vID,act123::Instance().defined2IDs[feature]);
+			isvar=check_id(i,vID,feature);
 			uint min=data.ExtractVariable(i+2,extract),max=data.ExtractVariable(i+2+extract,extract);
 			if(nument2>1)data.SetEol(i+1+extract*2,isadv?2:1);
 			if(min>max)IssueMessage((i==off)?WARNING4:WARNING1,UNREACHABLE_VAR,(i-off)/width);
@@ -201,7 +205,7 @@ void Check2(PseudoSprite&data){
 			}
 		}
 		ranges.CheckDefault();
-		check_id(end,def,act123::Instance().defined2IDs[feature]);
+		check_id(end,def,feature);
 		return;
 	}
 	default:
@@ -330,16 +334,17 @@ void Check3(PseudoSprite&data){
 		if(j==0xFE&&feature!=4)
 			IssueMessage(ERROR,INVALID_CARGO_TYPE,i,j);
 		i++;
-		check_id(i,id=data.ExtractWord(i),act123::Instance().defined2IDs[feature]);
+		check_id(i,id=data.ExtractWord(i),feature);
 		if(def==id)
 			IssueMessage(WARNING1,REUSED_DEFAULT);
 	}
-	check_id(4+numIDs+3*numCIDs,def,act123::Instance().defined2IDs[feature]);
+	check_id(4+numIDs+3*numCIDs,def,feature);
 }
 
 void Init123(){act123::Instance().init();}
 
 void final123(){
+	const act123::IDarray& IDs=act123::CInstance().defined2IDs;
 	ManualConsoleMessages();
 	bool header=false;
 	if(act123::Instance().act1.spritenum)
@@ -355,13 +360,13 @@ void final123(){
 	for(uint i=0;i<=MaxFeature();i++){
 		header=false;
 		for(j=0;j<256;j++)
-			if(act123::CInstance().defined2IDs[i].is_defined(j)&&!act123::CInstance().defined2IDs[i].is_used(j)){
+			if(IDs.GetFeature(j)==i&&IDs.is_defined(j)&&!IDs.is_used(j)){
 				if(!header){
 					IssueMessage(WARNING1,UNUSED2IDLEAD,i);
 					IssueMessage(WARNING1,UNEXP_EOF_CARGOID,i);
 					header=true;
 				}
-				IssueMessage(WARNING1,UNUSEDIDFINAL,j,act123::CInstance().defined2IDs[i].defined_at(j));
+				IssueMessage(WARNING1,UNUSEDIDFINAL,j,IDs.defined_at(j));
 			}
 	}
 }

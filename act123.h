@@ -34,23 +34,27 @@ struct act123{
 	}act1;
 	class IDarray{
 	public:
-		void init(){used.resize(0);sprite.resize(0);v1C.resize(0);}
-		bool is_defined(int id)const{return sprite[id]!=0;}
-		bool is_used(int id)const{return used[id];}
-		unsigned short defined_at(int id)const{return sprite[id];}
-		void define(unsigned int id,bool checks1C);
-		bool checks1C(int id)const{return v1C[id];}
-		void use(int id){used[id]=true;}
+		void init(){_m.resize(0);}
+		bool is_defined(int id)const{return _m[id].sprite!=0;}
+		bool is_used(int id)const{return _m[id].used;}
+		unsigned short defined_at(int id)const{return _m[id].sprite;}
+		void define(uint feature,unsigned int id,bool checks1C);
+		bool checks1C(int id)const{return _m[id].v1C;}
+		void use(int id){_m[id].used=true;}
 		bool test(uint,uint)const;
+		unsigned short GetFeature(uint id)const{return _m[id].feature;}
 	private:
-		Expanding0Array<bool>used;
-		Expanding0Array<bool>v1C;
-		Expanding0Array<unsigned short>sprite;
-	};
+		struct info{
+			info():used(false),v1C(false),sprite(0),feature((unsigned short)-1){}
+			bool used,v1C;
+			unsigned short sprite;
+			unsigned short feature;
+		};
+		ExpandingArray<info>_m;
+	}defined2IDs;
 
 	void init();
 
-	ExpandingArray<IDarray>defined2IDs;
 	uint act3feature,act3spritenum;
 	SINGLETON(act123)
 };

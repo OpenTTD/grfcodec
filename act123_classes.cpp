@@ -47,14 +47,15 @@ act123::act123(){init();}
 
 void act123::init(){
 	act1.init();
-	defined2IDs.resize(0);
+	defined2IDs.init();
 	act3spritenum=0;
 }
 
-void act123::IDarray::define(unsigned int id,bool checks1C){
-	used[id]=false;
-	sprite[id]=(unsigned short)_spritenum;
-	v1C[id]=checks1C;
+void act123::IDarray::define(uint feature,unsigned int id,bool checks1C){
+	_m[id].used=false;
+	_m[id].sprite=(unsigned short)_spritenum;
+	_m[id].v1C=checks1C;
+	_m[id].feature=feature;
 }
 
 bool act123::IDarray::test(uint offset,uint id)const{
@@ -338,9 +339,9 @@ void rand2::CheckRand(uint feat,uint type,uint triggers,uint first,uint nrand){
 //****************************************
 
 Define2::~Define2(){
-	if(act123::CInstance().defined2IDs[feature].is_defined(id)&&!act123::CInstance().defined2IDs[feature].is_used(id))
-		IssueMessage(WARNING1,UNUSED_ID,id,act123::CInstance().defined2IDs[feature].defined_at(id));
-	act123::Instance().defined2IDs[feature].define(id,checks1C);
+	if(act123::CInstance().defined2IDs.is_defined(id)&&!act123::CInstance().defined2IDs.is_used(id))
+		IssueMessage(WARNING1,UNUSED_ID,id,act123::CInstance().defined2IDs.defined_at(id));
+	act123::Instance().defined2IDs.define(feature,id,checks1C);
 }
 
 //****************************************
@@ -358,22 +359,22 @@ Callbacks::Callbacks(){
 // GLOBAL FUNCTIONS
 //****************************************
 
-void sanity_use_id(int feature,int id){
-	act123::Instance().defined2IDs[feature].use(id);
+void sanity_use_id(int id){
+	act123::Instance().defined2IDs.use(id);
 }
 
 void sanity_use_set(int set){
 	act123::Instance().act1.use(set);
 }
 
-void sanity_test_id(int feature,int id){
-	act123::Instance().defined2IDs[feature].test(0,id&0xFF);
+void sanity_test_id(int id){
+	act123::Instance().defined2IDs.test(0,id&0xFF);
 }
 
-int sanity_locate_id(int feature,int id){
-	return act123::Instance().defined2IDs[feature].defined_at(id&0xFF);
+int sanity_locate_id(int id){
+	return act123::Instance().defined2IDs.defined_at(id&0xFF);
 }
 
 void sanity_define_id(int feature,int id){
-	act123::Instance().defined2IDs[feature].define(id&0xFF,true);
+	act123::Instance().defined2IDs.define(feature,id&0xFF,true);
 }

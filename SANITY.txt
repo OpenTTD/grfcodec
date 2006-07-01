@@ -568,3 +568,7 @@ Remove the action 4, or increase num-ent.
 An unrecognized 9A XX sequence was found.
 Remove the 9A or correct the XX.
 
+188: "<off> ID <num> is defined with feature <feat>." (Error)
+This var/random 2 or 3 attempts to chain to an action 2 that does not have
+the same feature byte.
+Make the feature bytes match, or unchain the sprites.
