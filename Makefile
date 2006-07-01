@@ -133,7 +133,8 @@ clean:
 	rm -rf *.o *.exe *.EXE renum
 
 release: FORCE
-	rm -f $(NFORENUM)
+	$(_E)[REBUILD] $(NFORENUM)
+	$(_C)rm -f $(NFORENUM)
 	$(_C)make $(_S)
 	$(_E) [STRIP/UPX] $(NFORENUM)
 	$(_C)strip $(NFORENUM)
