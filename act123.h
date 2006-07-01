@@ -69,7 +69,7 @@ class Check2v{
 	struct FeatData{
 		FeatData():var80(VarData(1)){}
 		ExpandingArray<VarData>globvars,var40,var60;
-		ExpandingFillArray<VarData>var80;
+		ExpandingArray<VarData>var80;
 		uint last80,featfor82;
 	};
 public:
