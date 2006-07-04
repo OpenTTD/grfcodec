@@ -100,27 +100,27 @@ Check2v::Check2v(){
 	fclose(pFile);
 }
 
-void Check2v::Check(uint feature,uint type,uint var,uint param,uint shift)const{
+void Check2v::Check(uint feature,uint type,uint var,uint offs,uint param,uint shift)const{
 	VERIFY(feature<=MaxFeature(),feature);
 	if((type&3)==2)feature=_p[feature].featfor82;
 	if(var&0x80){
-		if((var&0x7F)>_p[feature].last80)IssueMessage(ERROR,NONEXISTANT_VARIABLE,var);
-		else if(!_p[feature].var80[var&0x7F].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,var);
-		else if(shift>=_p[feature].var80[var&0x7F].width<<3)IssueMessage(WARNING4,SHIFT_TOO_FAR,var);
+		if((var&0x7F)>_p[feature].last80)IssueMessage(ERROR,NONEXISTANT_VARIABLE,offs,var);
+		else if(!_p[feature].var80[var&0x7F].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
+		else if(shift>=_p[feature].var80[var&0x7F].width<<3)IssueMessage(WARNING4,SHIFT_TOO_FAR,offs+1,var);
 	}else if((var&0x60)==0x60){
-		if(!_p[feature].var60[var&0x3F].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,var);
+		if(!_p[feature].var60[var&0x3F].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
 		else{
-			if(shift>=_p[feature].var60[var&0x3F].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,var);
-			if(param>_p[feature].var60[var&0x3F].maxparam)IssueMessage(WARNING1,PARAM_TOO_LARGE,param,var);
+			if(shift>=_p[feature].var60[var&0x3F].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+2,var);
+			if(param>_p[feature].var60[var&0x3F].maxparam)IssueMessage(WARNING1,PARAM_TOO_LARGE,offs+1,param,var);
 		}
 	}else if(var&0x40){
-		if(!_p[feature].var40[var&0x3F].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,var);
-		else if(shift>=_p[feature].var40[var&0x3F].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,var);
+		if(!_p[feature].var40[var&0x3F].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
+		else if(shift>=_p[feature].var40[var&0x3F].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+1,var);
 	}else if(globvars[var].width){
-		if(shift>=globvars[var].width*8)IssueMessage(WARNING1,SHIFT_TOO_FAR,var);
+		if(shift>=globvars[var].width*8)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+1,var);
 	}else{
-		if(!_p[feature].globvars[var].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,var);
-		else if(shift>=_p[feature].globvars[var].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,var);
+		if(!_p[feature].globvars[var].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
+		else if(shift>=_p[feature].globvars[var].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+1,var);
 	}
 }
 
