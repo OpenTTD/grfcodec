@@ -197,7 +197,7 @@ Correct this sprite, or add a standard action 3.
 This message will only be issued once, even if multiple override 3s preceed
 the first standard 3.
 
-86: "Testing nonexistant variable <var>." (Error/Warn 1)
+86: "<off> Testing nonexistant variable <var>." (Error/Warn 1)
 This variational action 2 or action 7 tests a variable that does not exist.
 Change the feature, type, and/or variable.
 
@@ -263,7 +263,7 @@ Change the GRFID.
 GRFIDs with a first byte of FF (with the exception of FFFFFFFF) are reserved
 for TTDPatch internal use, and must not be used by GRF files.
 
-103: "Shifting variable <var> past its length." (Warn 1/4)
+103: "<off> Shifting variable <var> past its length." (Warn 1/4)
 <shift-num> is shifting this variable further than its defined length.
 Reduce <shift-num> so defined data is being read.
 All 80+x variables are defined to be 1 byte long, even if TTD considers that
@@ -361,7 +361,7 @@ Reduce the probabilities or allocate more random bits.
 This part has no probability.
 Remove this part, or increase its probability.
 
-132: "Parameter <num> out of valid range for variable <var>." (Error)
+132: "<off> Parameter <num> out of valid range for variable <var>." (Error)
 60+x variable <var> does not accept parameters this large.
 Reduce the parameter.
 

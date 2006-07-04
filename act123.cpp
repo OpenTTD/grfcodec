@@ -159,7 +159,8 @@ void Check2(PseudoSprite&data){
 		varRange ranges(extract);
 		while(true){//read <var> [<param>] <varadjust> [<op> ...]. off reports byte to be read.
 			if(((var=data.ExtractByte(off++))&0xE0)==0x60)param=data.ExtractByte(off++);
-			Check2v::Instance().Check(feature,nument1,var,param,(shift=data.ExtractByte(off++))&0x1F);
+			shift=data.ExtractByte(off++);
+			Check2v::Instance().Check(feature,nument1,var,off-2-((var&0x60)==0x60?1:0),param,shift&0x1F);
 			if((shift&0xC0)==0xC0){
 				IssueMessage(FATAL,INVALID_SHIFT,off-1);
 				return;

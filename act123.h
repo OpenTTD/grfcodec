@@ -73,7 +73,7 @@ class Check2v{
 		uint last80,featfor82;
 	};
 public:
-	void Check(uint,uint,uint,uint,uint)const;
+	void Check(uint,uint,uint,uint,uint,uint)const;
 	SINGLETON(Check2v)
 private:
 	ExpandingArray<VarData>globvars;
