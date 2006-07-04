@@ -121,8 +121,6 @@ void Check2v::Check(uint feature,uint type,uint var,uint offs,uint param,uint sh
 			}
 			if(shift>=_p[feature].var60[var&0x3F].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+2,var);
 			if(param>_p[feature].var60[var&0x3F].maxparam)IssueMessage(WARNING1,PARAM_TOO_LARGE,offs+1,param,var);
-			if(shift>=_p[feature].var60[var&0x3F].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+2,var);
-			if(param>_p[feature].var60[var&0x3F].maxparam)IssueMessage(WARNING1,PARAM_TOO_LARGE,offs+1,param,var);
 		}
 	}else if(var&0x40){
 		if(!_p[feature].var40[var&0x3F].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
