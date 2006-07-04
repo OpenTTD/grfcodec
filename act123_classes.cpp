@@ -110,6 +110,17 @@ void Check2v::Check(uint feature,uint type,uint var,uint offs,uint param,uint sh
 	}else if((var&0x60)==0x60){
 		if(!_p[feature].var60[var&0x3F].width)IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
 		else{
+			if(var==0x7E){
+				act123::IDarray&IDs=act123::Instance().defined2IDs;
+				if(!IDs.is_defined(param))IssueMessage(ERROR,UNDEFINED_ID,offs+1,param);
+				else{
+					if(IDs.GetFeature(param)!=feature)
+						IssueMessage(WARNING1,FEATURE_CALL_MISMATCH,offs+1,param,IDs.GetFeature(param));
+					IDs.use(param);
+				}
+			}
+			if(shift>=_p[feature].var60[var&0x3F].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+2,var);
+			if(param>_p[feature].var60[var&0x3F].maxparam)IssueMessage(WARNING1,PARAM_TOO_LARGE,offs+1,param,var);
 			if(shift>=_p[feature].var60[var&0x3F].width<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+2,var);
 			if(param>_p[feature].var60[var&0x3F].maxparam)IssueMessage(WARNING1,PARAM_TOO_LARGE,offs+1,param,var);
 		}

@@ -572,3 +572,8 @@ Remove the 9A or correct the XX.
 This var/random 2 or 3 attempts to chain to an action 2 that does not have
 the same feature byte.
 Make the feature bytes match, or unchain the sprites.
+
+189: "<off> ID <num> is defined with feature <feat>." (Warn 1)
+This variational 2 attempts to call an action 2 procedure that does not have
+the same feature byte.
+Make the feature bytes match, or remove the call.
