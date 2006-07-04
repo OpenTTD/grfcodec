@@ -73,11 +73,14 @@ bool check_id(uint offset,unsigned int id,uint feature){
 	else if(id>>8){
 		IssueMessage(ERROR,NEITHER_ID_CALLBACK,id,CID);
 		return true;
-	}else if(IDs.GetFeature(id)!=feature){
-		IssueMessage(ERROR,FEATURE_LINK_MISMATCH,offset,id,IDs.GetFeature(id));
-		return true;
 	}
-	return IDs.test(offset,id)?(IDs.use(id),IDs.checks1C(id)):true;
+	if(IDs.test(offset,id)){
+		if(IDs.GetFeature(id)!=feature)
+			IssueMessage(ERROR,FEATURE_LINK_MISMATCH,offset,id,IDs.GetFeature(id));
+		IDs.use(id);
+		return IDs.checks1C(id);
+	}else
+		return true;
 }
 
 void invalidate_act3(){
