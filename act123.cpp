@@ -301,7 +301,7 @@ void Check2(PseudoSprite&data){
 				}
 			}
 		}else if(feature==10){
-			if(CheckLength(length,15,INVALID_LENGTH,TYPE,PROD2,INDUSTRIES,15))break;
+			if(CheckLength(length,15,INVALID_LENGTH,TYPE,PROD2,INDUSTRIES,EXACTLY,15))break;
 			if(data.ExtractByte(3)!=0)
 				IssueMessage(ERROR,INVALID_LITERAL,3,data.ExtractByte(3),0);
 		}else
