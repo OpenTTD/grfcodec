@@ -86,11 +86,20 @@ Action 0 <num-info>: Corrected after <num-props>, and only if <num-props> is
 House/industry tile action 2 <num-sprites>: Changed to the number of valid
   sprite blocks (<sprite> followed by 3 or 6 bytes of meta-deta), but not if
   either the original or new values are 00.
+Standard action 2 <feature>: Corrected to the feature of the preceeding action
+  1 if it requires sprites from an action 1, or if the feature is not valid.
+  ([*] when changing from an invalid feature, or between the standard
+  (features 00..05,0B) and house/industry tile (features 07/09) formats.)
+  The sprite will then be completely rechecked.
+Variational/random action 2 <feature>: Corrected to the feature of the
+  referenced action 2s, if all referenced action 2s are defined with the same
+  feature. The sprite will then be completely rechecked.
 Variational action 2 <nvar>: Only corrected if a corrected value exists that
   makes the sprite length agree with nvar.
 Random action 2 <nrand>: Only corrected if a corrected value exists that
   makes the sprite length agree with nrand, and the corrected value has
   exactly one bit set.
+Action 3 <feature>: (See var/random action 2 feature.)
 Action 3 <num-cid>: Only corrected if a corrected value exists that makes the
   sprite length agree with num-cid. This can fail in very interesting ways if
   <num-ids> is not correct. [*]

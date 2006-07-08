@@ -577,3 +577,10 @@ Make the feature bytes match, or unchain the sprites.
 This variational 2 attempts to call an action 2 procedure that does not have
 the same feature byte.
 Make the feature bytes match, or remove the call.
+
+190: "Autocorrector seems to be stuck in an infinite loop." (Fatal)
+The autocorrector's rules are telling it contradictory things, resulting in
+repeated corrections to the same byte.
+Manually correct the offending byte, or do not use the autocorrector.
+If this message appears, it should be considered a bug in NFORenum; please
+report it as such.
