@@ -290,13 +290,16 @@ This does not effect parse error messages, which alert you to things GRFCodec
 will not accept.
 
 
-@@LOCATEID2 <feature> <id>
+@@LOCATEID2 [<feature>] <id>
 
 Issues a message of the form //!!LOCATEID2 <feature> <id>: <spritenum>, where
-<spritenum> is the most recent definition of <id>.
+<spritenum> is the most recent definition of <id>, and <feature> is <id>'s
+associated feature.
 If the most recent definition of <id> was made by a @@DEFINEID2, <spritenum>
 is undefined.
-<feature> and <id> must both be two hex characters.
+<feature> (if present) and <id> must both be two hex characters.
+<feature> is not required. If present, and a valid feature, it will be
+removed.
 
 
 @@REALSPRITES {RPNON|RPNOFF|COMMENTON|COMMENTOFF}
@@ -313,16 +316,20 @@ commented; parsing them as real sprites risks losing data if they are
 instead continuations of pseudosprites with an invalid character.
 
 
-@@TESTID2 <feature> <id>
+@@TESTID2 [<feature>] <id>
 
-Test to see if <id> is defined for <feature> but does not mark it as used.
-<feature> and <id> must both be two hex characters.
+Test to see if <id> is defined but does not mark it as used.
+<feature> (if present) and <id> must both be two hex characters.
+<feature> is not required. If present, and a valid feature, it will be
+removed.
 
 
-@@USEID2 <feature> <id>
+@@USEID2 [<feature>] <id>
 
 Mark <id> as used, if defined.
-<feature> and <id> must both be two hex characters.
+<feature> (if present) and <id> must both be two hex characters.
+<feature> is not required. If present, and a valid feature, it will be
+removed.
 
 
 @@USEOLDSPRITENUMS {ON|OFF}
