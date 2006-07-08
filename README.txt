@@ -29,8 +29,7 @@ Sprite numbers are required on real sprites if the filename starts with a
 digit, but are optional in all other cases.
 
 Messages will be output to the console and to the NFO file.
-For a detailed explanation of the sanity checker's messages, see SANITY or
-SANITY.txt (depending on package downloaded).
+For a detailed explanation of the sanity checker's messages, see SANITY.txt.
 
 Sprites that for some reason cannot be processed will be commented out, and
 processing will continue.
@@ -41,8 +40,8 @@ filename.nfo
 sprites/filename
 sprites/filename.nfo
 
-The old verson, that uses standard input and standard output, can be invoked
-by starting renum with no command-line arguements.
+If no command-line arguments are specified, NFORenum will read from standard
+input and write to standard output.
 
 
 The NFORenum will exit with one of the following error codes: (The highest
@@ -77,11 +76,11 @@ The following items can be corrected, with the following limitations:
 
 Action 0 <num-props>: Changed to the number of valid property bytes with the
   sufficient following data for <new-info>. This can fail in very interesting
-  ways if <num-info> is not correct. [*] when corrected value is 00, 01, or
-  more than 2 below the old value.
+  ways if <num-info> is not correct. ([*] when corrected value is 00, 01, or
+  more than 2 below the old value.)
 Action 0 <num-info>: Corrected after <num-props>, and only if <num-props> is
   01 and the property being set is not variably lengthed. For these purposes,
-  "variably-lengthed" means anything that is not a byte, extended byte, word,
+  "variably lengthed" means anything that is not a byte, extended byte, word,
   or doubleword.
 House/industry tile action 2 <num-sprites>: Changed to the number of valid
   sprite blocks (<sprite> followed by 3 or 6 bytes of meta-deta), but not if
@@ -103,8 +102,7 @@ Action 3 <feature>: (See var/random action 2 feature.)
 Action 3 <num-cid>: Only corrected if a corrected value exists that makes the
   sprite length agree with num-cid. This can fail in very interesting ways if
   <num-ids> is not correct. [*]
-Action 4 <num-ent>: Count of strings found in the action 4. This includes the
-  last one, even if its terminating null is missing.
+Action 4 <num-ent>: Count of strings found in the action 4.
 Action 6: A trailing FF will be added if doing so will make the sprite valid.
 Action 7/9 <varsize>: Only corrected if the sprite length, variable, and
   condition all agree on the correct value. For bit-tests, this value is
@@ -126,13 +124,14 @@ resultant error/warning messages are illogical, try again without -a, and you
 may get better messages.
 The beautifier must be on for auto-correction to work. If the beautifier is
 off when -a/--auto-correct is seen, NFORenum will behave as if the option
---beautify=convertonly+ immediately followed it on the command line. You are
-free to turn the beautifier back off, which is useful for doing dry runs of
-the auto-corrector. If you want to do this, -aab- is one of the many command
-line arguments that can be used. (NOTE: -ab- -a should not be used. The
-second -a will turn the beautifier back on again, which is almost certainly
-not what you wanted.) Add a --lock if you want to be sure that no @@BEAUTIFY
-commands from the NFO will cause the autocorrecter to make corrections.
+"--beautify convertonly=on" immediately followed it on the command line. You
+are free to turn the beautifier back off, which is useful for doing dry runs
+of the auto-corrector. If you want to do this, -aab- is one of the many
+command line arguments that can be used. (NOTE: -ab- -a should not be used.
+The second -a will turn the beautifier back on again, which is almost
+certainly not what you wanted.) Add a --lock if you want to be sure that no
+@@BEAUTIFY commands from the NFO will cause the autocorrecter to make
+corrections.
 
 
 --------------------------------------------------------------------------
@@ -253,6 +252,7 @@ As CLEARACTION2, but for the action F parser and town name IDs instead.
 
 Marks <id> as defined for <feature>. Tests for unused previous definition
 are not run.
+<feature> and <id> must both be two hex characters.
 
 
 @@DIFF
@@ -296,6 +296,7 @@ Issues a message of the form //!!LOCATEID2 <feature> <id>: <spritenum>, where
 <spritenum> is the most recent definition of <id>.
 If the most recent definition of <id> was made by a @@DEFINEID2, <spritenum>
 is undefined.
+<feature> and <id> must both be two hex characters.
 
 
 @@REALSPRITES {RPNON|RPNOFF|COMMENTON|COMMENTOFF}
@@ -315,14 +316,13 @@ instead continuations of pseudosprites with an invalid character.
 @@TESTID2 <feature> <id>
 
 Test to see if <id> is defined for <feature> but does not mark it as used.
+<feature> and <id> must both be two hex characters.
 
 
-@@USEID2 $feature $id
+@@USEID2 <feature> <id>
 
-This is a work-around for NFORenum's current inability to correctly parse the
-Action 6s; it will supress "Unused ID" messages for that feature/id pair,
-until the next definition. $feature and $id both MUST be two characters long,
-and written in hex. NFORenum's behaviour is undefined otherwise.
+Mark <id> as used, if defined.
+<feature> and <id> must both be two hex characters.
 
 
 @@USEOLDSPRITENUMS {ON|OFF}
@@ -331,12 +331,12 @@ Turning this on instructs NFORenum not to fix the sprite numbers in the NFO,
 but to instead output the original sprite numbers. @@DIFF will override this.
 
 
-@@USESET $set
+@@USESET <set>
 
-This is a work-around for NFORenum's current inability to correctly parse the
-Action 6s; it will supress "Unused sprite set" messages for that set, until
-the next Action 1. $set MUST be two characters long, and written in hex.
-NFORenum's behaviour is undefined otherwise.
+This is a work-around for NFORenum's inability to correctly parse action 6s;
+it will supress "Unused sprite set" messages for that set, until the next
+action 1. <set> must be two characters long, and written in hex. NFORenum's
+behaviour is undefined otherwise.
 
 
 @@VERSIONCHECK <ver> <name>
