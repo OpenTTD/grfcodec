@@ -183,9 +183,14 @@ bool parse_comment(const string&line){
 	case USEID2:{
 		int feature;
 		commandstream>>setbase(16)>>feature>>id;
-		if(!IsValidFeature(ACT2,feature)){
+		if(!commandstream)
+			id=feature;
+		else if(!IsValidFeature(ACT2,feature)){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[USEID2].name);
 			return true;
+		}else{
+			inject(mysprintf("%s@@USEID2 %2x",COMMENT_PREFIX,id));
+			return false;
 		}
 		sanity_use_id(id);
 		return true;
@@ -368,27 +373,42 @@ bool parse_comment(const string&line){
 	case TESTID2:{
 		int feature;
 		commandstream>>setbase(16)>>feature>>id;
-		if(!IsValidFeature(ACT2,feature)){
+		if(!commandstream)
+			id=feature;
+		else if(!IsValidFeature(ACT2,feature)){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
+		}else{
+			inject(mysprintf("%s@@TESTID2 %2x",COMMENT_PREFIX,id));
+			return false;
 		}
 		sanity_test_id(id);
 		return true;
 	}case DEFINEID2:{
 		int feature;
 		commandstream>>setbase(16)>>feature>>id;
-		if(!IsValidFeature(ACT2,feature)){
+		if(!commandstream)
+			id=feature;
+		else if(!IsValidFeature(ACT2,feature)){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
+		}else{
+			inject(mysprintf("%s@@DEFINEID2 %2x",COMMENT_PREFIX,id));
+			return false;
 		}
 		sanity_define_id(feature,id);
 		return true;
 	}case LOCATEID2:{
 		int feature;
 		commandstream>>setbase(16)>>feature>>id;
-		if(!IsValidFeature(ACT2,feature)){
+		if(!commandstream)
+			id=feature;
+		else if(!IsValidFeature(ACT2,feature)){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
+		}else{
+			inject(mysprintf("%s@@LOCATEID2 %2x",COMMENT_PREFIX,id));
+			return false;
 		}
 		inject("//@@PRESERVEMESSAGES NOPRESERVE");
 		inject(mysprintf("//!!LOCATEID2 %2x %2x: %d",feature,id,sanity_locate_id(id)));
