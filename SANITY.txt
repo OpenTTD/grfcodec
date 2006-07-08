@@ -577,6 +577,10 @@ Make the feature bytes match, or unchain the sprites.
 This variational 2 attempts to call an action 2 procedure that does not have
 the same feature byte.
 Make the feature bytes match, or remove the call.
+This is not a bug in the NFO as such, but NFORenum will check the procedure's
+variables against the procedure's feature byte, not the caller's feature
+byte, which may conceal problems with the procedure, and/or reveal "problems"
+that aren't problems.
 
 190: "Autocorrector seems to be stuck in an infinite loop." (Fatal)
 The autocorrector's rules are telling it contradictory things, resulting in
