@@ -353,6 +353,10 @@ Define2::~Define2(){
 	act123::Instance().defined2IDs.define(feature,id,checks1C);
 }
 
+void Define2::ChangeFeature(uint feat){
+	feature=feat;
+}
+
 //****************************************
 // Callbacks
 //****************************************

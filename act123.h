@@ -118,6 +118,7 @@ public:
 	Define2(uint feat,uint id):feature(feat),id(id),checks1C(false){}
 	~Define2();
 	void Check(uint var){checks1C|=(var==0x1C);}
+	void ChangeFeature(uint);
 private:
 	uint feature,id;
 	bool checks1C;

@@ -38,6 +38,17 @@ using namespace std;
 
 #define MAX_TTD_SPRITE 4894
 
+#define CHANGED_FEATURE(type)\
+	{\
+		int loop;\
+		loop=0;\
+type##ChangedFeature:\
+		if(loop++>10){\
+			IssueMessage(FATAL,AUTOCORRECT_LOOP);\
+			return;\
+		}\
+	}
+
 /*int parity(uint x){
 	int ret=0;
 	while(x){
@@ -48,12 +59,13 @@ using namespace std;
 }*/
 
 
-void CheckSpriteNum(uint num,uint offset,act123::Act1&act1,uint feature,bool&mismatch,bool&hasGround){
+bool CheckSpriteNum(uint num,uint offset,act123::Act1&act1,uint feature,bool&mismatch,bool&hasGround){
 	uint sprite=num&0x3FFF;
 	if(num&1<<31){
 		if(feature!=act1.feature&&!mismatch){
 			IssueMessage(ERROR,FEATURE_MISMATCH,1,act1.spritenum);
 			mismatch=true;
+			return false;
 		}
 		if(sprite>=act1.numsets)
 			IssueMessage(ERROR,UNDEFINED_SPRITE_SET,offset,sprite,act1.spritenum);
@@ -65,9 +77,10 @@ void CheckSpriteNum(uint num,uint offset,act123::Act1&act1,uint feature,bool&mis
 	if(translate==3)IssueMessage(ERROR,INVALID_COLOR_TRANS,offset);
 	else if((translate==1||translate==2&&color)&&(color<775||color>790)&&(color<795||color>803))
 		IssueMessage(WARNING1,INVALID_COLOR_SPRITE,offset+2,color);
+	return true;
 }
 
-bool check_id(uint offset,unsigned int id,uint feature){
+bool check_id(uint offset,unsigned int id,uint feature,uint&newfeature){
 	act123::IDarray&IDs=act123::Instance().defined2IDs;
 	if(id&0x8000)return false;//callback
 	else if(id>>8){
@@ -75,8 +88,11 @@ bool check_id(uint offset,unsigned int id,uint feature){
 		return true;
 	}
 	if(IDs.test(offset,id)){
-		if(IDs.GetFeature(id)!=feature)
+		if(IDs.GetFeature(id)!=feature){
 			IssueMessage(ERROR,FEATURE_LINK_MISMATCH,offset,id,IDs.GetFeature(id));
+			if(newfeature==(uint)-1)newfeature=IDs.GetFeature(id);
+			else if(newfeature!=IDs.GetFeature(id))newfeature=feature;
+		}else newfeature=feature;
 		IDs.use(id);
 		return IDs.checks1C(id);
 	}else
@@ -119,7 +135,11 @@ void Check2(PseudoSprite&data){
 	uint feature=data.ExtractByte(1),id=data.ExtractByte(2);
 	if(!IsValidFeature(ACT2,feature)){
 		IssueMessage(FATAL,INVALID_FEATURE);
-		return;
+		if(_autocorrect==2&&act1.spritenum){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECTING,1,"feature",feature,act1.feature);
+			data.SetByteAt(1,feature=act1.feature);
+		}else return;
 	}
 	Define2 defineID(feature,id);
 	uint nument1=data.ExtractByte(3),nument2=data.ExtractByte(4),length=data.Length(),i,j;
@@ -127,8 +147,9 @@ void Check2(PseudoSprite&data){
 	case 0x80:
 	case 0x83:
 	{
+CHANGED_FEATURE(rand)
 		bool isRand=false;
-		unsigned int prevID=(unsigned)-1,rID;
+		unsigned int prevID=(unsigned)-1,rID,newfeature=(uint)-1;
 		nument2=data.ExtractByte(6);
 		if((nument2-1)&nument2/*tests for only one bit set*/||!nument2)IssueMessage(ERROR,RAND_2_NUMSETS);
 		else if(nument2==1)IssueMessage(WARNING3,ONLY_ONE_CHOICE);
@@ -141,20 +162,28 @@ void Check2(PseudoSprite&data){
 		if(CheckLength(length,7+2*nument2,BAD_LENGTH,"nrand","%2x",nument2,7+2*nument2))return;
 		for(i=0;i<nument2;i++){
 			rID=data.SetNoEol(7+2*i).ExtractWord(7+2*i);
-			check_id(7*i+2,rID,feature);
+			check_id(7*i+2,rID,feature,newfeature);
 			if(prevID!=(unsigned)-1)
 				isRand|=(prevID!=rID);
 			prevID=rID;
 		}
 		if(!isRand&&nument2!=1)
 			IssueMessage(WARNING3,NOT_RANDOM);
+		if(_autocorrect&&newfeature!=(uint)-1&&newfeature!=feature){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECTING,1,"feature",feature,newfeature);
+			data.SetByteAt(1,feature=newfeature);
+			defineID.ChangeFeature(feature);
+			goto randChangedFeature;
+		}
 		return;
 	}
 	case 0x81:case 0x82:
 	case 0x85:case 0x86:
 	case 0x89:case 0x8A:
 	{
-		uint extract=1<<((nument1>>2)&3),off=4,var,param=0,shift,op=(uint)-1;
+CHANGED_FEATURE(var)
+		uint extract=1<<((nument1>>2)&3),off=4,var,param=0,shift,op=(uint)-1,newfeature=(uint)-1;
 		bool isvar=false,isadv=false;
 		varRange ranges(extract);
 		while(true){//read <var> [<param>] <varadjust> [<op> ...]. off reports byte to be read.
@@ -189,7 +218,7 @@ void Check2(PseudoSprite&data){
 		uint def=data.ExtractWord(end),vID;
 		for(i=off;i<end;i+=width){//read <ID> <min> <max> [...]
 			vID=data.ExtractWord(i);
-			isvar=check_id(i,vID,feature);
+			isvar=check_id(i,vID,feature,newfeature);
 			uint min=data.ExtractVariable(i+2,extract),max=data.ExtractVariable(i+2+extract,extract);
 			if(nument2>1)data.SetEol(i+1+extract*2,isadv?2:1);
 			if(min>max)IssueMessage((i==off)?WARNING4:WARNING1,UNREACHABLE_VAR,(i-off)/width);
@@ -209,10 +238,18 @@ void Check2(PseudoSprite&data){
 			}
 		}
 		ranges.CheckDefault();
-		check_id(end,def,feature);
+		check_id(end,def,feature,newfeature);
+		if(_autocorrect&&newfeature!=(uint)-1&&newfeature!=feature){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECTING,1,"feature",feature,newfeature);
+			data.SetByteAt(1,feature=newfeature);
+			defineID.ChangeFeature(feature);
+			goto varChangedFeature;
+		}
 		return;
 	}
 	default:
+CHANGED_FEATURE(std)
 		if(nument1&0x80)IssueMessage(FATAL,INVALID_TYPE);
 		else if(feature<6||feature==0x0B){
 			bool mismatch=false,no1=false;
@@ -239,6 +276,13 @@ void Check2(PseudoSprite&data){
 				}else if(feature!=act1.feature&&!mismatch&&!no1){
 					mismatch=true;
 					IssueMessage(ERROR,FEATURE_MISMATCH,1,act1.spritenum);
+					if(_autocorrect==2||(_autocorrect&&(act1.feature<6||act1.feature==0xB))){
+						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+						IssueMessage(0,AUTOCORRECTING,1,"feature",feature,act1.feature);
+						data.SetByteAt(1,feature=act1.feature);
+						defineID.ChangeFeature(feature);
+						goto stdChangedFeature;
+					}
 				}else if(j>=act1.numsets)
 					IssueMessage(ERROR,UNDEFINED_SPRITE_SET,2*i+5,j,act1.spritenum);
 				else act1.use(j);
@@ -255,7 +299,13 @@ void Check2(PseudoSprite&data){
 					try{
 						uint building=data.ExtractDword(off+1),xoff=data.ExtractByte(off+5),
 							yoff=data.ExtractByte(off+6),zoff=data.ExtractByte(off+7);
-						CheckSpriteNum(building,off+1,act123::Instance().act1,feature,mismatch,hasGround);
+						if(!CheckSpriteNum(building,off+1,act123::Instance().act1,feature,mismatch,hasGround)&&
+							(_autocorrect==2||(_autocorrect&&(act1.feature==7||act1.feature==9)))){
+							IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+							IssueMessage(0,AUTOCORRECTING,1,"feature",feature,act1.feature);
+							data.SetByteAt(1,feature=act1.feature);
+							goto stdChangedFeature;
+						}
 						if(!building)IssueMessage(ERROR,NO_BUILDING_SPRITE,off+1);
 						if(zoff!=0x80){
 							uint x=data.ExtractByte(off+8),y=data.ExtractByte(off+9);
@@ -292,7 +342,13 @@ void Check2(PseudoSprite&data){
 				uint building=data.ExtractDword(8),xoff=data.ExtractByte(12),yoff=data.ExtractByte(13),
 					x=data.ExtractByte(14),y=data.ExtractByte(15);//,z=data.ExtractByte(16);
 				if(building){
-					CheckSpriteNum(building,8,act1,feature,mismatch,hasGround);
+					if(!CheckSpriteNum(building,8,act1,feature,mismatch,hasGround)&&
+						(_autocorrect==2||(_autocorrect&&(act1.feature==7||act1.feature==9)))){
+						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+						IssueMessage(0,AUTOCORRECTING,1,"feature",feature,act1.feature);
+						data.SetByteAt(1,feature=act1.feature);
+						goto stdChangedFeature;
+					}
 					if(xoff>15)IssueMessage(WARNING3,TOO_LARGE,12,"<xoff>",15);
 					else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,12,"xoff+xextent",16);
 					if(yoff>15)IssueMessage(WARNING3,TOO_LARGE,13,"yoff",15);
@@ -310,7 +366,7 @@ void Check2(PseudoSprite&data){
 }
 
 void Check3(PseudoSprite&data){
-	const uint feature=data.ExtractByte(1),length=data.Length();
+	uint feature=data.ExtractByte(1),length=data.Length(),newfeature=(uint)-1;
 	if(!IsValidFeature(ACT3,feature)){
 		IssueMessage(FATAL,INVALID_FEATURE);
 		return;
@@ -330,6 +386,7 @@ void Check3(PseudoSprite&data){
 	}
 	if(numCIDs&&feature>4)IssueMessage(WARNING1,NO_CARGOTYPES);
 	if(CheckLength(length,6+numIDs+3*numCIDs,BAD_LENGTH,VARS,"n-id","num-cid",VALS,numIDs,numCIDs,6+numIDs+3*numCIDs))return;
+CHANGED_FEATURE(act3)
 	unsigned int id,def=data.ExtractWord(4+numIDs+3*numCIDs),i,j;
 	for(i=3;i<3+numIDs;i++)
 		CheckID(feature,data.ExtractByte(i));
@@ -338,11 +395,17 @@ void Check3(PseudoSprite&data){
 		if(j==0xFE&&feature!=4)
 			IssueMessage(ERROR,INVALID_CARGO_TYPE,i,j);
 		i++;
-		check_id(i,id=data.ExtractWord(i),feature);
+		check_id(i,id=data.ExtractWord(i),feature,newfeature);
 		if(def==id)
 			IssueMessage(WARNING1,REUSED_DEFAULT);
 	}
-	check_id(4+numIDs+3*numCIDs,def,feature);
+	check_id(4+numIDs+3*numCIDs,def,feature,newfeature);
+	if(_autocorrect&&newfeature!=(uint)-1&&newfeature!=feature){
+		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+		IssueMessage(0,AUTOCORRECTING,1,"feature",feature,newfeature);
+		data.SetByteAt(1,feature=newfeature);
+		goto act3ChangedFeature;
+	}
 }
 
 void Init123(){act123::Instance().init();}
