@@ -55,7 +55,7 @@ void act123::IDarray::define(uint feature,unsigned int id,bool checks1C){
 	_m[id].used=false;
 	_m[id].sprite=(unsigned short)_spritenum;
 	_m[id].v1C=checks1C;
-	_m[id].feature=feature;
+	_m[id].feature=(ushort)feature;
 }
 
 bool act123::IDarray::test(uint offset,uint id)const{
