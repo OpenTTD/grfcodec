@@ -104,7 +104,7 @@ void Check4(PseudoSprite&data){
 		if(_autocorrect){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 			IssueMessage(0,AUTOCORRECTING,3,"num-ent",data.ExtractByte(3),data.ExtractByte(3)-nument);
-			data.SetByteAt(3,uchar(data.ExtractByte(3)-nument));
+			data.SetByteAt(3,data.ExtractByte(3)-nument);
 		}else
 			IssueMessage(ERROR,INSUFFICIENT_STRINGS,nument);
 	}

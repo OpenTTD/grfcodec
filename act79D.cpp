@@ -122,7 +122,7 @@ int Check7(PseudoSprite&data){
 	if(_autocorrect&&desiredSize&&desiredSize!=data.ExtractByte(2)){
         IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 		IssueMessage(0,AUTOCORRECTING,2,"varsize",data.ExtractByte(2),desiredSize);
-		data.SetByteAt(2,uchar(var_size=desiredSize));
+		data.SetByteAt(2,var_size=desiredSize);
 	}
 	if(cond<2?
 		CheckLength(data.Length(),6,BAD_LENGTH,"cond","%2x",cond,6):

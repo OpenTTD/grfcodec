@@ -157,7 +157,7 @@ CHANGED_FEATURE(rand)
 		if(_autocorrect&&length%2&&nument2*2!=(length-7)&&(length-7)/2<256&&!(((length-7)/2-1)&(length-7)/2)){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 			IssueMessage(0,AUTOCORRECTING,6,"nrand",nument2,(length-7)/2);
-			data.SetByteAt(6,uchar(nument2=(length-7)/2));
+			data.SetByteAt(6,nument2=(length-7)/2);
 		}
 		if(CheckLength(length,7+2*nument2,BAD_LENGTH,"nrand","%2x",nument2,7+2*nument2))return;
 		for(i=0;i<nument2;i++){
@@ -211,7 +211,7 @@ CHANGED_FEATURE(var)
 		if(change&&_autocorrect&&!((length-end-2)%width)&&nument2+change<256){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 			IssueMessage(0,AUTOCORRECTING,off-1,"nvar",nument2,nument2+change);
-			data.SetByteAt(off-1,uchar(nument2+=change));
+			data.SetByteAt(off-1,nument2+=change);
 			end=length-2;
 		}
 		if(CheckLength(length,end+2,BAD_LENGTH,"nvar","%2x",nument2,end+2))return;
@@ -325,7 +325,7 @@ CHANGED_FEATURE(std)
 							if(i!=nument1){
 								IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 								IssueMessage(0,AUTOCORRECTING,3,"num-sprites",nument1,i);
-								data.SetByteAt(3,(uchar)i);
+								data.SetByteAt(3,i);
 							}
 							break;
 						}else{
@@ -382,7 +382,7 @@ void Check3(PseudoSprite&data){
 	if(_autocorrect>=2&&!((length-numIDs)%3)&&newCIDs!=numCIDs&&newCIDs<256){
 		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 		IssueMessage(0,AUTOCORRECTING,3+numIDs,"num-cid",numCIDs,newCIDs);
-		data.SetByteAt(3+numIDs,uchar(numCIDs=newCIDs));
+		data.SetByteAt(3+numIDs,numCIDs=newCIDs);
 	}
 	if(numCIDs&&feature>4)IssueMessage(WARNING1,NO_CARGOTYPES);
 	if(CheckLength(length,6+numIDs+3*numCIDs,BAD_LENGTH,VARS,"n-id","num-cid",VALS,numIDs,numCIDs,6+numIDs+3*numCIDs))return;
