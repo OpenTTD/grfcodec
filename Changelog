@@ -1,3 +1,21 @@
+Changes in 0.9.9 (r653)
+- By Patchman:
+  - Check for sprites that extend beyond the end of the PCX file.
+  - Update versioning system to show last-comitted revision for non-release
+    builds.
+- By DaleStan:
+  - (devel) Add release targets to the Makefiles
+  - Check the palette of the PCX file before encoding from it.
+    (Override a failed check with -f)
+  - Introduce several backslash escape sequences; see the wiki for further
+    information.
+    (disable with -x or -xx)
+  - Do not apply colormap to sprites that like character glyphs.
+    (Apply colormap to all sprites with -M instead of -m)
+  - Enable reading of GIMP palette files with -p.
+  - (devel) Terse build mode; get the verbose mode with make V=1.
+  - (devel) Touch version.h if and only if it changes.
+
 Changes in 0.9.8 (r197)
 - By DaleStan:
   - (devel) grfcodec (but not grfdiff or grfmerge) can now be built in
