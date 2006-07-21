@@ -35,7 +35,7 @@ NOREV: Set to 0 by default, set to 1 to remove the "rXXX" from the version
 NO_BOOST: Set to 0 by default; set to 1 if make erroneously finds a boost
     install.
 SVNVERSION: Set to svnversion . by default. If you're using TortoiseSVN,
-    change Makefile.setup to set it to SubECRev.exe . instead.
+    change Makefile.setup to set it to SubWCRev.exe . instead.
 
 
 Targets
@@ -44,20 +44,20 @@ Targets
 The following are the most intersting targets. Other targets exist, but are
 less useful.
 
-all		Will compile grfcodec, grfdiff, and grfmerge, using gcc
-allb		Will compile grfcodec, grfdiff, and grfmerge, using BCC
+all		Compile grfcodec, grfdiff, and grfmerge, using gcc
+allb		Compile grfcodec, grfdiff, and grfmerge, using BCC
 
 grfcodec
 grfdiff
-grfmerge	Will compile the program in question, using gcc.
+grfmerge	Compile the program in question, using gcc.
 		Append _r to any of these to also strip/upx the resultant
 		binary.
 
 grfcodec.exe
 grfdiff.exe
-grfmerge.exe	Will compile the program in question, using BCC
+grfmerge.exe	Compile the program in question, using BCC.
 
-release		Will compile all three programs using gcc, then strip and upx
+release		Compile all three programs using gcc, then strip and upx
 		them.
 
 clean		Delete all compiled files
