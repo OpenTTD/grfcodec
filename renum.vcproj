@@ -462,6 +462,9 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\0compile.txt">
+		</File>
+		<File
 			RelativePath=".\CHANGELOG.txt">
 		</File>
 		<File
