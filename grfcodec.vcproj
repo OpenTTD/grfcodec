@@ -382,6 +382,24 @@
 				RelativePath=".\version.def">
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\0compile.txt">
+		</File>
+		<File
+			RelativePath=".\Changelog">
+		</File>
+		<File
+			RelativePath=".\grf.txt">
+		</File>
+		<File
+			RelativePath=".\grfcodec.txt">
+		</File>
+		<File
+			RelativePath=".\grftut.txt">
+		</File>
+		<File
+			RelativePath=".\todo.txt">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
