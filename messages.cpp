@@ -29,10 +29,10 @@ using namespace std;
 // The prefered method for generating version.h for Visual Studio is to
 // install Cygwin and use the command "make version.h".
 // If this is not an option, create a file with the two lines
-// #define VERSION "v3.2.1 r277"
+// #define VERSION "v3.3.1 r<revision>"
 // #define YEARS "2004-2006"
-// where <revision> is the current revision of the grfcodec source
-// Increment the 3.2.1 as necessary to agree with version.def
+// where <revision> is the current revision of the nforenum source
+// Increment the 3.3.1 as necessary to agree with version.def
 #include"version.h"
 #include"renum.h"
 #include"inlines.h"
