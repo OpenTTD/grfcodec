@@ -175,7 +175,7 @@ pseudo.o: pseudo.cpp
 
 Makefile.dep: .remake_deps
 	$(_E) [DEP] $@
-	$(_C)$(CC) $(CFLAGS) -MM -MG *.c *.cpp | sed -e "s/[-a-zA-Z0-9_/]*boost\/[-a-zA-Z0-9_/]*\.hpp//g" -e "s/[a-zA-Z0-9_]*\.cpp//g" > $@
+	$(_C)$(CC) $(CFLAGS) -MM -MG -DNO_BOOST *.c *.cpp > $@
 
 ifndef NO_MAKEFILE_DEP
 -include Makefile.dep
