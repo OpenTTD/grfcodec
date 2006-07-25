@@ -457,10 +457,6 @@ Change the condition, or specify four bytes.
 The specified metadata in not in the range that can be stored in a GRF file.
 Bring the metadata into range.
 
-158: "Metadata invalid. ypos must be non-decreasing." (Warn 1)
-This sprite has a smaller value for ypos than the preceeding sprite did.
-Change the filename if you need to go backwards in a PCX file.
-
 159: "Metadata invalid. compression must be one of ..." (Error/Warn 1)
 The compression byte is does not have one of the four valid values.
 Change the compression byte.
