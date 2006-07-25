@@ -322,7 +322,7 @@ NFO_MESSAGE(INVALID_EXT_CODE,"Undefined extended format code %2x.\n",USE_PREFIX|
 NFO_MESSAGE(FEATURE_LINK_MISMATCH,"ID %2x is defined with feature %2x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(FEATURE_CALL_MISMATCH,"ID %2x is defined with feature %2x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(AUTOCORRECT_LOOP,"Autocorrector seems to be stuck in an infinite loop.\n",USE_PREFIX)
-
+NFO_MESSAGE(BITS_OVERLAP,"<parts> field %d reuses the following bits already used in this Action F: %s\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs here. */
 
