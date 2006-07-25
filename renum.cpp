@@ -57,7 +57,6 @@ using namespace std;
 int process_file(istream&);
 void output_buffer(const string&,bool,int);
 bool verify_real(string&);
-void reset_real();
 
 static int _retval=EOK;
 static int _force=0;
@@ -227,7 +226,6 @@ int __cdecl main(const int argc,char**argv){
 		fin.clear();
 		reset_sanity();
 		reset_commands();
-		reset_real();
 		_grfver=0;
 		IssueMessage(0,PROCESSING_FILE,basename.c_str());
 		result=process_file(fin);
@@ -410,19 +408,7 @@ int process_file(istream&in){
 	}
 }
 
-void reset_real(){
-	string s;
-	verify_real(s);
-}
-
 bool verify_real(string&data){
-	static string prevname;
-	static int prevy=0;
-	if(data==""){
-		prevname="";
-		prevy=0;
-		return true;
-	}
 	string::size_type loc=NPOS;
 	string udata=UCase(data);
 	while(true){
@@ -434,10 +420,6 @@ bool verify_real(string&data){
 		if(isspace(data[loc+4]))break;
 	}
 	string name=data.substr(0,loc+4);
-	if(name!=prevname){
-		prevy=0;
-		prevname=name;
-	}
 	int var_list[9]={0,0,1,1,1,0,0},&xpos=var_list[0],&ypos=var_list[1],&comp=var_list[2],&ysize=var_list[3],&xsize=var_list[4],
 		&xrel=var_list[5],&yrel=var_list[6];
 	const char*const format_list[7]={
@@ -471,8 +453,6 @@ bool verify_real(string&data){
 	if(state)data=data.substr(0,loc+5)+meta;
 	if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,"xpos",0);
 	if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,"ypos",0);
-	else if(ypos<prevy)IssueMessage(WARNING1,REAL_MOVES_UP);
-	prevy=ypos;
 	if(!(comp&1)||(comp&0x0B)!=comp)IssueMessage(comp==0xFF?ERROR:WARNING1,REAL_BAD_COMP,comp);
 	if(xsize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,"xsize",1);
 	else if(xsize>0xFFFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,"xsize",0xFFFF);

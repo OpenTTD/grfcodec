@@ -289,7 +289,7 @@ NFO_MESSAGE(INVALID_OVERRIDE,"Cannot override graphics for this feature.\n",USE_
 NFO_MESSAGE(COND_SIZE_MISMATCH,"Condition %2x requires %d byte(s).\n",USE_PREFIX)
 NFO_MESSAGE(REAL_VAL_TOO_SMALL,"Metadata invalid. %s must not be smaller than %d.\n",USE_PREFIX)
 NFO_MESSAGE(REAL_VAL_TOO_LARGE,"Metadata invalid. %s must not be larger than %d.\n",USE_PREFIX)
-NFO_MESSAGE(REAL_MOVES_UP,"Metadata invalid. ypos must be non-decreasing.\n",USE_PREFIX)
+  MESSAGE_UNUSED(REAL_MOVES_UP)
 NFO_MESSAGE(REAL_BAD_COMP,"Metadata invalid. compression must be one of 01, 03, 09, or 0B.\n",USE_PREFIX)
 NFO_MESSAGE(REAL_SPRITE_TOO_LARGE,"Metadata invalid. Sprite size exceeds 64K.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_TEXTID,"Text ID %4x is not a valid text ID.\n",USE_PREFIX|HAS_OFFSET)
