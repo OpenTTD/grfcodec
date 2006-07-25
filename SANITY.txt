@@ -584,3 +584,8 @@ repeated corrections to the same byte.
 Manually correct the offending byte, or do not use the autocorrector.
 If this message appears, it should be considered a bug in NFORenum; please
 report it as such.
+
+191: "<off> <parts> field <num> reuses the following bits ..." (Warn 1)
+This action F uses some bits multiple times.
+Change one of the <parts> sections to use different bits.
+<num> is zero-based; the first <parts> is 0, the second is 1, and so forth.

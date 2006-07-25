@@ -21,6 +21,7 @@
 
 #include<string>
 #include<cassert>
+#include<sstream>
 
 using namespace std;
 
@@ -50,6 +51,8 @@ protected:
 static const IDarray&crStatus=status;
 
 void InitF(){status.init();}
+
+#define BITS(first, num) (((1U << (num)) - 1) << (first))
 
 void CheckF(PseudoSprite&data){
 	data.SetAllHex();
@@ -94,10 +97,30 @@ void CheckF(PseudoSprite&data){
 	uint num_parts=data.SetEol(offset,1).ExtractByte(offset);
 	if(id&0x80)data.SetEol(offset-1,1);
 	if(!num_parts)IssueMessage(ERROR,NO_PARTS,offset);
+	uint bitsused=0;
 	for(uint i=0;i<num_parts;i++){
 		uint textcount=data.ExtractByte(++offset);
 		if(!textcount)IssueMessage(ERROR,NO_PARTS,offset);
 		uint total_prob=0,firstbit=data.ExtractByte(++offset),fb_offs=offset,numbits=data.ExtractByte(++offset);
+		if(bitsused&BITS(firstbit,numbits)){
+			ostringstream s;
+			int first=-1,bits=bitsused&BITS(firstbit,numbits);
+			for(int j=0;j<32;j++){
+				if(bits&(1<<j)){
+					if(first==-1)first=j;
+					continue;
+				}
+				if(first==-1)continue;
+				if(first==j-1)s<<first<<", ";
+				else if(first==j-2)s<<first<<", "<<j-1<<", ";
+				else s<<first<<".."<<j-1<<", ";
+				first=-1;
+			}
+			string str=s.str();
+			str[str.length()-2]='\0';
+			IssueMessage(WARNING1,BITS_OVERLAP,fb_offs,i,str.c_str());
+		}
+		bitsused|=BITS(firstbit,numbits);
 		data.SetEol(offset,2);
 		if(firstbit+numbits>32)IssueMessage(ERROR,OUT_OF_RANGE_BITS,32,fb_offs);
 		for(uint j=0;j<textcount;j++){
