@@ -55,7 +55,7 @@ public:
 	size_type size()const{
 		return _Mybase::size();
 	}
-	reference operator[](size_t x){
+	reference operator[](size_type x){
 		return _Mybase::operator [](x);
 	}
 	const_reference operator[](size_type x)const{
