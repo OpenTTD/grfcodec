@@ -1,4 +1,29 @@
 Changelog:
+v3.3.1 to v3.4.0 (r688)
+- (devel) Can now make the version without \w<date> with NO_BOOST=1.
+- (devel) By Patchman: non-release versions show last-committed revision, not
+  repository revision.
+- Added support for:
+  - Industry variable 64.
+  - String code 94.
+  - Variable 7E (procedure calls).
+- Added 2.<minor>r<revision> format for @@VERSIONCHECK.
+- Added a missing check for 00 byte following string code 99.
+- (devel) Terse build mode.
+- Corrected handling of action 2 CargoIDs; all share the same table.
+- Added offset info to the variational 2 messages that didn't have it.
+- (bugfix) No longer crashes when an industry production callback is not 15
+  bytes long.
+- (autocorrect) Feature byte for actions 2 and 3.
+- Made <feature> optional in most commands taking <feature> <id>.
+- Fixed two over-long lines in the --help message.
+- (devel) Removed Boost headers from Makefile.dep.
+- Remove warning about moving to a smaller ypos.
+- Added check for second use of a single bit in Action F.
+- (bugfix) Action Fs that try to use too many bits now report the correct
+  <offset> and <available-bits>, instead of having them swapped.
+- (bugfix) Fix parsing of quoted \##.
+
 v3.3.0 to v3.3.1 (r320)
 - Recognize Info version 7.
 - Warn about generic action 4s that declare no texts.
