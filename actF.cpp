@@ -90,8 +90,13 @@ void CheckF(PseudoSprite&data){
 			}
 		}while((langs=data.ExtractByte(offset))!=0);
 		if(names>1)data.SetEol(oldoff-1,1);
-		if(_grfver<7&&!nameLocs[0])IssueMessage(WARNING1,MISSING_FALLBACK);
-		else if(_grfver>6&&!cNameLocs[0x7F])IssueMessage(WARNING1,MISSING_FALLBACK);
+		if(_grfver<7){
+			if(!nameLocs[4])IssueMessage(WARNING1,MISSING_LANG_NAME,4);
+			if(!nameLocs[3])IssueMessage(WARNING1,MISSING_LANG_NAME,3);
+			if(!nameLocs[2])IssueMessage(WARNING1,MISSING_LANG_NAME,2);
+			if(!nameLocs[1])IssueMessage(WARNING1,MISSING_LANG_NAME,1);
+			if(!nameLocs[0])IssueMessage(WARNING1,MISSING_LANG_NAME,0);
+		}else if(!cNameLocs[0x7F])IssueMessage(WARNING1,MISSING_FALLBACK);
 		offset++;
 	}
 	uint num_parts=data.SetEol(offset,1).ExtractByte(offset);

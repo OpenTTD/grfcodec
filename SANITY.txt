@@ -340,10 +340,12 @@ Change one or both of src1 and src2, or change the operation to 00.
 This action F has already specified a name for language <lang>.
 Remove one of the definitions.
 
+127: "No name for <lang> was specified." (Warn 1)
 127: "No fallback string was specified." (Warn 1)
-In version 6 format, this action F specifies no name for American.
+In version 6 format, this action F specifies no name for one of the five
+standard languages.
 In version 7 format, this action F specifies no name for language 7F.
-Add an additional name for either American or all.
+Add the missing name(s).
 
 128: "<off> Zero parts were specified." (Error)
 This action specified either 0 parts or 0 texts for one of the parts.
@@ -589,3 +591,5 @@ report it as such.
 This action F uses some bits multiple times.
 Change one of the <parts> sections to use different bits.
 <num> is zero-based; the first <parts> is 0, the second is 1, and so forth.
+
+
