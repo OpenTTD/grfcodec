@@ -110,6 +110,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 						}
 						break;
 					}default:
+						in.unget();
 						ch=(char)ReadHex(in,2);
 						if(!in){
 							IssueMessage(0,INVALID_EXTENSION);
