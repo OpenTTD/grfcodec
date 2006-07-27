@@ -153,12 +153,12 @@ NFO_MESSAGE(UNDEF_VAR,"Undefined variable \"%s\".\n",0)
 NFO_MESSAGE(COMMAND_INVALID_ARG,"Invalid argument to %s command.\n",0)
 NFO_MESSAGE(COMMAND_UNKNOWN,"Unknown comment command: %s\n",0)
 NFO_MESSAGE(COMMAND_REVERT_DEFAULT,"Assuming \"DEFAULT\".\n",0)
+NFO_MESSAGE(COMMAND_UNKNOWN_VERSION,"Unknown version number. If this version has been released, please get the latest versions.dat from the NFORenum website.\n",0)
 
 //UNPARSEABLE
 NFO_MESSAGE(INVALID_CHARACTER,"Invalid character: \"%c\".\n",0)
 NFO_MESSAGE(INVALID_EXTENSION,"Invalid escape sequence.\n",0)
 NFO_MESSAGE(UNTERMINATED_STRING,"Unterminated literal string.\n",0)
-  MESSAGE_UNUSED(BAD_SIZE)//,"Could not determine size.\n",0)
 MESSAGE(REAL_NO_FILENAME,"Apparent real sprite does not contain a file name.\n",TO_NULL|MAKE_COMMENT)
 NFO_MESSAGE(REAL_MISSING_DATA,"Could not read %s from apparent real sprite.\n",0)
 

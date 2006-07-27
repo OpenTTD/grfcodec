@@ -49,6 +49,7 @@ DATA_FILE(0f8)
 DATA_FILE(callbacks)
 DATA_FILE(2r)
 DATA_FILE(langs)
+DATA_FILE(versions)
 
 /*
  * To add a new data files, pick a name (matching the regex [0-9a-zA-Z_]*),

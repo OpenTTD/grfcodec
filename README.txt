@@ -353,12 +353,14 @@ This will insert a TTDPatch version check.
  1) The dotted-decimal version number, eg 2.0.10.640 for 2.0.1 alpha 64.
  2) The 8-character version code, best acquired by copying from switches.xml.
  3a) The coloquial version number, either dotted or undotted (201a<num>, 
-    2.0.1a<num>, 25b<num>, or 2.5b<num>), eg 201a66 for 2.0.1 alpha 66, for
-    TTDPatch versions 2.5b5 and earlier.
+    2.0.1a<num>, 25b<num>, or 2.5b<num>), eg 201a66 for 2.0.1 alpha 66.
  3b) The coloquial version number, either dotted or undotted (2<minor>r<rev>
     or 2.<minor>r<num>), for TTDPatch revisions r418 and later.
 Note that 3a cannot be used to specify a version that is not in the 2.0.1
-alpha or 2.5 beta series, nor a non-official version.
+alpha or 2.5 beta series, nor a non-official version. For 2.5 beta 6 and
+later, NFORenum keeps the correct revision in versions.dat. If this file has
+not been updated since the release of the 2.5 beta you want to test for, you
+will have to use form 3b instead.
 <name> is the human-readable name of that version, either as a series of hex
 characters or as a quoted string. A 00 will be appended by NFORenum.
 For example, to check for at least alpha 63, all of these are valid:
