@@ -308,7 +308,6 @@ void CheckLangID(uint id,uint offs){
 }
 
 string GetLangName(uint id){
-	VERIFY(_grfver>6,_grfver);
 	VERIFY(id<0x80,id);
 	if(langNames::Instance().names[id]!="")return langNames::Instance().names[id];
 	return _unknownLanguage;
