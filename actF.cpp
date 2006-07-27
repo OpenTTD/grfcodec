@@ -124,7 +124,7 @@ void CheckF(PseudoSprite&data){
 			bitsused|=BITS(firstbit,numbits);
 		}
 		data.SetEol(offset,2);
-		if(firstbit+numbits>32)IssueMessage(ERROR,OUT_OF_RANGE_BITS,32,fb_offs);
+		if(firstbit+numbits>32)IssueMessage(ERROR,OUT_OF_RANGE_BITS,fb_offs,32);
 		for(uint j=0;j<textcount;j++){
 			uint prob=data.ExtractByte(++offset);
 			total_prob+=prob&0x7F;
