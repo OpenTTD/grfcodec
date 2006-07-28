@@ -352,7 +352,7 @@ PseudoSprite&PseudoSprite::SetText(uint i,uint num){
 }
 PseudoSprite&PseudoSprite::SetEot(uint i){beauty[i]=ENDQUOTE;return*this;}
 PseudoSprite&PseudoSprite::SetEol(uint i,uint minbreaks){
-	if(GetState(CONVERTONLY)||GetState(LINEBREAKS)<minbreaks)return*this;
+	if(GetState(CONVERTONLY)||GetState(LINEBREAKS)<minbreaks||i+1==Length())return*this;
 	if(context[i].find_first_of('\n')==NPOS)context[i]+="\n";
 	if(context[i][context[i].length()-1]=='\n')context[i]+=string(GetState(LEADINGSPACE,(minbreaks>1)?1:0),' ');
 	return*this;
