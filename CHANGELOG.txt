@@ -2,6 +2,8 @@ Changelog:
 v3.4.0 to
 - Check that in GRF version 6, Action F declares names for all five standard
   languages.
+- (bugfix) Slight change to action F formating, for increased consistancy.
+- Prevent the beautifier from adding newlines after the end of a sprite.
 
 v3.3.1 to v3.4.0 (r688)
 - (devel) Can now make the version without \w<date> with NO_BOOST=1.
