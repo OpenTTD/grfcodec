@@ -130,7 +130,7 @@ void CheckF(PseudoSprite&data){
 		}
 		data.SetEol(offset,2);
 		if(firstbit+numbits>32)IssueMessage(ERROR,OUT_OF_RANGE_BITS,fb_offs,32);
-		for(uint j=0;j<textcount;j++){
+		for(uint j=0;j<textcount;/*Increment in SetEol call*/){
 			uint prob=data.ExtractByte(++offset);
 			total_prob+=prob&0x7F;
 			if(!(prob&0x7F))IssueMessage(WARNING1,NO_PROBABILITY,offset);
@@ -138,15 +138,15 @@ void CheckF(PseudoSprite&data){
 				uint id=data.ExtractByte(++offset)&0x7F;
 				if(!status.is_defined(id))IssueMessage(ERROR,UNDEFINED_ID,offset,id);
 				else status.use(id);
-				data.SetEol(offset,2);
 			}else{
 				oldoff=++offset;
 				if(CheckString(data,offset,0)){
 					IssueMessage(FATAL,OVERRAN_F_PART,oldoff);
 					return;
 				}
-				data.SetEol(--offset,2);
+				offset--;
 			}
+			data.SetEol(offset,(++j==textcount)?1:2);
 		}
 		total_prob--;//beause 2^n has n+1 bits but only needs n bits of randomness.
 		uint minbits=1;
