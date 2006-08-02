@@ -167,8 +167,8 @@ static const char _datlangs[]="\x00\x01"
 /*6x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
 /*7x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"any\n";
 
-static const char _datversions[]="\x00\x00\x07"
-"\xD8\x01\x77\x02";
+static const char _datversions[]="\x00\x01\x07"
+"\xD8\x01\x31\x06";
 
 /*** Add data file data here ***/
 
