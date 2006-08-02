@@ -391,3 +391,7 @@ int sanity_locate_id(int id){
 void sanity_define_id(int feature,int id){
 	act123::Instance().defined2IDs.define(feature,id&0xFF,true);
 }
+
+int sanity_get_feature(int id){
+	return act123::Instance().defined2IDs.GetFeature(id);
+}
