@@ -35,5 +35,6 @@ void sanity_use_set(int);
 void sanity_test_id(int);
 int sanity_locate_id(int);
 void sanity_define_id(int,int);
+int sanity_get_feature(int);
 
 #endif//_RENUM_SANITY_H_DEFINED

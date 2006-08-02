@@ -425,7 +425,7 @@ bool parse_comment(const string&line){
 			return false;
 		}
 		inject("//@@PRESERVEMESSAGES NOPRESERVE");
-		inject(mysprintf("//!!LOCATEID2 %2x %2x: %d",feature,id,sanity_locate_id(id)));
+		inject(mysprintf("//!!LOCATEID2 %2x %2x: %d",sanity_get_feature(id),id,sanity_locate_id(id)));
 		if(GetState(REMOVEMESSAGES))inject("//@@REMOVEMESSAGES NOPRESERVE");
 		break;
 	}case USEOLDSPRITENUMS:
