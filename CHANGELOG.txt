@@ -6,6 +6,9 @@ v3.4.0 to
 - Prevent the beautifier from adding newlines after the end of a sprite.
 - Fix: Version number is revision in hex digits, not converted to hex.
 - Fix: LOCATEID2 now reports the correct feature byte.
+- Data file updates:
+  - Version 2.5 beta 8
+  - Callback 143
 
 v3.3.1 to v3.4.0 (r688)
 - (devel) Can now make the version without \w<date> with NO_BOOST=1.
