@@ -1,5 +1,5 @@
 # Version number
-VER = 0.9.9
+VER = 0.9.10
 
 
 VERSIONSTR = $(VER) r${SVNREV}

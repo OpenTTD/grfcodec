@@ -1,4 +1,4 @@
-Changes in
+Changes in 0.9.10 (r819)
 - (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
 
 Changes in 0.9.9 (r653)
