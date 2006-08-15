@@ -186,8 +186,8 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 							out.put(0x07);
 							continue;
 						}
-					case'C':out.put(0x0B);continue;
-					case'c':out.put(0x0C);continue;
+					case'c':out.put(0x0B);continue;
+					case'C':out.put(0x0C);continue;
 					}
 					break;
 				}case'D':{
@@ -208,8 +208,8 @@ PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
 							continue;
 						}
 						break;
-					case'|':out.put(0x07);continue;
-					case'&':out.put(0x08);continue;
+					case'&':out.put(0x07);continue;
+					case'|':out.put(0x08);continue;
 					case'/':out.put(sign?0x0A:0x09);continue;
 					case'%':out.put(sign?0x0C:0x0B);continue;
 					//GRM <operation>
