@@ -1,3 +1,6 @@
+Changes in
+- (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
+
 Changes in 0.9.9 (r653)
 - By Patchman:
   - Check for sprites that extend beyond the end of the PCX file.
