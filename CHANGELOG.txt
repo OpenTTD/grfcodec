@@ -9,6 +9,7 @@ v3.4.0 to
 - Data file updates:
   - Version 2.5 beta 8
   - Callback 143
+- (bugfix) Correct reading of \7c, \7C, \D| and \D&
 
 v3.3.1 to v3.4.0 (r688)
 - (devel) Can now make the version without \w<date> with NO_BOOST=1.
