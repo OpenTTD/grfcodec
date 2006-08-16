@@ -124,7 +124,7 @@ static const char _datTextIDs[]="\x04\x02\x35\x03\x11\x00\x25\x00\x19\x00\x5D\x0
 //                                     --08--                          --0C--                          --10--
 static const char _dat0f8[]="\x02\x00\x30\x30\x00\xFC\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x00\x00";
 
-static const char _datcallbacks[]="\x05\x01\x44\x01"
+static const char _datcallbacks[]="\x05\x02\x45\x01"
 "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 "\x00\x00\x8F\x04\x04\x8F\x00\x07\x9F\x8F\x07\x07\x07\x00\x07\x07"
 //                 x4              x8              xC
@@ -150,7 +150,7 @@ static const char _datcallbacks[]="\x05\x01\x44\x01"
 //                 x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x05\x05\x05\x07";
+"\x05\x05\x05\x07\x0C";
 
 //byte triples: num 80 bits/num 83 bits/num triggers
 //                                    --  00  --                                      --  04  --                                      --  08  --                                      --  0C  --
