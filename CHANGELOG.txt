@@ -5,6 +5,7 @@ v3.4.1 to
   - Callback 145
   - Action B messages 04 & 05
   - New action 5 sprites for trams and the GUI
+- Action 13
 
 v3.4.0 to 3.4.1 (r820)
 - Check that in GRF version 6, Action F declares names for all five standard

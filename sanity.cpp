@@ -99,6 +99,7 @@ int  Check7(PseudoSprite&);
 void CheckB(PseudoSprite&);
 bool CheckD(PseudoSprite&,uint);
 void CheckF(PseudoSprite&);
+void Check13(PseudoSprite&);
 void invalidate_act3();
 
 void reset_sanity(){
@@ -398,6 +399,10 @@ void check_sprite(PseudoSprite&data){
 		status.spritenum=_spritenum;
 		status.seensprites=0;
 		SetState(FIND_REAL);
+		break;
+	case 0x13:
+		Seen8(0x13);
+		Check13(data);
 		break;
 	case 0xFE:{
 		if(CheckLength(length,8,INVALID_LENGTH,IMPORTS,EXACTLY,8))return;
