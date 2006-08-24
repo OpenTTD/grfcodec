@@ -115,7 +115,7 @@ static const char _datIDs[]="\x76\x00\x73\x00\x57\x00\x0A\x00\x28\x00\xFF\x00\x0
 static const char _dat4[]="\x02\x00"
 "\x04\x04\x04\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 "\x1C\x1C\x1C\x1C\x04\x04\x00\x04\x00\x1C\x1D\x06\x00\x00";
-static const char _datB[]="\x01\x00\x03\x04\x02\x02\x02\x03";
+static const char _datB[]="\x01\x01\x03\x06\x02\x02\x02\x03\x02\x02";
 //                                         05      06              08                              0C
 static const char _dat5[]="\x02\x01\x0D\x30\x00\x4A\x00\x49\x00\x41\x00\x06\x00\x00\x01\x4C\x00\x85\x00\x10\x00";
 //Count of IDs in class:                   -0000-                          -2000-                          -4000-                          -6000-                          -8000-                          -A000-                          -C000-                          -E000-
