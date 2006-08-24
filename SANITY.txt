@@ -592,4 +592,6 @@ This action F uses some bits multiple times.
 Change one of the <parts> sections to use different bits.
 <num> is zero-based; the first <parts> is 0, the second is 1, and so forth.
 
-
+193: "Action 13 can only define texts in the C4xx, C5xx, C9xx ..." (Error)
+This action 13 attempts to define texts outside its valid range.
+Use action 4 or correct the textID.

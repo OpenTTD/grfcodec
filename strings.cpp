@@ -111,6 +111,49 @@ void Check4(PseudoSprite&data){
 	if(i<data.Length())IssueMessage(WARNING2,EXTRA_DATA,i);
 }
 
+void Check13(PseudoSprite&data){
+	if(data.Length()<9){
+		IssueMessage(FATAL,INVALID_LENGTH,ACTION,0x13,AT_LEAST,9);
+		return;
+	}
+	const uint GRFid=data.ExtractDword(1);
+	data.SetGRFID(1);
+	if((GRFid&0xFF)==0xFF)IssueMessage(WARNING1,RESERVED_GRFID);
+
+	uint offs=8;
+
+	data.SetAllHex();
+	int nument=(signed)data.ExtractByte(5);
+	if(nument!=0){
+		const uint id=data.ExtractWord(6);
+		if(id>>10==0xD0>>2||id>>8==0xDC||id>>9==0xC4>>1||id>>9==0xC9)
+			CheckTextID(0x48,id,6)&&CheckTextID(0x48,id+nument-1,5);
+		else
+			IssueMessage(ERROR,OUT_OF_RANGE_TEXTID_13);
+	}else
+		IssueMessage(WARNING1,NO_TEXTS);
+	for(;nument--||_autocorrect;){
+		int result=CheckString(data,offs,CTRL_ALL|CTRL_NO_STACK_CHECK,!nument);
+		if(result){
+			if(result!=-1)nument--;
+			break;
+		}
+		try{
+			if(data[offs])data.SetEol(offs-1,1);
+			else data.SetNoEol(offs-1);
+		}catch(uint){}
+	}
+	if(++nument){
+		if(_autocorrect){
+			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+			IssueMessage(0,AUTOCORRECTING,5,"num-ent",data.ExtractByte(5),data.ExtractByte(5)-nument);
+			data.SetByteAt(5,data.ExtractByte(5)-nument);
+		}else
+			IssueMessage(ERROR,INSUFFICIENT_STRINGS,nument);
+	}
+	if(offs<data.Length())IssueMessage(WARNING2,EXTRA_DATA,offs);
+}
+
 #define STACK_CHECK(type,width)\
 	if(stackoffs+width>stack.length()){\
 		IssueMessage(WARNING1,OVERRAN_STACK,offs,ch);\
