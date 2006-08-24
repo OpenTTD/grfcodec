@@ -78,7 +78,7 @@ void Check4(PseudoSprite&data){
 	int perms=feature==0x48?CTRL_ALL|CTRL_NO_STACK_CHECK
 		:(check4::Instance().*(lang&0x80?&check4::GetGenericPerms:&check4::GetNamePerms))(feature);
 	if(feature==0x0B){
-		for(;nument--;){
+		for(;nument--||_autocorrect;){
 			int result=CheckString(data,i,perms,!nument,MakeStack(1,STACK_WORD));
 			if(result){
 				if(result!=-1)nument--;
