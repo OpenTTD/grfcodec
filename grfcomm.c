@@ -42,7 +42,7 @@ void usage(char *extratext)
 }
 
 
-int getspritefilename(char *filename, const char *basefilename, char *subdirectory, const char *ext, long spriteno)
+static int getspritefilename(char *filename, const char *basefilename, char *subdirectory, const char *ext, long spriteno)
 {
 	char *fullpath = strdup(basefilename);//_fullpath(NULL, basefilename, 0);
 

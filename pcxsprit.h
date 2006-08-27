@@ -29,7 +29,7 @@ class pcxwrite : public pcxfile, public spritestorage {
 	void writepal();
 
 	void setcolours(U8 bg, U8 bord, int skip);
-	void setpalette(U8 *palette);
+	void setpalette(const U8 *palette);
 	//void setpalette(FILE *palfile);
 
 	protected:
@@ -37,7 +37,7 @@ class pcxwrite : public pcxfile, public spritestorage {
 	private:
 	void showspriteno();
 
-	U8 *palette;
+	const U8 *palette;
 
 	int borderskip, spriteno, lastdigitx;
 	U8 background;
