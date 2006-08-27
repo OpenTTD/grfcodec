@@ -29,15 +29,15 @@
 #include "typesize.h"
 #include "version.h"
 
-U32 GRDmagic = 0x67fb49ad;
+static const U32 GRDmagic = 0x67fb49ad;
 #define TEMPFILE "grfmerge.tmp"
 
-int alwaysyes = 0;
-char *grdfile = NULL;
-long grdofs = 0;
-int onlyshow = 0, issfx = 0;
+static int alwaysyes = 0;
+static char *grdfile = NULL;
+static long grdofs = 0;
+static int onlyshow = 0, issfx = 0;
 
-void usage(void)
+static void usage(void)
 {
 	printf(
 		"\nUsage:\n"
@@ -59,7 +59,7 @@ void usage(void)
 	exit(1);
 }
 
-int checkisselfextr(char *exe)
+static int checkisselfextr(const char *exe)
 {
 	FILE *f;
 	char c[3];
@@ -99,7 +99,7 @@ int checkisselfextr(char *exe)
 	return issfx = magic == GRDmagic;
 }
 
-void die(char *text, ...)
+static void die(const char *text, ...)
 {
 	va_list argptr;
 
@@ -110,7 +110,7 @@ void die(char *text, ...)
 	exit(2);
 }
 
-int yesno(char *txt)
+static int yesno(const char *txt)
 {
 	char c;
 
@@ -133,7 +133,7 @@ int yesno(char *txt)
 
 static char *block = NULL;
 #define BLOCKSIZE 8192
-void copyblock(size_t size, FILE *from, FILE *to)
+static void copyblock(size_t size, FILE *from, FILE *to)
 {
 	size_t thisblock;
 
@@ -152,7 +152,7 @@ void copyblock(size_t size, FILE *from, FILE *to)
 }
 
 // this function reads a piece of data, and copies it to the other files
-void copy(void *data, size_t size, size_t n, FILE *from, FILE *to)
+static void copy(void *data, size_t size, size_t n, FILE *from, FILE *to)
 {
 	size_t res;
 
@@ -178,7 +178,7 @@ void copy(void *data, size_t size, size_t n, FILE *from, FILE *to)
 // just the length)
 //
 
-U16 copysprite(FILE *from, FILE *to)
+static U16 copysprite(FILE *from, FILE *to)
 {
 	U8 info, ofs;
 	S8 code;
@@ -234,12 +234,12 @@ U16 copysprite(FILE *from, FILE *to)
 	return 1;
 }
 
-void skipsprite(FILE *f)
+static void skipsprite(FILE *f)
 {
 	copysprite(f, NULL);
 }
 
-void showpct(long now, long total, int spriteno, int *pct)
+static void showpct(long now, long total, int spriteno, int *pct)
 {
 	int newpct = 100L*now/total;
 
@@ -250,10 +250,11 @@ void showpct(long now, long total, int spriteno, int *pct)
 	*pct = newpct;
 }
 
-int mergeset(FILE *grd, char *grffile)
+static int mergeset(FILE *grd, const char *grffile)
 {
 	FILE *grf = NULL, *tmp = NULL;
-	char grflen, *grfname, *c;
+	char grflen, *grfname;
+	const char *c;
 	char tempfile[16];
 	U16 version, i, j, numsprites, spriteno, curno;
 	int lastfrom = -2, lastto = lastfrom, lastpct = -1;
@@ -382,6 +383,8 @@ int mergeset(FILE *grd, char *grffile)
 	if (grf) fclose(grf);
 
 	if (!skipped) {
+		char* c;
+
 		printf("\nDone\n");
 
 		// rename grf to bak if bak doesn't exist
@@ -425,7 +428,7 @@ int mergeset(FILE *grd, char *grffile)
 	return 1;
 }
 
-int domerge(int argc, char **argv)
+static int domerge(int argc, char **argv)
 {
 	FILE *grd;
 	U32 magic;

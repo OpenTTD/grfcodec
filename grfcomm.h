@@ -16,13 +16,9 @@ void usage(char *extratext
 #endif
 );
 
-int getspritefilename(char *filename, const char *basefilename, char *subdirectory, const char *ext, long spriteno);
-
 char *spritefilename(const char *basefilename, const char *reldirectory, const char *ext, int spriteno, const char *mode, int mustexist);
 int doopen(const char *grffile, const char *dir, const char *ext, const char *mode,
 	char **filename, FILE **file, int mustexist);
-
-int movetoreal(char *newfile, char *realfile);
 
 ENDC
 

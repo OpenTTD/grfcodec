@@ -1,7 +1,7 @@
 
 #include "path.h"
 
-void CopyIt(char *dst, const char *src, unsigned maxlen)
+static void CopyIt(char *dst, const char *src, unsigned maxlen)
 {
 	if (dst) {
 		if(strlen(src) >= maxlen)
@@ -14,7 +14,7 @@ void CopyIt(char *dst, const char *src, unsigned maxlen)
 	}
 }
 
-int DotFound(char *pB)
+static int DotFound(const char *pB)
 {
 	if (*(pB-1) == '.')
 		pB--;
@@ -30,7 +30,7 @@ int DotFound(char *pB)
 	return 0;
 }
 
-char *stpcopy(char *dest, const char *src)
+static char *stpcopy(char *dest, const char *src)
 {
   return strcpy(dest, src) + strlen(src);
 }

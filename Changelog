@@ -1,3 +1,7 @@
+Changes in
+- (devel) By Tron: code cleanup, make C functions and variables static where
+  possible.
+
 Changes in 0.9.10 (r819)
 - (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
 

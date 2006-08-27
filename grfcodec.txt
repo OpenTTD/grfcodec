@@ -2,7 +2,7 @@
                             GRFCodec Documentation
 
    GRFCODEC: A suite of programs to decode and encode Transport Tycoon
-   Deluxe's GRF files. Copyright (C) 2000-2003 by [1]Josef Drexler.
+   Deluxe's GRF files. Copyright (C) 2000-2006 by [1]Josef Drexler.
 
    These programs are distributed according to the terms of the GNU
    General Public License, Version 2. For more information read the file
@@ -20,7 +20,7 @@ GRFCODEC
      * to decode a GRF file:
 
      grfcodec -d <grf-file>
-       This will put a pcx file in a subdirectory called "SPRITES". It
+       This will put a pcx file in a subdirectory called "sprites". It
        will also make a .NFO file that is needed to reconstruct the GRF
        file.
      * to encode a GRF file:
@@ -54,6 +54,11 @@ GRFCODEC
                 example when decoding TT Original or TT+World Builder
                 graphics. See -p ? for a list of possible values.
 
+        -x
+        -xx
+                Disable part or all of the Info version 7 format, reverting
+                to the Info version 6 format 
+
           Examples:
 
      grfcodec -d trg1.grf
@@ -67,6 +72,17 @@ GRFCODEC
                 encoding process, but it also greatly increases the size
                 of the resulting .GRF file, and may reduce performance in
                 TTD because it can only cache fewer sprites.
+
+        -o
+        -oo
+                Enable sprite-shrinking optimizations. Note that these are
+                not necessarily safe. In particular, sprites that will
+                participate share their bounding box (as for some station
+                sprites) must not have their upper-right hand corner moved,
+                and the sprite defining the bounding box must not be shrunk
+                smaller than any that will share with it.
+
+   When doing either:
 
         -m <mapping>
                 Map the colour palette from one type to another, for

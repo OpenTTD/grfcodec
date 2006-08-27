@@ -100,7 +100,7 @@ char *usagetext=
 
 ENDC
 
-void showpalettetext()
+static void showpalettetext()
 {
 	printf(
 		"Options for the -p parameter:\n"
@@ -130,7 +130,7 @@ void showpalettetext()
 		);
 }
 
-void showcolourmaps()
+static void showcolourmaps()
 {
 	printf(
 		"Options for the -m parameter:\n"
@@ -142,11 +142,11 @@ void showcolourmaps()
 }
 
 struct defpal {
-	char *grffile;
+	const char* grffile;
 	int defpalno;
 };
 
-defpal defpals[] =
+static const defpal defpals[] =
 {
 	// DOS TTD
 	{ "TRG1",	PAL_ttd_norm },
@@ -174,10 +174,10 @@ defpal defpals[] =
 	{ "TTDPATCHW",	PAL_ttw_norm },
 };
 
-int *colourmaps[] = { palmap0, palmap1 };
+static int *colourmaps[] = { palmap0, palmap1 };
 
 
-int movetoreal(char *newfile, char *realfile)
+static int movetoreal(char *newfile, char *realfile)
 {
 	// rename original to bak if bak doesn't exist
 	char *bakfile = (char*) malloc(strlen(realfile) + 4);
@@ -225,24 +225,27 @@ int movetoreal(char *newfile, char *realfile)
 
 class spritefiles : public multifile {
 public:
-	spritefiles() { init(); };
-	spritefiles(char *basename, char *directory);
-	virtual FILE *curfile()  { return thecurfile; };
+	spritefiles() { init(); }
+	spritefiles(const char *basename, const char *directory);
+	virtual FILE *curfile()  { return thecurfile; }
 	virtual FILE *nextfile();
-	virtual const char *filename() { return thecurfilename; };
-	virtual const char *getdirectory() { return directory; };
+	virtual const char *filename() { return thecurfilename; }
+	virtual const char *getdirectory() { return directory; }
 private:
 	void init () {
 		thecurfile = NULL;
-		basename = thecurfilename = directory = NULL;
-		filenum = 0; };
+		basename = thecurfilename = NULL;
+		directory = NULL;
+		filenum = 0;
+	}
 		FILE *thecurfile;
-		char *thecurfilename, *directory;
+		char *thecurfilename;
+		const char *directory;
 		const char *basename;
 		unsigned int filenum;
 };
 
-spritefiles::spritefiles(char *basename, char *directory)
+spritefiles::spritefiles(const char *basename, const char *directory)
 {
 	init();
 	spritefiles::basename = basename;
@@ -272,7 +275,7 @@ FILE *spritefiles::nextfile()
 
 
 
-int encode(char *file, char *dir, int compress, int *colourmap)
+static int encode(const char *file, const char *dir, int compress, int *colourmap)
 {
 	char *grfnew, *infofile;
 	FILE *grf;
@@ -450,7 +453,7 @@ int encode(char *file, char *dir, int compress, int *colourmap)
 	return 0;
 }
 
-int decode(char *file, char *dir, U8 *palette, int box, int width, int height, int *colourmap, int useplaintext)
+static int decode(const char *file, const char *dir, const U8 *palette, int box, int width, int height, int *colourmap, int useplaintext)
 {
 	int count, result, lastpct = -1;
 	FILE *grf, *info;
@@ -542,7 +545,7 @@ int decode(char *file, char *dir, U8 *palette, int box, int width, int height, i
 	return 0;
 }
 
-U8 *readpal(char *filearg)
+static U8 *readpal(const char *filearg)
 {
 	enum paltype { UNK, BCP, PSP, GPL };
 	paltype type = UNK;
@@ -621,7 +624,7 @@ U8 *readpal(char *filearg)
 }
 
 // find default palette
-U8* findpal(char *grffile)
+static U8* findpal(char *grffile)
 {
 	char base[12];
 	char *bs;

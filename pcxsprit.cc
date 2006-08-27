@@ -218,7 +218,7 @@ void pcxwrite::writepal()
 	fseek(curfile, oldpos, SEEK_SET);
 }
 
-void pcxwrite::setpalette(U8 *palette)
+void pcxwrite::setpalette(const U8 *palette)
 {
 	pcxwrite::palette = palette;
 }

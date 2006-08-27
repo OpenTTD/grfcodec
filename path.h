@@ -19,12 +19,6 @@
 
 BEGINC
 
-void CopyIt(char *dst, const char *src, unsigned maxlen);
-int DotFound(char *pB);
-
-// not stpcpy b/o naming conflict
-char *stpcopy(char *dest, const char *src);
-
 void fnmerge(register char *pathP, const char *driveP,
 	const char *dirP, const char *nameP, const char *extP);
 int fnsplit(const char *pathP, char *driveP, char *dirP,
