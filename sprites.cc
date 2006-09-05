@@ -26,7 +26,7 @@
 #define HASTRANSPARENCY(info) (info[0] & 8)
 #define SIZEISCOMPRESSED(info) (info[0] & 2)
 
-void cfread (void *ptr, size_t size, size_t n, FILE *stream)
+static void cfread(void *ptr, size_t size, size_t n, FILE *stream)
 {
 	unsigned int read = fread(ptr, 1, size * n, stream);
 
@@ -37,49 +37,8 @@ void cfread (void *ptr, size_t size, size_t n, FILE *stream)
 	}
 }
 
-void cfwrite (void *ptr, size_t size, size_t n, FILE *stream)
-{
-	unsigned int written = fwrite(ptr, 1, size * n, stream);
 
-	if (written != size * n) {
-		fperror("\nError in cfwrite, wrote %d, wanted %d, at %ld",
-			written, size * n, ftell(stream));
-		exit(2);
-	}
-}
-
-long fcopy(FILE *one, FILE *two, long bytes)
-{
-	void *buffer = malloc(8192);
-	long total = 0;
-
-	if (!buffer) {
-		printf("\nError copying file\n");
-		exit(2);
-	}
-
-	while (bytes) {
-		long chunk = (bytes > 8192) ? 8192 : bytes;
-		long read = fread(buffer, 1, chunk, one);
-
-		if (read != chunk)
-			break;
-
-		long written = fwrite(buffer, 1, read, two);
-
-		total += written;
-
-		if (written != read)
-			break;
-
-		bytes -= written;
-	}
-
-	free(buffer);
-	return total;
-}
-
-int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
+static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
 {
 	U16 *ibuffer = (U16*) buffer;
 
@@ -118,7 +77,7 @@ int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
 	return 1;
 }
 
-int decoderegular(U8 *buffer, int sx, int sy, spritestorage *store)
+static int decoderegular(const U8 *buffer, int sx, int sy, spritestorage *store)
 {
 	long offset = 8;
 	for (int y=0; y<sy; y++) {
@@ -130,7 +89,7 @@ int decoderegular(U8 *buffer, int sx, int sy, spritestorage *store)
 	return 1;
 }
 
-long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* out, unsigned long outsize)
+static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* out, unsigned long outsize)
 {
 	unsigned long inused, datasize, compsize, *testsize;
 
@@ -302,7 +261,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 	return result;
 }
 
-long fakecompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
+static long fakecompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
 {
 	long needsize = insize + ((insize + 0x7f) / 0x7f);
 	if (outsize < needsize) {
@@ -332,7 +291,7 @@ long fakecompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsiz
 
 #ifdef OLDSTRATEGY
 // different compression strategies for identifying repetition
-multitype strategy1(const U8* data, unsigned int datasize, unsigned int datamax)
+static multitype strategy1(const U8* data, unsigned int datasize, unsigned int datamax)
 {
 	int overlap;
 	multitype ret;
@@ -381,7 +340,7 @@ multitype strategy1(const U8* data, unsigned int datasize, unsigned int datamax)
 // datasize is how much has been processed so far, and can be used for
 //	the repetition finding
 // datamax is the entire size of the sprite data
-multitype strategy2(const U8* data, unsigned int datasize, unsigned int datamax)
+static multitype strategy2(const U8* data, unsigned int datasize, unsigned int datamax)
 {
 	unsigned int overlap = 0, newoverlap, remain, minoverlap, maxoverlap;
 	multitype ret;
@@ -444,14 +403,12 @@ multitype strategy2(const U8* data, unsigned int datasize, unsigned int datamax)
 	return ret;
 }
 
-multitype strategy3(const U8* data, unsigned int datasize, unsigned int datamax);
-// in assembly optimized source if used
 
 #ifdef _MSC_VER
 #pragma warning(disable:4701)//chunk may be used uninitialized
 #endif
 
-long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
+static long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
 {
 	long inpos = 0, outpos = 0;
 	long inposm8, outposm8;
@@ -527,7 +484,7 @@ long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsiz
 #pragma warning(default:4701)
 #endif
 
-U16 lasttilesize;
+static U16 lasttilesize;
 
 U16 getlasttilesize()
 {
