@@ -47,7 +47,7 @@ char *alloca ();
 #undef	alloca
 #include <stdlib.h>
 #include <string.h>
-#else	/* Not GNU C library.  */
+#elif !defined(__alloca)
 #define	__alloca	alloca
 #endif	/* GNU C library.  */
 
