@@ -714,7 +714,7 @@ int main(int argc, char **argv)
 				showcolourmaps();
 				exit(1);
 			} else if ( (mapnum >= 0) &&
-				(mapnum <= sizeof(colourmaps)/sizeof(colourmaps[0])) ) {
+				(mapnum < sizeof(colourmaps)/sizeof(colourmaps[0])) ) {
 					colourmap = colourmaps[mapnum];
 				} else
 					usage();
