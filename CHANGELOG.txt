@@ -7,6 +7,8 @@ v3.4.1 to
   - New action 5 sprites for trams and the GUI
 - Action 13
 - (bugfix) Enable autocorrection for feature 0B (cargo) action 4s
+- Require two slashes before dismissing anything as a C++ style comment.
+- Fix reading of real sprites with Unixy absolute paths.
 
 v3.4.0 to 3.4.1 (r820)
 - Check that in GRF version 6, Action F declares names for all five standard

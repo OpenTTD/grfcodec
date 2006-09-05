@@ -42,8 +42,23 @@ inline int ctoi(char ch){
 	return 0;
 }
 
+inline bool is_comment(istream&in){
+	if(strchr("#;",in.peek()))return true;
+	if(in.peek()!='/')return false;
+	in.ignore();
+	if(in.peek()=='/')return true;
+	in.putback('/');
+	return false;
+}
+
+inline bool is_comment(const string&str,size_t off){
+	if(strchr("#;",str[off]))return true;
+	if(str[off]!='/'||str[off+1]!='/') return false;
+	return true;
+}
+
 inline bool is_comment(const string&line){
-	return line==""||COMMENT.find(line[line.find_first_not_of(WHITESPACE)])!=NPOS;
+	return line==""||is_comment(line,line.find_first_not_of(WHITESPACE));
 }
 
 inline string UCase(string str){
