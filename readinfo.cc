@@ -102,8 +102,7 @@ uint ReadHex(istream&in,uint digits){
 }
 
 const char*const VALID_PSEUDO="0123456789ABCDEFabcdef \t\v\r\n",
-	*const WHITESPACE=" \t\v\r\n",
-	*const COMMENT="#;/";
+	*const COMMENT="/#;";
 
 #define NPOS (string::npos)
 
@@ -124,6 +123,21 @@ const char*const VALID_PSEUDO="0123456789ABCDEFabcdef \t\v\r\n",
 	}else\
 		(void(0))
 
+bool is_comment(istream&in){
+	if(strchr("#;",in.peek()))return true;
+	if(in.peek()!='/')return false;
+	in.ignore();
+	if(in.peek()=='/')return true;
+	in.putback('/');
+	return false;
+}
+
+bool is_comment(const string&str,int off){
+	if(strchr("#;",str[off]))return true;
+	if(str[off]!='/'||str[off+1]!='/') return false;
+	return true;
+}
+
 void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 	string sprite,datapart,buffer;
 
@@ -135,7 +149,7 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 		istringstream spritestream(sprite);
 		eat_white(spritestream);
 		if(spritestream.peek()==EOF || // blank
-			strchr(COMMENT,spritestream.peek())){ // comment
+			is_comment(spritestream)){ // comment
 		}else{//sprite
 			if(!eat_white(spritestream>>temp)){
 				spritestream.clear();
@@ -159,7 +173,7 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 				if((!spritestream||firstnotpseudo==NPOS||
 					(datapart[firstnotpseudo]=='"'&&infover>4)||
 					(datapart[firstnotpseudo]=='\\'&&infover>6)||
-					strchr(COMMENT,datapart[firstnotpseudo]))&&
+					is_comment(datapart,firstnotpseudo))&&
 					Pseudo::MayBeSprite(buffer)){
 						buffer+=sprite+'\n';
 				}else{
