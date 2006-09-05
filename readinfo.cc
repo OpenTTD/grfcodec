@@ -257,7 +257,6 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 	istringstream in(sprite);
 	ostringstream out;
 	char ch;
-	if(num<16)printf("Sprite %d:",(int)num);
 	while(in){
 		eat_white(in);
 		switch(in.peek()){
@@ -297,7 +296,6 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 					}
 				}
 				out.put(ch);
-				if(num<16)printf(" %2X",ch);
 			}
 			break;
 		case'/':case'#':case';'://comment
@@ -462,7 +460,6 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 			if(!in)
 				throw Sprite::unparseable("Encountered invalid character looking for literal byte",num);
 			out.put(ch);
-			if(num<16)printf(" %2X",ch);
 		}
 	}
 	packed=out.str();
