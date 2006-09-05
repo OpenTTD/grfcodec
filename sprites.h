@@ -61,12 +61,6 @@ class spritestorage {
 SPRITES_EXTERN U8 cused[256/8];
 SPRITES_EXTERN int maxx SPRITES_INIT, maxy SPRITES_INIT, maxs SPRITES_INIT;
 
-void cfread (void *ptr, size_t size, size_t n, FILE *stream);
-void cfwrite (void *ptr, size_t size, size_t n, FILE *stream);
-long fcopy(FILE *one, FILE *two, long bytes);
-
-int decodetile(U8 *buffer, int sx, int sy, spritestorage *store, FILE *info);
-int decoderegular(U8 *buffer, int sx, int sy, spritestorage *store, FILE *info);
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);
 
 U16 getlasttilesize();
