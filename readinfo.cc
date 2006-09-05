@@ -109,7 +109,7 @@ const char*const VALID_PSEUDO="0123456789ABCDEFabcdef \t\v\r\n",
 
 #define checkspriteno()\
 	if(spriteno!=-1&&spriteno!=(int)sprites.size()){\
-		printf("Warning: Found sprite %d looking for sprite %d.\n",spriteno,sprites.size());\
+		printf("Warning: Found sprite %d looking for sprite %d.\n",spriteno,(int)sprites.size());\
 	}else(void(0))
 
 
@@ -257,6 +257,7 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 	istringstream in(sprite);
 	ostringstream out;
 	char ch;
+	if(num<16)printf("Sprite %d:",(int)num);
 	while(in){
 		eat_white(in);
 		switch(in.peek()){
@@ -296,6 +297,7 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 					}
 				}
 				out.put(ch);
+				if(num<16)printf(" %2X",ch);
 			}
 			break;
 		case'/':case'#':case';'://comment
@@ -460,13 +462,14 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 			if(!in)
 				throw Sprite::unparseable("Encountered invalid character looking for literal byte",num);
 			out.put(ch);
+			if(num<16)printf(" %2X",ch);
 		}
 	}
 	packed=out.str();
 	if(!size())
 		throw Sprite::unparseable("Found a zero-byte pseudo-sprite",num);
 	if(size()!=(uint)claimed_size&&claimed_size!=0)
-		printf("Warning: Sprite %d reports %d bytes, but I found %d.\n",num,claimed_size,size());
+		printf("Warning: Sprite %d reports %d bytes, but I found %d.\n",(int)num,claimed_size,size());
 }
 
 uint Pseudo::size()const{return (uint)packed.size();}
