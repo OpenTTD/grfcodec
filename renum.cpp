@@ -336,7 +336,7 @@ int process_file(istream&in){
 		istringstream spritestream(sprite);
 		eat_white(spritestream);
 		if(spritestream.peek()==EOF)buffer+='\n';
-		else if(COMMENT.find((char)spritestream.peek())!=NPOS){//comment
+		else if(is_comment(spritestream)){
 			if(is_command(sprite))
 				flush_buffer();
 			if(parse_comment(sprite))
@@ -372,7 +372,7 @@ int process_file(istream&in){
 				getline(spritestream,datapart);
 				firstnotpseudo=datapart.find_first_not_of(VALID_PSEUDO);
 				if(!spritestream||firstnotpseudo==NPOS||(datapart[firstnotpseudo]=='"'?(SetVersion(5),true):false)||
-					(datapart[firstnotpseudo]=='\\'?TrySetVersion(7):false)||COMMENT.find_first_of(datapart[firstnotpseudo])!=NPOS){
+					(datapart[firstnotpseudo]=='\\'?TrySetVersion(7):false)||is_comment(datapart,firstnotpseudo)){
 					if(PseudoSprite::MayBeSprite(buffer)){
 						buffer+=sprite+'\n';
 					}else{
