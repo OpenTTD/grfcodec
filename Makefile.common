@@ -49,15 +49,15 @@ ttdpal.h:	$(PAL_FILES) pal2c.pl
 readinfo.o: readinfo.cc
 	$(_E) [CPP] $@
 	$(BOOST_WARN)	
-	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) $<
+	$(_C)$(CXX) -c -o $@ -MMD -MG -MF $@.d $(CXXFLAGS) $<
 
 %.o : %.c
 	$(_E) [CC] $@
-	$(_C)$(CC) -c -o $@ $(CFLAGS) $<
+	$(_C)$(CC) -c -o $@ -MMD -MG -MF $@.d $(CFLAGS) $<
 
 %.o : %.cc
 	$(_E) [CPP] $@
-	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) $<
+	$(_C)$(CXX) -c -o $@ -MMD -MG -MF $@.d $(CXXFLAGS) $<
 
 % : %.o
 	$(_E) [LD] $@
@@ -76,7 +76,7 @@ readinfo.o: readinfo.cc
 # same as above but optimized for size not speed
 %.os : %.c
 	$(_E) [CC] $@
-	$(_C)$(CC) -c -o $@ $(CFLAGS) -Os $<
+	$(_C)$(CC) -c -o $@ -MD -MG -MF $@.d $(CFLAGS) -Os $<
 
 % :: %.os
 	$(_E) [LD] $@
@@ -96,12 +96,24 @@ readinfo.o: readinfo.cc
 	$(_E) [LD] $@
 	$(_C)$(BCC) $(LOPTS) $^ -e$@
 
-Makefile.dep: .remake_deps
-	$(_E) [DEP] $@
-	$(_C)$(CC) $(CFLAGS) -MM -MG grfmerge.c $(GRFMERGESRC) | sed -e "s/\.o:/\.os:/g" > $@
-	$(_C)$(CC) $(CFLAGS) -MM -MG -DNO_BOOST *.c *.cc >> $@
-	$(_C)perl -e "open DEP, '+<$@';@dep=<DEP>;s/.o:/.obj:/g for @dep;seek DEP,0,2;print DEP @dep"
+%.o.d:
+	$(_E) [CPP DEP] $@
+	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG $*.c* -MF $@
+
+%.os.d:
+	$(_E) [CPP DEP] $@
+	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG -MT ${subst .d,,$@} -MF $@ $*.c*
+
+%.obj.d: $(wildcard %.c*)
+	$(_E) [CPP DEP] $@
+	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG -MT ${subst .d,,$@} -MF $@ $*.c*
 
 ifndef NO_MAKEFILE_DEP
--include Makefile.dep
+-include $(GRFCODECSRC:%.c=%.o.d)
+-include $(GRFMERGESRC:%.c=%.o.d)
+-include $(GRFDIFFSRC:%.c=%.o.d)
+-include $(GRFMERGESRC:%.c=%.os.d)
+-include $(GRFCODECSRC:%.c=%.obj.d)
+-include $(GRFMERGESRC:%.c=%.obj.d)
+-include $(GRFDIFFSRC:%.c=%.obj.d)
 endif

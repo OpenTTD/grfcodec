@@ -82,13 +82,13 @@ export _I
 # =======================================================================
 
 
-# auxiliary sources to be linked with each of these programs
+# sources to be linked with each of these programs
 GRFCODECSRC=grfcomm.c pcxfile.c sprites.c pcxsprit.c info.c \
-	error.c getopt.c path.c readinfo.c file.c
+	error.c getopt.c path.c readinfo.c file.c grfcodec.c
 
-GRFDIFFSRC=grfcomm.c error.c sprites.c getopt.c
+GRFDIFFSRC=grfcomm.c error.c sprites.c getopt.c grfdiff.c path.c
 
-GRFMERGESRC=getopt.c
+GRFMERGESRC=getopt.c grfmerge.c
 
 ifndef NOREV
 NOREV = 0
@@ -116,13 +116,13 @@ PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 all: grfcodec grfdiff grfmerge
 allb: grfcodec.exe grfdiff.exe grfmerge.exe
 
-grfcodec:	grfcodec.o $(GRFCODECSRC:%.c=%.o) path.o 
-grfdiff:	grfdiff.o $(GRFDIFFSRC:%.c=%.o) grfmrg.o path.o
-grfmerge:	grfmerge.o $(GRFMERGESRC:%.c=%.o)
+grfcodec:	$(GRFCODECSRC:%.c=%.o)
+grfdiff:	$(GRFDIFFSRC:%.c=%.o) grfmrg.o
+grfmerge:	$(GRFMERGESRC:%.c=%.o)
 
-grfcodec.exe:	grfcodec.obj $(GRFCODECSRC:%.c=%.obj)
-grfdiff.exe:	grfdiff.obj $(GRFDIFFSRC:%.c=%.obj) grfmrg.obj
-grfmerge.exe:	grfmerge.obj $(GRFMERGESRC:%.c=%.obj)
+grfcodec.exe:	$(GRFCODECSRC:%.c=%.obj)
+grfdiff.exe:	$(GRFDIFFSRC:%.c=%.obj)
+grfmerge.exe:	$(GRFMERGESRC:%.c=%.obj)
 
 clean:
 	rm -rf *.o *.os *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.ah
