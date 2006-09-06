@@ -170,13 +170,10 @@ pseudo.o: pseudo.cpp
 	$(BOOST_WARN)	
 	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) $<
 
-.remake_deps:
-	touch .remake_deps
-
-Makefile.dep: .remake_deps
-	$(_E) [DEP] $@
-	$(_C)$(CC) $(CFLAGS) -MM -MG -DNO_BOOST *.c *.cpp > $@
+%.o.d:
+	$(_E) [CPP DEP] $@
+	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG $*.c* -MF $@
 
 ifndef NO_MAKEFILE_DEP
--include Makefile.dep
+-include $(NFORENUMSRC:.cpp=.o.d)
 endif
