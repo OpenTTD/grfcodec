@@ -58,7 +58,6 @@ class spritestorage {
 };
 
 
-SPRITES_EXTERN U8 cused[256/8];
 SPRITES_EXTERN int maxx SPRITES_INIT, maxy SPRITES_INIT, maxs SPRITES_INIT;
 
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);

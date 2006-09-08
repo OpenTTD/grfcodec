@@ -1,6 +1,6 @@
 Changes in
 - (devel) By Tron: code cleanup, make C functions and variables static where
-  possible.
+  possible, remove dead and debugging code.
 - Require two slashes before dismissing anything as a C++ style comment.
 - Fix reading of real sprites with Unixy absolute paths.
 

@@ -60,7 +60,6 @@ static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
 			for (x=0; x<len; x++) {
 				int col = buffer[offset++];
 				store->nextpixel(col);
-				cused[col/8] |= ( 1 << (col&7) );
 			}
 			chunkstart = ofs + len;
 
@@ -411,20 +410,13 @@ static multitype strategy2(const U8* data, unsigned int datasize, unsigned int d
 static long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
 {
 	long inpos = 0, outpos = 0;
-	long inposm8, outposm8;
 	U8 *lastcodepos = out;
 	multitype chunk;
-
-	int stats[16];
-	memset(stats, 0, 16*sizeof(int));	// for debugging
 
 	out[outpos++] = 1;
 	out[outpos++] = in[inpos++];
 
 	while (inpos < insize) {
-		inposm8 = inpos - 8;	// for debugging only
-		outposm8 = outpos - 8;
-
 		// search for where the first repetition of >= 3 chars occurs
 		int overlap;
 		int ofsh,ofsl;
@@ -446,7 +438,6 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *
 			out[outpos] = 0;	// start new interim verbatim chunk
 			lastcodepos = &(out[outpos++]);
 			inpos += overlap;
-			stats[overlap]++;
 		} else {	//  no we didn't. Increase length of verbatim chunk
 			if (*lastcodepos == 0x7f) {	// maximum length 127
 				lastcodepos = &(out[outpos++]);	// start new one
@@ -454,7 +445,6 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *
 			}
 			(*lastcodepos)++;
 			out[outpos++] = in[inpos++];
-			stats[0]++;
 		}
 		if (outpos + 2 >= outsize) {
 			// buffer too small, estimate expected size
