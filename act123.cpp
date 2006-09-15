@@ -195,7 +195,7 @@ CHANGED_FEATURE(var)
 				return;
 			}
 			if(isadv||(shift&0x20))data.SetEol(off-(((var&0xE0)==0x60)?4:3),2);
-			ranges.UpdateRange(op,shift,data,off);
+			ranges.UpdateRange(var,op,shift,data,off);
 			defineID.Check(var);
 			isvar|=(var!=0x1A&&var!=0x1C);
 			if(!(shift&0x20))break;

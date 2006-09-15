@@ -325,6 +325,7 @@ NFO_MESSAGE(AUTOCORRECT_LOOP,"Autocorrector seems to be stuck in an infinite loo
 NFO_MESSAGE(BITS_OVERLAP,"<parts> field %d reuses the following bits already used in this Action F: %s\n",USE_PREFIX|HAS_OFFSET)
 MESSAGE_EX(MISSING_LANG_NAME,"No name for %L was specified.\n",MAKE_COMMENT|USE_PREFIX,NFO,MISSING_FALLBACK)
 NFO_MESSAGE(OUT_OF_RANGE_TEXTID_13,"Action 13 can only define texts in the C4xx, C5xx, C9xx, D0xx, and DCxx ranges.\n",USE_PREFIX)
+NFO_MESSAGE(AND_00,"Anding with 0.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs here. */
 

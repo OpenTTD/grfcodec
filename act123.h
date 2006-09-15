@@ -91,7 +91,7 @@ private:
 public:
 	static const uint rangemax[];
 	explicit varRange(uint);
-	void UpdateRange(uint op,uint shift,const PseudoSprite&data,uint&offs);
+	void UpdateRange(uint var,uint op,uint shift,const PseudoSprite&data,uint&offs);
 	void AddRange(uint min,uint max);
 	void CheckDefault();
 private:
