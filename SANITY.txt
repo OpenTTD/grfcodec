@@ -595,3 +595,11 @@ Change one of the <parts> sections to use different bits.
 193: "Action 13 can only define texts in the C4xx, C5xx, C9xx ..." (Error)
 This action 13 attempts to define texts outside its valid range.
 Use action 4 or correct the textID.
+
+194: "Anding with 0" (Warn 1)
+This varaction 2 has a <and> byte/word/dword of 0, making the associated
+<var>/<varadjust> pair somewhat useless.
+Remove the pair, or adjust the <and> byte to an appropriate value.
+This warning is not issued for variable 7E, on the assumption that you will
+be using 1C to get the result instead.
+
