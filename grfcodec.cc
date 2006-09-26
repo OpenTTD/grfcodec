@@ -172,6 +172,8 @@ static const defpal defpals[] =
 	// TTDPatch
 	{ "TTDPATCH",	PAL_ttd_norm },
 	{ "TTDPATCHW",	PAL_ttw_norm },
+	{ "TTDPBASE",	PAL_ttd_norm },
+	{ "TTDPBASEW",	PAL_ttw_norm },
 };
 
 static int *colourmaps[] = { palmap0, palmap1 };
