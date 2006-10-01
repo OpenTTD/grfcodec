@@ -392,7 +392,7 @@ void check_sprite(PseudoSprite&data){
 			sprites=data.ExtractByte(3+4*i);
 			if(!sprites)
 				IssueMessage(WARNING1,SET_WITH_NO_SPRITES,3+4*i,i);
-			else if((data.ExtractWord(4+4*i)&~0x7F)!=((data.ExtractWord(4+4*i)+sprites)&~0x7F))
+			else if((data.ExtractWord(4+4*i)&~0x7F)!=((data.ExtractWord(4+4*i)+sprites-1)&~0x7F))
 				IssueMessage(ERROR,SPANS_BLOCKS,3+4*i,i);
 			status.expectedsprites+=sprites;
 		}

@@ -10,6 +10,7 @@ v3.4.1 to
 - Require two slashes before dismissing anything as a C++ style comment.
 - Fix reading of real sprites with Unixy absolute paths.
 - Add check for <and> B/W/Ds of 0 in varaction 2s.
+- Fix off-by-one error when checking block extents in Action 12.
 
 v3.4.0 to 3.4.1 (r820)
 - Check that in GRF version 6, Action F declares names for all five standard
