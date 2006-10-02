@@ -602,4 +602,3 @@ This varaction 2 has a <and> byte/word/dword of 0, making the associated
 Remove the pair, or adjust the <and> byte to an appropriate value.
 This warning is not issued for variable 7E, on the assumption that you will
 be using 1C to get the result instead.
-
