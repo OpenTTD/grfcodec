@@ -142,8 +142,8 @@ release: FORCE
 
 FORCE:
 .rev: FORCE
-	@ [ -e $@ ] || echo SVNREV=0 > $@
-	@ REV=`${SVNVERSION}` perl rev.pl $@ < $@
+	$(_C) [ -e $@ ] || echo SVNREV=0 > $@
+	$(_C) REV=`${SVNVERSION}` perl rev.pl $@ < $@
 
 -include .rev
 include version.def
