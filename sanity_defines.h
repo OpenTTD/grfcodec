@@ -38,10 +38,12 @@ void finalF();
 bool IsLabel(uint);
 //int GetBit(const string&);
 
-enum ActBit{ACT0=1,ACT1=2,ACT2=4,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20};
+enum ActBit{ACT0=1,ACT1=2,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20,GENERIC3=0x40};
 enum sanstate{UNKNOWN,FIND_PSEUDO,FIND_REAL,FIND_INCLUDE,FIND_RECOLOR,FIND_REAL_OR_RECOLOR};
 
-bool IsValidFeature(enum ActBit act,uint feat);
+bool IsValidFeature(int actbits,uint feat);
+bool IsValid2Feature(uint feat);
+uchar Get2Type(uint feat);
 uint MaxFeature();
 
 template<typename _Ty>class auto_array{//can't use auto_ptr because I use new[]/delete[]

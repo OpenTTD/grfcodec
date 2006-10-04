@@ -186,7 +186,7 @@ bool parse_comment(const string&line){
 		commandstream>>setbase(16)>>feature>>id;
 		if(!commandstream)
 			id=feature;
-		else if(!IsValidFeature(ACT2,feature)){
+		else if(!IsValid2Feature(feature)){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[USEID2].name);
 			return true;
 		}else{
@@ -389,7 +389,7 @@ bool parse_comment(const string&line){
 		commandstream>>setbase(16)>>feature>>id;
 		if(!commandstream)
 			id=feature;
-		else if(!IsValidFeature(ACT2,feature)){
+		else if(!IsValid2Feature(feature)){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
 		}else{
@@ -403,7 +403,7 @@ bool parse_comment(const string&line){
 		commandstream>>setbase(16)>>feature>>id;
 		if(!commandstream)
 			id=feature;
-		else if(!IsValidFeature(ACT2,feature)){
+		else if(!IsValid2Feature(feature)){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
 		}else{
@@ -417,7 +417,7 @@ bool parse_comment(const string&line){
 		commandstream>>setbase(16)>>feature>>id;
 		if(!commandstream)
 			id=feature;
-		else if(!IsValidFeature(ACT2,feature)){
+		else if(!IsValid2Feature(feature)){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
 		}else{
