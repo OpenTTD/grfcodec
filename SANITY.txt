@@ -602,3 +602,7 @@ This varaction 2 has a <and> byte/word/dword of 0, making the associated
 Remove the pair, or adjust the <and> byte to an appropriate value.
 This warning is not issued for variable 7E, on the assumption that you will
 be using 1C to get the result instead.
+
+195: "Action 3 may not be both generic and an override." (Error)
+This action 3 has a <num-ids> of 80.
+Change the <num-ids>, or remove the action 3.
