@@ -117,11 +117,12 @@ int Check1(PseudoSprite&data){
 			if(!act1.is_used(i))IssueMessage(WARNING1,UNUSED_SET,i,act1.spritenum);
 	act1.init();
 	if(CheckLength(length,(data.ExtractByte(3)==0xFF)?6:4,INVALID_LENGTH,ACTION,1,ONE_OF,4,6))return 0;
-	if(!IsValidFeature(ACT1,act1.feature=data.ExtractByte(1)))IssueMessage(ERROR,INVALID_FEATURE);
+	if(!IsValidFeature(ACT1|EMPTY1,act1.feature=data.ExtractByte(1)))IssueMessage(ERROR,INVALID_FEATURE);
 	act1.numsets=data.ExtractByte(2);
 	if(!act1.numsets)IssueMessage(WARNING1,NO_SETS,1);
 	int numsprites=data.ExtractExtended(3);
 	if(!numsprites&&!IsValidFeature(EMPTY1,act1.feature))IssueMessage(WARNING1,NO_SPRITES,1);
+	else if(numsprites&&!IsValidFeature(ACT1,act1.feature))IssueMessage(WARNING1,NO_SPRITES,1);
 	if((numsprites>4&&(act1.feature==7||act1.feature==9))||(numsprites>8&&act1.feature<4)||
 		(numsprites>1&&act1.feature==0x0B))IssueMessage(WARNING1,SET_TOO_LARGE);
 	else if(numsprites>4&&numsprites<8&&act1.feature<4)IssueMessage(WARNING1,STRANGE_SET_SIZE);
@@ -374,7 +375,7 @@ CHANGED_FEATURE(std)
 
 void Check3(PseudoSprite&data){
 	uint feature=data.ExtractByte(1),length=data.Length(),newfeature=(uint)-1;
-	if(!IsValidFeature(ACT3,feature)){
+	if(!IsValidFeature(ACT3|GENERIC3,feature)){
 		IssueMessage(FATAL,INVALID_FEATURE);
 		return;
 	}
@@ -382,6 +383,7 @@ void Check3(PseudoSprite&data){
 	if(isOverride&&isGeneric)IssueMessage(ERROR,GENERIC_AND_OVERRIDE);
 	if(isOverride&&!IsValidFeature(OVERRIDE3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	else if(isGeneric&&!IsValidFeature(GENERIC3,feature))IssueMessage(ERROR,INVALID_FEATURE);
+	else if(!isGeneric&&!IsValidFeature(ACT3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	unsigned int numIDs=data.ExtractByte(2)&0x7F,numCIDs=data.ExtractByte(3+numIDs);
 	if(isGeneric)// Generic 3s cannot be followed by an override
 		act123::Instance().act3spritenum=0;
