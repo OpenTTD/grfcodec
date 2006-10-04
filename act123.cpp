@@ -378,10 +378,14 @@ void Check3(PseudoSprite&data){
 		IssueMessage(FATAL,INVALID_FEATURE);
 		return;
 	}
-	bool isOverride=((data.ExtractByte(2)&0x80)!=0);
+	bool isOverride=((data.ExtractByte(2)&0x80)!=0),isGeneric=((data.ExtractByte(2)&0x7F)==0);
+	if(isOverride&&isGeneric)IssueMessage(ERROR,GENERIC_AND_OVERRIDE);
 	if(isOverride&&!IsValidFeature(OVERRIDE3,feature))IssueMessage(ERROR,INVALID_FEATURE);
+	else if(isGeneric&&!IsValidFeature(GENERIC3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	unsigned int numIDs=data.ExtractByte(2)&0x7F,numCIDs=data.ExtractByte(3+numIDs);
-	if(!isOverride){
+	if(isGeneric)// Generic 3s cannot be followed by an override
+		act123::Instance().act3spritenum=0;
+	else if(!isOverride){
 		act123::Instance().act3feature=feature;
 		act123::Instance().act3spritenum=_spritenum;
 	}else if(!act123::Instance().act3spritenum)IssueMessage(ERROR,NO_STD_3);
