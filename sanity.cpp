@@ -41,21 +41,37 @@ using namespace std;
 class features{
 public:
 	uint maxFeat;
-	AUTO_ARRAY(uchar);
+	struct featdat{
+		uchar validbits;
+		uchar act2type;
+	};
+	AUTO_ARRAY(featdat);
 	SINGLETON(features)
 };
 
 features::features(){
 	FILE*pFile=myfopen(feat);
 	maxFeat=GetCheckByte(feat);
-	_p=new uchar[maxFeat+1];
-	myfread(_p,maxFeat+1,feat);
+	_p=new features::featdat[maxFeat+1];
+	uint i=0;
+	for(;i<=maxFeat;i++) _p[i].validbits=(uchar)GetCheckByte(feat);
+	for(i=0;i<=maxFeat;i++) _p[i].act2type=(uchar)GetCheckByte(feat);
 	fclose(pFile);
 }
 
-bool IsValidFeature(enum ActBit act,uint feat){
+bool IsValidFeature(int act,uint feat){
 	if(feat>features::Instance().maxFeat)return false;
-	return(features::Instance()[feat]&act)!=0;
+	return(features::Instance()[feat].validbits&act)!=0;
+}
+
+bool IsValid2Feature(uint feat){
+	if(feat>features::Instance().maxFeat)return false;
+	return features::Instance()[feat].act2type!=0xFF;
+}
+
+uchar Get2Type(uint feat){
+	if(feat>features::Instance().maxFeat)return 0xFF;
+	return features::Instance()[feat].act2type;
 }
 
 uint MaxFeature(){return features::Instance().maxFeat;}

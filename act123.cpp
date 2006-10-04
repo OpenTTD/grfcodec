@@ -133,7 +133,7 @@ void Check2(PseudoSprite&data){
 	data.SetAllHex();
 	act123::Act1&act1=act123::Instance().act1;
 	uint feature=data.ExtractByte(1),id=data.ExtractByte(2);
-	if(!IsValidFeature(ACT2,feature)){
+	if(!IsValid2Feature(feature)){
 		IssueMessage(FATAL,INVALID_FEATURE);
 		if(_autocorrect==2&&act1.spritenum){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
@@ -250,8 +250,12 @@ CHANGED_FEATURE(var)
 	}
 	default:
 CHANGED_FEATURE(std)
-		if(nument1&0x80)IssueMessage(FATAL,INVALID_TYPE);
-		else if(feature<6||feature==0x0B){
+		if(nument1&0x80){
+			IssueMessage(FATAL,INVALID_TYPE);
+			return;
+		}
+		switch(Get2Type(feature)){
+		case 0:{ // Standard format
 			bool mismatch=false,no1=false;
 			if(CheckLength(length,2*(nument1+nument2)+5,BAD_LENGTH,VARS,"nument1","nument2",VALS,nument1,nument2,
 						   2*(nument1+nument2)+5))
@@ -287,7 +291,8 @@ CHANGED_FEATURE(std)
 					IssueMessage(ERROR,UNDEFINED_SPRITE_SET,2*i+5,j,act1.spritenum);
 				else act1.use(j);
 			}
-		}else if(feature==7||feature==9){
+			break;
+		}case 1:{ // House/Industry tile format
 			uint ground=data.ExtractDword(4);
 			bool mismatch=false,hasGround=(ground!=0);
 			if(ground)CheckSpriteNum(ground,4,act1,feature,mismatch,hasGround);
@@ -356,12 +361,14 @@ CHANGED_FEATURE(std)
 					//if(z>0x87)IssueMessage(WARNING1,TOO_LARGE,16,"zextent",0x87);
 				}
 			}
-		}else if(feature==10){
+			break;
+		}case 2: // Industry format
 			if(CheckLength(length,15,INVALID_LENGTH,TYPE,PROD2,INDUSTRIES,EXACTLY,15))break;
 			if(data.ExtractByte(3)!=0)
 				IssueMessage(ERROR,INVALID_LITERAL,3,data.ExtractByte(3),0);
-		}else
-			INTERNAL_ERROR(feature,feature);
+			break;
+		DEFAULT(feature)
+		}
 	}
 }
 

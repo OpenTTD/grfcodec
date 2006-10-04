@@ -44,9 +44,11 @@ using namespace std;
 
 //Let's dump the data files into the source code. That sounds like fun, right?
 
-//enum ActBit{ACT0=1,ACT1=2,ACT2=4,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20};
-//                                          00              04              08              0C
-static const char _datfeat[]="\x10\x00\x0D\x3F\x1F\x1F\x3F\x1F\x06\x09\x0F\x01\x0F\x0D\x0F\x01\x00";
+//enum ActBit{ACT0=1,ACT1=2,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20};
+static const char _datfeat[]="\x11\x00\x0D"
+// 00              04              08              0C
+"\x3F\x1F\x1F\x3F\x1F\x06\x09\x0F\x01\x0F\x0D\x0F\x01\x00"
+"\x00\x00\x00\x00\x00\x00\xFF\x01\xFF\x01\x02\x00\xFF\xFF";
 
 //third chawmp: 0x:default 1x:quote 2x:decimal 3x:B-E hex (2x and 3x are currently unsupported)
 //The upper chawmp, which only applies in FE strings:
