@@ -131,8 +131,8 @@ remake: clean all
 
 FORCE:
 .rev: FORCE ttdpal.h
-	@ [ -e $@ ] || echo SVNREV=0 > $@
-	@ REV=`${SVNVERSION}` perl rev.pl $@ < $@
+	${_C} [ -e $@ ] || echo SVNREV=0 > $@
+	${_C} REV=`${SVNVERSION}` perl rev.pl $@ < $@
 
 -include .rev
 include version.def
