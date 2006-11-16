@@ -3,6 +3,7 @@ Changes in
   possible, remove dead and debugging code.
 - Require two slashes before dismissing anything as a C++ style comment.
 - Fix reading of real sprites with Unixy absolute paths.
+- Check for pixels with palette index of 255 when encoding.
 
 Changes in 0.9.10 (r819)
 - (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
