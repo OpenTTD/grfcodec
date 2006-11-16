@@ -411,6 +411,14 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 			info.getsprite(image);
 
+			int k=0;
+			for (int j=info.imgsize; j >= 0; j--)
+				if (image[j] == 0xFF) k++;
+
+			if (k)
+				printf("Warning: %d of %ld pixels (%ld%%) in sprite %d are pure white\n",
+					k, info.imgsize, k*100/info.imgsize, i);
+
 			U16 compsize;
 			if (info.inf[0] & 8) {
 				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress);
