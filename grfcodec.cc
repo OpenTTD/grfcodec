@@ -66,7 +66,7 @@ char *usagetext=
 	"%sUsage:\n"
 	"    GRFCODEC -d [<Options>] <GRF-File> [<Directory>]\n"
 	"        Decode all sprites in the GRF file and put them in the directory\n"
-	"    GRFCODEC -e [-u] <GRF-File> [<Directory>]\n"
+	"    GRFCODEC -e [<Options>] <GRF-File> [<Directory>]\n"
 	"        Encode all sprites in the directory and combine them in the GRF file\n"
 	"\n"
 	"<GRF-File> denotes the .GRF file you want to work on, e.g. TRG1.GRF\n"
@@ -683,7 +683,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dew:h:b:cup:m:M:tfxq");
+		char opt = getopt(argc, argv, "dew:h:b:up:m:M:tfxq");
 
 		if (opt == (char) EOF)
 			break;
@@ -730,9 +730,6 @@ int main(int argc, char **argv)
 				} else
 					usage();
 				break;
-		case 'c':
-			printf("Warning: Compression is enabled by default, disable with -u\n");
-			break;
 		case 'u':
 			compress = 0;
 			break;
