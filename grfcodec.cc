@@ -87,6 +87,7 @@ char *usagetext=
 	"\n"
 	"Options for encoding:\n"
 	"    -u        Save uncompressed data (probably not a good idea)\n"
+	"    -q        Suppress warning messages\n"
 	"\n"
 	"Options for both encoding and decoding:\n"
 	"    -m <num>  Apply colour translation to all sprites except character-glyphs.\n"
@@ -275,7 +276,7 @@ FILE *spritefiles::nextfile()
 	return thecurfile;
 }
 
-
+int _quiet=0;
 
 static int encode(const char *file, const char *dir, int compress, int *colourmap)
 {
@@ -393,7 +394,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			fwrite(sprite.GetData(),1,size,grf);
 			if(spriteno == 1 && sprite.size() == 4){
 				int reported = *((S32*)sprite.GetData()) + 1;
-				if(reported != info.size())
+				if(reported != info.size() && !_quiet)
 					printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
 					abs(info.size() - reported),
 					info.size()>reported?"more":"fewer");
@@ -415,7 +416,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			for (int j=info.imgsize; j >= 0; j--)
 				if (image[j] == 0xFF) k++;
 
-			if (k)
+			if (k && !_quiet)
 				printf("Warning: %d of %ld pixels (%ld%%) in sprite %d are pure white\n",
 					k, info.imgsize, k*100/info.imgsize, i);
 
@@ -682,7 +683,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dew:h:b:cup:m:M:tfx");
+		char opt = getopt(argc, argv, "dew:h:b:cup:m:M:tfxq");
 
 		if (opt == (char) EOF)
 			break;
@@ -743,6 +744,9 @@ int main(int argc, char **argv)
 			break;
 		case 'x':
 			if(_useexts)_useexts--;
+			break;
+		case 'q':
+			_quiet++;
 			break;
 		default:
 			usage();

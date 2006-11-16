@@ -277,6 +277,7 @@ void pcxread::setline(U8 *band)
 }
 
 extern bool _force;
+extern int _quiet;
 
 void pcxread::readheader()
 {
@@ -308,7 +309,7 @@ void pcxread::readheader()
 
 	if ( i == NUM_PALS ) {
 		if ( _force )
-			fprintf(stderr, "Warning: Encoding despite unrecognized palette.\n");
+			if (!_quiet) fprintf(stderr, "Warning: Encoding despite unrecognized palette.\n");
 		else{
 			fprintf(stderr, "Error: Unrecognized palette, aborting.\n"
 				"Specify -f on the command line to override this check.\n");
