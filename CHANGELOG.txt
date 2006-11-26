@@ -3,6 +3,9 @@ v3.4.2 to
 - Permit Action 1/2/3 for bridges (Callback 33)
 - Data file updates:
   - Articulated RV callbacks and variables.
+  - The long date properties
+  - (fix) Station prop 18 is a word, not a byte
+  - (fix) Callbacks 140..142 are for stations.
 
 v3.4.1 to v3.4.2 (r1057)
 - Data file updates:
