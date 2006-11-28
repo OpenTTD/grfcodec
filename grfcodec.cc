@@ -86,6 +86,7 @@ char *usagetext=
 	"              of a version 7 .nfo.\n"
 	"\n"
 	"Options for encoding:\n"
+	"    -c        Crop extraneous transparent blue from real sprites\n"
 	"    -u        Save uncompressed data (probably not a good idea)\n"
 	"    -q        Suppress warning messages\n"
 	"\n"
@@ -276,6 +277,7 @@ FILE *spritefiles::nextfile()
 	return thecurfile;
 }
 
+int _crop=0;
 int _quiet=0;
 
 static int encode(const char *file, const char *dir, int compress, int *colourmap)
@@ -419,6 +421,54 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			if (k && !_quiet)
 				printf("Warning: %d of %ld pixels (%ld%%) in sprite %d are pure white\n",
 					k, info.imgsize, k*100/info.imgsize, i);
+
+			if(_crop/*&&info.imgsize!=1*/){
+				int i=0,j=0;
+				for(i=info.imgsize-1;i>=0;i--)if(image[i])break; // Find last non-blue pixel
+				if(i<0)// We've got an all-blue sprite
+					info.sx=info.sy=info.imgsize=1;
+				else{
+					i=info.imgsize-(i+info.sx-i%info.sx/*begining of next line*/);
+					info.sy-=i/info.sx;
+					info.imgsize-=i;
+
+					for(i=0;i<info.imgsize;i++)if(image[i])break; // Find first non-blue pixel
+					i-=i%info.sx;// Move to beginning of line
+
+					info.sy-=i/info.sx;
+					*((S16*)(info.inf+6))/*rely*/+=i/info.sx;
+					info.imgsize-=i;
+					if(i)memmove(image,image+i,info.imgsize);
+					for(i=0;i<info.sx;i++){
+						for(j=0;j<info.sy;j++){
+							if(image[i+j*info.sx])goto foundfirst;
+						}
+					}
+foundfirst:
+					if(i){
+						for(j=0;j<info.sy;j++)
+							memmove(image+j*(info.sx-i),image+j*info.sx+i,info.sx-i);
+						*((S16*)(info.inf+4))/*relx*/+=i;
+						info.sx-=i;
+					}
+
+					for(i=info.sx-1;i>=0;i--){
+						for(j=0;j<info.sy;j++){
+							if(image[i+j*info.sx])goto foundlast;
+						}
+					}
+foundlast:
+					i=info.sx-i-1;
+					if(i){
+						for(j=1;j<info.sy;j++)
+							memmove(image+j*(info.sx-i),image+j*info.sx,info.sx-i);
+						info.sx-=i;
+					}
+
+				}
+				*((S16*)(info.inf+2))=info.sx;
+				*((S8*)(info.inf+1))=info.sy;
+			}
 
 			U16 compsize;
 			if (info.inf[0] & 8) {
@@ -683,7 +733,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dew:h:b:up:m:M:tfxq");
+		char opt = getopt(argc, argv, "dew:h:b:up:m:M:tfxqc");
 
 		if (opt == (char) EOF)
 			break;
@@ -716,6 +766,9 @@ int main(int argc, char **argv)
 				} else
 					palette = readpal(optarg);
 				break;
+		case 'c':
+			_crop++;
+			break;
 		case 'm':
 		case 'M':
 			_mapAll= opt=='M';
