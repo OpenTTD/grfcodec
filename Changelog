@@ -5,6 +5,7 @@ Changes in
 - Fix reading of real sprites with Unixy absolute paths.
 - Check for pixels with palette index of 255 when encoding.
 - Add -q to silence warnings.
+- Add -c to automatically crop extraenous transparent blue pixels.
 
 Changes in 0.9.10 (r819)
 - (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
