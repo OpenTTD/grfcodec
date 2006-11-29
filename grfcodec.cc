@@ -415,7 +415,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			info.getsprite(image);
 
 			int k=0;
-			for (int j=info.imgsize; j >= 0; j--)
+			for (int j=info.imgsize-1; j >= 0; j--)
 				if (image[j] == 0xFF) k++;
 
 			if (k && !_quiet)
