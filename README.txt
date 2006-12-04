@@ -7,9 +7,8 @@ The required boost header is included. If you do not have the rest of boost,
 make should detect this and remove the boost dependency.
 
 To install, copy renum.exe into any directory, preferably one in your path.
-NFORenum will (if necessary) create a .renum directory in the current
-directory. All its data files will be placed in that directory, and updated
-as needed.
+NFORenum will (if necessary) create a .renum directory. All its data files
+will be placed in that directory, and updated as needed.
 It is not necessary to remove the .renum directory before upgrading.
 To uninstall, delete renum.exe and any .renum directories.
 
@@ -43,6 +42,13 @@ sprites/filename.nfo
 If no command-line arguments are specified, NFORenum will read from standard
 input and write to standard output.
 
+The default search paths for the .renum directory are as follows:
+  .
+  $HOME
+  $HOMEDRIVE$HOMEPATH
+If the .renum directory is not found in any of these locations, NFORenum will
+attempt to create one in each location, starting from the bottom of the list
+and working up. This can be overridden with the --data option.
 
 The NFORenum will exit with one of the following error codes: (The highest
 applicable code will be returned)
