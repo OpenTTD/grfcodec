@@ -230,11 +230,14 @@ string getdir(){
 		INTERNAL_ERROR(makedir(datadir,true),false);
 	}
 	char*pcwd=getcwd(NULL,0);
-	const string cwd=pcwd;
-	string ret;
+	string cwd=pcwd,home=safetostring(getenv("HOME")),homedrpath=safetostring(getenv("HOMEDRIVE"))+safetostring(getenv("HOMEPATH"));
 	free(pcwd);
-	if(finddir(ret=cwd)||finddir(ret=safetostring(getenv("HOME")))||makedir(ret)||makedir(ret=cwd,true))return ret;
-	INTERNAL_ERROR(makedir(cwd,true),false);
+	if(finddir(cwd))return cwd;
+	if(finddir(home))return home;
+	if(finddir(homedrpath)||makedir(homedrpath))return homedrpath;
+	if(makedir(home))return home;
+	assert(makedir(cwd,true));
+	return cwd;
 }
 
 FILE*tryopen(const char*name,const char*mode,bool allownull=false){
