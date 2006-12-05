@@ -103,7 +103,7 @@ void Check4(PseudoSprite&data){
 	if(++nument){
 		if(_autocorrect){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-			IssueMessage(0,AUTOCORRECTING,3,"num-ent",data.ExtractByte(3),data.ExtractByte(3)-nument);
+			IssueMessage(0,AUTOCORRECTING,3,NUMENT,data.ExtractByte(3),data.ExtractByte(3)-nument);
 			data.SetByteAt(3,data.ExtractByte(3)-nument);
 		}else
 			IssueMessage(ERROR,INSUFFICIENT_STRINGS,nument);
@@ -146,7 +146,7 @@ void Check13(PseudoSprite&data){
 	if(++nument){
 		if(_autocorrect){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-			IssueMessage(0,AUTOCORRECTING,5,"num-ent",data.ExtractByte(5),data.ExtractByte(5)-nument);
+			IssueMessage(0,AUTOCORRECTING,5,NUMENT,data.ExtractByte(5),data.ExtractByte(5)-nument);
 			data.SetByteAt(5,data.ExtractByte(5)-nument);
 		}else
 			IssueMessage(ERROR,INSUFFICIENT_STRINGS,nument);

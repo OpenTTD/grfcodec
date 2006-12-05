@@ -423,12 +423,12 @@ bool verify_real(string&data){
 	int var_list[9]={0,0,1,1,1,0,0},&xpos=var_list[0],&ypos=var_list[1],&comp=var_list[2],&ysize=var_list[3],&xsize=var_list[4],
 		&xrel=var_list[5],&yrel=var_list[6];
 	const char*const format_list[7]={
-		"%d%s",
-		"%d %d%s",NULL,
-		"%d %d %2x %d%s",
-		"%d %d %2x %d %d%s",
-		"%d %d %2x %d %d %d%s",
-		"%d %d %2x %d %d %d %d%s"};
+		"%d%t",
+		"%d %d%t",NULL,
+		"%d %d %2x %d%t",
+		"%d %d %2x %d %d%t",
+		"%d %d %2x %d %d %d%t",
+		"%d %d %2x %d %d %d %d%t"};
 	const char*const var_names[7]={"xpos","ypos","comp","ysize","xsize","xrel","yrel"};
 	string meta=data.substr(loc+5);
 	size_t offs=NPOS;
@@ -451,18 +451,18 @@ bool verify_real(string&data){
 		meta=mysprintf(format_list[var],xpos,ypos,comp,ysize,xsize,xrel,yrel,var_list[7],var_list[8]);
 	}
 	if(state)data=data.substr(0,loc+5)+meta;
-	if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,"xpos",0);
-	if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,"ypos",0);
+	if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
+	if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YPOS,0);
 	if(!(comp&1)||(comp&0x0B)!=comp)IssueMessage(comp==0xFF?ERROR:WARNING1,REAL_BAD_COMP,comp);
-	if(xsize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,"xsize",1);
-	else if(xsize>0xFFFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,"xsize",0xFFFF);
-	if(ysize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,"ysize",1);
-	else if(ysize>0xFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,"ysize",0xFF);
+	if(xsize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XSIZE,1);
+	else if(xsize>0xFFFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XSIZE,0xFFFF);
+	if(ysize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YSIZE,1);
+	else if(ysize>0xFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,YSIZE,0xFF);
 	if(xsize*ysize>0xFFFF)IssueMessage(ERROR,REAL_SPRITE_TOO_LARGE);
-	if(xrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,xrel,-32768);
-	else if(xrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,xrel,32767);
-	if(yrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,yrel,-32768);
-	else if(yrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,yrel,32767);
+	if(xrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XREL,-32768);
+	else if(xrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XREL,32767);
+	if(yrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YREL,-32768);
+	else if(yrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,YREL,32767);
 	return true;
 }
 

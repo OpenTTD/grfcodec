@@ -65,6 +65,14 @@ void ManualConsoleMessages(){
 #define MESSAGE(name,message,props){message,props},
 #define END_MESSAGES() };
 
+#undef EXTRA
+#undef START_EXTRA_STRINGS
+#undef END_EXTRA_STRINGS
+
+#define EXTRA(name,str)str,
+#define START_EXTRA_STRINGS() static const char* const extra [] = {
+#define END_EXTRA_STRINGS() };
+
 string myvsprintf(const char*,va_list&);
 
 struct messageData{
@@ -79,22 +87,28 @@ struct messageData{
 	}
 	const static string commentPrefix;
 private:
-	string GetMessage(const string&prefix="")const{
-		string ret=text;
-		if(props&HAS_OFFSET)ret=OFFSET+ret;
-		if(props&USE_PREFIX)ret=prefix+ret;
-		if(props&MAKE_COMMENT)ret=COMMENT_PREFIX+commentPrefix+ret;
-		return ret;
-	}
+	string GetMessage(const string&prefix="")const;
 };
 const string messageData::commentPrefix="!!";
 
 #include "messages.h"
 
+string messageData::GetMessage(const string&prefix)const{
+	string ret=text;
+	if(props&HAS_OFFSET)ret=extra[OFFSET]+ret;
+	if(props&USE_PREFIX)ret=prefix+ret;
+	if(props&MAKE_COMMENT)ret=COMMENT_PREFIX+commentPrefix+ret;
+	return ret;
+}
+
 string mysprintf(const char*str,...){
 	WrapAp(str);
 	return myvsprintf(str,ap);
 }
+
+#ifdef DEBUG
+static int curMessage;
+#endif
 
 string IssueMessage(int minSan,int id,...){
 	WrapAp(id);
@@ -102,11 +116,14 @@ string IssueMessage(int minSan,int id,...){
 }
 
 string vIssueMessage(int minSan,int id,va_list arg_ptr){
+#ifdef DEBUG
+	curMessage=id;
+#endif
 	/*if(minSan<0){
 		if(GetState(VERBOSE)<-minSan)return"";
 	}else*/if(!GetWarn(id,minSan))return"";
 	if(message[id].props&MAKE_COMMENT&&GetState(DIFF))return"";
-	string prefix=PREFIX_LINT_WARNING;
+	int prefix=PREFIX_LINT_WARNING;
 	switch(minSan){
 		case-1:case-2:break;
 		case 0:
@@ -129,8 +146,7 @@ string vIssueMessage(int minSan,int id,va_list arg_ptr){
 		else if(minSan>=0)SetCode(EWARN);
 	}
 	try{
-		prefix=mysprintf(prefix.c_str(),id);
-		return message[id].display(prefix,arg_ptr);
+		return message[id].display(mysprintf(extra[prefix],id),arg_ptr);
 	}catch(...){
 		(*pErr)<<message[FATAL_MESSAGE_ERROR].text<<id<<endl;
 		assert(false);
@@ -153,12 +169,36 @@ string myvsprintf(const char*fmt,va_list&arg_ptr){
 			case'd':
 				ret+=itoa(va_arg(arg_ptr,int),10,pad);
 				break;
-			case's':
+			case't': // If an EXTRA cannot be used (eg for __FILE__), use %t, not %s.
 				ret+=(char*)va_arg(arg_ptr,char*);
 				break;
-			case'S':{
-				char*pstr=(char*)va_arg(arg_ptr,char*);
-				ret+=myvsprintf(pstr,arg_ptr);
+			case's':{
+				int x=(int)va_arg(arg_ptr,int);
+				if(x>=__LAST_EXTRA){
+#ifdef DEBUG
+					IssueMessage(0,BAD_STRING,x,curMessage,_spritenum);
+#else
+					IssueMessage(0,BAD_STRING,x);
+#endif
+					assert(false);
+					exit(EFATAL);
+				}
+				if(x!=-1)
+					ret+=extra[x];
+				break;
+			}case'S':{
+				int x=(int)va_arg(arg_ptr,int);
+				if(x>=__LAST_EXTRA){
+#ifdef DEBUG
+					IssueMessage(0,BAD_STRING,x,curMessage,_spritenum);
+#else
+					IssueMessage(0,BAD_STRING,x);
+#endif
+					assert(false);
+					exit(EFATAL);
+				}
+				if(x!=-1)
+					ret+=myvsprintf(extra[x],arg_ptr);
 				break;
 			}case'x':{
 				uint val=va_arg(arg_ptr,int);

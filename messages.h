@@ -50,51 +50,17 @@ string mysprintf(const char*,...);
 #define MESSAGE_UNUSED(name) MESSAGE(unused_##name,NULL,0)
 #endif
 
+#ifndef EXTRA
+#define EXTRA(name,str)name,
+#define START_EXTRA_STRINGS() enum{
+#define END_EXTRA_STRINGS() __LAST_EXTRA};
+#endif//EXTRA
+
+
 //#ifndef VMESSAGE // Verbose output messages
 //#define VMESSAGE(name,message) NFO_MESSAGE(V_##name,message,NO_CONSOLE|HAS_OFFSET)
 //#endif
 
-#ifndef GENERAL_STRINGS
-#define GENERAL_STRINGS
-
-#define PREFIX_UNPARSEABLE "Processing Failure: "
-#define PREFIX_LINT_FATAL "Fatal Error (%d): "
-#define PREFIX_LINT_ERROR "Error (%d): "
-#define PREFIX_LINT_WARNING "Warning (%d): "
-#define OFFSET "Offset %d: "
-
-#define LOADING "loading"
-#define LOADED "loaded"
-#define LOTS "lots-of-cargo"
-#define HOUSE_INSTYTILE "houses and industry tiles"
-#define INDUSTRIES "industries"
-#define BASICSTD2 "Basic standard 02s"
-#define PROD2 "Production callbacks"
-#define GROUND "ground"
-#define NONTRANS "non-transparent"
-
-#define ACTION "action %xs"
-#define IMPORTS "sound import sprites"
-#define TYPE "%s for %s"
-#define AT_LEAST "at least %d"
-#define EXACTLY "%d"
-#define ONE_OF "%d or %d"
-#define VARS "%s and %s"
-#define VALS "%2x and %2x"
-#define REAL_S "real sprite"
-#define BIN_INCLUDE "binary include"
-#define RECOLOR_TABLE "recolor table"
-#define SET "action 1 set"
-#define CID "cargo ID"
-#define DAT2 "%2x %2x"
-#define DAT3 "%2x %2x %2x"
-
-#define EOF_READING_NAME "EOF while reading name %2x."
-#define OVERLENGTH_NAME "Name %2x exceeds 100 characters long."
-
-#define OPEN "open"
-#define LOAD "load"
-#define WRITE "write"
 
 //#defines for properties bit-field
 #define MAKE_COMMENT 1 //Indicates that the message should be prefixed with "//!!"
@@ -109,26 +75,24 @@ string mysprintf(const char*,...);
 #define TO_MASK 0x30
 #define TO_SHIFT 4
 
-#endif//GENERAL_STRINGS
-
 //The first message is different for a reason. It is not run through myvsprintf; a number is appended at runtime.
 //All other messages follow the printf format (see myvsprintf in messages.cpp for supported specifiers).
 
 START_MESSAGES()
 ERR_MESSAGE(FATAL_MESSAGE_ERROR,"Fatal error issuing message ",0)
-ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%s(%d): Fatal error parsing sprite %d: %s cannot equal %d.\n"
-			"\t(function %s).\n",0)
-ERR_MESSAGE(INVALID_DATAFILE,"Data file \"%s\" contains invalid data. (%S)\n",0)
-ERR_MESSAGE(NO_INPUT_FILE,"Could not open \"%s\" specified on the command line.\n",0)
-ERR_MESSAGE(NO_OUTPUT_FILE,"Could not open output file \"%s\" for input \"%s\".\n",0)
-ERR_MESSAGE(REPLACE_FAILED,"Could not replace old file (%s) with new file (%s). (%d)\n",0)
-ERR_MESSAGE(DATAFILE_ERROR,"Failed to %s data file: \"%s\". %S\n",0)
-ERR_MESSAGE(CREATE_FAILED,"Could not create .renum directory in %s. (%d)\n",0)
-ERR_MESSAGE(DELETE_FAILED,"Could not remove old file %s. (%d)\n",0)
+ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%t(%d): Fatal error parsing sprite %d: %t cannot equal %d.\n"
+			"\t(function %t).\n",0)
+ERR_MESSAGE(INVALID_DATAFILE,"Data file \"%t\" contains invalid data. (%S)\n",0)
+ERR_MESSAGE(NO_INPUT_FILE,"Could not open \"%t\" specified on the command line.\n",0)
+ERR_MESSAGE(NO_OUTPUT_FILE,"Could not open output file \"%t\" for input \"%s\".\n",0)
+ERR_MESSAGE(REPLACE_FAILED,"Could not replace old file (%t) with new file (%t). (%d)\n",0)
+ERR_MESSAGE(DATAFILE_ERROR,"Failed to %s data file: \"%t\". %S\n",0)
+ERR_MESSAGE(CREATE_FAILED,"Could not create .renum directory in %t. (%d)\n",0)
+ERR_MESSAGE(DELETE_FAILED,"Could not remove old file %t. (%d)\n",0)
 
-OUT_MESSAGE(CREATED_DIR,"Created .renum directory in %s.\n",0)
+OUT_MESSAGE(CREATED_DIR,"Created .renum directory in %t.\n",0)
 OUT_MESSAGE(PROCESSING,"Processing from standard input.\n",0)
-OUT_MESSAGE(PROCESSING_FILE,"Processing file \"%s\".\n",0)
+OUT_MESSAGE(PROCESSING_FILE,"Processing file \"%t\".\n",0)
 OUT_MESSAGE(PROCESSING_COMPLETE,"Processing complete.\n",0)
 OUT_MESSAGE(APPARENTLY_NOT_NFO,"Does not appear to be an NFO file.\n",0)
 OUT_MESSAGE(UNKNOWN_VERSION,"Unknown NFO file version: %d.  ",0)//No \n. That's intentional.
@@ -328,17 +292,101 @@ NFO_MESSAGE(OUT_OF_RANGE_TEXTID_13,"Action 13 can only define texts in the C4xx,
 NFO_MESSAGE(AND_00,"Anding with 0.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Action 3 may not be both generic and an override.\n",USE_PREFIX)
 
-/* Insert new NFO_MESSAGEs here. */
 
-//VMESSAGEs
-//Level 1
-//VMESSAGE(IDS,"Setting IDs %x to %x (%d IDs).\n")
+/* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
-//Level 2
-//VMESSAGE(ACTION_FOR,"Action %d %Y for feature %Y.\n")
 
-/* Insert new VMESSAGEs here. */
+#ifdef DEBUG
+ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist (%d/%d).\n",0)
+#else
+ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist.\n",0)
+#endif
 
 END_MESSAGES()
+
+// Names of extra strings, below, are passed to correspond with a %s or %S argument in the format.
+// A %S string consumes any arguments that immediately follow it, according to its format, while %s strings do not.
+// If a literal char* must be passed, (eg __FILE__), use %t instead.
+
+START_EXTRA_STRINGS()
+
+EXTRA(PREFIX_UNPARSEABLE,"Processing Failure: ")
+EXTRA(PREFIX_LINT_FATAL,"Fatal Error (%d): ")
+EXTRA(PREFIX_LINT_ERROR,"Error (%d): ")
+EXTRA(PREFIX_LINT_WARNING,"Warning (%d): ")
+EXTRA(OFFSET,"Offset %d: ")
+
+EXTRA(LOADING,"loading")
+EXTRA(LOADED,"loaded")
+EXTRA(LOTS,"lots-of-cargo")
+EXTRA(HOUSE_INSTYTILE,"houses and industry tiles")
+EXTRA(INDUSTRIES,"industries")
+EXTRA(BASICSTD2,"Basic standard 02s")
+EXTRA(PROD2,"Production callbacks")
+EXTRA(GROUND,"ground")
+EXTRA(NONTRANS,"non-transparent")
+
+EXTRA(ACTION,"action %xs")
+EXTRA(IMPORTS,"sound import sprites")
+EXTRA(TYPE,"%s for %s")
+EXTRA(AT_LEAST,"at least %d")
+EXTRA(EXACTLY,"%d")
+EXTRA(ONE_OF,"%d or %d")
+EXTRA(VARS,"%s and %s")
+EXTRA(VAL,"%2x")
+EXTRA(VALS,"%2x and %2x")
+EXTRA(REAL_S,"real sprite")
+EXTRA(BIN_INCLUDE,"binary include")
+EXTRA(RECOLOR_TABLE,"recolor table")
+EXTRA(SET,"action 1 set")
+EXTRA(CID,"cargo ID")
+
+EXTRA(EOF_READING_NAME,"EOF while reading name %2x.")
+EXTRA(OVERLENGTH_NAME,"Name %2x exceeds 100 characters long.")
+
+EXTRA(OPEN,"open")
+EXTRA(LOAD,"load")
+EXTRA(WRITE,"write")
+
+EXTRA(BYTE1,"byte 1")
+EXTRA(FEATURE,"feature")
+
+EXTRA(NUMINFO,"numinfo")
+EXTRA(NUMIDS,"numids")
+
+EXTRA(NUMENT1,"nument1")
+EXTRA(NUMENT2,"nument2")
+EXTRA(NVAR,"nvar")
+EXTRA(NRAND,"nrand")
+EXTRA(NID,"n-id")
+EXTRA(NUMCID,"num-cid")
+EXTRA(NUM,"num")
+EXTRA(NUMENT,"num-ent")
+EXTRA(NUMSPRITES,"num-sprites")
+EXTRA(NUMSETS,"num-sets")
+EXTRA(NUMDEFS,"num-defs")
+
+EXTRA(VARSIZE,"var-size")
+EXTRA(COND,"cond")
+
+EXTRA(XPOS,"xpos")
+EXTRA(YPOS,"ypos")
+EXTRA(XSIZE,"xsize")
+EXTRA(YSIZE,"ysize")
+EXTRA(XREL,"xrel")
+EXTRA(YREL,"yrel")
+
+EXTRA(XOFF,"xoff")
+EXTRA(XOFF_EXT,"xoff+xextent")
+EXTRA(YOFF,"yoff")
+EXTRA(YOFF_EXT,"yoff+yextent")
+
+
+EXTRA(FILELINE,"(%t:%d)")
+EXTRA(ERRNO,"(%d)")
+EXTRA(DAT2,"%2x %2x")
+EXTRA(DAT3,"%2x %2x %2x")
+
+END_EXTRA_STRINGS()
 
 #endif//_RENUM_MESSAGES_H_INCLUDED_
