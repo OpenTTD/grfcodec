@@ -107,9 +107,14 @@ static const char _dat2v[]="\x09\x09"
 "\x0B\x7E\x82\xFF\x7F\x84\x7F\x80\x80"
 "\x0C\x80\x80"
 "\x0D\x80\x80";
-//Format: Low nibble: width (1/2/4) high nibble: bitmask: Read in 7, read in D, write in D, reserved
+//Format: Bitmask
+//Bit(s)			Meaning
+//0,1,2				valid width(s) (B,W,D) (If all are clear, this is a batmask-variable.)
+//5					write in D
+//6					read in D
+//7					read in 7
 //                                          80                              88                              90                              98                              A0
-static const char _dat79Dv[]="\x1F\x01\x20\x00\x00\x00\xC1\xC1\x80\x80\x00\x84\x00\x00\xC4\x00\xC1\xE1\xE4\x00\x00\xC1\xE2\xE2\xE2\xE2\xE1\x00\x24\x84\x00\x00\xC4\xE4\x24";
+static const char _dat79Dv[]="\x20\x00\x20\x00\x00\x00\xC7\xC5\x80\x80\x00\x84\x00\x00\xC6\x00\xC1\xE1\xE4\x00\x00\xC1\xE2\xE2\xE2\xE2\xE1\x00\x24\x87\x00\x00\xC4\xE4\x24";
 static const char _datD[]="\x13\x00"
 	"\x10\x0C"                      "\x74\x00\x58\x00\x0B\x00\x29\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1E\x13\x00\x00\x25\x00\x40\x00\x00\x00\x00\x00";
 //Feature:                             --00--                          --04--                          --08--                          --0C--
