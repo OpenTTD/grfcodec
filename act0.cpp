@@ -219,7 +219,7 @@ void Check0::Check(PseudoSprite&str){
 					}
 					if(propsRemain){
 						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-						IssueMessage(0,AUTOCORRECTING,2,"num-info",str.ExtractByte(2),str.ExtractByte(2)-propsRemain);
+						IssueMessage(0,AUTOCORRECTING,2,NUMINFO,str.ExtractByte(2),str.ExtractByte(2)-propsRemain);
 						str.SetByteAt(2,str.ExtractByte(2)-propsRemain);
 					}
 					break;
@@ -232,7 +232,7 @@ void Check0::Check(PseudoSprite&str){
 				if(_autocorrect){
 					if(propsRemain){
 						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-						IssueMessage(0,AUTOCORRECTING,2,"num-info",str.ExtractByte(2),str.ExtractByte(2)-propsRemain);
+						IssueMessage(0,AUTOCORRECTING,2,NUMINFO,str.ExtractByte(2),str.ExtractByte(2)-propsRemain);
 						str.SetByteAt(2,str.ExtractByte(2)-propsRemain);
 					}
 					break;
@@ -288,7 +288,7 @@ void Check0::Check(PseudoSprite&str){
 					}
 					if(IDs!=str.ExtractByte(3)){
 						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-						IssueMessage(0,AUTOCORRECTING,3,"num-IDs",str.ExtractByte(3),IDs);
+						IssueMessage(0,AUTOCORRECTING,3,NUMIDS,str.ExtractByte(3),IDs);
 						str.SetByteAt(3,IDs);
 					}
 				}

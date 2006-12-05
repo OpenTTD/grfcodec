@@ -503,6 +503,14 @@ uint GetState(enum beaut type,int arg){
 #define END_MESSAGES() };
 #define MESSAGE_EX(name,msg,props,loc,base) base,
 
+#undef EXTRA
+#undef START_EXTRA_STRINGS
+#undef END_EXTRA_STRINGS
+
+#define EXTRA(name,str)
+#define START_EXTRA_STRINGS()
+#define END_EXTRA_STRINGS()
+
 #undef _RENUM_MESSAGES_H_INCLUDED_
 
 #include"messages.h"

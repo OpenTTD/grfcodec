@@ -249,7 +249,7 @@ FILE*tryopen(const char*name,const char*mode,bool allownull=false){
 	static string dir=getdir();
 	FILE*pFile=fopen((dir+name).c_str(),mode);
 	if(pFile||allownull)return pFile;
-	IssueMessage(0,DATAFILE_ERROR,OPEN,name+1,"(%d)",errno);
+	IssueMessage(0,DATAFILE_ERROR,OPEN,name+1,ERRNO,errno);
 	perror(NULL);
 	assert(false);
 	exit(EDATA);
@@ -263,7 +263,7 @@ FILE*_myfopen(files file){
 	}
 	pFile=tryopen(data[file].name,"wb");
 	if(fwrite(data[file].data,1,data[file].len,pFile)!=data[file].len){
-		IssueMessage(0,DATAFILE_ERROR,WRITE,data[file].name+1,"");
+		IssueMessage(0,DATAFILE_ERROR,WRITE,data[file].name+1,-1);
 		assert(false);
 		exit(EDATA);
 	}
@@ -276,7 +276,7 @@ FILE*_myfopen(files file){
 
 int _CheckEOF(int dat,files file,const char*src,int line){
 	if(dat==EOF){
-		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+8,"(%s:%d)",src,line);
+		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+8,FILELINE,src,line);
 		assert(false);
 		exit(EDATA);
 	}
@@ -290,7 +290,7 @@ int _GetCheckWord(FILE*pFile,files file,const char*src,int line){
 
 void _myfread(FILE*pFile,uchar*target,uint count,files file,const char*src,int line){
 	if(fread(target,1,count,pFile)!=count){
-		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+8,"(%s:%d)",src,line);
+		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+8,FILELINE,src,line);
 		assert(false);
 		exit(EDATA);
 	}

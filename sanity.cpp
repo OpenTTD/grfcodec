@@ -316,11 +316,11 @@ void check_sprite(PseudoSprite&data){
 		status.seensprites=data.ExtractByte(1);
 		if(_autocorrect&&length%3==2&&length/3!=status.seensprites&&length/3<256){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-			IssueMessage(0,AUTOCORRECTING,1,"num-sets",data.ExtractByte(1),length/3);
+			IssueMessage(0,AUTOCORRECTING,1,NUMSETS,data.ExtractByte(1),length/3);
 			data.SetByteAt(1,status.seensprites=length/3);
 		}
 		if(!status.seensprites)IssueMessage(WARNING1,NO_SETS,0x0A);
-		if(CheckLength(length,2+3*status.seensprites,BAD_LENGTH,"byte 1","%2x",status.seensprites,2+3*status.seensprites))
+		if(CheckLength(length,2+3*status.seensprites,BAD_LENGTH,BYTE1,VAL,status.seensprites,2+3*status.seensprites))
 			return;
 		status.expectedsprites=0;
 		for(uint i=0;i<status.seensprites;i++){
@@ -346,10 +346,10 @@ void check_sprite(PseudoSprite&data){
 		uint numids=data.SetHex(1).ExtractByte(1);
 		if(_autocorrect&&length%4==2&&length/4!=numids&&length/4<256){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-			IssueMessage(0,AUTOCORRECTING,1,"num",numids,length/4);
+			IssueMessage(0,AUTOCORRECTING,1,NUM,numids,length/4);
 			data.SetByteAt(1,numids=length/4);
 		}
-		if(CheckLength(length,2+4*numids,BAD_LENGTH,"<num>","%2x",numids,2+4*numids))return;
+		if(CheckLength(length,2+4*numids,BAD_LENGTH,NUM,VAL,numids,2+4*numids))return;
 		if(!numids)IssueMessage(WARNING1,NO_GRFIDS);
 		if(numids<2)return;
 		uint*id=new uint[numids];
@@ -395,11 +395,11 @@ void check_sprite(PseudoSprite&data){
 		status.seensprites=data.ExtractByte(1);
 		if(_autocorrect&&length%4==2&&length/4!=status.seensprites&&length/4<256){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-			IssueMessage(0,AUTOCORRECTING,1,"num-defs",status.seensprites,length/4);
+			IssueMessage(0,AUTOCORRECTING,1,NUMDEFS,status.seensprites,length/4);
 			data.SetByteAt(1,status.seensprites=length/4);
 		}
 		if(!status.seensprites)IssueMessage(WARNING1,NO_SETS,0x12);
-		if(CheckLength(length,2+4*status.seensprites,BAD_LENGTH,"byte 1","%2x",status.seensprites,2+4*status.seensprites))
+		if(CheckLength(length,2+4*status.seensprites,BAD_LENGTH,BYTE1,VAL,status.seensprites,2+4*status.seensprites))
 			return;
 		status.expectedsprites=0;
 		for(uint i=0;i<status.seensprites;i++){
