@@ -40,7 +40,11 @@ public:
 	bool canRead7(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x80));}
 	bool canReadD(uint v){return(v<0x80||v==0xFF||(v<numvars&&_p[v&0x7F]&0x40));}
 	bool canWriteD(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x20));}
-	uint len(uint v){return _p[v&0x7F]&0xF;}
+	bool isBitmask(uint v){return(v<numvars&&_p[v&0x7F]&7)==0;}
+	bool lenOK(uint v,uint len){
+		if(len==4)len--;
+		return(_p[v&0x7F]&(1<<(len-1)))!=0;
+	}
 	AUTO_ARRAY(uchar)
 	SINGLETON(Vars)
 };
@@ -71,6 +75,10 @@ D::D(){
 
 #define SetSize(x)\
 	if(desiredSize!=x)desiredSize=0;\
+	else(void(0))
+
+#define CheckSize(var)\
+	if(!Vars::Instance().lenOK(var,desiredSize)) desiredSize=0;\
 	else(void(0))
 
 struct act7{
@@ -105,19 +113,19 @@ int Check7(PseudoSprite&data){
 		var_size=1;
 	}
 	if(!Vars::Instance().canRead7(var))IssueMessage(ERROR,NONEXISTANT_VARIABLE,var);
-	else if(var>0x7F&&cond>1&&!Vars::Instance().len(var)){
+	else if(var>0x7F&&cond>1&&Vars::Instance().isBitmask(var)){
 		IssueMessage(ERROR,BITTEST_VARIABLE,var);
 		desiredSize=0;
 	}
-	if(var_size==0||var_size>4){
+	if(var_size==0||var_size==3||var_size>4){
 		IssueMessage(FATAL,BAD_VARSIZE,var_size);
 		return 0;
 	}else if((cond==0xB||cond==0xC)&&var_size!=4)
 		IssueMessage(WARNING2,COND_SIZE_MISMATCH,cond,4);
 	else if(var>0x7F&&cond>1){
-		SetSize(Vars::Instance().len(var));
-		if(var_size!=Vars::Instance().len(var))
-			IssueMessage(WARNING2,VARIABLE_SIZE_MISMATCH,var,Vars::Instance().len(var));
+		CheckSize(var);
+		if(!Vars::Instance().lenOK(var,var_size))
+			IssueMessage(WARNING2,VARIABLE_SIZE_MISMATCH,var_size,var);
 	}
 	if(_autocorrect&&desiredSize&&desiredSize!=data.ExtractByte(2)){
         IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
