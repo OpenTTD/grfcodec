@@ -87,7 +87,7 @@ private:
 	Expanding0Array<char>beauty;
 	ExpandingArray<string>context;
 	bool valid,useorig;
-	const int spriteno;
+	const int oldspritenum;
 };
 
 #endif//_RENUM_PSEUDO_H_INCLUDED_

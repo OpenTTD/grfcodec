@@ -60,11 +60,11 @@ enum{HEX,TEXT,UTF8,ENDQUOTE,NOBREAK=4};
 	}else ((void)0)
 
 
-PseudoSprite::PseudoSprite(const string&sprite,int spriteno):
+PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 	orig(sprite),
 	valid(true),
 	useorig(false),
-	spriteno(spriteno)
+	oldspritenum(oldspritenum)
 {
 	istringstream in(sprite);
 	ostringstream out;
