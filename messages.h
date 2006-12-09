@@ -113,9 +113,9 @@ OUT_MESSAGE(STARTUP,"NFORenum " VERSION " - Copyright " YEARS " Dale McCoy.\n",0
 
 NFO_MESSAGE(BAD_RPN,"Invalid RPN expression while reading character %c.\n",0)
 NFO_MESSAGE(BAD_RPN_EOF,"No close parenthesis found.\n",0)
-NFO_MESSAGE(UNDEF_VAR,"Undefined variable \"%s\".\n",0)
-NFO_MESSAGE(COMMAND_INVALID_ARG,"Invalid argument to %s command.\n",0)
-NFO_MESSAGE(COMMAND_UNKNOWN,"Unknown comment command: %s\n",0)
+NFO_MESSAGE(UNDEF_VAR,"Undefined variable \"%t\".\n",0)
+NFO_MESSAGE(COMMAND_INVALID_ARG,"Invalid argument to %t command.\n",0)
+NFO_MESSAGE(COMMAND_UNKNOWN,"Unknown comment command: %t\n",0)
 NFO_MESSAGE(COMMAND_REVERT_DEFAULT,"Assuming \"DEFAULT\".\n",0)
 NFO_MESSAGE(COMMAND_UNKNOWN_VERSION,"Unknown version number. If this version has been released, please get the latest versions.dat from the NFORenum website.\n",0)
 
