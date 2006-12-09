@@ -296,7 +296,7 @@ NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Action 3 may not be both generic and an overri
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
 
-#ifdef DEBUG
+#if defined DEBUG || defined _DEBUG
 ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist (%d/%d).\n",0)
 #else
 ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist.\n",0)

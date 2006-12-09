@@ -106,7 +106,7 @@ string mysprintf(const char*str,...){
 	return myvsprintf(str,ap);
 }
 
-#ifdef DEBUG
+#if defined DEBUG || defined _DEBUG
 static int curMessage;
 #endif
 
@@ -116,7 +116,7 @@ string IssueMessage(int minSan,int id,...){
 }
 
 string vIssueMessage(int minSan,int id,va_list arg_ptr){
-#ifdef DEBUG
+#if defined DEBUG || defined _DEBUG
 	curMessage=id;
 #endif
 	/*if(minSan<0){
@@ -175,7 +175,7 @@ string myvsprintf(const char*fmt,va_list&arg_ptr){
 			case's':{
 				int x=(int)va_arg(arg_ptr,int);
 				if(x>=__LAST_EXTRA){
-#ifdef DEBUG
+#if defined DEBUG || defined _DEBUG
 					IssueMessage(0,BAD_STRING,x,curMessage,_spritenum);
 #else
 					IssueMessage(0,BAD_STRING,x);
@@ -189,7 +189,7 @@ string myvsprintf(const char*fmt,va_list&arg_ptr){
 			}case'S':{
 				int x=(int)va_arg(arg_ptr,int);
 				if(x>=__LAST_EXTRA){
-#ifdef DEBUG
+#if defined DEBUG || defined _DEBUG
 					IssueMessage(0,BAD_STRING,x,curMessage,_spritenum);
 #else
 					IssueMessage(0,BAD_STRING,x);
