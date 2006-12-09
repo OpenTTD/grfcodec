@@ -97,6 +97,6 @@ private:\
 	void operator=(const class&);
 
 #define spritenum() (GetState(DIFF)?-1:\
-	GetState(USEOLDSPRITENUMS)?spriteno:(int)_spritenum)
+	GetState(USEOLDSPRITENUMS)?oldspritenum:(int)_spritenum)
 
 #endif//_RENUM_RENUM_H_INCLUDED_

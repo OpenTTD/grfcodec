@@ -258,10 +258,10 @@ int __cdecl main(const int argc,char**argv){
 #define flush_buffer()\
 	if(true){\
 		if(buffer!=""){\
-			output_buffer(buffer,isPatch,spriteno);\
+			output_buffer(buffer,isPatch,oldspritenum);\
 			buffer="";\
 		}\
-		spriteno=temp;\
+		oldspritenum=temp;\
 	}else\
 		(void(0))
 
@@ -322,7 +322,7 @@ int process_file(istream&in){
 	}
 
 
-	int temp=-1,size,spriteno=-1;
+	int temp=-1,size,oldspritenum=-1;
 	_spritenum=(unsigned)-1;
 	string::size_type firstnotpseudo;
 	bool isPatch=false;
