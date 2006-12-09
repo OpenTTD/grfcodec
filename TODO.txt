@@ -1,4 +1,4 @@
-NFORenum v3.4.2
+NFORenum v3.4.3
 NFO file re-numberer and linter
 
 TODO:
@@ -15,8 +15,6 @@ TODO:
   - Convert action Cs to comments (?)
   - Eat all comments, not just messages (?)
 - Config file (!)
-- Readability enhancements:
-  (moved to Info version 7 TODO)
 - Auto-correction:
   - Action 7/9 num-sprites if it jumps to or past EOF.
 - Multiple backups
