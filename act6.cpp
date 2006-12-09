@@ -38,7 +38,7 @@ uint Check6(PseudoSprite&data){
 	try{
 		while(data.ExtractByte(ofs++)!=0xFF){
 			canCorrect=false;
-			int num=data.ExtractByte(ofs++);
+			int num=data.ExtractByte(ofs++)&0x7F;
 			if(num)minlen=std::max(minlen,num+data.ExtractExtended(ofs));
 			else IssueMessage(WARNING1,DOES_NOT_MODIFY,ofs-1);
 			ofs+=data.ExtendedLen(ofs);
