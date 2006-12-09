@@ -53,10 +53,11 @@ void CheckB(PseudoSprite&data){
 	uint offset=4;
 	int specials;
 	if((sev&0x7F)>B::Instance().maxSeverity)IssueMessage(ERROR,INVALID_SEVERITY);
-	if(lang&0x80||(_grfver<7&&lang&0x60&&lang!=0x7F))IssueMessage(WARNING2,UNKNOWN_LANG_BIT,2,lang);
-	lang&=0x7F;
-	if(_grfver>6)CheckLangID(lang,2);
-	else if(_grfver==0&&lang>0x1F){
+	if(_grfver){
+		if(lang&0x80||(_grfver<7&&lang&0x60&&(lang&0x7F)!=0x7F))IssueMessage(WARNING2,UNKNOWN_LANG_BIT,2,lang);
+		lang&=0x7F;
+		if(_grfver>6)CheckLangID(lang,2);
+	}else if((lang&=0x7F)>0x1F){
 		_grfver=7;
 		CheckLangID(lang,2);
 		_grfver=0;
