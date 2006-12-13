@@ -286,7 +286,7 @@ void varRange::CheckDefault(){
 	AddRangeInternal(dflt.min,dflt.max,UNREACHABLE_DEFAULT);
 }
 
-void varRange::AddRangeInternal(uint min,uint max,uint unreachable){
+void varRange::AddRangeInternal(uint min,uint max,RenumMessageId unreachable){
 	bool obscured=false,repeat;
 	do{
 		repeat=false;

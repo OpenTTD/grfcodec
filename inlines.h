@@ -30,6 +30,8 @@
 #include"globals.h"
 #include"renum.h"
 
+inline string safetostring(const char*ptr){return ptr?ptr:"";}
+
 inline istream&eat_white(istream&in){
 	while(isspace(in.peek()))in.ignore();
 	return in;

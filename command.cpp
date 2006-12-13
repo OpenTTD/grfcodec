@@ -499,21 +499,11 @@ uint GetState(enum beaut type,int arg){
 #undef MESSAGE_EX
 
 #define MESSAGE(name,message,props)name,
-#define START_MESSAGES() int msg_type[]={
+#define START_MESSAGES(lang) int msg_type[]={
 #define END_MESSAGES() };
 #define MESSAGE_EX(name,msg,props,loc,base) base,
 
-#undef EXTRA
-#undef START_EXTRA_STRINGS
-#undef END_EXTRA_STRINGS
-
-#define EXTRA(name,str)
-#define START_EXTRA_STRINGS()
-#define END_EXTRA_STRINGS()
-
-#undef _RENUM_MESSAGES_H_INCLUDED_
-
-#include"messages.h"
+#include "lang/message_english.h"
 
 bool GetWarn(int message,int minSan){
 	message=msg_type[message];
@@ -541,7 +531,7 @@ void SetVar(const string&var,const string&value){
 int GetVar(const string&var,int&err){
 	map<string,int>::const_iterator it;
 	if((it=_varmap.find(var))!=_varmap.end())return it->second;
-	IssueMessage(0,err=UNDEF_VAR,var.c_str());
+	IssueMessage(0,(RenumMessageId)(err=UNDEF_VAR),var.c_str());
 	SetCode(EPARSE);
 	return 0;
 }
@@ -568,7 +558,7 @@ int DoCalc(istream&data,int&err){
 		}else if(ops.find((char)ch)!=NPOS){
 			data.ignore();
 			if(nums.size()<2){
-				IssueMessage(0,err=BAD_RPN,ch);
+				IssueMessage(0,(RenumMessageId)(err=BAD_RPN),ch);
 				return 0;
 			}
 			int r;
@@ -584,12 +574,12 @@ int DoCalc(istream&data,int&err){
 			}
 		}else if(ch==')'){
 			if(!nums.size()){
-				IssueMessage(0,err=BAD_RPN,ch);
+				IssueMessage(0,(RenumMessageId)(err=BAD_RPN),ch);
 				return 0;
 			}
 			return nums.top();
 		}else if(ch==EOF){
-			IssueMessage(0,err=BAD_RPN_EOF);
+			IssueMessage(0,(RenumMessageId)(err=BAD_RPN_EOF));
 			return 0;
 		}else{
 			string var=ReadVar(data);
