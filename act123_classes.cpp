@@ -74,6 +74,7 @@ Check2v::Check2v(){
 	FILE*pFile=myfopen(2v);
 	VarData tempvar;
 	int var;
+	maxop=GetCheckByte(2v);
 	while(true){
 		var=tempvar.Load(pFile);
 		if(var==-1)break;
@@ -222,7 +223,9 @@ void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,u
 	assert(dflt.min<=dflt.max);
 	switch(op){
 	case(uint)-1://First run
+	case 0xF:// Discard left
 		dflt=var;
+	case 0xE:// Store
 		break;
 	case 0:// +
 	case 0xC:// |
