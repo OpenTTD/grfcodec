@@ -2,6 +2,7 @@ Changelog:
 v3.4.3 to
 - Data file updates:
   - Variable 7D
+- Make unrecognized action 5 types look for real sprites or recolor sprites.
 
 v3.4.2 to v3.4.3 (r1244)
 - Permit Action 1/2/3 for bridges (Callback 33)

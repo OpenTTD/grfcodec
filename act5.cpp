@@ -59,6 +59,7 @@ int Check5(PseudoSprite&data,sanstate&state){
 	state=FIND_REAL;
 	if(feature<4||feature>c5::Instance().maxFeature){
 		IssueMessage(FATAL,INVALID_FEATURE);
+		state=FIND_REAL_OR_RECOLOR;
 		return sprites;
 	}
 	if(feature==4){
