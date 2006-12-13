@@ -190,7 +190,7 @@ varRange::varRange(uint width):dflt(rangemax[width]),num(0),width(width){
 
 void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,uint&offs){
 	uint add,divmod,nAnd=data.ExtractVariable(offs,width);
-	if(Var!=0x73&&!nAnd)IssueMessage(WARNING1,AND_00,offs);
+	if(Var!=0x7E&&!nAnd)IssueMessage(WARNING1,AND_00,offs);
 	offs+=width;
 	range var(rangemax[width],0,(0xFFFFFFFF>>shift)&nAnd);
 	if(shift&0xC0){
