@@ -3,6 +3,7 @@
  * defines message processing functions.
  *
  * Copyright 2004-2006 by Dale McCoy.
+ * Copyright 2006, Dan Masek.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ using namespace std;
 #include"sanity_defines.h"
 #include"strings.h"
 #include"command.h"
+#include "message_mgr.h"
 
 //#define MSG_ARRAYS_INCLUDE_TIMES 3
 //#include"msg_arrays.h"
@@ -56,51 +58,6 @@ void ManualConsoleMessages(){
 	bAutoMessage=false;
 }
 
-#undef _RENUM_MESSAGES_H_INCLUDED_
-#undef MESSAGE
-#undef START_MESSAGES
-#undef END_MESSAGES
-
-#define START_MESSAGES() const messageData message[]={
-#define MESSAGE(name,message,props){message,props},
-#define END_MESSAGES() };
-
-#undef EXTRA
-#undef START_EXTRA_STRINGS
-#undef END_EXTRA_STRINGS
-
-#define EXTRA(name,str)str,
-#define START_EXTRA_STRINGS() static const char* const extra [] = {
-#define END_EXTRA_STRINGS() };
-
-string myvsprintf(const char*,va_list&);
-
-struct messageData{
-	char*text;
-	char props;
-	bool ConsoleMessage()const{return!(props&NO_CONSOLE);}
-	string display(const string&prefix,va_list&ap)const{
-		string ret=myvsprintf(GetMessage(prefix).c_str(),ap);
-		ostream*const stream[]={pErr,pOut,pNfo};
-		if((props&TO_MASK)!=TO_NULL)(*(stream[(props&TO_MASK)>>TO_SHIFT]))<<ret;
-		return ret;
-	}
-	const static string commentPrefix;
-private:
-	string GetMessage(const string&prefix="")const;
-};
-const string messageData::commentPrefix="!!";
-
-#include "messages.h"
-
-string messageData::GetMessage(const string&prefix)const{
-	string ret=text;
-	if(props&HAS_OFFSET)ret=extra[OFFSET]+ret;
-	if(props&USE_PREFIX)ret=prefix+ret;
-	if(props&MAKE_COMMENT)ret=COMMENT_PREFIX+commentPrefix+ret;
-	return ret;
-}
-
 string mysprintf(const char*str,...){
 	WrapAp(str);
 	return myvsprintf(str,ap);
@@ -110,20 +67,20 @@ string mysprintf(const char*str,...){
 static int curMessage;
 #endif
 
-string IssueMessage(int minSan,int id,...){
+string IssueMessage(int minSan,RenumMessageId id,...){
 	WrapAp(id);
 	return vIssueMessage(minSan,id,ap);
 }
 
-string vIssueMessage(int minSan,int id,va_list arg_ptr){
+string vIssueMessage(int minSan,RenumMessageId id,va_list arg_ptr){
 #if defined DEBUG || defined _DEBUG
 	curMessage=id;
 #endif
 	/*if(minSan<0){
 		if(GetState(VERBOSE)<-minSan)return"";
 	}else*/if(!GetWarn(id,minSan))return"";
-	if(message[id].props&MAKE_COMMENT&&GetState(DIFF))return"";
-	int prefix=PREFIX_LINT_WARNING;
+	if(MessageMgr::Instance().GetMessageData(id).IsMakeComment() &&	GetState(DIFF)) return "";
+	RenumExtraTextId prefix = PREFIX_LINT_WARNING;
 	switch(minSan){
 		case-1:case-2:break;
 		case 0:
@@ -136,19 +93,21 @@ string vIssueMessage(int minSan,int id,va_list arg_ptr){
 		case WARNING2:
 		case WARNING3:
 		case WARNING4:
-			if(message[id].ConsoleMessage()&&bAutoMessage)
-				IssueMessage(0,CONSOLE_LINT_WARNING-(minSan<WARNING1?WARNING1-minSan:0),_spritenum,minSan-ERROR);
+			if(MessageMgr::Instance().GetMessageData(id).IsConsoleMessage()&&bAutoMessage)
+				IssueMessage(0,(RenumMessageId)(CONSOLE_LINT_WARNING-(minSan<WARNING1?WARNING1-minSan:0)),
+					_spritenum,minSan-ERROR);
 			break;
 		DEFAULT(minSan)
 	}
-	if(message[id].props&MAKE_COMMENT){
+	if(MessageMgr::Instance().GetMessageData(id).IsMakeComment()){
 		if(minSan==FATAL||minSan==ERROR)SetCode(EERROR);
 		else if(minSan>=0)SetCode(EWARN);
 	}
 	try{
-		return message[id].display(mysprintf(extra[prefix],id),arg_ptr);
+		return MessageMgr::Instance().GetMessageData(id).Display(
+			mysprintf(MessageMgr::Instance().GetExtraText(prefix).c_str(),id),arg_ptr);
 	}catch(...){
-		(*pErr)<<message[FATAL_MESSAGE_ERROR].text<<id<<endl;
+		(*pErr)<<MessageMgr::Instance().GetMessageData(FATAL_MESSAGE_ERROR).GetText()<<id<<endl;
 		assert(false);
 		exit(EFATAL);
 	}
@@ -184,7 +143,7 @@ string myvsprintf(const char*fmt,va_list&arg_ptr){
 					exit(EFATAL);
 				}
 				if(x!=-1)
-					ret+=extra[x];
+					ret += MessageMgr::Instance().GetExtraText((RenumExtraTextId)x);
 				break;
 			}case'S':{
 				int x=(int)va_arg(arg_ptr,int);
@@ -198,7 +157,7 @@ string myvsprintf(const char*fmt,va_list&arg_ptr){
 					exit(EFATAL);
 				}
 				if(x!=-1)
-					ret+=myvsprintf(extra[x],arg_ptr);
+					ret+=myvsprintf(MessageMgr::Instance().GetExtraText((RenumExtraTextId)x).c_str(),arg_ptr);
 				break;
 			}case'x':{
 				uint val=va_arg(arg_ptr,int);

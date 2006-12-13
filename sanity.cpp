@@ -137,7 +137,7 @@ void Seen8(int action){
 	}
 }
 
-bool CheckLength(int alen,int elen,int message,...){
+bool CheckLength(int alen,int elen,RenumMessageId message,...){
 	WrapAp(message);
 	if(alen<elen){
 		vIssueMessage(FATAL,message,ap);

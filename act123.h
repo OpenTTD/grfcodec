@@ -19,6 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "singleton.h"
+#include "message_mgr.h"
+
 class PseudoSprite;
 
 struct act123{
@@ -98,7 +101,7 @@ private:
 	int num;
 	uint width;
 	vector<range>ranges;
-	void AddRangeInternal(uint min,uint max,uint unreachable);
+	void AddRangeInternal(uint min,uint max,RenumMessageId unreachable);
 };
 
 class rand2{

@@ -373,10 +373,19 @@
 				RelativePath=".\globals.cpp">
 			</File>
 			<File
+				RelativePath=".\help.cpp">
+			</File>
+			<File
 				RelativePath=".\IDs.cpp">
 			</File>
 			<File
 				RelativePath=".\inject.cpp">
+			</File>
+			<File
+				RelativePath=".\language_mgr.cpp">
+			</File>
+			<File
+				RelativePath=".\message_mgr.cpp">
 			</File>
 			<File
 				RelativePath=".\messages.cpp">
@@ -423,10 +432,19 @@
 				RelativePath=".\globals.h">
 			</File>
 			<File
+				RelativePath=".\help.h">
+			</File>
+			<File
 				RelativePath=".\inject.h">
 			</File>
 			<File
 				RelativePath=".\inlines.h">
+			</File>
+			<File
+				RelativePath=".\language_mgr.h">
+			</File>
+			<File
+				RelativePath=".\message_mgr.h">
 			</File>
 			<File
 				RelativePath=".\messages.h">
@@ -447,6 +465,9 @@
 				RelativePath=".\sanity_defines.h">
 			</File>
 			<File
+				RelativePath=".\singleton.h">
+			</File>
+			<File
 				RelativePath=".\strings.h">
 			</File>
 			<File
@@ -455,6 +476,40 @@
 			<File
 				RelativePath=".\win32.h">
 			</File>
+			<Filter
+				Name="lang"
+				Filter="">
+				<File
+					RelativePath=".\lang\all_extra.h">
+				</File>
+				<File
+					RelativePath=".\lang\all_help.h">
+				</File>
+				<File
+					RelativePath=".\lang\all_messages.h">
+				</File>
+				<File
+					RelativePath=".\lang\extra_czech.h">
+				</File>
+				<File
+					RelativePath=".\lang\extra_english.h">
+				</File>
+				<File
+					RelativePath=".\lang\help_czech.h">
+				</File>
+				<File
+					RelativePath=".\lang\help_english.h">
+				</File>
+				<File
+					RelativePath=".\lang\language_list.h">
+				</File>
+				<File
+					RelativePath=".\lang\message_czech.h">
+				</File>
+				<File
+					RelativePath=".\lang\message_english.h">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Resource Files"

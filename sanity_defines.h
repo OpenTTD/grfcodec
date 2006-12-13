@@ -23,8 +23,9 @@
 #define _RENUM_SANITY_DEFS_H_INCLUDED_
 
 #include <cstdarg>
+#include "message_mgr.h"
 
-bool CheckLength(int,int,int,...);
+bool CheckLength(int,int,RenumMessageId,...);
 bool CheckTextID(uint,uint,uint);
 bool CheckID(uint,uint);
 

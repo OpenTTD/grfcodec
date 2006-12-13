@@ -77,25 +77,6 @@ void SetCode(int);
 #define EXPECTED_BYTES(off) (off>>24)
 #define EXPECTED_LOC(off) (off&0xFFFFFF)
 
-//Mutable singleton
-#define SINGLETON(class)\
-public:\
-	static class&Instance(){static class obj;return obj;}\
-	static const class&CInstance(){return Instance();}\
-private:\
-	class();\
-	class(const class&);\
-	void operator=(const class&);
-
-//Immutable singleton
-#define C_SINGLETON(class)\
-public:\
-	static const class&Instance(){static const class obj;return obj;}\
-private:\
-	class();\
-	class(const class&);\
-	void operator=(const class&);
-
 #define spritenum() (GetState(DIFF)?-1:\
 	GetState(USEOLDSPRITENUMS)?oldspritenum:(int)_spritenum)
 

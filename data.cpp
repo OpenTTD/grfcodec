@@ -37,6 +37,7 @@
 using namespace std;
 
 #include"renum.h"
+#include"inlines.h"
 #include"globals.h"
 #include"data.h"
 #include"messages.h"
@@ -226,8 +227,6 @@ bool finddir(string&dir){
 	else if(Stat.st_mode&S_IFREG)return false;
 	return true;
 }
-
-string safetostring(const char*ptr){return ptr?ptr:"";}
 
 string getdir(){
 	if(datadir!=""){
