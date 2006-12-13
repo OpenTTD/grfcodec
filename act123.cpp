@@ -201,7 +201,7 @@ CHANGED_FEATURE(var)
 			isvar|=(var!=0x1A&&var!=0x1C);
 			if(!(shift&0x20))break;
 			isadv=true;
-			if((op=data.ExtractByte(off++))>0x0D)IssueMessage(ERROR,INVALID_OP,off,op);
+			if((op=data.ExtractByte(off++))>Check2v::GetMaxOp())IssueMessage(ERROR,INVALID_OP,off,op);
 		}
 		nument2=data.ExtractByte(off);//off switches to byte-just-read.
 		if(isadv)data.SetEol(off-1,1);

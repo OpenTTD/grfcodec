@@ -77,10 +77,12 @@ class Check2v{
 	};
 public:
 	void Check(uint,uint,uint,uint,uint,uint)const;
+	static uint GetMaxOp(){return Instance().maxop;}
 	SINGLETON(Check2v)
 private:
 	ExpandingArray<VarData>globvars;
 	auto_array<FeatData>_p;
+	uint maxop;
 };
 
 class varRange{
