@@ -2,6 +2,7 @@ Changelog:
 v3.4.3 to
 - Data file updates:
   - Variable 7D
+  - Industries do not use GRM.
 - Make unknown action 5 types look for real sprites or recolor sprites.
 - Recognize action 2 operations 0E and 0F.
 - Catch Action Fs that chain to themselves.
