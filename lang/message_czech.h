@@ -229,7 +229,7 @@ NFO_MESSAGE(INVALID_EXT_CODE,"Rozsireny format %2x neexistuje.\n",USE_PREFIX|HAS
 NFO_MESSAGE(FEATURE_LINK_MISMATCH,"ID %2x je definovano pro feature %2x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(FEATURE_CALL_MISMATCH,"ID %2x je definovano pro feature %2x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(AUTOCORRECT_LOOP,"System pro automatickou opravu se pravdepodobne zasekl v nekonecnem cyklu.\n",USE_PREFIX)
-NFO_MESSAGE(BITS_OVERLAP,"Polozka %d argumentu <parts> pouziva nasledujici bity, ktere jiz byly v teto akci F pouzity: %s\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(BITS_OVERLAP,"Polozka %d argumentu <parts> pouziva nasledujici bity, ktere jiz byly v teto akci F pouzity: %t\n",USE_PREFIX|HAS_OFFSET)
 MESSAGE_EX(MISSING_LANG_NAME,"Pro %L nebyl specifikovan zadny nazev.\n",MAKE_COMMENT|USE_PREFIX,NFO,MISSING_FALLBACK)
 NFO_MESSAGE(OUT_OF_RANGE_TEXTID_13,"Akce 13 muze pouze definovat texty pro ID v rozsazich C4xx, C5xx, C9xx, D0xx a DCxx.\n",USE_PREFIX)
 NFO_MESSAGE(AND_00,"Operace AND hodnotou 0.\n",USE_PREFIX|HAS_OFFSET)
