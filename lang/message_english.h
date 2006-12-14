@@ -244,6 +244,7 @@ MESSAGE_EX(MISSING_LANG_NAME,"No name for %L was specified.\n",MAKE_COMMENT|USE_
 NFO_MESSAGE(OUT_OF_RANGE_TEXTID_13,"Action 13 can only define texts in the C4xx, C5xx, C9xx, D0xx, and DCxx ranges.\n",USE_PREFIX)
 NFO_MESSAGE(AND_00,"Anding with 0.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Action 3 may not be both generic and an override.\n",USE_PREFIX)
+NFO_MESSAGE(RECURSIVE_F,"Action F may not chain to itself.\n",USE_PREFIX)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 

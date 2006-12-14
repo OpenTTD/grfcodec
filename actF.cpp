@@ -57,10 +57,12 @@ void InitF(){status.init();}
 void CheckF(PseudoSprite&data){
 	data.SetAllHex();
 	uint id=data.ExtractByte(1),offset=2,langs,oldoff=0;
-	if(status.is_defined(id)&&!status.is_used(id))IssueMessage(WARNING1,UNUSED_ID,id&0x7F,status.defined_at(id));
-	status.define(id&0x7F);
-	if(id&0x80)status.use(id&0x7F);
-	if(id&0x80){
+	bool isFinal=(id>=0x80);
+	id&=0x7F;
+	if(crStatus.is_defined(id)&&!status.is_used(id))IssueMessage(WARNING1,UNUSED_ID,id,status.defined_at(id));
+	status.define(id);
+	if(isFinal){
+		status.use(id);
 		ExpandingArray<uint>nameLocs;
 		const ExpandingArray<uint>&cNameLocs=nameLocs;
 		uint names=0;
@@ -100,7 +102,7 @@ void CheckF(PseudoSprite&data){
 		offset++;
 	}
 	uint num_parts=data.SetEol(offset,1).ExtractByte(offset);
-	if(id&0x80)data.SetEol(offset-1,1);
+	if(isFinal)data.SetEol(offset-1,1);
 	if(!num_parts)IssueMessage(ERROR,NO_PARTS,offset);
 	uint bitsused=0;
 	for(uint i=0;i<num_parts;i++){
@@ -135,9 +137,10 @@ void CheckF(PseudoSprite&data){
 			total_prob+=prob&0x7F;
 			if(!(prob&0x7F))IssueMessage(WARNING1,NO_PROBABILITY,offset);
 			if(prob&0x80){
-				uint id=data.ExtractByte(++offset)&0x7F;
-				if(!status.is_defined(id))IssueMessage(ERROR,UNDEFINED_ID,offset,id);
-				else status.use(id);
+				uint newid=data.ExtractByte(++offset)&0x7F;
+				if(!status.is_defined(newid))IssueMessage(ERROR,UNDEFINED_ID,offset,newid);
+				else if(newid==id)IssueMessage(ERROR,RECURSIVE_F,offset);
+				else status.use(newid);
 			}else{
 				oldoff=++offset;
 				if(CheckString(data,offset,0)){
