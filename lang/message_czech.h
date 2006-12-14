@@ -22,7 +22,7 @@
 START_MESSAGES(RL_CZECH)
 
 ERR_MESSAGE(FATAL_MESSAGE_ERROR,"Kriticka chyba behem vytvareni zpravy ",0)
-ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%t(%d): Kriticka chyba pri analyze spritu %d: %t se nesmi rovnat %d.\n"
+ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%t(%d): Kriticka chyba pri analyze spritu %d: %t se nesmi rovnat %d.\n" \
 			"\t(funkce %t).\n",0)
 ERR_MESSAGE(INVALID_DATAFILE,"Datovy soubor \"%t\" obsahuje chybna data. (%S)\n",0)
 ERR_MESSAGE(NO_INPUT_FILE,"Nelze otevrit soubor \"%t\" specifikovany na prikazove radce.\n",0)

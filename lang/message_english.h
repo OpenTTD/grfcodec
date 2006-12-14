@@ -28,12 +28,15 @@
 // All other messages follow the printf format
 // (see myvsprintf in messages.cpp for supported specifiers).
 
+// Macro invocations broken across multiple lines must be continued with a
+// trailing backslash, or checklang.pl will become confused.
+
 // START_MESSAGES(<language>)
 // - <language> Language id as defined in language_list.h
 START_MESSAGES(RL_ENGLISH)
 
 ERR_MESSAGE(FATAL_MESSAGE_ERROR,"Fatal error issuing message ",0)
-ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%t(%d): Fatal error parsing sprite %d: %t cannot equal %d.\n"
+ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%t(%d): Fatal error parsing sprite %d: %t cannot equal %d.\n" \
 			"\t(function %t).\n",0)
 ERR_MESSAGE(INVALID_DATAFILE,"Data file \"%t\" contains invalid data. (%S)\n",0)
 ERR_MESSAGE(NO_INPUT_FILE,"Could not open \"%t\" specified on the command line.\n",0)
