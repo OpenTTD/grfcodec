@@ -6,6 +6,7 @@ v3.4.3 to
 - Make unknown action 5 types look for real sprites or recolor sprites.
 - Recognize action 2 operations 0E and 0F.
 - Catch Action Fs that chain to themselves.
+- Add escapes for the new action 2 operations 0E and 0F.
 
 v3.4.2 to v3.4.3 (r1244)
 - Permit Action 1/2/3 for bridges (Callback 33)

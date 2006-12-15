@@ -159,6 +159,20 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 					case'&':out.put(0x0B);continue;
 					case'|':out.put(0x0C);continue;
 					case'^':out.put(0x0D);continue;
+					case's':out.put(0x0E);
+						if(in.get()=='t'&&in.peek()=='o'){
+							in.ignore();
+							continue;
+						}
+						in.unget();
+						continue;
+					case'r':out.put(0x0F);
+						if(in.get()=='s'&&in.peek()=='t'){
+							in.ignore();
+							continue;
+						}
+						in.unget();
+						continue;
 					}
 					break;
 				}case'7':{
