@@ -54,7 +54,7 @@
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="\cygwin\bin\make -f Makefile.vc NOREV=0"/>
+				CommandLine="c:\cygwin\bin\make -f Makefile.vc NOREV=0"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -121,7 +121,7 @@
 				CommandLine="upx -fqq --best &quot;$(TargetPath)&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="\cygwin\bin\make -f Makefile.vc NOREV=0"/>
+				CommandLine="c:\cygwin\bin\make -f Makefile.vc NOREV=0"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -188,7 +188,7 @@
 				CommandLine="upx -fqq --best &quot;$(TargetPath)&quot;"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="\cygwin\bin\make -f Makefile.vc NOREV=1"/>
+				CommandLine="c:\cygwin\bin\make -f Makefile.vc NOREV=1"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
@@ -519,20 +519,49 @@
 				RelativePath=".\version.def">
 			</File>
 		</Filter>
+		<Filter
+			Name="Documentation"
+			Filter="">
+			<File
+				RelativePath=".\doc\AUTO_CORRECT.en.txt">
+			</File>
+			<File
+				RelativePath=".\doc\COMMANDS.en.txt">
+			</File>
+			<File
+				RelativePath=".\doc\README.en.txt">
+			</File>
+			<File
+				RelativePath=".\doc\README.RPN.en.txt">
+			</File>
+			<File
+				RelativePath=".\doc\SANITY.en.txt">
+			</File>
+			<Filter
+				Name="Czech"
+				Filter="">
+				<File
+					RelativePath=".\doc\AUTO_CORRECT.cz.txt">
+				</File>
+				<File
+					RelativePath=".\doc\COMMANDS.cz.txt">
+				</File>
+				<File
+					RelativePath=".\doc\README.cz.txt">
+				</File>
+				<File
+					RelativePath=".\doc\README.RPN.cz.txt">
+				</File>
+				<File
+					RelativePath=".\doc\SANITY.cz.txt">
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\0compile.txt">
 		</File>
 		<File
 			RelativePath=".\CHANGELOG.txt">
-		</File>
-		<File
-			RelativePath=".\README.RPN.txt">
-		</File>
-		<File
-			RelativePath=".\README.txt">
-		</File>
-		<File
-			RelativePath=".\SANITY.txt">
 		</File>
 		<File
 			RelativePath=".\TODO.txt">

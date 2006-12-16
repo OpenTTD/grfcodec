@@ -1,4 +1,4 @@
-How to compile GRFCodec
+How to compile NFORenum
 -----------------------
 
 Compiling NFORenum is pretty straightforward. It can be done, with varying
@@ -11,7 +11,7 @@ The Makefile will attempt to auto-detect:
 - Whether you are building on Cygwin or Linux (ISCYGWIN)
 - The location of your boost includes (BOOST_VERSION and/or BOOST_INCLUDE)
 
-If it gets these wrong, modify Makefile appropriately, or set the above
+If it gets these wrong, modify Makefile.local appropriately, or set the above
 mentioned controlling variables.
 ISCYGWIN: 1 on cygwin and 0 on Linux.
 BOOST_VERSION is the version number of your boost install, in the same format
@@ -25,7 +25,7 @@ NOREV: Set to 0 by default, set to 1 to remove the "rXXX" from the version
 NO_BOOST: Set to 0 by default; set to 1 if make erroneously finds a boost
     install
 SVNVERSION: Set to svnversion . by default. If you're using TortoiseSVN,
-    change Makefile.setup to set it to SubWCRev.exe . instead.
+    change Makefile.local to set it to SubWCRev.exe . instead.
 
 
 Targets
