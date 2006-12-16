@@ -25,6 +25,9 @@
 class PseudoSprite;
 
 struct act123{
+	void init();
+	uint MaxFoundFeat()const;
+
 	class Act1{
 	public:
 		Act1(){init();}
@@ -46,6 +49,7 @@ struct act123{
 		void use(int id){_m[id].used=true;}
 		bool test(uint,uint)const;
 		unsigned short GetFeature(uint id)const{return _m[id].feature;}
+		friend uint act123::MaxFoundFeat()const;
 	private:
 		struct info{
 			info():used(false),v1C(false),sprite(0),feature((unsigned short)-1){}
@@ -55,8 +59,6 @@ struct act123{
 		};
 		ExpandingArray<info>_m;
 	}defined2IDs;
-
-	void init();
 
 	uint act3feature,act3spritenum;
 	SINGLETON(act123)
