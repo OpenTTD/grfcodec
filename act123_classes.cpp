@@ -51,6 +51,14 @@ void act123::init(){
 	act3spritenum=0;
 }
 
+uint act123::MaxFoundFeat()const{
+	const vector<IDarray::info>&m=defined2IDs._m;
+	uint ret=0;
+	for(uint i=0;i<(int)m.size();i++)
+		ret=max<uint>(ret,m[i].feature);
+	return ret;
+}
+
 void act123::IDarray::define(uint feature,unsigned int id,bool checks1C){
 	_m[id].used=false;
 	_m[id].sprite=(unsigned short)_spritenum;
@@ -102,7 +110,7 @@ Check2v::Check2v(){
 }
 
 void Check2v::Check(uint feature,uint type,uint var,uint offs,uint param,uint shift)const{
-	VERIFY(feature<=MaxFeature(),feature);
+	if(feature>MaxFeature())return;
 	if((type&3)==2)feature=_p[feature].featfor82;
 	if(var&0x80){
 		if((var&0x7F)>_p[feature].last80)IssueMessage(ERROR,NONEXISTANT_VARIABLE,offs,var);
@@ -338,6 +346,7 @@ rand2::rand2(){
 }
 
 void rand2::CheckRand(uint feat,uint type,uint triggers,uint first,uint nrand){
+	if(feat>MaxFeature())return;
 	type&=1;
 	uint bits=0;
 	while(nrand>>=1)bits++;

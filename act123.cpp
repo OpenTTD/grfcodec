@@ -134,16 +134,16 @@ void Check2(PseudoSprite&data){
 	data.SetAllHex();
 	act123::Act1&act1=act123::Instance().act1;
 	uint feature=data.ExtractByte(1),id=data.ExtractByte(2);
+	uint nument1=data.ExtractByte(3),nument2=data.ExtractByte(4),length=data.Length(),i,j;
+	Define2 defineID(feature,id);
 	if(!IsValid2Feature(feature)){
-		IssueMessage(FATAL,INVALID_FEATURE);
-		if(_autocorrect==2&&act1.spritenum){
+		IssueMessage((nument1&0x80)?ERROR:FATAL,INVALID_FEATURE);
+		if(_autocorrect==2&&act1.spritenum&&!(nument1&0x80)){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 			IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature,act1.feature);
 			data.SetByteAt(1,feature=act1.feature);
-		}else return;
+		}else if(!(nument1&0x80)) return;
 	}
-	Define2 defineID(feature,id);
-	uint nument1=data.ExtractByte(3),nument2=data.ExtractByte(4),length=data.Length(),i,j;
 	switch(nument1){
 	case 0x80:
 	case 0x83:
@@ -183,19 +183,20 @@ CHANGED_FEATURE(rand)
 	case 0x85:case 0x86:
 	case 0x89:case 0x8A:
 	{
+#define Is60x(var) (((var)&0xE0)==0x60)
 CHANGED_FEATURE(var)
 		uint extract=1<<((nument1>>2)&3),off=4,var,param=0,shift,op=(uint)-1,newfeature=(uint)-1;
 		bool isvar=false,isadv=false;
 		varRange ranges(extract);
 		while(true){//read <var> [<param>] <varadjust> [<op> ...]. off reports byte to be read.
-			if(((var=data.ExtractByte(off++))&0xE0)==0x60)param=data.ExtractByte(off++);
+			if(Is60x(var=data.ExtractByte(off++)))param=data.ExtractByte(off++);
 			shift=data.ExtractByte(off++);
-			Check2v::Instance().Check(feature,nument1,var,off-2-((var&0x60)==0x60?1:0),param,shift&0x1F);
+			Check2v::Instance().Check(feature,nument1,var,off-2-(Is60x(var)?1:0),param,shift&0x1F);
 			if((shift&0xC0)==0xC0){
 				IssueMessage(FATAL,INVALID_SHIFT,off-1);
 				return;
 			}
-			if(isadv||(shift&0x20))data.SetEol(off-(((var&0xE0)==0x60)?4:3),2);
+			if(isadv||(shift&0x20))data.SetEol(off-(Is60x(var)?4:3),2);
 			ranges.UpdateRange(var,op,shift,data,off);
 			defineID.Check(var);
 			isvar|=(var!=0x1A&&var!=0x1C);
@@ -375,10 +376,6 @@ CHANGED_FEATURE(std)
 
 void Check3(PseudoSprite&data){
 	uint feature=data.ExtractByte(1),length=data.Length(),newfeature=(uint)-1;
-	if(!IsValidFeature(ACT3|GENERIC3,feature)){
-		IssueMessage(FATAL,INVALID_FEATURE);
-		return;
-	}
 	bool isOverride=((data.ExtractByte(2)&0x80)!=0),isGeneric=((data.ExtractByte(2)&0x7F)==0);
 	if(isOverride&&isGeneric)IssueMessage(ERROR,GENERIC_AND_OVERRIDE);
 	if(isOverride&&!IsValidFeature(OVERRIDE3,feature))IssueMessage(ERROR,INVALID_FEATURE);
@@ -437,7 +434,7 @@ void final123(){
 				}
 			}
 	int j;
-	for(uint i=0;i<=MaxFeature();i++){
+	for(uint i=0;i<=act123::Instance().MaxFoundFeat();i++){
 		header=false;
 		for(j=0;j<256;j++)
 			if(IDs.GetFeature(j)==i&&IDs.is_defined(j)&&!IDs.is_used(j)){
