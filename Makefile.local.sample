@@ -1,0 +1,43 @@
+# =========================================================
+#            Local Makefile settings for NFORenum
+# =========================================================
+
+# Copy this file to Makefile.local (if make didn't do it for you)
+# and edit to modify the settings
+
+# A command to return the current SVN revision of the source tree; it should
+# it in the format [##:]##, where the second set of digits is the current
+# revision (used for adding the revision to the version string)
+# SVNVERSION = svnversion -c .	# standard SVN client (e.g. cygwin)
+# SVNVERSION = SubWCRev.exe .	# TortoiseSVN
+
+# Optional parts of NFORenum are dependent on boost::date_time
+# If you do not have boost, make should detect this, and compile a version
+# of grfcodec that does not include the boost-dependent parts.
+# Get boost from www.boost.org
+#
+# Set these as appropriate; BOOST_VERSION is used to help automatically
+# locate your boost include directory. The usual format is x_yy for x.yy.0
+# versions and x_yy_z for x.yy.z releases
+#BOOST_VERSION = 1_33_1
+# If that fails, set your boost include folder here.
+#BOOST_INCLUDE = 
+# If make is convinced that you do have boost installed when you do not,
+# uncomment the following line:
+#NO_BOOST = 1
+
+# Gnu compiler settings
+#SHELL = /bin/sh
+#CC = g++
+#CXX = g++
+
+# use 386 instructions but optimize for pentium II/III
+#CFLAGS = -g -DWIN32 -O1 $(BOOST_CMD) -Wall -Wno-uninitialized $(CFLAGAPP)
+#CXXFLAGS = $(CFLAGS)
+#LDOPT = -g -Wl,--subsystem,console -luser32 -lgdi32 -lwinmm -lcomdlg32 -lcomctl32
+#LDOPT = -Wl,--subsystem,console,-s
+#LDOPT += -Wl,-Map,$(@:%=%.map)		# to make map files
+
+# for profiling
+#CFLAGS += -pg
+#LDOPT += -pg

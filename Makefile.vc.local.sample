@@ -1,0 +1,9 @@
+# =========================================================
+#		Local Makefile settings for Visual Studio builds
+# =========================================================
+
+# Copy this file to Makefile.vc.local (if make didn't do it for you)
+# and edit to modify the settings
+
+# The NFORenum source directory, in Cygwin
+#SOURCE_DIR = ~/nforenum 
