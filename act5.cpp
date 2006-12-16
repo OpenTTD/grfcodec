@@ -56,18 +56,18 @@ int Check5(PseudoSprite&data,sanstate&state){
 	if(CheckLength(length,(data.ExtractByte(2)==0xFF)?5:3,INVALID_LENGTH,ACTION,5,ONE_OF,3,5))return-1;
 	int feature=data.ExtractByte(1);
 	uint sprites=data.ExtractExtended(2);
-	state=FIND_REAL;
+	state=FIND_REAL_OR_RECOLOR;
 	if(feature<4||feature>c5::Instance().maxFeature){
 		IssueMessage(FATAL,INVALID_FEATURE);
-		state=FIND_REAL_OR_RECOLOR;
 		return sprites;
 	}
 	if(feature==4){
 		if(sprites!=48&&sprites!=112&&sprites!=240)IssueMessage(ERROR,SIGNALS);
 	}else{
 		uint expSprites=c5::Instance()[feature];
-		if(sprites!=expSprites)IssueMessage(ERROR,ACTION_5,expSprites,expSprites);
+		if((expSprites&0x3FFF)&&sprites!=(expSprites&0x3FFF))IssueMessage(ERROR,ACTION_5,expSprites,expSprites);
+		if(expSprites&0x8000)state=FIND_RECOLOR;
+		else if(!(expSprites&0x4000))state=FIND_REAL;
 	}
-	if(feature==0x0A)state=FIND_RECOLOR;
 	return sprites;
 }
