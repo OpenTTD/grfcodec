@@ -1,3 +1,6 @@
+NFORenum - Automatic Sprite Correction
+======================================
+
 NFORenum is capable of performing some automated correction of your
 pseudo-sprites.
 The following items can be corrected, with the following limitations:
