@@ -1,3 +1,6 @@
+NFORenum -- Comment Commands
+============================
+
 NFORenum can be controlled by adding the following commands to the NFO file.
 All of them must be commented out and prefixed with "@@". Commands take
 effect immediately, but do not affect previous lines. To place a command in
@@ -133,9 +136,9 @@ This is useful for variable assignment to be used in real-sprite calculations.
 The calculations in real sprites have the same format as the calculations in
 @@LET.
 <var> is any valid C identifier (first character must be A..Z, a..z or _, all
-others must be A..Z, a..z, 0..9 or _)
+others must be A..Z, a..z, 0..9 or _).
 <calculation> is one of:
-1) an RPN expression, enclosed in parentheses. (See README.RPN)
+1) an RPN expression, enclosed in parentheses. (See README.RPN.en.txt)
 2) a signed integer value.
 
 

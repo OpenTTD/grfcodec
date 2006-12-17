@@ -1,6 +1,7 @@
-NFORenum RPN calculator
+NFORenum -- RPN calculator
+==========================
 
-Most of you are familliar with infix notation, eg "4 + 2" or "4 + (2 * 2)".
+Most of you are familiar with infix notation, eg "4 + 2" or "4 + (2 * 2)".
 Infix can be expressed as "left operation right"
 RPN (Reverse Polish Notation, http://tinyurl.com/akj8w) uses
 "left right operation", eg "4 2 +" or "4 2 2 * +". RPN has the advantage that
@@ -17,7 +18,8 @@ division, and rounded down; (5 3 /) is 1.
 
 In RPN expressions, a previously defined variable (variables are defined by
 @@LET) may be used in place of any number, both in real sprites and in @@LET
-commands. Variables should be valid C identifiers, and are case sensitive.
+commands. Variables should be valid C identifiers (first character must be A..Z,
+a..z or _, all others must be A..Z, a..z, 0..9 or _), and are case sensitive.
 Variables with 2 leading underscores are reserved for possible future use by
 NFORenum.
 
