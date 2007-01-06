@@ -54,7 +54,7 @@ void act123::init(){
 uint act123::MaxFoundFeat()const{
 	const vector<IDarray::info>&m=defined2IDs._m;
 	uint ret=0;
-	for(uint i=0;i<(int)m.size();i++)
+	for(uint i=0;i<(uint)m.size();i++)
 		ret=max<uint>(ret,m[i].feature);
 	return ret;
 }
