@@ -291,7 +291,7 @@ void check_sprite(PseudoSprite&data){
 		if(status.act8!=0&&status.act8!=(unsigned)-1)IssueMessage(ERROR,DUPLICATE_ACT,8,status.act8);
 		status.act8=_spritenum;
 		_grfver=data.ExtractByte(1);
-		if(_grfver<2||_grfver>7)IssueMessage(ERROR,INVALID_VERSION);
+		if(_grfver<2||_grfver>7)IssueMessage(ERROR,INVALID_VERSION,GRF);
 		const uint GRFid=data.ExtractDword(2);
 		data.SetGRFID(2);
 		if((GRFid&0xFF)==0xFF&&GRFid!=0xFFFFFFFF)IssueMessage(WARNING1,RESERVED_GRFID);

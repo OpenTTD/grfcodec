@@ -135,10 +135,10 @@ This error will only be issued once.
 Note that not all action Ds require a preceeding 8; this message will not be
 issued on non-resource-management Ds.
 
-69: "Invalid GRF version number."  (Error)
-This version number will not load into TTDPatch.
+69: "Invalid <type> version number."  (Error)
+The version number listed in this sprite is out of range for the object it
+encodes.
 Correct the version number.
-TTDPatch currently understands GRF versions 02-07.
 
 71: "Variable size <size> is invalid." (Fatal)
 72: "Condition <cond> is invalid." (Error)
@@ -606,3 +606,15 @@ be using 1C to get the result instead.
 195: "Action 3 may not be both generic and an override." (Error)
 This action 3 has a <num-ids> of 80.
 Change the <num-ids>, or remove the action 3.
+
+196: "Action F may not chain to itself." (Error)
+Although action 2s may refer to their own ID, Action Fs may not.
+Pick a different ID for either this action F, or the referenced action F.
+
+197: "add-in-<num> should not be negative." (Warn 1)
+This industry production callback has an add-in set to a negative value.
+Set the add-in to 0 if you want no effect.
+
+198: "Attempt to access non-existant register %4x." (Error)
+This sprite attempts to access a GRF register that doesn't exist.
+Read from, or write to, a register in the 0000..010F range.
