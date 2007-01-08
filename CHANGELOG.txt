@@ -4,7 +4,7 @@ v3.4.3 to
   - Variable 7D
   - Industries do not use GRM.
   - Industry tile variable 62.
-  - Industry variables 43, 65, 66, 67.
+  - Industry variables 43, 65, 66, 67, 7C.
 - Make unknown action 5 types look for real sprites or recolor sprites.
 - Recognize action 2 operations 0E and 0F.
 - Catch Action Fs that chain to themselves.
@@ -17,6 +17,7 @@ v3.4.3 to
 - Industry production callback version 1.
 - Produce a useful error message when data files are out of sync with each
   other.
+- Variational action 2 operator 10.
 
 v3.4.2 to v3.4.3 (r1244)
 - Permit Action 1/2/3 for bridges (Callback 33)

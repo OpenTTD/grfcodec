@@ -234,6 +234,7 @@ void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,u
 	case 0xF:// Discard left
 		dflt=var;
 	case 0xE:// Store
+	case 0x10://Persistent store
 		break;
 	case 0:// +
 	case 0xC:// |
