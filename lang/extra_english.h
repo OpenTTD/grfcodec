@@ -42,9 +42,12 @@ EXTRA(LOTS,"lots-of-cargo")
 EXTRA(HOUSE_INSTYTILE,"houses and industry tiles")
 EXTRA(INDUSTRIES,"industries")
 EXTRA(BASICSTD2,"Basic standard 02s")
-EXTRA(PROD2,"Production callbacks")
+EXTRA(PROD2S,"Production callbacks")
+EXTRA(PROD2,"production callback")
 EXTRA(GROUND,"ground")
 EXTRA(NONTRANS,"non-transparent")
+
+EXTRA(GRF,"GRF")
 
 EXTRA(ACTION,"action %xs")
 EXTRA(IMPORTS,"sound import sprites")

@@ -113,7 +113,7 @@ NFO_MESSAGE(INSUFFICIENT_DATA2,"Expected %d more bytes for prop %2x.\n",USE_PREF
 NFO_MESSAGE(MISSING_TERMINATOR,"Property data is missing terminating byte(s).\n",USE_PREFIX)
 NFO_MESSAGE(DUPLICATE_ACT,"Action %x already found at sprite %d.\n",USE_PREFIX)
 NFO_MESSAGE(MISSING_8,"An action 8 must preceed action %x.\n",USE_PREFIX)
-NFO_MESSAGE(INVALID_VERSION,"Invalid GRF version number.\n",USE_PREFIX)
+NFO_MESSAGE(INVALID_VERSION,"Invalid %s version number.\n",USE_PREFIX)
   MESSAGE_UNUSED(BAD_VARIABLE)
 NFO_MESSAGE(BAD_VARSIZE,"Variable size %2x is invalid.\n",USE_PREFIX)
 NFO_MESSAGE(BAD_CONDITION,"Condition %2x is invalid.\n",USE_PREFIX)
@@ -248,6 +248,8 @@ NFO_MESSAGE(OUT_OF_RANGE_TEXTID_13,"Action 13 can only define texts in the C4xx,
 NFO_MESSAGE(AND_00,"Anding with 0.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Action 3 may not be both generic and an override.\n",USE_PREFIX)
 NFO_MESSAGE(RECURSIVE_F,"Action F may not chain to itself.\n",USE_PREFIX)
+NFO_MESSAGE(EXCESSIVE_ADD,"<add-in-%d> should not be negative.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NOT_A_REGISTER,"Attempt to access non-existant register %4x.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 

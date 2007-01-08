@@ -100,7 +100,7 @@ NFO_MESSAGE(INSUFFICIENT_DATA2,"Ocekavam dalsich %d bytu pro vlastnost %2x.\n",U
 NFO_MESSAGE(MISSING_TERMINATOR,"Data vlastnosti neobsahuji koncove byty.\n",USE_PREFIX)
 NFO_MESSAGE(DUPLICATE_ACT,"Akce %x jiz byla nalezena ve spritu %d.\n",USE_PREFIX)
 NFO_MESSAGE(MISSING_8,"Akce 8 musi prechazet akci %x.\n",USE_PREFIX)
-NFO_MESSAGE(INVALID_VERSION,"Chybne cislo verze GRF.\n",USE_PREFIX)
+NFO_MESSAGE(INVALID_VERSION,"Chybne cislo verze %s.\n",USE_PREFIX)
   MESSAGE_UNUSED(BAD_VARIABLE)
 NFO_MESSAGE(BAD_VARSIZE,"Velikost promenne %2x je chybna.\n",USE_PREFIX)
 NFO_MESSAGE(BAD_CONDITION,"Podminka %2x je chybna.\n",USE_PREFIX)

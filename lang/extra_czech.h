@@ -33,9 +33,12 @@ EXTRA(LOTS,"lots-of-cargo")
 EXTRA(HOUSE_INSTYTILE,"budovy a policka prumyslu")
 EXTRA(INDUSTRIES,"prumysl")
 EXTRA(BASICSTD2,"Zakladni Akce 2")
-EXTRA(PROD2,"Callbacky produkce")
+EXTRA(PROD2S,"Callbacky produkce")
+EXTRA(PROD2,"callback produkce")
 EXTRA(GROUND,"ground")
 EXTRA(NONTRANS,"nepruhledny")
+
+EXTRA(GRF,"GRF")
 
 EXTRA(ACTION,"Akce %x")
 EXTRA(IMPORTS,"sprity pro import zvuku")
