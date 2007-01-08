@@ -127,7 +127,11 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 			if (datasize + count > outsize)
 				return -2*(datasize + count);
 
-			memmove(out+datasize, out + datasize - offset, count);
+			U8* copy_src = out + datasize - offset;
+			U8* copy_dest = out + datasize;
+			for(unsigned long i = 0; i < count; i++) {
+				*copy_dest = *copy_src; copy_dest++; copy_src++;
+			}
 
 			datasize += count;
 		} else {
