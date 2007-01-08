@@ -258,5 +258,7 @@ ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist (%d/%d).\n",0)
 #else
 ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist.\n",0)
 #endif
+ERR_MESSAGE(DATAFILE_MISMATCH,"%t contains information for fewer features than does feat.dat.\n" \
+			"Update it, or delete feat.dat.\n",0)
 
 END_MESSAGES()
