@@ -35,27 +35,31 @@
 #endif
 
 DATA()
-DATA_FILE(feat)
-DATA_FILE(0)
-DATA_FILE(2v)
 DATA_FILE(79Dv)
-DATA_FILE(D)
-DATA_FILE(IDs)
-DATA_FILE(4)
 DATA_FILE(B)
 DATA_FILE(5)
 DATA_FILE(TextIDs)
 DATA_FILE(0f8)
 DATA_FILE(callbacks)
-DATA_FILE(2r)
 DATA_FILE(langs)
 DATA_FILE(versions)
+
+DATA_FILE(feat)
+DATA_FILE(0)
+DATA_FILE(2v)
+DATA_FILE(D)
+DATA_FILE(IDs)
+DATA_FILE(4)
+DATA_FILE(2r)
 
 /*
  * To add a new data files, pick a name (matching the regex [0-9a-zA-Z_]*),
  * add a DATA_FILE(name) macro here, and add a static const char _datname[]
- * to data.cpp. (Preferably after all the others, about a two-thirds of the
- * way down. More instructions there.)
+ * to data.cpp. (Preferably in the same order as above. More instructions
+ * immediately before the definition of _datfeat, and  after the last
+ * _dat* definiton.)
+ * Files that depend on feat.dat must appear after it; files that do not must
+ * appear before it.
  *
  * Open the file with FILE*pFile=myfopen(name);. myfopen (re)writes, if
  * necessary, name.dat and returns a non-null input FILE*.
