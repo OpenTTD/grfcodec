@@ -234,6 +234,10 @@ MESSAGE_EX(MISSING_LANG_NAME,"Pro %L nebyl specifikovan zadny nazev.\n",MAKE_COM
 NFO_MESSAGE(OUT_OF_RANGE_TEXTID_13,"Akce 13 muze pouze definovat texty pro ID v rozsazich C4xx, C5xx, C9xx, D0xx a DCxx.\n",USE_PREFIX)
 NFO_MESSAGE(AND_00,"Operace AND hodnotou 0.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Akce 3 muze byt bud obycejna nebo pro zmenu nateru, ne oboji.\n",USE_PREFIX)
+NFO_MESSAGE(RECURSIVE_F,"Action F nesmi odkazovat sama na sebe.\n",USE_PREFIX)
+NFO_MESSAGE(EXCESSIVE_ADD,"Hodnota <add-in-%d> nesmi byt zaporna.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NOT_A_REGISTER,"Pokus o pristup k neexistujicimu registru %4x.\n",USE_PREFIX|HAS_OFFSET)
+
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
@@ -242,5 +246,7 @@ ERR_MESSAGE(BAD_STRING,"Chyba: Retezec %d neexistuje (%d/%d).\n",0)
 #else
 ERR_MESSAGE(BAD_STRING,"Chyba: Retezec %d neexistuje.\n",0)
 #endif
+ERR_MESSAGE(DATAFILE_MISMATCH,"%t obsahuje informace pro mene features nez je v souboru feat.dat.\n" \
+			"Nahradte jej novejsi verzi nebo smazte feat.dat.\n",0)
 
 END_MESSAGES()
