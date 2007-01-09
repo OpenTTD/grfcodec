@@ -73,7 +73,7 @@ class Check2v{
 	};
 	struct FeatData{
 		FeatData():var80(VarData(1)){}
-		ExpandingArray<VarData>globvars,var40,var60;
+		ExpandingArray<VarData>vars;
 		ExpandingArray<VarData>var80;
 		uint last80,featfor82;
 	};
@@ -85,6 +85,9 @@ private:
 	ExpandingArray<VarData>globvars;
 	auto_array<FeatData>_p;
 	uint maxop;
+	bool IsValid(uint feature, uint var)const;
+	uint MaxParam(uint feature, uint var)const;
+	uint GetWidth(uint feature, uint var)const;
 };
 
 class varRange{
