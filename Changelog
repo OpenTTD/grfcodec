@@ -7,6 +7,7 @@ Changes in
 - Add -q to silence warnings.
 - Add -c to automatically crop extraenous transparent blue pixels.
 - Add escapes for the new action 2 operations 0E and 0F.
+- Prevent quotes and escapes in sprite 0.
 
 Changes in 0.9.10 (r819)
 - (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
