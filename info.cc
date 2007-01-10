@@ -183,60 +183,61 @@ void infowriter::newband(pcxfile *pcx)
 					//int thistxt = (d->data[j] >= 32 && d->data[j] < 127) || d->data[j] > 158;
 					//int nexttxt = j+1<d->size && ((d->data[j+1]>=32 && d->data[j+1]<127) || d->data[j+1] > 158);
 
-					if (istxt(0) && useplaintext && (instr || 
-						//two in a row for 8 and E
-						(istxt(1) && (d->data[0]==8 || d->data[0]==0xE ||
-						//four in a row for everything else.
-						(istxt(2) && istxt(3))
-						))
-						)) {
-							if (!instr) {
-								fputs(" \"", info); instr = 1;
-							}
-							if(_useexts && d->data[j]=='\\')
-								fputs("\\\\", info);
-							else if(_useexts && d->data[j]=='"')
-								fputs("\\\"", info);
-							else
-								fputc(d->data[j], info);
-						} else {
-							if (instr) {
-								fputs("\"", info); instr = 0;
-							}
-							int k=0;
-							if (_useexts == 2) {
-								for(;k<num_esc;k++)
-									if(escapes[k].byte==d->data[j]&&
-										escapes[k].action==d->data[0]&&
-										(escapes[k].override?escapes[k].override(d->data,j):escapes[k].pos==j)&&
-										(escapes[k].additional==NULL||escapes[k].additional(d->data,d->size))){
-											fprintf(info," %s",escapes[k].str);
-											break;
-										}
-							}else
-								k = num_esc;
-							if(k==num_esc)
-								fprintf(info, " %02X", d->data[j]);
+					if (spriteno>1 &&
+							istxt(0) && useplaintext && (instr || 
+							//two in a row for 8 and E
+							(istxt(1) && (d->data[0]==8 || d->data[0]==0xE ||
+							//four in a row for everything else.
+							(istxt(2) && istxt(3))
+							))
+							)) {
+						if (!instr) {
+							fputs(" \"", info); instr = 1;
 						}
+						if(_useexts && d->data[j]=='\\')
+							fputs("\\\\", info);
+						else if(_useexts && d->data[j]=='"')
+							fputs("\\\"", info);
+						else
+							fputc(d->data[j], info);
+					} else {
+						if (instr) {
+							fputs("\"", info); instr = 0;
+						}
+						int k=0;
+						if (_useexts == 2 && spriteno>1) {
+							for(;k<num_esc;k++)
+								if(escapes[k].byte==d->data[j]&&
+									escapes[k].action==d->data[0]&&
+									(escapes[k].override?escapes[k].override(d->data,j):escapes[k].pos==j)&&
+									(escapes[k].additional==NULL||escapes[k].additional(d->data,d->size))){
+										fprintf(info," %s",escapes[k].str);
+										break;
+									}
+						}else
+							k = num_esc;
+						if(k==num_esc)
+							fprintf(info, " %02X", d->data[j]);
+					}
 
-						// break lines after 32 non-text characters
-						// or at spaces after 32 text characters or
-						// after 60 text characters
-						count++;
-						if ( ((!instr && count>=32) ||
+					// break lines after 32 non-text characters
+					// or at spaces after 32 text characters or
+					// after 60 text characters
+					count++;
+					if ( ((!instr && count>=32) ||
 							(instr && (count>=32 && d->data[j]==' ' 
 							|| count>=50)))
 							&& j<d->size-1) {
-								if (instr) {
-									if(istxt(1)){
-										fputs("\"\n\t \"", info);
-									}else{
-										fputs("\"\n\t", info); instr = 0;
-									}
-								}else
-									fputs("\n\t", info);
-								count = 0;
+						if (instr) {
+							if(istxt(1)){
+								fputs("\"\n\t \"", info);
+							}else{
+								fputs("\"\n\t", info); instr = 0;
 							}
+						}else
+							fputs("\n\t", info);
+						count = 0;
+					}
 				}
 
 				if (instr) fputs("\"", info);
