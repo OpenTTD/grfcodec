@@ -36,7 +36,8 @@ extern const char*const WHITESPACE; // List of whitespace characters
 extern const std::string COMMENT; // List of comment prefix characters
 
 extern std::string datadir; // Current data directory path
-extern bool dosleep; // True if program should wait after creating a new data directory
+extern bool dosleep; // If true, program will wait after creating a new data directory
+					 // If false, program will report where it found its data files.
 
 extern const char*COMMENT_PREFIX; // Comment prefix string
 

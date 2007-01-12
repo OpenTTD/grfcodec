@@ -48,9 +48,11 @@ typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned char uchar;
 
-#ifdef _DEBUG
+#if defined DEBUG || defined _DEBUG
 inline int _FORCE_INT_(int x){return x;}
+#define verify assert
 #else
+#define verify(x) (void(x))
 #define _FORCE_INT_(x) ((int)x)
 #endif
 

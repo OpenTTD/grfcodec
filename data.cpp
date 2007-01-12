@@ -258,19 +258,28 @@ bool finddir(string&dir){
 }
 
 string getdir(){
+	string *pret;
+	string cwd,home,homedrpath;
 	if(datadir!=""){
-		if(finddir(datadir)||makedir(datadir,true))return datadir;
-		INTERNAL_ERROR(makedir(datadir,true),false);
+		verify(finddir(datadir)||makedir(datadir,true));
+		pret=&datadir;
+	}else{
+		char*pcwd=getcwd(NULL,0);
+		cwd=pcwd;
+		home=safetostring(getenv("HOME"));
+		homedrpath=safetostring(getenv("HOMEDRIVE"))+safetostring(getenv("HOMEPATH"));
+		free(pcwd);
+		if(finddir(cwd))pret=&cwd;
+		else if(finddir(home))pret=&home;
+		else if(finddir(homedrpath)||makedir(homedrpath))pret=&homedrpath;
+		else if(makedir(home))pret=&home;
+		else{
+			verify(makedir(cwd,true));
+			pret=&cwd;
+		}
 	}
-	char*pcwd=getcwd(NULL,0);
-	string cwd=pcwd,home=safetostring(getenv("HOME")),homedrpath=safetostring(getenv("HOMEDRIVE"))+safetostring(getenv("HOMEPATH"));
-	free(pcwd);
-	if(finddir(cwd))return cwd;
-	if(finddir(home))return home;
-	if(finddir(homedrpath)||makedir(homedrpath))return homedrpath;
-	if(makedir(home))return home;
-	assert(makedir(cwd,true));
-	return cwd;
+	if(!dosleep)IssueMessage(0,DATA_FOUND_AT,pret->c_str());
+	return *pret;
 }
 
 FILE*tryopen(const char*name,const char*mode,bool allownull=false){

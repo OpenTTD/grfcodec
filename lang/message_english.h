@@ -253,12 +253,13 @@ NFO_MESSAGE(NOT_A_REGISTER,"Attempt to access non-existant register %4x.\n",USE_
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
-#ifdef DEBUG
+#if defined DEBUG || defined _DEBUG
 ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist (%d/%d).\n",0)
 #else
 ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist.\n",0)
 #endif
 ERR_MESSAGE(DATAFILE_MISMATCH,"%t contains information for fewer features than does feat.dat.\n" \
 			"Update it, or delete feat.dat.\n",0)
+OUT_MESSAGE(DATA_FOUND_AT,"Data files loaded from '%t/.renum'.\n",0)
 
 END_MESSAGES()
