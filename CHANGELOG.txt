@@ -5,6 +5,7 @@ v3.4.3 to
   - Industries do not use GRM.
   - Industry tile variable 62.
   - Industry variables 43, 65, 66, 67, 7C.
+  - New objects properties.
 - Make unknown action 5 types look for real sprites or recolor sprites.
 - Recognize action 2 operations 0E and 0F.
 - Catch Action Fs that chain to themselves.
