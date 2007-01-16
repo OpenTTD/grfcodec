@@ -410,8 +410,13 @@ void Check3(PseudoSprite&data){
 	if(CheckLength(length,6+numIDs+3*numCIDs,BAD_LENGTH,VARS,NID,NUMCID,VALS,numIDs,numCIDs,6+numIDs+3*numCIDs))return;
 CHANGED_FEATURE(act3)
 	unsigned int id,def=data.ExtractWord(4+numIDs+3*numCIDs),i,j;
-	for(i=3;i<3+numIDs;i++)
-		CheckID(feature,data.ExtractByte(i));
+	Expanding0Array<uint>ids;
+	for(i=3;i<3+numIDs;i++){
+		id=data.ExtractByte(i);
+		if(ids[id])IssueMessage(WARNING1,DUPLICATE_ID,i,id,ids[id]);
+		ids[id]=i;
+		CheckID(feature,id);
+	}
 	for(i=4+numIDs;i<4+numIDs+3*numCIDs;i+=2){
 		j=data.ExtractByte(i);
 		if(j==0xFE&&feature!=4)
