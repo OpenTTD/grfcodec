@@ -416,6 +416,8 @@ CHANGED_FEATURE(act3)
 		if(ids[id])IssueMessage(WARNING1,DUPLICATE_ID,i,id,ids[id]);
 		ids[id]=i;
 		CheckID(feature,id);
+		if(!IsValidFeature(ACT3_BEFORE_PROP08,feature) && !IsProp08Set(feature,id))
+			IssueMessage(ERROR,ACT3_PRECEEDS_PROP08,i,id);
 	}
 	for(i=4+numIDs;i<4+numIDs+3*numCIDs;i+=2){
 		j=data.ExtractByte(i);

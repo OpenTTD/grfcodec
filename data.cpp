@@ -125,12 +125,12 @@ static const char _datversions[]="\x00\x04\x09"
 
 // The above also applies for feat.dat.
 
-static const char _datfeat[]="\x11\x04\x0F"
+static const char _datfeat[]="\x11\x05\x0F"
 // 00              04              08              0C
-"\x7F\x5F\x5F\x7F\x5F\x06\x59\x0F\x01\x0F\x0D\x0F\x01\x00\x54\x09"
+"\xFF\xDF\xDF\xFF\x5F\x86\xD9\x0F\x01\x0F\x0D\x8F\x01\x00\x54\x09"
 "\x00\x00\x00\x00\x00\x00\x00\x01\xFF\x01\x02\x00\xFF\xFF\x00\xFF";
 // First line: OR of the appropriate bits from enum ActBit
-//    {ACT0=1,ACT1=2,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20,GENERIC3=0x40};
+//    {ACT0=1,ACT1=2,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20,GENERIC3=0x40,ACT3_BEFORE_PROP08=0x80};
 // Second line: Std action 2 format:
 // 0: Vehicle style		1: House style		2: Ind. prod style
 // FF: No std 2 for this feature

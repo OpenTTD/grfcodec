@@ -120,6 +120,7 @@ void invalidate_act3();
 
 void reset_sanity(){
 	status.init();
+	Init0();
 	Init123();
 	Init7();
 	InitF();
