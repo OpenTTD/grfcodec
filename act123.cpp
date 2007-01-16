@@ -80,7 +80,7 @@ bool CheckSpriteNum(uint num,uint offset,act123::Act1&act1,uint feature,bool&mis
 	return true;
 }
 
-bool check_id(uint offset,unsigned int id,uint feature,uint&newfeature){
+bool CheckCargoID(uint offset,unsigned int id,uint feature,uint&newfeature){
 	act123::IDarray&IDs=act123::Instance().defined2IDs;
 	if(id&0x8000)return false;//callback
 	else if(id>>8){
@@ -163,7 +163,7 @@ CHANGED_FEATURE(rand)
 		if(CheckLength(length,7+2*nument2,BAD_LENGTH,NRAND,VAL,nument2,7+2*nument2))return;
 		for(i=0;i<nument2;i++){
 			rID=data.SetNoEol(7+2*i).ExtractWord(7+2*i);
-			check_id(7*i+2,rID,feature,newfeature);
+			CheckCargoID(7*i+2,rID,feature,newfeature);
 			if(prevID!=(unsigned)-1)
 				isRand|=(prevID!=rID);
 			prevID=rID;
@@ -220,7 +220,7 @@ CHANGED_FEATURE(var)
 		uint def=data.ExtractWord(end),vID;
 		for(i=off;i<end;i+=width){//read <ID> <min> <max> [...]
 			vID=data.ExtractWord(i);
-			isvar=check_id(i,vID,feature,newfeature);
+			isvar=CheckCargoID(i,vID,feature,newfeature);
 			uint min=data.ExtractVariable(i+2,extract),max=data.ExtractVariable(i+2+extract,extract);
 			if(nument2>1)data.SetEol(i+1+extract*2,isadv?2:1);
 			if(min>max)IssueMessage((i==off)?WARNING4:WARNING1,UNREACHABLE_VAR,(i-off)/width);
@@ -240,7 +240,7 @@ CHANGED_FEATURE(var)
 			}
 		}
 		ranges.CheckDefault();
-		check_id(end,def,feature,newfeature);
+		CheckCargoID(end,def,feature,newfeature);
 		if(_autocorrect&&newfeature!=(uint)-1&&newfeature!=feature){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 			IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature,newfeature);
@@ -417,11 +417,11 @@ CHANGED_FEATURE(act3)
 		if(j==0xFE&&feature!=4)
 			IssueMessage(ERROR,INVALID_CARGO_TYPE,i,j);
 		i++;
-		check_id(i,id=data.ExtractWord(i),feature,newfeature);
+		CheckCargoID(i,id=data.ExtractWord(i),feature,newfeature);
 		if(def==id)
 			IssueMessage(WARNING1,REUSED_DEFAULT);
 	}
-	check_id(4+numIDs+3*numCIDs,def,feature,newfeature);
+	CheckCargoID(4+numIDs+3*numCIDs,def,feature,newfeature);
 	if(_autocorrect&&newfeature!=(uint)-1&&newfeature!=feature){
 		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 		IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature,newfeature);
