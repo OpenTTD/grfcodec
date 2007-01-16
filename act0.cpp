@@ -188,6 +188,32 @@ int PropData::CountFE(const ustring&str){
 	return ret;
 }
 
+class Prop08Tracking{
+	STATIC(Prop08Tracking)
+public:
+	static void Set(uint feat,uint id){
+		_m[feat][id]=true;
+	}
+	static void Reset(){
+		_m.clear();
+	}
+	static bool Check(uint feat,uint id){
+		return ((const ExpandingArray<Expanding0Array<bool> >)_m)[feat][id];
+	}
+private:
+	static ExpandingArray<Expanding0Array<bool> > _m;
+};
+
+ExpandingArray<Expanding0Array<bool> > Prop08Tracking::_m;
+
+bool IsProp08Set(uint feature,uint id){
+	return Prop08Tracking::Check(feature,id);
+}
+
+void Init0(){
+	Prop08Tracking::Reset();
+}
+
 void Check0::Check(PseudoSprite&str){
 	assert(str.ExtractByte(0)==0);
 	int feature=str.ExtractByte(1);
@@ -227,6 +253,10 @@ void Check0::Check(PseudoSprite&str){
 				return;
 			}
 			len=_p[feature].GetData(prop);
+			if(prop==8)// Mark prop 08 as set, if necessary.
+				for(uint i=firstID;i<=maxID;i++)
+					Prop08Tracking::Set(feature,i);
+
 			if(len==0xFF){
 				IssueMessage(FATAL,INVALID_PROP,i,prop);
 				if(_autocorrect){

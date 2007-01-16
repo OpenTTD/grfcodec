@@ -42,4 +42,11 @@ private:\
 	class(const class&);\
 	void operator=(const class&);
 
+//Non-object class
+#define STATIC(class)\
+private:\
+	class();\
+	class(const class&);\
+	void operator=(const class&);
+
 #endif // _RENUM_SINGLETON_H_INCLUDED_

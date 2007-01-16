@@ -622,3 +622,9 @@ Read from, or write to, a register in the 0000..010F range.
 199: "<off> ID <id> previously specified at offset <off>." (Warn 1)
 The named ID was specified twice in this action 3.
 Remove the second specification.
+
+200: "Prop 08 has not been set for ID %2x." (Error)
+For several features, property 08 must be set before an Action 3 will have
+any effect. This is one of those features.
+Move this ID's action 0 before the action 3, or add an action 0 that sets
+prop 08.
