@@ -20,6 +20,7 @@ v3.4.3 to
   other.
 - Variational action 2 operator 10.
 - Make --data also report the data-file location.
+- Check for duplicate IDs in an action 3.
 
 v3.4.2 to v3.4.3 (r1244)
 - Permit Action 1/2/3 for bridges (Callback 33)
