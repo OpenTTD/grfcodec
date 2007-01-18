@@ -1,7 +1,11 @@
 Changelog:
+v3.4.4 to
+- Data file updates:
+  - New signals.
+
 v3.4.3 to 3.4.4 (r1350)
 - Data file updates:
-  - Variable 7D
+  - Variable 7D.
   - Industries do not use GRM.
   - Industry tile variable 62.
   - Industry variables 43, 65, 66, 67, 7C.
