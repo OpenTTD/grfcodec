@@ -237,7 +237,8 @@ NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Akce 3 muze byt bud obycejna nebo pro zmenu na
 NFO_MESSAGE(RECURSIVE_F,"Action F nesmi odkazovat sama na sebe.\n",USE_PREFIX)
 NFO_MESSAGE(EXCESSIVE_ADD,"Hodnota <add-in-%d> nesmi byt zaporna.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NOT_A_REGISTER,"Pokus o pristup k neexistujicimu registru %4x.\n",USE_PREFIX|HAS_OFFSET)
-
+NFO_MESSAGE(DUPLICATE_ID,"ID %2x jiz bylo specifikovano na pozici %d.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Pro ID %2x nebyla definovana vlastnost 08.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
@@ -248,5 +249,6 @@ ERR_MESSAGE(BAD_STRING,"Chyba: Retezec %d neexistuje.\n",0)
 #endif
 ERR_MESSAGE(DATAFILE_MISMATCH,"%t obsahuje informace pro mene features nez je v souboru feat.dat.\n" \
 			"Nahradte jej novejsi verzi nebo smazte feat.dat.\n",0)
+OUT_MESSAGE(DATA_FOUND_AT,"Datove soubory nacteny z adresare '%t/.renum'.\n",0)
 
 END_MESSAGES()
