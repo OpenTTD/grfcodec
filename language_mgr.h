@@ -74,7 +74,7 @@ public:
 
 	/*! Decodes a language code into its identifier.
 		\param code A string containing the language code.
-		\return Corresponding language ID, is such a language is supported.
+		\return Corresponding language ID, if such a language is supported.
 			Otherwise the function returns RL_DEFAULT.
 	*/
 	RenumLanguageId DecodeLanguageCode(const std::string& code) const;
