@@ -4,6 +4,9 @@ How to compile NFORenum
 Compiling NFORenum is pretty straightforward. It can be done, with varying
 quantities of automation, with MSVC 2003 or basically any gcc.
 
+The parser (renum.tab.c and renum.tab.h) is generated with bison. yacc may
+also work, but this is untested.
+
 Compiling with make
 ===================
 
@@ -63,3 +66,5 @@ version.h. Instructions on how to do this live right next to the
 #include "version.h" directive.
 
 All Release targets expect to find upx in your PATH.
+
+If you update renum.y, cygwin's bison is required to build renum.tab.[ch]
