@@ -64,7 +64,7 @@ string mysprintf(const char*str,...){
 }
 
 #if defined DEBUG || defined _DEBUG
-static int curMessage;
+static RenumMessageId curMessage;
 #endif
 
 string IssueMessage(int minSan,RenumMessageId id,...){
