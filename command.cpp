@@ -190,7 +190,7 @@ bool parse_comment(const string&line){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[USEID2].name);
 			return true;
 		}else{
-			inject(mysprintf("%s@@USEID2 %2x",COMMENT_PREFIX,id));
+			inject(mysprintf("%t@@USEID2 %2x",COMMENT_PREFIX,id));
 			return false;
 		}
 		sanity_use_id(id);
@@ -250,9 +250,9 @@ bool parse_comment(const string&line){
 		}
 		getline(commandstream,command_part);
 		inject(mysprintf("0*0 09 8B 04 05 %8x 01",ver-1));
-		inject(mysprintf("0*0 0B 03 1F 00%s 00",command_part.c_str()));
+		inject(mysprintf("0*0 0B 03 1F 00%t 00",command_part.c_str()));
 		//inject("//@@PRESERVEMESSAGES NOPRESERVE");
-		inject(mysprintf("0*0 09 8B 04 04 %8x 00"/* %s!! MOVE ME AFTER THE ACTION 8 !!"*/,ver,COMMENT_PREFIX));
+		inject(mysprintf("0*0 09 8B 04 04 %8x 00"/* %t!! MOVE ME AFTER THE ACTION 8 !!"*/,ver,COMMENT_PREFIX));
 		//if(GetState(REMOVEMESSAGES))inject("//@@REMOVEMESSAGES NOPRESERVE");
 		return false;
 	}case LET:{
@@ -360,7 +360,7 @@ bool parse_comment(const string&line){
 			else _commandState.beauty&=~0x80000000;
 			break;
 		}case GETCOOKIE:
-			inject(mysprintf("%s@@BEAUTIFY SETCOOKIE %d",COMMENT_PREFIX,_commandState.beauty));
+			inject(mysprintf("%t@@BEAUTIFY SETCOOKIE %d",COMMENT_PREFIX,_commandState.beauty));
 			return false;
 		case SETCOOKIE:
 			if(!(commandstream>>_commandState.beauty)){
@@ -393,7 +393,7 @@ bool parse_comment(const string&line){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
 		}else{
-			inject(mysprintf("%s@@TESTID2 %2x",COMMENT_PREFIX,id));
+			inject(mysprintf("%t@@TESTID2 %2x",COMMENT_PREFIX,id));
 			return false;
 		}
 		sanity_test_id(id);
@@ -407,7 +407,7 @@ bool parse_comment(const string&line){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
 		}else{
-			inject(mysprintf("%s@@DEFINEID2 %2x",COMMENT_PREFIX,id));
+			inject(mysprintf("%t@@DEFINEID2 %2x",COMMENT_PREFIX,id));
 			return false;
 		}
 		sanity_define_id(feature,id);
@@ -421,7 +421,7 @@ bool parse_comment(const string&line){
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
 			return true;
 		}else{
-			inject(mysprintf("%s@@LOCATEID2 %2x",COMMENT_PREFIX,id));
+			inject(mysprintf("%t@@LOCATEID2 %2x",COMMENT_PREFIX,id));
 			return false;
 		}
 		inject("//@@PRESERVEMESSAGES NOPRESERVE");
