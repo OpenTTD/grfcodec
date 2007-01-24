@@ -2,8 +2,9 @@ Changelog:
 v3.4.4 to
 - Data file updates:
   - New signals.
+  - Variable 20.
 
-v3.4.3 to 3.4.4 (r1350)
+v3.4.3 to v3.4.4 (r1350)
 - Data file updates:
   - Variable 7D.
   - Industries do not use GRM.
