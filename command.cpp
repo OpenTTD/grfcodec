@@ -238,8 +238,10 @@ bool parse_comment(const string&line){
 						ver=0x02500000|r;
 					}else{
 						IssueMessage(0,COMMAND_UNKNOWN_VERSION,gen[VERSIONCHECK].name);
+						fclose(pFile);
 						return true;
 					}
+					fclose(pFile);
 				}
 			}else if((sscanf(command_part.c_str(),"2%ur%x",&m,&b)==2||sscanf(command_part.c_str(),"2.%ur%x",&m,&b)==2)&&m<16&&b>417&&b<0x10000)
 				ver=0x02000000|(m<<20)|b;
@@ -248,7 +250,10 @@ bool parse_comment(const string&line){
 				return true;
 			}
 		}
-		getline(commandstream,command_part);
+		if(!getline(commandstream,command_part)){
+			IssueMessage(0,COMMAND_INVALID_ARG,gen[VERSIONCHECK].name);
+			return true;
+		}
 		inject(mysprintf("0*0 09 8B 04 05 %8x 01",ver-1));
 		inject(mysprintf("0*0 0B 03 1F 00%t 00",command_part.c_str()));
 		//inject("//@@PRESERVEMESSAGES NOPRESERVE");
