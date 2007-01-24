@@ -124,7 +124,7 @@ NFO_MESSAGE(VARIABLE_SIZE_MISMATCH,"%d is not a valid <size> for variable %2x.\n
   MESSAGE_UNUSED(INVALID_LABEL)//,"Labels must have the high 3 bits set (E0-FF).\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_LITERAL,"%2x was found where a literal %2x was expected.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INSUFFICIENT_STRINGS,"Expected %d more string(s) for this action 4.\n",USE_PREFIX)
-NFO_MESSAGE(TOO_LARGE,"Value of <%s> must not exceed 0Fh.\n",USE_PREFIX)
+NFO_MESSAGE(TOO_LARGE,"Value of <%s> must not exceed 0Fh.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(SPRITENUM_TOO_HIGH,"TTD only defines sprites up to 4984 (1E 13).\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_COLOR_TRANS,"Color translation mode 3 is undefined.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_COLOR_SPRITE,"Sprite %d is not a color translation sprite.\n",USE_PREFIX|HAS_OFFSET)

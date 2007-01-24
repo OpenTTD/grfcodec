@@ -4,6 +4,7 @@ v3.4.4 to
   - New signals.
   - Variable 20.
 - Fix yet more array index vs char* problems.
+- Add offset info to a message that failed to have it.
 
 v3.4.3 to v3.4.4 (r1350)
 - Data file updates:
