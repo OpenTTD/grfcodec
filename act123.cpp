@@ -365,17 +365,14 @@ CHANGED_FEATURE(std)
 			}
 			break;
 		}case 2: // Industry format
-			if(CheckLength(length,15,INVALID_LENGTH,TYPE,PROD2S,INDUSTRIES,EXACTLY,15))break;
 			switch(data.ExtractByte(3)){ // Callback version
 			case 0:
+				if(CheckLength(length,15,INVALID_LENGTH,TYPE,PROD2S,INDUSTRIES,ONE_OF,11,15))break;
 				if(data.ExtractWord(10)>32768)IssueMessage(WARNING1,EXCESSIVE_ADD,1);
 				if(data.ExtractWord(12)>32768)IssueMessage(WARNING1,EXCESSIVE_ADD,2);
 				break;
 			case 1:
-				for(i=4;i<13;i+=2){
-					uint reg=data.ExtractWord(i);
-					if(reg>0x10F)IssueMessage(ERROR,NOT_A_REGISTER,i,reg);
-				}
+				if(CheckLength(length,11,INVALID_LENGTH,TYPE,PROD2S,INDUSTRIES,ONE_OF,11,15))break;
 				break;
 			default:
 				IssueMessage(ERROR,INVALID_VERSION,PROD2);

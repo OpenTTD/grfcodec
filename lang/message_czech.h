@@ -236,7 +236,7 @@ NFO_MESSAGE(AND_00,"Operace AND hodnotou 0.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Akce 3 muze byt bud obycejna nebo pro zmenu nateru, ne oboji.\n",USE_PREFIX)
 NFO_MESSAGE(RECURSIVE_F,"Action F nesmi odkazovat sama na sebe.\n",USE_PREFIX)
 NFO_MESSAGE(EXCESSIVE_ADD,"Hodnota <add-in-%d> nesmi byt zaporna.\n",USE_PREFIX|HAS_OFFSET)
-NFO_MESSAGE(NOT_A_REGISTER,"Pokus o pristup k neexistujicimu registru %4x.\n",USE_PREFIX|HAS_OFFSET)
+//NFO_MESSAGE(NOT_A_REGISTER,"Pokus o pristup k neexistujicimu registru %4x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(DUPLICATE_ID,"ID %2x jiz bylo specifikovano na pozici %d.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Pro ID %2x nebyla definovana vlastnost 08.\n",USE_PREFIX|HAS_OFFSET)
 

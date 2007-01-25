@@ -22,6 +22,8 @@
 
 // Only the properties for messages in English are relevant.
 // Properties defined in files for additional languages are ignored.
+// MESSAGE_UNUSED and maintaining the message order is required in
+// English, but optional in all other languages.
 
 // The first message is different for a reason.
 // It is not run through myvsprintf; a number is appended at runtime.
@@ -249,7 +251,7 @@ NFO_MESSAGE(AND_00,"Anding with 0.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Action 3 may not be both generic and an override.\n",USE_PREFIX)
 NFO_MESSAGE(RECURSIVE_F,"Action F may not chain to itself.\n",USE_PREFIX)
 NFO_MESSAGE(EXCESSIVE_ADD,"<add-in-%d> should not be negative.\n",USE_PREFIX|HAS_OFFSET)
-NFO_MESSAGE(NOT_A_REGISTER,"Attempt to access non-existant register %4x.\n",USE_PREFIX|HAS_OFFSET)
+  MESSAGE_UNUSED(NOT_A_REGISTER)//,"Attempt to access non-existant register %4x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(DUPLICATE_ID,"ID %2x previously specified at offset %d.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Prop 08 has not been set for ID %2x.\n",USE_PREFIX|HAS_OFFSET)
 
