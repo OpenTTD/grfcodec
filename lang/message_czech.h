@@ -56,7 +56,7 @@ OUT_MESSAGE(STARTUP,"NFORenum " VERSION " - Copyright " YEARS " Dale McCoy.\n",0
 NFO_MESSAGE(BAD_RPN,"Chybny vyraz RPN (behem cteni znaku %c).\n",0)
 NFO_MESSAGE(BAD_RPN_EOF,"Chybi prava zavorka.\n",0)
 NFO_MESSAGE(UNDEF_VAR,"Promenna \"%t\" nebyla dosud definovana.\n",0)
-/***/NFO_MESSAGE(COMMAND_INVALID_ARG,"Chybny argument prikazu %t.\n",0)
+NFO_MESSAGE(COMMAND_INVALID_ARG,"Chybejici nebo chybny argument prikazu %t.\n",0)
 NFO_MESSAGE(COMMAND_UNKNOWN,"Neznamy prikaz: %t\n",0)
 NFO_MESSAGE(COMMAND_REVERT_DEFAULT,"Automaticky pouzivam \"DEFAULT\".\n",0)
 NFO_MESSAGE(COMMAND_UNKNOWN_VERSION,"Nezname cislo verze. Jestlize byla tato verze jiz vydana," \
