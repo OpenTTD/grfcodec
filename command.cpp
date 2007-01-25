@@ -530,7 +530,7 @@ void SetVar(const string&var,const string&value){
 		val=DoCalc(value,offs);
 		if(offs==NPOS)return;
 	}
-	_varmap.insert(map<string,int>::value_type(var,val));
+	_varmap[var] = val;
 }
 
 int GetVar(const string&var,int&err){
