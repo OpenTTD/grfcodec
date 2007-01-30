@@ -254,6 +254,7 @@ NFO_MESSAGE(EXCESSIVE_ADD,"<add-in-%d> should not be negative.\n",USE_PREFIX|HAS
   MESSAGE_UNUSED(NOT_A_REGISTER)//,"Attempt to access non-existant register %4x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(DUPLICATE_ID,"ID %2x previously specified at offset %d.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Prop 08 has not been set for ID %2x.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(MASKED_BIT_SET,"GRFID has a bit set that is clear in the mask.\n",USE_PREFIX)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
