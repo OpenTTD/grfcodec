@@ -2,7 +2,7 @@
  * act79D.cpp
  * Contains definitions for checking actions 7, 9, and D.
  *
- * Copyright 2005-2006 by Dale McCoy.
+ * Copyright 2005-2007 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ int Check7(PseudoSprite&data){
 		data.SetText(4,4);
 		SetSize(4);
 	}
-	if(cond<6&&var==0x88){
+	if((cond<6||cond>0xA)&&var==0x88){
 		IssueMessage(ERROR,GRFVAR_NEEDS_GRFCOND);
 		desiredSize=0;
 	}
@@ -112,12 +112,18 @@ int Check7(PseudoSprite&data){
 		SetSize(1);
 		var_size=1;
 	}
-	if(!Vars::Instance().canRead7(var))IssueMessage(ERROR,NONEXISTANT_VARIABLE,var);
+	if(!Vars::Instance().canRead7(var))IssueMessage(ERROR,NONEXISTANT_VARIABLE,1,var);
 	else if(var>0x7F&&cond>1&&Vars::Instance().isBitmask(var)){
 		IssueMessage(ERROR,BITTEST_VARIABLE,var);
 		desiredSize=0;
 	}
-	if(var_size==0||var_size==3||var_size>4){
+	if(var_size==8&&var==0x88){
+		if(desiredSize>=8){
+			uint grfid = data.ExtractDword(4), mask = data.ExtractDword(8);
+			if((~mask&grfid)!=0)
+				IssueMessage(WARNING1,MASKED_BIT_SET);
+		}
+	}else if(var_size==0||var_size==3||var_size>4){
 		IssueMessage(FATAL,BAD_VARSIZE,var_size);
 		return 0;
 	}else if((cond==0xB||cond==0xC)&&var_size!=4)

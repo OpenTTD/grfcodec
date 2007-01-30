@@ -615,10 +615,6 @@ Pick a different ID for either this action F, or the referenced action F.
 This industry production callback has an add-in set to a negative value.
 Set the add-in to 0 if you want no effect.
 
-198: "Attempt to access non-existant register %4x." (Error)
-This sprite attempts to access a GRF register that doesn't exist.
-Read from, or write to, a register in the 0000..010F range.
-
 199: "<off> ID <id> previously specified at offset <off>." (Warn 1)
 The named ID was specified twice in this action 3.
 Remove the second specification.
@@ -628,3 +624,8 @@ For several features, property 08 must be set before an Action 3 will have
 any effect. This is one of those features.
 Move this ID's action 0 before the action 3, or add an action 0 that sets
 prop 08.
+
+201: "GRFID has a bit set that is clear in the mask." (Warn1)
+When testing for multiple IDs, the specified GRFID already have had the mask
+applied.
+AND the GRFID with the mask and use that value for the GRFID instead.
