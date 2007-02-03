@@ -239,6 +239,7 @@ NFO_MESSAGE(EXCESSIVE_ADD,"Hodnota <add-in-%d> nesmi byt zaporna.\n",USE_PREFIX|
 //NFO_MESSAGE(NOT_A_REGISTER,"Pokus o pristup k neexistujicimu registru %4x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(DUPLICATE_ID,"ID %2x jiz bylo specifikovano na pozici %d.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Pro ID %2x nebyla definovana vlastnost 08.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(MASKED_BIT_SET,"GRFID ma zapnut bit, ktery je v masce vypnut.\n",USE_PREFIX)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
