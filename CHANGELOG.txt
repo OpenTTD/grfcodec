@@ -1,5 +1,5 @@
 Changelog:
-v3.4.4 to
+v3.4.4 to v3.4.5 (r1394)
 - Data file updates:
   - New signals.
   - Variable 20.
@@ -9,6 +9,7 @@ v3.4.4 to
 - Ensure that VERSIONCHECK gets its required two arguments.
 - Fix version 1 industry production callback support.
 - Support Action 7/9's new GRFID/mask format.
+- (minime) Allow @@LET variables to be redefined.
 
 v3.4.3 to v3.4.4 (r1350)
 - Data file updates:
