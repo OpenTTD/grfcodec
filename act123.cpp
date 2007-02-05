@@ -367,12 +367,12 @@ CHANGED_FEATURE(std)
 		}case 2: // Industry format
 			switch(data.ExtractByte(3)){ // Callback version
 			case 0:
-				if(CheckLength(length,15,INVALID_LENGTH,TYPE,PROD2S,INDUSTRIES,ONE_OF,11,15))break;
+				if(CheckLength(length,15,INVALID_LENGTH,TYPE,PROD2S,INDUSTRIES,ONE_OF,10,15))break;
 				if(data.ExtractWord(10)>32768)IssueMessage(WARNING1,EXCESSIVE_ADD,1);
 				if(data.ExtractWord(12)>32768)IssueMessage(WARNING1,EXCESSIVE_ADD,2);
 				break;
 			case 1:
-				if(CheckLength(length,11,INVALID_LENGTH,TYPE,PROD2S,INDUSTRIES,ONE_OF,11,15))break;
+				CheckLength(length,10,INVALID_LENGTH,TYPE,PROD2S,INDUSTRIES,ONE_OF,10,15);
 				break;
 			default:
 				IssueMessage(ERROR,INVALID_VERSION,PROD2);
