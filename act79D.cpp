@@ -104,7 +104,7 @@ int Check7(PseudoSprite&data){
 		data.SetText(4,4);
 		SetSize(4);
 	}
-	if((cond<6||cond>0xA)&&var==0x88){
+	if(cond<6&&var==0x88){
 		IssueMessage(ERROR,GRFVAR_NEEDS_GRFCOND);
 		desiredSize=0;
 	}
