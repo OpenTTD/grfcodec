@@ -636,3 +636,8 @@ The operation preceeding this operation 0F was neither operation 0E or 10,
 meaning that the calculated value was discarded without being stored.
 Trim the unnecessary parts of the left-hand side, or remove the op 0F.
 This is message is based on the same theory as #194.
+
+203: "No persistent registers exist for this feature." (Error)
+This variational attempts to use operation 10 (store to persistent register),
+but it is for a feature/type pair that does not have persistent registers.
+Use a global register (op 0E) or adjust the feature and/or type.

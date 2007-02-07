@@ -185,14 +185,15 @@ CHANGED_FEATURE(rand)
 	{
 #define Is60x(var) (((var)&0xE0)==0x60)
 CHANGED_FEATURE(var)
-		uint extract=1<<((nument1>>2)&3),off=4,var,param=0,shift,op=(uint)-1,newfeature=(uint)-1;
+		uint extract=1<<((nument1>>2)&3),off=4,var,param=0,shift,op=(uint)-1,newfeature=(uint)-1,
+			effFeature = Check2v::GetEffFeature(feature,nument1);
 		bool isvar=false,isadv=false;
 		uint oldop = 0;
 		varRange ranges(extract);
 		while(true){//read <var> [<param>] <varadjust> [<op> ...]. off reports byte to be read.
 			if(Is60x(var=data.ExtractByte(off++)))param=data.ExtractByte(off++);
 			shift=data.ExtractByte(off++);
-			Check2v::Instance().Check(feature,nument1,var,off-2-(Is60x(var)?1:0),param,shift&0x1F);
+			Check2v::Instance().Check(effFeature,var,off-2-(Is60x(var)?1:0),param,shift&0x1F);
 			if((shift&0xC0)==0xC0){
 				IssueMessage(FATAL,INVALID_SHIFT,off-1);
 				return;
@@ -203,9 +204,11 @@ CHANGED_FEATURE(var)
 			isvar|=(var!=0x1A&&var!=0x1C);
 			if(!(shift&0x20))break;
 			isadv=true;
-			if((op=data.ExtractByte(off++))>Check2v::GetMaxOp())IssueMessage(ERROR,INVALID_OP,off,op);
+			if((op=data.ExtractByte(off++))>Check2v::GetMaxOp())IssueMessage(ERROR,INVALID_OP,off-1,op);
 			if(op==0xF && oldop!=0xE && oldop!=0x10)
-				IssueMessage(WARNING1,DISCARD_UNSTORED,off);
+				IssueMessage(WARNING1,DISCARD_UNSTORED,off-1);
+			else if(op==0x10 && !Check2v::Instance().IsValid(effFeature, 0x7C))
+				IssueMessage(ERROR,NO_PERS_REGS,off-1);
 			oldop = op;
 		}
 		nument2=data.ExtractByte(off);//off switches to byte-just-read.

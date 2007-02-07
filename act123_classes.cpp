@@ -131,9 +131,13 @@ uint Check2v::GetWidth(uint feature, uint var)const{
 		return globvars[var].width & ~0x40;
 }
 
-void Check2v::Check(uint feature,uint type,uint var,uint offs,uint param,uint shift)const{
+uint Check2v::GetEffFeature(uint feature,uint type){
+	if((type&3)==2)return Instance()._p[feature].featfor82;
+	return feature;
+}
+
+void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 	if(feature>MaxFeature())return;
-	if((type&3)==2)feature=_p[feature].featfor82;
 	if(var&0x80){
 		if((var&0x7F)>_p[feature].last80) IssueMessage(ERROR,NONEXISTANT_VARIABLE,offs,var);
 		else if(!IsValid(feature, var)) IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
