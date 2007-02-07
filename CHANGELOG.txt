@@ -3,6 +3,7 @@ v3.4.5 to
 - Data file updates:
   - Industry texts may have arbitrary text-stack data.
 - Fix parameter check for global 60+x variables.
+- Allow variational 2s to take var 1A with an <and-mask> of 0.
 
 v3.4.4 to v3.4.5 (r1396)
 - Data file updates:

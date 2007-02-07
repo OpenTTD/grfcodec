@@ -128,7 +128,7 @@ uint Check2v::GetWidth(uint feature, uint var)const{
 	if(_p[feature].vars[var].width)
 		return _p[feature].vars[var].width;
 	else
-		return globvars[var].width;
+		return globvars[var].width & ~0x40;
 }
 
 void Check2v::Check(uint feature,uint type,uint var,uint offs,uint param,uint shift)const{
@@ -155,6 +155,9 @@ void Check2v::Check(uint feature,uint type,uint var,uint offs,uint param,uint sh
 	}
 }
 
+uint Check2v::Prohibit0Mask(uint var){
+	return !(CInstance().globvars[var].width & 0x40);
+}
 
 //****************************************
 // Check2v::VarData
@@ -212,7 +215,7 @@ varRange::varRange(uint width):dflt(rangemax[width]),num(0),width(width){
 
 void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,uint&offs){
 	uint add,divmod,nAnd=data.ExtractVariable(offs,width);
-	if(Var!=0x7E&&!nAnd)IssueMessage(WARNING1,AND_00,offs);
+	if(Check2v::Prohibit0Mask(Var) && !nAnd)IssueMessage(WARNING1,AND_00,offs);
 	offs+=width;
 	range var(rangemax[width],0,(0xFFFFFFFF>>shift)&nAnd);
 	if(shift&0xC0){
