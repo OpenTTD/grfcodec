@@ -602,6 +602,7 @@ This varaction 2 has a <and> byte/word/dword of 0, making the associated
 Remove the pair, or adjust the <and> byte to an appropriate value.
 This warning is not issued for variable 7E, on the assumption that you will
 be using 1C to get the result instead.
+This is message is based on the same theory as #202.
 
 195: "Action 3 may not be both generic and an override." (Error)
 This action 3 has a <num-ids> of 80.
@@ -625,7 +626,13 @@ any effect. This is one of those features.
 Move this ID's action 0 before the action 3, or add an action 0 that sets
 prop 08.
 
-201: "GRFID has a bit set that is clear in the mask." (Warn1)
+201: "GRFID has a bit set that is clear in the mask." (Warn 1)
 When testing for multiple IDs, the specified GRFID already have had the mask
 applied.
 AND the GRFID with the mask and use that value for the GRFID instead.
+
+202: "<off> Operation 0F follows a non-store operation." (Warn 1)
+The operation preceeding this operation 0F was neither operation 0E or 10,
+meaning that the calculated value was discarded without being stored.
+Trim the unnecessary parts of the left-hand side, or remove the op 0F.
+This is message is based on the same theory as #194.
