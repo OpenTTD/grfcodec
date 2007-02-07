@@ -149,7 +149,7 @@ void Check2v::Check(uint feature,uint type,uint var,uint offs,uint param,uint sh
 					IssueMessage(WARNING1,FEATURE_CALL_MISMATCH,offs+1,param,IDs.GetFeature(param));
 				IDs.use(param);
 			}
-		}else if(var>=0x60 && param>_p[feature].vars[var].maxparam)
+		}else if(var>=0x60 && param>MaxParam(feature,var))
 			IssueMessage(WARNING1,PARAM_TOO_LARGE,offs+1,param,var);
 		if(shift>=GetWidth(feature, var)<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+2,var);
 	}
