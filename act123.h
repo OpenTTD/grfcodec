@@ -80,6 +80,7 @@ class Check2v{
 public:
 	void Check(uint,uint,uint,uint,uint,uint)const;
 	static uint GetMaxOp(){return Instance().maxop;}
+	static uint Prohibit0Mask(uint);
 	SINGLETON(Check2v)
 private:
 	ExpandingArray<VarData>globvars;
