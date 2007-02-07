@@ -256,6 +256,7 @@ NFO_MESSAGE(DUPLICATE_ID,"ID %2x previously specified at offset %d.\n",USE_PREFI
 NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Prop 08 has not been set for ID %2x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(MASKED_BIT_SET,"GRFID has a bit set that is clear in the mask.\n",USE_PREFIX)
 NFO_MESSAGE(DISCARD_UNSTORED,"Operation 0F follows a non-store operation.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NO_PERS_REGS,"No persistent registers exist for this feature.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 

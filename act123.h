@@ -78,15 +78,16 @@ class Check2v{
 		uint last80,featfor82;
 	};
 public:
-	void Check(uint,uint,uint,uint,uint,uint)const;
+	void Check(uint,uint,uint,uint,uint)const;
 	static uint GetMaxOp(){return Instance().maxop;}
 	static uint Prohibit0Mask(uint);
+	static uint GetEffFeature(uint,uint);
+	bool IsValid(uint feature, uint var)const;
 	SINGLETON(Check2v)
 private:
 	ExpandingArray<VarData>globvars;
 	auto_array<FeatData>_p;
 	uint maxop;
-	bool IsValid(uint feature, uint var)const;
 	uint MaxParam(uint feature, uint var)const;
 	uint GetWidth(uint feature, uint var)const;
 };
