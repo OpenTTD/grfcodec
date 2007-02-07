@@ -187,6 +187,7 @@ CHANGED_FEATURE(rand)
 CHANGED_FEATURE(var)
 		uint extract=1<<((nument1>>2)&3),off=4,var,param=0,shift,op=(uint)-1,newfeature=(uint)-1;
 		bool isvar=false,isadv=false;
+		uint oldop = 0;
 		varRange ranges(extract);
 		while(true){//read <var> [<param>] <varadjust> [<op> ...]. off reports byte to be read.
 			if(Is60x(var=data.ExtractByte(off++)))param=data.ExtractByte(off++);
@@ -203,6 +204,9 @@ CHANGED_FEATURE(var)
 			if(!(shift&0x20))break;
 			isadv=true;
 			if((op=data.ExtractByte(off++))>Check2v::GetMaxOp())IssueMessage(ERROR,INVALID_OP,off,op);
+			if(op==0xF && oldop!=0xE && oldop!=0x10)
+				IssueMessage(WARNING1,DISCARD_UNSTORED,off);
+			oldop = op;
 		}
 		nument2=data.ExtractByte(off);//off switches to byte-just-read.
 		if(isadv)data.SetEol(off-1,1);
