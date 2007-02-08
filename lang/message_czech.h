@@ -240,6 +240,8 @@ NFO_MESSAGE(EXCESSIVE_ADD,"Hodnota <add-in-%d> nesmi byt zaporna.\n",USE_PREFIX|
 NFO_MESSAGE(DUPLICATE_ID,"ID %2x jiz bylo specifikovano na pozici %d.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Pro ID %2x nebyla definovana vlastnost 08.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(MASKED_BIT_SET,"GRFID ma zapnut bit, ktery je v masce vypnut.\n",USE_PREFIX)
+NFO_MESSAGE(DISCARD_UNSTORED,"Operace 0F nenasleduje operaci ulozeni do registru.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NO_PERS_REGS,"Pro tuto feature neexistuji zadne trvale registry.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
