@@ -95,7 +95,7 @@ public:
 	uint GetFeat8(){return _p[8].GetLength();}
 private:
 	Check0();
-	bool CheckVar(uint&,PseudoSprite&,const PropData&,bool addblank)const;
+	bool CheckVar(uint&,PseudoSprite&,const PropData&,bool addblank,bool)const;
 	void operator=(const Check0&);
 	Check0(const Check0&);
 };
@@ -282,7 +282,7 @@ void Check0::Check(PseudoSprite&str){
 				i++;
 				const PropData*data=_p[feature].GetVarLength(prop);
 				for(j=0;j<IDs;j++)
-					if(!CheckVar(i,str,*data,j+1<IDs))return;
+					if(!CheckVar(i,str,*data,j+1<IDs,true))return;
 			}else if((len&7)==3){
 				i++;
 				for(j=0;j<IDs;j++)
@@ -325,6 +325,7 @@ void Check0::Check(PseudoSprite&str){
 				if(i<str.Length())
 					IssueMessage(WARNING2,EXTRA_DATA,i);
 			}
+			if(!GetState(LINEBREAKS))return;
 			bool linebreaks=(IDs>1||GetState(LINEBREAKS)==3)&&str.ExtractByte(2)>1;
 			uint maxwidth=2,data,width;
 			for(i=0;i<propLoc.size();i++)
@@ -349,7 +350,7 @@ void Check0::Check(PseudoSprite&str){
 	}
 }
 
-bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool canaddblank)const{
+bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool canaddblank,bool appendeol)const{
 	bool findPipe=false;
 	uchar ch;
 	uint orig_loc=str_loc,vdatalen=vdata.GetLength();
@@ -376,7 +377,7 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			uint times=vdata.GetRepeat(++i,decoded);
 			if(repeat_data==0xFE){
 				for(uint j=0;j<times;j++)
-					if(!CheckVar(str_loc,str,*vdata2,false))return false;
+					if(!CheckVar(str_loc,str,*vdata2,false,false))return false;
 			}else if((repeat_data&7)<5){
 				switch((repeat_data>>4)&3){
 				case 1:str.SetText(str_loc-1-repeat_data&7,repeat_data&7);
@@ -422,7 +423,7 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 						str_loc+=repeat_data;
 				}else if(repeat_data==0xFE){
 					while((str.*ExtractTerm)(str_loc)!=term)
-						if(!CheckVar(str_loc,str,*vdata2,false))return false;
+						if(!CheckVar(str_loc,str,*vdata2,false,false))return false;
 				}else{
 					IssueMessage(0,INVALID_DATAFILE,DAT2,"0.dat",'*',repeat_data);
 					exit(EDATA);
@@ -435,7 +436,7 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			}
 			break;
 		}case 0xFE:
-			CheckVar(str_loc,str,*vdata.GetVarLength(i),false);
+			CheckVar(str_loc,str,*vdata.GetVarLength(i),false,false);
 			break;
 		default:
 			switch(ch&7){
@@ -467,7 +468,10 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 		IssueMessage(ERROR,MISSING_TERMINATOR);
 		return false;
 	}
-	if(addblank)str.AddBlank(str_loc-1);
+	if(appendeol)
+		str.SetEol(str_loc-1,1,canaddblank?1:0);
+	if(addblank && GetState(LINEBREAKS)>1)
+		str.AddBlank(str_loc-1);
 	return true;
 }
 

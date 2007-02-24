@@ -41,7 +41,10 @@ public:
 	PseudoSprite&SetHex(uint);
 	PseudoSprite&SetAllHex();
 	PseudoSprite&SetEot(uint);
-	PseudoSprite&SetEol(uint,uint);
+	PseudoSprite&SetEol(uint,uint,uint);
+	PseudoSprite&SetEol(uint loc,uint minbreaks){
+		return SetEol(loc,minbreaks,(minbreaks>1)?1:0);
+	}
 	PseudoSprite&SetNoEol(uint);
 	PseudoSprite&SetGRFID(uint);
 
