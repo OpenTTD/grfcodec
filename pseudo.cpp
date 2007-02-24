@@ -365,10 +365,10 @@ PseudoSprite&PseudoSprite::SetText(uint i,uint num){
 	return SetEot(i);
 }
 PseudoSprite&PseudoSprite::SetEot(uint i){beauty[i]=ENDQUOTE;return*this;}
-PseudoSprite&PseudoSprite::SetEol(uint i,uint minbreaks){
+PseudoSprite&PseudoSprite::SetEol(uint i,uint minbreaks,uint lead){
 	if(GetState(CONVERTONLY)||GetState(LINEBREAKS)<minbreaks||i+1==Length())return*this;
 	if(context[i].find_first_of('\n')==NPOS)context[i]+="\n";
-	if(context[i][context[i].length()-1]=='\n')context[i]+=string(GetState(LEADINGSPACE,(minbreaks>1)?1:0),' ');
+	if(context[i][context[i].length()-1]=='\n')context[i]+=string(GetState(LEADINGSPACE,lead),' ');
 	return*this;
 }
 PseudoSprite&PseudoSprite::SetNoEol(uint i){
