@@ -2,7 +2,7 @@
  * act123.cpp
  * Contains definitions for checking actions 1-3.
  *
- * Copyright 2004-2006 by Dale McCoy.
+ * Copyright 2004-2007 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ using namespace std;
 #include"messages.h"
 
 #define MAX_TTD_SPRITE 4894
+
+uint CargoTransTable(int=0);
 
 #define CHANGED_FEATURE(type)\
 	{\
@@ -425,7 +427,7 @@ CHANGED_FEATURE(act3)
 	}
 	for(i=4+numIDs;i<4+numIDs+3*numCIDs;i+=2){
 		j=data.ExtractByte(i);
-		if(j==0xFE&&feature!=4)
+        if(j>CargoTransTable() && j!=0xFF && (j!=0xFE||feature!=4))
 			IssueMessage(ERROR,INVALID_CARGO_TYPE,i,j);
 		i++;
 		CheckCargoID(i,id=data.ExtractWord(i),feature,newfeature);

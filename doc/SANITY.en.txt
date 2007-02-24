@@ -87,8 +87,10 @@ Add sprites to the action 1 or choose a defined spriteset for the action 2.
 
 57: "<off> Invalid cargo type: ..." (Error)
 This action 3 declares a cargo-specific cargoID for a cargo-type that
-does not exist.
-Change the cargo type or remove the cargo type/cargoID pair.
+does not exist. This may also mean that the cargo does not appear in the
+cargo translation table.
+Change the cargo type, remove the cargo type/cargoID pair, or add the cargo
+to the cargo translation table.
 
 58: "Action 2 declaring no <type> sprites." (Error)
 This standard action 2 declares no sprites for loadstate/loadingstates/
@@ -295,7 +297,7 @@ This random action 2 is not random, as only once choice is available.
 Add additional choices, change the existing ones, or remove the sprite.
 
 113: "Var2 accesses only constant variables (1A & 1C)." (Warn 4)
-This variational 2 only acesses variables 1A and 1C; the result is known in
+This variational 2 only accesses variables 1A and 1C; the result is known in
 the previous var2.
 Check other variables or remove the sprite.
 
@@ -627,8 +629,8 @@ Move this ID's action 0 before the action 3, or add an action 0 that sets
 prop 08.
 
 201: "GRFID has a bit set that is clear in the mask." (Warn 1)
-When testing for multiple IDs, the specified GRFID already have had the mask
-applied.
+When testing for multiple IDs, the specified GRFID should already have had
+the mask applied.
 AND the GRFID with the mask and use that value for the GRFID instead.
 
 202: "<off> Operation 0F follows a non-store operation." (Warn 1)
@@ -641,3 +643,11 @@ This is message is based on the same theory as #194.
 This variational attempts to use operation 10 (store to persistent register),
 but it is for a feature/type pair that does not have persistent registers.
 Use a global register (op 0E) or adjust the feature and/or type.
+
+204: "Cargo translation table previously found at sprite <num>." (Warn 1)
+NFO files should not have multiple translation tables. Remove the extra
+tables.
+Also, because NFORenum is a single-pass linter, changing the translation
+table partway through the NFO may cause NFORenum to object to valid cargos,
+or accept invalid ones.
+To prevent this, place the translation table before all action 3s.
