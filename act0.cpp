@@ -2,7 +2,7 @@
  * act0.cpp
  * Contains definitions for checking action 0s.
  *
- * Copyright 2005-2006 by Dale McCoy.
+ * Copyright 2005-2007 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,9 +210,26 @@ bool IsProp08Set(uint feature,uint id){
 	return Prop08Tracking::Check(feature,id);
 }
 
+uint CargoTransTable(int newlimit=0){
+	static int limit=0;
+	static uint prevtable;
+	if(newlimit<0)
+		limit=0;
+	else if(newlimit){
+		if(limit)
+			IssueMessage(WARNING1,DUPLICATE_TRANS_TABLE,prevtable);
+		limit = newlimit;
+		prevtable=_spritenum;
+	}
+	if(limit) return (uint)limit;
+	return 0x1B;
+}
+
 void Init0(){
 	Prop08Tracking::Reset();
+	CargoTransTable(-1);
 }
+
 
 void Check0::Check(PseudoSprite&str){
 	assert(str.ExtractByte(0)==0);
@@ -252,6 +269,8 @@ void Check0::Check(PseudoSprite&str){
 				}
 				return;
 			}
+			if(feature==8 && prop==9)
+				CargoTransTable(IDs-1);
 			len=_p[feature].GetData(prop);
 			if(prop==8)// Mark prop 08 as set, if necessary.
 				for(uint i=firstID;i<=maxID;i++)
