@@ -334,6 +334,7 @@ void Check0::Check(PseudoSprite&str){
 					else if(data==0x14)maxwidth=max<uint>(maxwidth,6);
 					else maxwidth=max(maxwidth,uint(data&7)*3-1);
 			if(!linebreaks)return;
+			++maxwidth; // Add an extra space between columns of the table.
 			for(i=0;i<propLoc.size();i++){
 				if(!propLoc[i])continue;
 				str.SetEol(propLoc[i]-1,1);
