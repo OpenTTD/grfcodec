@@ -307,7 +307,7 @@ int process_file(istream&in){
 			}else{
 				getline(spritestream,datapart);
 				firstnotpseudo=datapart.find_first_not_of(VALID_PSEUDO);
-				if(!spritestream||firstnotpseudo==NPOS||(datapart[firstnotpseudo]=='"'?(SetVersion(5),true):false)||
+				if(!spritestream||firstnotpseudo==NPOS||datapart[firstnotpseudo]=='"'||
 					(datapart[firstnotpseudo]=='\\'?TrySetVersion(7):false)||is_comment(datapart,firstnotpseudo)){
 					if(PseudoSprite::MayBeSprite(buffer)){
 						buffer+=sprite+'\n';
