@@ -2,7 +2,7 @@
  * pseudo.cpp
  * Implementation of the PsuedoSprite class.
  *
- * Copyright 2006 by Dale McCoy.
+ * Copyright 2006-2007 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 		switch(in.peek()){
 		case EOF:continue;
 		case'"':
+			TrySetVersion(5);
 			in.ignore();
 			ProcessWhite();
 			while(true){
