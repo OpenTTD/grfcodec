@@ -1,0 +1,599 @@
+﻿Zprávy jsou setříděné podle čísla. Zprávy, které jsou si podobné a mají
+sousední čísla jsou sdružené dohromady.
+
+Popis chybových hlášení má následující formát:
+<číslo>: "Zpráva" (závažnost/i)
+->	Význam zprávy
+=>	Návod k opravě
+[Poznámky]
+
+Předpona <ofs> bude při výpisu zprávy programem nahrazena řetězcem
+"Offset <číslo>:", kde <číslo> je číslo chybného bytu či sekvence v aktuálním
+pseudospritu. Číslování bytů začíná od 0 a hodnota je uvedena v desítkové
+soustavě.
+
+
+41: "Vsechny <typ> jsou <popis> bytu dlouhe." (Kritická/Varování 2)
+42: "Delka neodpovida <proměnná> hodnoty <hodnota>..." (Kritická/Varování 2)
+->	Tento pseudosprite je příliš krátký (Kritická chyba), nebo příliš dlouhý
+	(Varování 2).
+=>	Přidejte nebo odstraňte data dle potřeby a/nebo změňte <proměnná>
+	(vyžaduje-li to situace).
+
+43: "<ofs> Linter vyzaduje dalsich <počet> bytu, ktere vsak chybi." (Kritická)
+->	Program se pokoušel načíst neexistující byty.
+=>	Přidejte požadovaný počet bytů do pseudo-spritu.
+Pozn: Toto chybové hlášení je použito v případě, že neexistuje žádný lepší
+popis chyby. Případné návrhy chybových hlášení společně společně s kódem, který
+je způsobuje prosím zašlete autorům programu.
+
+44: "Chybna hodnota polozky feature." (Kritická/Chyba)
+->	Je zadána hodnota feature, kterou TTDPatch nepodporuje.
+=>	Použijte hodnotu v rozmezí 00-0F. Množina povolených hodnot závisí na
+	Akci, kterou právě kódujete. Pro více informací konzultujte wiki. 
+
+45: "Chybna hodnota polozky nument1 nebo typ nahodne/variabilni Akce 2."
+    (Kritická)
+->	Hodnota značící typ této Akce 2 nic neznamená.
+=>	Změňte hodnotu na 80-83, 85, 86, 89 nebo 8A v případě variační/náhodné
+	Akce 2, nebo 00-7F pro standardní Akci 2.
+
+46: "Chybne cislo Akce." (Kritická)
+->	TTDPatch nepodporuje Akci s tímto číslem.
+=>	Upravte byte značící typ akce.
+
+47: "<ofs> Chybna vlastnost <vlastnost>." (Kritická)
+->	Byte na pozici <ofs> by měl značit číslo vlastnosti, ale taková vlastnost
+	není TTDPatchem podporována.
+=>	Opravte tento byte a/nebo zkontrolujte správnost zápisu předchozích
+	vlastností.
+
+48: "U Akce 6 chybi koncova hodnota FF." (Kritická)
+->	Analyzér narazil na konec spritu dříve než našel koncový byte s hodnotou FF.
+=>	Ujistěte se, že je přítomen byte s hodnotou FF, a že všechny předcházející
+	trojice <parametr> <velikost> <offset> jsou správně zapsané.
+
+49: "Chybi <typ>..." (Chyba)
+50: "Prebyva <typ>..." (Chyba)
+->	Počet spritů typu <typ> (reálné nebo vkládací) analyzovaných od poslední
+	Akce 1/5/A/11/12 neodpovídá počtu uvedenému v této Akci 1/5/A/11/12.
+=>	Přidejte/odstraňte potřebný počet spritů, případně upravte patřičnou Akci.
+Pozn: Sekvence "* 1 00" je interpretována jako reálný sprite v blocích
+následujících Akci 1 a většinu Akcí 5.
+
+51: "Nalezen neocekavany <typ>." (Chyba)
+->	Na tomto místě nebyl důvod očekávat sprite typu <typ> (reálný nebo
+	vkládací); předcházející sprite není Akce 1/5/A/11/12.
+=>	Odstaňte tento sprite, nebo přidejte Akci 1/5/A/11/12.
+Pozn: Sekvence "* 1 00" je interpretována jako reálný sprite v blocích
+následujících Akci 1 a většinu Akcí 5.
+
+52: "Hodnota feature neodpovida hodnote feature predchozi Akce...." (Chyba)
+->	Tato standardní Akce 2 deklaruje ID nákladu pro feature, která se liší od té
+	uvedené v předchozí Akci 1. **NEBO**
+	Tato Akce 3 pro změnu nátěru se pokouší změnit nátěr pro feature, která se
+	liší od té uvedené v předchozí Akci 3.
+=>	Změňte jednu, či obě hodnoty feature tak, aby byly stejné.
+
+53: "Nahodna Akce 2 musi obsahovat 2^n moznosti k vyberu." (Chyba)
+->	Tato náhodná Akce 2 obsahuje chybnou hodnotu nrand.
+=>	Nastavte nrand na 02, 04, 08, 10, 20, 40 nebo 80.
+
+55: "<id> neni ani callback ani ID nakladu." (Chyba)
+->	Tato akce 2/3 se pokouší použít neplatné ID.
+=>	Jestliže se pokoušíte deklarovat callback, ujistěte se, že je nejvyšší bit
+	zapnut. V opačném případě se ujistěte, že jste k ID přidali "00".
+
+56: "<ofs> Skupina spritu <skupina> neni definovana v predchozi..." (Chyba)
+->	Tato standardní akce 2 se pokouší použít skupinu spritů, která nebyla v
+	předchozí Akci 1 definována.
+=>	Přidejte do předcházející Akce 1 potřebné sprity a/nebo v Akci 2 použijte
+	definovanou skupinu spritů.
+
+57: "<ofs> Chybny druh nakladu: ..." (Chyba)
+->	Tato Akce 3 deklaruje ID nákladu pro náklad, který neexistuje.
+=>	Změňte druh nákladu, nebo odstraňte pár <druh nákladu> <ID nákladu>.
+
+58: "Akce 2 nedeklaruje zadne skupiny spritu pro <typ>." (Chyba)
+->	Tato standardní akce 2 nedeklaruje žádné sprity pro naložený stav/proces
+    nakládání/velké množství nákladu.
+=>	I když toto není přímo chyba, koledujete si o dělení nulou. Změňte chybný
+    byte.
+
+59: "Navestidla vyzaduji 48, 112 nebo 240 (0x30, 0x70 nebo 0xF0) spritu."
+    (Chyba)
+60: "Pro tento typ ocekavam <počet> (0x<hex>) spritu." (Chyba)
+->	Počet spritů deklarovaných touto Akcí 5 neodpovídá počtu, který tato feature
+    vyžaduje.
+=>	Opravte pseudo-sprite tak, aby počet spritů odpovídal feature. Seznam hodnot
+    naleznete na wiki.
+
+62: "<ofs> ID <id> nebylo dosud definovano." (Chyba)
+->	Tato Akce 2/3 se pokouší použít nedefinované ID.
+
+63: "Ocekavam dalsich <počet> vlastnosti." (Chyba)
+->	Tato Akce 0 skončila dříve, než program nalezl všechny deklarované
+    vlastnosti.
+=>	Přidejte chybějící vlastnosti, případně snižte počet vlastností, které
+    v této Akci 0 měníte.
+
+64: "Pro vlastnost <vlastnost> ocekavam vice dat..." (Kritická)
+65: "Ocekavam dalsich <počet> bytu pro vlastnost <vlastnost>." (Chyba)
+->	Vlastnost <vlastnost> neobsahuje dostatek dat.
+=>	Přidejte chybějící data.
+Pozn: Analyzér Akcí 0 se domníval, že by měl být schopen načíst dalších <počet>
+bytů na pozici <offset> (nebo na konci spritu). To neznamená, že pro opravu
+spritu stačí pouze přidat požadovaný počet bytů.
+
+66: "Data vlastnosti neobsahuji koncove byty." (Chyba)
+->	Tento sprite obsahuje datové pole s proměnlivou délkou, které vyžaduje
+    koncovy byte, jenž však nebyl nalezen.
+=>	Zkontrolujte položky s proměnlivou délkou a ujistěte se, že obsahují koncové
+    byty.
+
+67: "Akce <číslo> jiz byla nalezena ve spritu <pozice>." (Chyba)
+->	Soubor obsahuje dvě nebo více Akce 8/11.
+=>	Odstraňte přebytečné Akce 8/11.
+
+68: "Akce 8 musi predchazet akci <číslo>." (Chyba)
+->	Před touto Akcí nebyla nalezena žádná Akce 8.
+=>	Přidejte Akci 8 před tento sprite.
+Pozn: NFORenum toto chybové hlášení vypíše maximálně jednou.
+Pozn: Ne všechny Akce D vyžadují předcházející Akci 8; toto chybové hlášení
+nebude vypsáno pro Akce D, které se netýkají zprávy prostředků.
+
+69: "Chybne cislo verze <typ>." (Chyba)
+->	Číslo verze zapsané v tomto spritu je mimo povolený rozsah platný pro objekt
+    jenž tento sprite kóduje.
+=>	Opravte číslo verze.
+
+71: "Velikost promenne <velikost> je chybna." (Kritická)
+72: "Podminka <podmínka> je chybna." (Chyba)
+->	Tato Akce 7/9 nastavuje <velikost> nebo <podmínku> na chybnou hodnotu.
+=>	Konzultujte wiki pro seznam povolených hodnot a jejich význam.
+
+73: "Podminka <podmínka> vyzaduje promennou 88." (Chyba)
+74: "Promenna 88 vyzaduje podminku pro testovani GRFID." (Chyba)
+->	Použili jste podmínku pro kontrolu GRFID na proměnnou obsahující GRFID, či
+    naopak.
+=>	Upravte proměnnou nebo podmínku tak, aby si navzájem odpovídaly.
+
+75: "Promenna <proměnná> vyzaduje podminku pro testovani bitu." (Chyba)
+->	Proměnná obsahující bitový přepínač není použita s podmínkou pro kontrolu
+    hodnoty bitu.
+=>	Změňte proměnnou nebo podmínku.
+
+76: "<číslo> je chybna <velikost> pro promennou <proměnná>." (Varování 2)
+->	Tento pár proměnná/velikost-proměnné je chybný.
+=>	Změňte proměnnou nebo její velikost.
+
+78: "<ofs> <stávající> na miste, kde bych ocekaval <očekávaná>." (Chyba)
+->	Na pozici <offset> jsem očekával byte s hodnotou <očekávaná>.
+=>	Změnte byte na odpovídající hodnotu, případně zkontrolujte, jestli používáte
+    správnou feature.
+
+79: "Pro tuto Akci 4 ocekavam dalsich <počet> retezcu." (Chyba)
+->	Tato Akce 4 obsahuje příliš málo bytů s hodnotou "00" v porovnání s počtem
+    řetězců, které deklaruje.
+=>	Zkontrolujete, zda-li je každý řetězec ukončen, přidejte chybějící řetězce
+    nebo upravte počet deklarovaných řetězců.
+
+80: "<ofs> Hodnota <xoff nebo yoff> nesmi presahnout 0Fh." (Varování 3)
+->	Offset spritu byl nastaven na příliš vysokou hodnotu.
+=>	Snižte offset.
+
+81: "<ofs> Nejvyssi ID spritu, ktere TTD definuje, je 4984 (1E 13)." (Chyba)
+->	Pokus o použití spritu jenž TTD neobsahuje.
+=>	Použijte nižší číslo spritu.
+
+82: "Prebarvovaci mod 3 neni definovan." (Chyba)
+->	Pokus o použití přebarvovacího módu 3, přičemž hra pouze podporuje módy 0-2.
+=>	Změňte přebarvovací mód.
+
+83: "Sprite <číslo> neni sprite s tabulkou zmeny barev." (Varování 1)
+->	Pokoušíte se přebarvovat pomocí spritu, jenž neobsahuje přebarvovací
+    tabulku.
+=>	Pro přebarvování použijte sprite s přebarvovací tabulkou, nebo vypněte
+    přebarvování.
+
+84: "Nebyl definovan zadny sprite zeme." (Chyba)
+84: "Nebyl definovan zadny nepruhledny sprite" (Chyba)
+->	Definice této budovy/políčka průmyslu neobsahuje žádný sprite země, ani
+    neprůhledný sprite budovy.
+=>	Specifikujte sprite země, nebo alespoň jeden neprůhledný sprite budovy.
+
+85: "Tato Akce 3 pro zmenu nateru nenasleduje standardni Akci 3." (Chyba)
+->	
+=>	
+
+86: "<ofs> Promenna %2x neexistuje." (Chyba/Varování 1)
+->	
+=>	
+
+87: "Akce 6 se pokousi o zmenu bytu, ktery se nachazi za koncem tohoto spritu."
+    (Chyba)
+->	
+=>	
+
+88: "Po teto Akci 6 neni zadny sprite ke zmeneni." (Chyba)
+->	
+=>	
+
+89: "Akce %x nedeklaruje zadnou skupinu." (Varování 1)
+90: "Akce %x deklaruje skupiny, ktere neobsahuji zadne sprity." (Varování 1)
+->	
+=>	
+
+91: "<ofs> Skupina %d neobsahuje zadne sprity." (Varování 1)
+->	
+=>	
+
+92: "Akce 0 nenastavuje zadne vlastnosti." (Varování 1)
+93: "Akce 0 nenastavuje vlastnosti pro zadna ID." (Varování 1)
+->	
+=>	
+
+94: "Redefinice ID %2x, ktere od sve posledni definice ve spritu %d nebylo
+     dosud pouzito." (Varování 1)
+->	
+=>	
+
+95: "Nasledujici ID pro feature %x nebyla od sve posledni definice dosud
+     pouzita:" (Varování 1)
+->	
+=>	
+
+97: "Skupina %2x definovana v predchozi Akci 1 (sprite %d) nebyla dosud
+     pouzita." (Varování 1)
+->	
+=>	
+
+98: "Variace %d neni dosazitelna." (Varování 1/4)
+->	
+=>	
+
+99: "<ofs> Sprite obsahuje prebytecna data." (Varování 2)
+->	
+=>	
+
+100: "Standardni ID jiz bylo v tomto spritu pouzito." (Varování 1/3)
+->	
+=>	
+
+101: "GRFID zacinajici bytem FF jsou vyhrazena." (Varování 1)
+->	
+=>	
+
+103: "<ofs> Posuv bitu promenne %2x presahuje jeji velikost." (Varování 1/4)
+->	
+=>	
+
+104: "Akce 6 nic nemeni." (Varování 1)
+105: "<ofs> Tato cast nic nemeni." (Varování 1)
+->	
+=>	
+
+107: "Stitek %2x nebyl dosud pouzit." (Varování 2)
+->	
+=>	
+
+108: "Stitek %2x nebyl od sve posledni definice ve spritu %d dosud pouzit."
+     (Varování 1)
+->	
+=>	
+
+109: "<ofs> Vlastnost %2x jiz byla definovana na pozici %d." (Varování 2)
+->	
+=>	
+
+111: "Nahodna akce 2 obsahuje pouze jednu volbu na vyber." (Varování 3)
+112: "Variacni akce 2 pouziva pouze konstantni promenne (1A a 1C)." (Varování 3)
+->	
+=>	
+
+113: "Vsechny nahodne volby obsahuji stejne ID." (Varování 4)
+->	
+=>	
+
+115: "Chybi predchozi Akce 1." (Chyba)
+->	
+=>	
+
+117: "<ofs> Chybna operace %2x." (Chyba)
+->	
+=>	
+
+118: "Skupina spritu obsahuje vice spritu, nez muze dana feature vyuzit."
+	 (Varování 1)
+->	
+=>	
+
+119: "Skupina spritu obsahuje neobvykly pocet spritu." (Varování 1)
+->	
+=>	
+
+121: "<ofs> Toto GRFID jiz bylo deaktivovano na pozici %d (%8x)." (Varování 1)
+->	
+=>	
+
+122: "Akce E nedeaktivuje zadne GRF soubory." (Varování 1)
+->	
+=>	
+
+123: "Zdrojovy parametr %d je chybny." (Varování 1)
+->	
+=>	
+
+124: "Cilovy parametr je chybny." (Chyba)
+->	
+=>	
+
+125: "Jen jeden argumentu src1 a src2 muze mit hodnotu 0xFF." (Chyba)
+->	
+=>	
+
+126: "<ofs> Nazev pro %L jiz byl definovan na pozici %d." (Varování 2)
+->	
+=>	
+
+127: "Zadny nouzovy retezec nebyl definovan." (Varování 1)
+127: "" (Varování 1)
+->	
+=>	
+
+128: "<ofs> Nebyly specifikovany zadne casti." (Chyba)
+->	
+=>	
+
+129: "<ofs> Je dostupnych jen %d nahodnych bitu." (Chyba)
+->	
+=>	
+
+130: "<ofs> Je vyzadovano %x bitu, ale je dostupnych pouze %2x." (Varování 1)
+->	
+=>	
+
+131: "<ofs> Pro tuto cast byla specifikovana nulova pravdepodobnost."
+	 (Varování 1)
+->	
+=>	
+
+132: "<ofs> Parametr %2x presahuje maximalni povolenou hodnotu promenne %2x."
+	 (Chyba)
+->	
+=>	
+
+133: "<ofs> Sprity budovy nesmi byt prazdne." (Chyba)
+->	
+=>	
+
+134: "Neocekavany konec spritu pri cteni spritu %d." (Kritická)
+->	
+=>	
+
+135: "Prvni sprite budovy nemuze sdilet bounding box s predchozim spritem."
+	 (Chyba)
+->	
+=>	
+
+136: "<ofs> Akce %x odkazuje na vyhrazene GRFID." (Varování 1)
+->	
+=>	
+
+140: "Pokus hospodarit s prilis mnoho ID." (Varování 1)
+->	
+=>	
+
+141: "ID %2x mimo povoleny rozsah (%2x..%2x)." (Chyba)
+->	
+=>	
+
+142: "Pro tuto feature musi byt <num-cid> rovno 0." (Varování 1)
+->	
+=>	
+
+143: "<ofs> Kontrolni znak %2x nema zadnou funkci." (Varování 3)
+->	
+=>	
+
+144: "<ofs> V tomto retezci by kontrolni znak %2x nemel byt pouzit."
+	 (Varování 1)
+->	
+=>	
+
+145: "<ofs> Kontrolni znak %2x neodpovida parametru typu %K na vrchu
+	  zasobniku." (Varování 1)
+146: "<ofs> Kontrolni znak %2x cte data z vice parametru." (Varování 1)
+147: "<ofs> V zasobniku neni dostatek dat pro kontrolni znak %2x." (Varování 1)
+->	
+=>	
+
+148: "<ofs> V zasobniku neni dostatek dat pro presunuti." (Varování 1)
+->	
+=>	
+
+149: "Chybi koncovy nulovy byte." (Varování 1)
+->	
+=>	
+
+150: "Chybny byte zavaznosti." (Chyba)
+->	
+=>	
+
+151: "ID jazyka %2x ma zapnute nepouzivane bity." (Varování 2/3)
+->	
+=>	
+
+152: "Chybne ID zpravy." (Kritická)
+->	
+=>	
+
+153: "<ofs> %2x neni parametr GRF." (Varování 1)
+->	
+=>	
+
+154: "Pro tuto feature nelze zmenit grafiku." (Chyba)
+->	
+=>	
+
+155: "Podminka %2x vyzaduje %d bytu." (Varování 2)
+->	
+=>	
+
+156: "Chybna metadata. %s nesmi byt nizsi nez %d." (Chyba)
+157: "Chybna metadata. %s nesmi byt vyssi nez %d." (Chyba)
+->	
+=>	
+
+159: "Chybna metadata. Komprese musi byt 01, 03, 09 nebo 0B." (Chyba/Varování 1)
+->	
+=>	
+
+160: "Chybna metadata. Velikost spritu presahuje 64K." (Chyba)
+->	
+=>	
+
+161: "<ofs> TextID %4x neexistuje." (Chyba)
+->	
+=>	
+
+163: "<ofs> Zkouseni promenne 0C v rozsahu [%2x,%2x]." (Varování 1)
+->	
+=>	
+
+164: "<ofs> Pro tuto feature callback %2x neexistuje." (Varování 1)
+->	
+=>	
+
+165: "<ofs> Font %2x neexistuje." (Chyba)
+->	
+=>	
+
+166: "<ofs> Skupina %d deklaruje znaky pro vice bloku." (Chyba)
+->	
+=>	
+
+167: "<ofs> Retezec s nazvy jazyka %2x neobsahuje koncovy nulovy byte."
+	 (Kritická)
+168: "Cast nazvu zacinajici na pozici %d neobsahuje koncovy nulovy byte."
+	 (Kritická)
+->	
+=>	
+
+169: "Variace %d je castecne zakryta." (Varování 1)
+->	
+=>	
+
+170: "Standardni vysledek neni dosazitelny." (Varování 1)
+->	
+=>	
+
+171: "<ofs> var-adjust se pokousi delit nulou." (Kritická)
+->	
+=>	
+
+172: "<ofs> Zde staci pouzit argumenty shift-and a var-adjust." (Varování 2)
+->	
+=>	
+
+173: "<ofs> Argument shift nemuze mit oba nejvyssi bity zapnute." (Kritická)
+->	
+=>	
+
+174: "Pouziti neexistujici spousteci udalosti." (Varování 1)
+->	
+=>	
+
+175: "Chybna sekvence UTF-8: Prilis dlouhe vyjadreni kodu znaku." (Chyba)
+176: "Chybna sekvence UTF-8: Prvni byte neni nasledovan dostatecnym poctem
+	  pokracovacich bytu." (Varování 2)
+177: "Chybna sekvence UTF-8: Koduje znak mimo BMP." (Chyba)
+->	
+=>	
+
+179: "<ofs> Jazyk %2x neni definovan." (Varování 2)
+->	
+=>	
+
+180: "<ofs> Pouziti TextID %4x, ktere obsahuje nulovy byte." (Varování 1)
+->	
+=>	
+
+182: "<ofs> Nulovy byte uprostred retezce." (Varování 1)
+->	
+=>	
+
+183: "Nasledujici Akce 7/9 skacou za konec tohoto souboru:" (Varování 2)
+->	
+=>	
+
+185: "Akce 4 nedeklaruje zadne retezce." (Varování 1)
+->	
+=>	
+
+187: "<ofs> Rozsireny format %2x neexistuje." (Chyba)
+->	
+=>	
+
+188: "<ofs> ID %2x je definovano pro feature %2x." (Chyba)
+->	
+=>	
+
+189: "<ofs> ID %2x je definovano pro feature %2x." (Varování 1)
+->	
+=>	
+
+190: "System pro automatickou opravu se pravdepodobne zasekl v nekonecnem
+	  cyklu." (Kritická)
+->	
+=>	
+
+191: "<ofs> Polozka %d argumentu <parts> pouziva nasledujici bity, ktere jiz
+      byly v teto akci F pouzity: %t" (Varování 1)
+->	
+=>	
+
+193: "Akce 13 muze pouze definovat texty pro ID v rozsazich C4xx, C5xx, C9xx,
+	  D0xx a DCxx." (Chyba)
+->	
+=>	
+
+194: "Operace AND hodnotou 0." (Varování 1)
+->	
+=>	
+
+195: "Akce 3 muze byt bud obycejna nebo pro zmenu nateru, ne oboji." (Chyba)
+->	
+=>	
+
+196: "Action F nesmi odkazovat sama na sebe." (Chyba)
+->	
+=>	
+
+197: "Hodnota <add-in-%d> nesmi byt zaporna." (Varování 1)
+->	
+=>	
+
+199: "<ofs> ID %2x jiz bylo specifikovano na pozici %d." (Varování 1)
+->	
+=>	
+
+200: "Pro ID %2x nebyla definovana vlastnost 08." (Chyba)
+->	
+=>	
+
+201: "GRFID ma zapnut bit, ktery je v masce vypnut." (Varování 1)
+->	
+=>	
+
+202: "<ofs> Operace 0F nenasleduje operaci ulozeni do registru." (Varování 1)
+->	
+=>	
+
+203: "Pro tuto feature neexistuji zadne trvale registry." (Chyba)
+->	
+=>	
+
+204: "Precislovaci tabulka nakladu se jiz nachazi na spritu %d." (Varování 1)
+->	
+=>
