@@ -99,7 +99,7 @@ NFO_MESSAGE(INSUFFICIENT_DATA,"Pro vlastnost %2x ocekavam vice dat. (%d bytu na 
 NFO_MESSAGE(INSUFFICIENT_DATA2,"Ocekavam dalsich %d bytu pro vlastnost %2x.\n",USE_PREFIX)
 NFO_MESSAGE(MISSING_TERMINATOR,"Data vlastnosti neobsahuji koncove byty.\n",USE_PREFIX)
 NFO_MESSAGE(DUPLICATE_ACT,"Akce %x jiz byla nalezena ve spritu %d.\n",USE_PREFIX)
-NFO_MESSAGE(MISSING_8,"Akce 8 musi prechazet akci %x.\n",USE_PREFIX)
+NFO_MESSAGE(MISSING_8,"Akce 8 musi predchazet akci %x.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_VERSION,"Chybne cislo verze %s.\n",USE_PREFIX)
   MESSAGE_UNUSED(BAD_VARIABLE)
 NFO_MESSAGE(BAD_VARSIZE,"Velikost promenne %2x je chybna.\n",USE_PREFIX)
@@ -110,7 +110,7 @@ NFO_MESSAGE(BITTEST_VARIABLE,"Promenna %2x vyzaduje podminku pro testovani bitu.
 NFO_MESSAGE(VARIABLE_SIZE_MISMATCH,"%d je chybna <size> pro promennou %2x.\n",USE_PREFIX)
   MESSAGE_UNUSED(INVALID_LABEL)//,"Stitky musi mit nejvyssi 3 bity zapnute (E0-FF).\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_LITERAL,"%2x na miste, kde bych ocekaval %2x.\n",USE_PREFIX|HAS_OFFSET)
-NFO_MESSAGE(INSUFFICIENT_STRINGS,"Pro tuto Akci 4 cekavam dalsich %d retezcu.\n",USE_PREFIX)
+NFO_MESSAGE(INSUFFICIENT_STRINGS,"Pro tuto Akci 4 ocekavam dalsich %d retezcu.\n",USE_PREFIX)
 NFO_MESSAGE(TOO_LARGE,"Hodnota <%s> nesmi presahnout 0Fh.\n",USE_PREFIX)
 NFO_MESSAGE(SPRITENUM_TOO_HIGH,"Nejvyssi ID spritu, ktere TTD definuje, je 4984 (1E 13).\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_COLOR_TRANS,"Prebarvovaci mod 3 neni definovan.\n",USE_PREFIX)
@@ -242,6 +242,7 @@ NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Pro ID %2x nebyla definovana vlastnost 08.\n",
 NFO_MESSAGE(MASKED_BIT_SET,"GRFID ma zapnut bit, ktery je v masce vypnut.\n",USE_PREFIX)
 NFO_MESSAGE(DISCARD_UNSTORED,"Operace 0F nenasleduje operaci ulozeni do registru.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NO_PERS_REGS,"Pro tuto feature neexistuji zadne trvale registry.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(DUPLICATE_TRANS_TABLE,"Precislovaci tabulka nakladu se jiz nachazi na spritu %d.\n",USE_PREFIX)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 

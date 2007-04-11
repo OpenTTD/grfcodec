@@ -26,7 +26,7 @@ message in.
 
 44: "Invalid feature byte." (Fatal/Error)
 The feature byte of this sprite is not valid.
-Change the feature byte to something between 00 and 0C.
+Change the feature byte to something between 00 and 0F.
 Which features are valid depends on which action you are coding. See the
 wiki for the meanings of the feature bytes.
 
@@ -44,7 +44,7 @@ The byte at offset <off> appears to be a property byte, but is not a
 known propery.
 Fix this byte and/or check preceeding properties for validity.
 
-48: "Action 6 appears to be missing terminating FF."
+48: "Action 6 appears to be missing terminating FF." (Fatal)
 The parser hit end-of-sprite before finding the expected FF terminating byte.
 Ensure that the FF exists and that the preceeding <param> <size> <offset>
 triplets are all valid.
@@ -154,7 +154,7 @@ or vice versa.
 Change the condition and/or variable so they agree.
 
 75: "Variable <var> reqires a bit-test condition." (Error)
-A bit-test variable is paired with an non-bit-test condtion.
+A bit-test variable is paired with an non-bit-test condition.
 Change the condition or the variable.
 
 76: "Variable <var> is <len> byte(s) long." (Warn 2)
@@ -170,7 +170,7 @@ This action 4 contains too few "00" bytes for the number of strings it
 declares.
 Check that the strings are terminated, add strings, and/or reduce num-ent.
 
-80: "<off> Value of <xoff>/<yoff> must not exceed 0Fh." (Warn3)
+80: "<off> Value of <xoff>/<yoff> must not exceed 0Fh." (Warn 3)
 <xoff> or <yoff> was set to too high a value.
 Reduce the offset.
 
