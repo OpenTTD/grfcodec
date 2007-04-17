@@ -3,7 +3,8 @@ v3.4.5 to
 - Data file updates:
   - Industry texts may have arbitrary text-stack data.
   - Action D patch variable 11.
-  - Action 5 types 0F..11.
+  - Action 5 types 0F..12.
+  - Action 5 type 07 takes 75 sprites.
 - Fix parameter check for global 60+x variables.
 - Allow variational 2s to take var 1A with an <and-mask> of 0.
 - Check that variational 2 operator 0F's left-hand side side was stored.

@@ -60,8 +60,8 @@ static const char _datB[]="\x01\x01\x03\x06\x02\x02\x02\x03\x02\x02";
 
 // Bit 15 set if recolor block, bit 14 set if mixed block
 // Remaining bits are number of sprites expected. If 0, sprite count is not checked
-static const char _dat5[]="\x03\x02\x11\x30\x00\x4A\x00\x4A\x00\x41\x00\x06\x00\x00\x81\x71\x00\x85\x00\x10\x00\x00\x40\x0C\x00\x0F\0x00\x08\x00";
-//                                         05      06              08                              0C
+static const char _dat5[]="\x03\x03\x12\x30\x00\x4A\x00\x4B\x00\x41\x00\x06\x00\x00\x81\x71\x00\x85\x00\x10\x00\x00\x40\x0C\x00\x0F\0x00\x08\x00\x08\x00";
+//                                         05      06              08                              0C                              10
 
 static const char _datTextIDs[]="\x04\x05\x35\x03\x11\x00\x25\x00\x19\x00\x5D\x00\x11\x00\x6D\x00\x08\x00\x11\x00\x3C\x00\x2A\x00\x08\x00\x19\x00\x39\x00\x80\x00\x00\x00\x08\x01\x6C\x00\x38\x00\x43\x00\x44\x00\x00\x00\x06\x00\x00\x00\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x4D\x00\x00\x00\x00\x00\x45\x01"
 //Count of IDs in class:                   -0000-                          -2000-                          -4000-                          -6000-                          -8000-                          -A000-                          -C000-                          -E000-
