@@ -366,7 +366,8 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			totaluncomp += spritesize;
 			spriteno++;
 
-			fwrite(&spritesize, 1, 2, grf);
+			U16 le_spritesize = BE_SWAP16(spritesize);
+			fwrite(&le_spritesize, 1, 2, grf);
 			fputc(0xff, grf);
 			fputc(0xff, grf);
 			fputc(namelen, grf);
@@ -391,11 +392,13 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			totaluncomp += size;
 			spriteno++;
 
-			fwrite(&size, 1, 2, grf);
+			U16 le_size = BE_SWAP16(size);
+			fwrite(&le_size, 1, 2, grf);
 			fputc(0xff, grf);
 			fwrite(sprite.GetData(),1,size,grf);
 			if(spriteno == 1 && sprite.size() == 4){
-				int reported = *((S32*)sprite.GetData()) + 1;
+				int reported = *((S32*)sprite.GetData());
+				reported = BE_SWAP32(reported) + 1;
 				if(reported != info.size() && !_quiet)
 					printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
 					abs(info.size() - reported),
@@ -767,6 +770,10 @@ int main(int argc, char **argv)
 					palette = readpal(optarg);
 				break;
 		case 'c':
+			#ifdef __BIG_ENDIAN__
+				printf("Cropping not supported on big endian architectures.\n");
+				exit(1);
+			#endif
 			_crop++;
 			break;
 		case 'm':

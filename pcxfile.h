@@ -88,6 +88,8 @@ class pcxfile {
 
 	const char *getdirectory() { return mfile->getdirectory(); };
 
+	void be_swapheader(pcxheader& header);
+
 	protected:
 	pcxfile();
 
