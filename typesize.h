@@ -106,6 +106,17 @@ union multitype {
 	S8  s8[4];
 };
 
+#ifdef __BIG_ENDIAN__
+#	define BE_SWAP16(b) (*((U8*)(&b))+(*(((U8*)(&b))+1)<<8))
+#	define BE_SWAP32(b) (*((U8*)(&b))+(*(((U8*)(&b))+1)<<8)+(*(((U8*)(&b))+2)<<16)+(*(((U8*)(&b))+3)<<24))
+#	define BYTE_OFSL 1
+#	define BYTE_OFSH 0
+#else
+#	define BE_SWAP16(b) (b)
+#	define BE_SWAP32(b) (b)
+#	define BYTE_OFSL 0
+#	define BYTE_OFSH 1
+#endif
 
 #ifdef __cplusplus
 #define BEGINC extern "C" {

@@ -202,7 +202,13 @@ void pcxwrite::writeheader()
 	header.window[3] = totaly - 1;
 	header.screen[1] = totaly - 1;
 
-	fwrite(&header, sizeof(pcxheader), 1, curfile);
+	#ifdef __BIG_ENDIAN__
+		pcxheader le_header = header;
+		be_swapheader(le_header);
+	#else
+		pcxheader& le_header = header;
+	#endif
+	fwrite(&le_header, sizeof(pcxheader), 1, curfile);
 	fseek(curfile, oldpos, SEEK_SET);
 }
 
@@ -285,6 +291,7 @@ void pcxread::readheader()
 	fseek(curfile, 0, SEEK_SET);
 
 	fread(&header, sizeof(pcxheader), 1, curfile);
+	be_swapheader(header);
 
 	if (header.nplanes == 3) {
 		fprintf(stderr, "Cannot read truecolour PCX files!\n");

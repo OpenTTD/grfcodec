@@ -40,10 +40,8 @@ static void cfread(void *ptr, size_t size, size_t n, FILE *stream)
 
 static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
 {
-	U16 *ibuffer = (U16*) buffer;
-
 	for (int y=0; y<sy; y++) {
-		long offset = ibuffer[4+y] + 8;
+		long offset = BE_SWAP16(buffer[8+2*y]) + 8;
 
 		long x, islast, chunkstart=0;
 		do {
@@ -176,6 +174,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 	store->newsprite();
 
 	cfread(&wsize, 2, 1, grf);
+	wsize = BE_SWAP16(wsize);
 	size = wsize;
 
 	if (!size)
@@ -432,8 +431,8 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *
 			if (!*lastcodepos)	// there's a zero length verbatim chunk -> delete it
 				outpos--;
 
-			ofsl = chunk.u8[0];
-			ofsh = chunk.u8[1];
+			ofsl = chunk.u8[BYTE_OFSL];
+			ofsh = chunk.u8[BYTE_OFSH];
 			overlap = chunk.u8[2];
 
 			out[outpos++] = (-overlap << 3) | ofsh;
@@ -506,6 +505,7 @@ U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, 
 			int x1 = 0, x2 = 0;
 
 			lineofs[y] = tileofs;
+			lineofs[y] = BE_SWAP16(lineofs[y]);
 			long lastlenofs = tileofs;
 
 			while ( (x1 < sx) && (tileofs + 2 + sx < tilesize) ) {
@@ -575,7 +575,7 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int
 	}
 
 	long result;
-	U16 realcompsize;
+	U16 realcompsize = 0;
 	while (1) {
 		memcpy(compr, inf, 8);
 		if (docompress)
@@ -638,7 +638,9 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int
 		}
 	}
 
-	fwrite(&size, 1, 2, grf);
+	U16 le_size = size;
+	le_size = BE_SWAP16(le_size);
+	fwrite(&le_size, 1, 2, grf);
 	fwrite(compr, 1, realcompsize + 8, grf);
 
 	free(compr);

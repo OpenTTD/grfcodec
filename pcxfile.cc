@@ -470,3 +470,19 @@ void pcxfile::installwritemap(int *map)
 {
 	putcolourmap = map;
 }
+
+void pcxfile::be_swapheader(pcxheader& header)
+{
+#ifdef __BIG_ENDIAN__
+	header.window[0] = BE_SWAP16(header.window[0]);
+	header.window[1] = BE_SWAP16(header.window[1]);
+	header.window[2] = BE_SWAP16(header.window[2]);
+	header.window[3] = BE_SWAP16(header.window[3]);
+	header.dpi[0] = BE_SWAP16(header.dpi[0]);
+	header.dpi[1] = BE_SWAP16(header.dpi[1]);
+	header.bpl = BE_SWAP16(header.bpl);
+	header.palinfo = BE_SWAP16(header.palinfo);
+	header.screen[0] = BE_SWAP16(header.screen[0]);
+	header.screen[1] = BE_SWAP16(header.screen[1]);
+#endif
+}
