@@ -40,8 +40,10 @@ static void cfread(void *ptr, size_t size, size_t n, FILE *stream)
 
 static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
 {
+	U16 *ibuffer = (U16*) buffer;
+
 	for (int y=0; y<sy; y++) {
-		long offset = BE_SWAP16(buffer[8+2*y]) + 8;
+		long offset = BE_SWAP16(ibuffer[4+y]) + 8;
 
 		long x, islast, chunkstart=0;
 		do {
