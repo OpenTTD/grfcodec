@@ -9,6 +9,7 @@ v3.4.5 to
   - House property 1F.
   - Canal properties 08, 09.
   - Canal IDs 05..07.
+  - Industry variables 44, 68.
 - Fix parameter check for global 60+x variables.
 - Allow variational 2s to take var 1A with an <and-mask> of 0.
 - Check that variational 2 operator 0F's left-hand side side was stored.
