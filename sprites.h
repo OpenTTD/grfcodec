@@ -63,7 +63,7 @@ SPRITES_EXTERN int maxx SPRITES_INIT, maxy SPRITES_INIT, maxs SPRITES_INIT;
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);
 
 U16 getlasttilesize();
-U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, const U8 inf[8], int docompress);
+U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, const U8 inf[8], int docompress, int spriteno);
 U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int docompress);
 
 #endif /* _SPRITES_H */
