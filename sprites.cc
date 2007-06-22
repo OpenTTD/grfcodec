@@ -486,7 +486,7 @@ U16 getlasttilesize()
 	return lasttilesize;
 }
 
-U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, const U8 inf[8], int docompress)
+U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, const U8 inf[8], int docompress, int spriteno)
 {
 	long tilesize = imgsize + 16L * sy;
 
@@ -524,6 +524,23 @@ U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, 
 						x2++;
 					}
 
+					if (x2 > 255) { // chunk extends past the 255-wall; encode the remainder of the line
+						if (x1 > 255) // chunk cannot start after 255; move it back
+							x1 = 255;
+						x2 = sx;
+						while ( (image[y*sx+x2-1] == background) )
+							x2--;
+						len = x2 - x1;
+						if (len > 0x7f) { // chunk is too long
+							if (x1 < 255) {  // first encode the part before the wall
+								len = 255 - x1;
+								x2 = 255;
+							} else { // chunk starts at wall, abort
+								printf("Error: Sprite %d is too wide to use tile encoding.\n", spriteno);
+								exit(2);
+							}
+						}
+					}
 
 					lastlenofs = tileofs;
 					tile[tileofs++] = len;

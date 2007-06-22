@@ -475,7 +475,7 @@ foundlast:
 
 			U16 compsize;
 			if (info.inf[0] & 8) {
-				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress);
+				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, spriteno);
 				totaltransp += getlasttilesize();	// how much after transparency removed
 				totaluntransp += info.imgsize;		// how much with transparency
 
