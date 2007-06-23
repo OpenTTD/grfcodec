@@ -22,10 +22,6 @@
 #define _SPRITES_C
 #include "sprites.h"
 
-// Define some of the bits in info[0]
-#define HASTRANSPARENCY(info) (info[0] & 8)
-#define SIZEISCOMPRESSED(info) (info[0] & 2)
-
 static void cfread(void *ptr, size_t size, size_t n, FILE *stream)
 {
 	unsigned int read = fread(ptr, 1, size * n, stream);
