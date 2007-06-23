@@ -425,7 +425,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 				printf("Warning: %d of %ld pixels (%ld%%) in sprite %d are pure white\n",
 					k, info.imgsize, k*100/info.imgsize, i);
 
-			if(_crop/*&&info.imgsize!=1*/){
+			if(_crop && !DONOTCROP(info.inf)){
 				int i=0,j=0;
 				for(i=info.imgsize-1;i>=0;i--)if(image[i])break; // Find last non-blue pixel
 				if(i<0)// We've got an all-blue sprite
@@ -474,7 +474,7 @@ foundlast:
 			}
 
 			U16 compsize;
-			if (info.inf[0] & 8) {
+			if (HASTRANSPARENCY(info.inf)) {
 				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, spriteno);
 				totaltransp += getlasttilesize();	// how much after transparency removed
 				totaluntransp += info.imgsize;		// how much with transparency

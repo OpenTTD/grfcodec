@@ -33,6 +33,13 @@
 #	define SPRITES_INIT
 #endif
 
+
+// Define some of the bits in info[0]
+#define DONOTCROP(info) (info[0] & 64)
+#define HASTRANSPARENCY(info) (info[0] & 8)
+#define SIZEISCOMPRESSED(info) (info[0] & 2)
+
+
 // minimum and maximum overlap to search for in the compression routines
 #define MINOVERLAP 3
 #define MAXOVERLAP 15	// must be <= 15 b/o how it's encoded
