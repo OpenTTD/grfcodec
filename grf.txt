@@ -22,22 +22,25 @@ Sprite Info
           Bitcoded value that determines what type this sprite is.
 
    Bit Val Meaning
-   0 1 ?
-   1 2 Size is compressed size if set
-   If this bit is set, the given size is simply the size in the file. If
-   it is unset, you *must* decompress it to find out how large it is in
-   the file.
-   2 4 ?
-   3 8 Has transparency (i.e. is a tile), see below
-   others ?
+    0   1  Color index 0 is transparent. (should always be set)
+    1   2  Size is compressed size if set
+             If this bit is set, the given size is simply the size in the
+             file. If it is unset, you *must* decompress it to find out
+             how large it is in the file.
+    3   8  Has transparency (i.e. is a tile), see below
+    6  40h The exact size of this sprite is significant. If not set,
+             grfcodec may attempt to remove extraneous transparent pixels
+
+   others  ?
 
           If info==0xff, the sprite is a special type and has none of the
-          following info byte, it is simply a stream of some bytes with
+          following info bytes, it is simply a stream of some bytes with
           the given size. For example, these are used for specifying
           colour maps for the transparency feature and the company
           colours, as well as making a grey-scale image for the
           newspaper. With TTDPatch, these sprites are so-called
-          "actions", see TTDPatch's sprites.txt for more details.
+          "actions", see NewGraphicsSpecs on the TTDPatch wiki for more
+          details.
 
    BYTE ydim
           How many lines there are in the sprite (y dimension)
