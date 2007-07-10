@@ -150,7 +150,7 @@ NFO_MESSAGE(REPEATED_PROP,"Vlastnost %2x jiz byla definovana na pozici %d.\n",US
 //WARNING3
 NFO_MESSAGE(ONLY_ONE_CHOICE,"Nahodna akce 2 obsahuje pouze jednu volbu na vyber.\n",USE_PREFIX)
 NFO_MESSAGE(NOT_VARIATIONAL,"Variacni akce 2 pouziva pouze konstantni promenne (1A a 1C).\n",USE_PREFIX)
-NFO_MESSAGE(NOT_RANDOM,"Vsechny nahodne volby obsahuje stejne ID.\n",USE_PREFIX)
+NFO_MESSAGE(NOT_RANDOM,"Vsechny nahodne volby obsahuji stejne ID.\n",USE_PREFIX)
   MESSAGE_UNUSED(TOO_MANY_STRINGS)
 
 NFO_MESSAGE(NO_ACT1,"Chybi predchozi Akce 1.\n",USE_PREFIX)
