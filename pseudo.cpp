@@ -172,7 +172,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 						if(ch=='o' && (in.peek()=='r' || in.peek()=='t')){
 							out.put(0x11);
 							in.ignore();
-							continue:
+							continue;
 						}
 						out.put(0x0F);
 						if(ch=='s' && in.peek()=='t'){
@@ -181,7 +181,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 						}
 						in.unget();
 						continue;
-					}
+					}}
 					break;
 				}case'7':{
 					switch(in.get()){
