@@ -6,7 +6,7 @@ Changes in
 - Check for pixels with palette index of 255 when encoding.
 - Add -q to silence warnings.
 - Add -c to automatically crop extraenous transparent blue pixels.
-- Add escapes for the new action 2 operations 0E and 0F.
+- Add escapes for the new action 2 operations 0E, 0F and 11.
 - Prevent quotes and escapes in sprite 0.
 
 Changes in 0.9.10 (r819)
