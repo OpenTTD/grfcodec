@@ -63,6 +63,8 @@ char * means the next char is repeated an arbitrary number of times. This is
 char l means the next character appears in the NFO
 char | means what is on either side is valid -- the left side MUST have at
 least one literal. (ex: \x03 == l\xFF\x02|\x01)
+char FD takes the same type of parameter as r, but adds that value to the
+  list of 80+x values for all following FE substrings.
 char FE means variable, see corresponding LengthData struct in subData
 char x0 means apply top nibble to previous byte
 A backslash is used to escape nulls that are not end-of-string characters
@@ -79,7 +81,7 @@ public:
 	uchar GetData(uint)const;
 	uint GetLength()const{return(uint)length.length();}
 	const PropData*GetVarLength(int)const;
-	uint GetRepeat(uint&,const int_str&)const;
+	uint GetValue(uint&,const int_str&)const;
 private:
 	ustring length;
 	static ustring readString(FILE*);
@@ -95,7 +97,7 @@ public:
 	uint GetFeat8(){return _p[8].GetLength();}
 private:
 	Check0();
-	bool CheckVar(uint&,PseudoSprite&,const PropData&,bool addblank,bool)const;
+	bool CheckVar(uint&,PseudoSprite&,const PropData&,bool addblank,bool,int_str =int_str())const;
 	void operator=(const Check0&);
 	Check0(const Check0&);
 };
@@ -139,17 +141,17 @@ const PropData*PropData::GetVarLength(int prop)const{
 	return ret;
 }
 
-uint PropData::GetRepeat(uint&len_off,const int_str&decoded)const{
-	uint repeat=GetData(len_off);
-	if(repeat=='x'){
-		repeat=GetRepeat(++len_off,decoded);
-		return repeat*GetRepeat(++len_off,decoded);
+uint PropData::GetValue(uint&len_off,const int_str&decoded)const{
+	uint value=GetData(len_off);
+	if(value=='x'){
+		value=GetValue(++len_off,decoded);
+		return value*GetValue(++len_off,decoded);
 	}
-	if(repeat=='l')
+	if(value=='l')
 		return GetData(++len_off);
-	if(repeat&0x80)
-		return decoded[repeat&0x7F];
-	return repeat;
+	if(value&0x80)
+		return decoded[value&0x7F];
+	return value;
 }
 
 void PropData::Init(FILE*pFile){
@@ -370,11 +372,11 @@ void Check0::Check(PseudoSprite&str){
 	}
 }
 
-bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool canaddblank,bool appendeol)const{
+bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool canaddblank,bool appendeol,int_str decoded)const{
 	bool findPipe=false;
 	uchar ch;
+	int_str pass;
 	uint orig_loc=str_loc,vdatalen=vdata.GetLength();
-	int_str decoded;
 	bool addblank=false;
 	for(uint i=0;i<vdatalen;i++){
 		ch=vdata.GetData(i);
@@ -394,10 +396,10 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 		case'r':{
 			const PropData*vdata2=vdata.GetVarLength(i);
 			uchar repeat_data=vdata.GetData(++i);
-			uint times=vdata.GetRepeat(++i,decoded);
+			uint times=vdata.GetValue(++i,decoded);
 			if(repeat_data==0xFE){
 				for(uint j=0;j<times;j++)
-					if(!CheckVar(str_loc,str,*vdata2,false,false))return false;
+					if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
 			}else if((repeat_data&7)<5){
 				switch((repeat_data>>4)&3){
 				case 1:str.SetText(str_loc-1-repeat_data&7,repeat_data&7);
@@ -443,7 +445,7 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 						str_loc+=repeat_data;
 				}else if(repeat_data==0xFE){
 					while((str.*ExtractTerm)(str_loc)!=term)
-						if(!CheckVar(str_loc,str,*vdata2,false,false))return false;
+						if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
 				}else{
 					IssueMessage(0,INVALID_DATAFILE,DAT2,"0.dat",'*',repeat_data);
 					exit(EDATA);
@@ -455,8 +457,11 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 				return false;
 			}
 			break;
-		}case 0xFE:
-			CheckVar(str_loc,str,*vdata.GetVarLength(i),false,false);
+		}case 0xFD:
+			pass.push_back(vdata.GetValue(++i,decoded));
+			break;
+		case 0xFE:
+			CheckVar(str_loc,str,*vdata.GetVarLength(i),false,false,pass);
 			break;
 		default:
 			switch(ch&7){
