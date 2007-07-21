@@ -13,6 +13,9 @@ v3.4.5 to
   - Mark variable 81 as readable in actions 7 and D.
   - Text IDs F945..F95F.
   - Adv. action 2 op 11.
+  - House variable 63.
+  - Station variables 67, 68.
+  - Station variables 60..65 can take a parameter up to FF.
 - Fix parameter check for global 60+x variables.
 - Allow variational 2s to take var 1A with an <and-mask> of 0.
 - Check that variational 2 operator 0F's left-hand side side was stored.
