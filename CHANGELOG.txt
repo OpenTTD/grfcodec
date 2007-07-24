@@ -6,16 +6,17 @@ v3.4.5 to
   - Action 5 types 0F..12.
   - Action 5 type 07 takes 75 sprites.
   - Languages: Esperanto, Bulgarian, Japanese, Korean
-  - House property 1F.
+  - House property 1F, 20.
   - Canal properties 08, 09.
   - Canal IDs 05..07.
   - Industry variables 44, 68.
   - Mark variable 81 as readable in actions 7 and D.
   - Text IDs F945..F95F.
   - Adv. action 2 op 11.
-  - House variable 63.
-  - Station variables 67, 68.
+  - House variable 63, 64.
+  - Station variables 67, 68, 69.
   - Station variables 60..65 can take a parameter up to FF.
+  - Callback 148.
 - Fix parameter check for global 60+x variables.
 - Allow variational 2s to take var 1A with an <and-mask> of 0.
 - Check that variational 2 operator 0F's left-hand side side was stored.
