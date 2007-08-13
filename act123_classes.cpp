@@ -397,8 +397,14 @@ void Define2::ChangeFeature(uint feat){
 
 Callbacks::Callbacks(){
 	FILE*pFile=myfopen(callbacks);
-	_p=new uchar[numcallbacks=GetCheckWord(callbacks)];
-	myfread(_p,numcallbacks,callbacks);
+	_p=new uint[numcallbacks=GetCheckWord(callbacks)];
+	for(uint i=0;i<numcallbacks;i++){
+		uint temp=GetCheckByte(callbacks);
+		if(temp==0x7F)
+			temp = GetCheckWord(callbacks) | (1<<31);
+		else if(temp&0x80)temp ^= (1<<31 | 0x80);
+		_p[i]=temp;
+	}
 	fclose(pFile);
 }
 

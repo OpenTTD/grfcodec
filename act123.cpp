@@ -107,7 +107,7 @@ void invalidate_act3(){
 
 void CheckCallback(uint offs,uint feature,uint cb){
 	Callbacks&cbs=Callbacks::Instance();
-	if(cb&&(cb>=cbs.numcallbacks||cb<0x10||(cbs[cb]&0x80?!(cbs[cb]&(1<<feature)):feature!=cbs[cb])))
+	if(cb&&(cb>=cbs.numcallbacks||cb<0x10||(cbs[cb]&0x80000000?!(cbs[cb]&(1<<feature)):feature!=cbs[cb])))
 		IssueMessage(ERROR,INVALID_CALLBACK,offs,cb);
 }
 
