@@ -136,7 +136,7 @@ private:
 	bool checks1C;
 };
 
-class Callbacks:public auto_array<uchar>{
+class Callbacks:public auto_array<uint>{
 public:
 	uint numcallbacks;
 	SINGLETON(Callbacks);
