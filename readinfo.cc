@@ -482,7 +482,46 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 					if(in.peek()=='x'){// \wx
 						in.ignore();
 						x=ReadHex(in,8);
-					}else in>>x;
+					}else{
+						in>>x;
+#ifndef NO_BOOST
+						if(in.peek()=='/'||in.peek()=='-'){//date
+							in.ignore();
+							unsigned short y,z;
+							in>>y;
+							if(/*!in||*/(in.peek()!='/'&&in.peek()!='-'))//in.peek will return eof if !in
+								break;
+							in.ignore();
+							in>>z;
+							date d;
+							int extra=701265;
+//Boost doesn't support years out of the range 1400..9999, so move wider dates back in range.
+#define adjyear(x) \
+	while(x>9999){ \
+		x-=400; \
+		extra += 365*400 + 97; /* 97 leap years every 400 years. */ \
+	} \
+	while(x<1400){ \
+		x+=400; \
+		extra -= 365*400 + 97; \
+	}
+
+							try{
+								if(z<32){
+									adjyear(x);
+									d=date((unsigned short)x,y,z);
+								}else{
+									adjyear(z);
+									d=date(z,y,(unsigned short)x);
+								}
+								x=(d-date(1920,1,1)).days();
+							}catch(std::out_of_range){
+								break;
+							}
+							x+=extra;
+						}
+#endif // NO_BOOST
+					}
 					if(!in)break;
 					out.put(x);
 					out.put(x>>8);
