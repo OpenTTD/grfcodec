@@ -8,6 +8,7 @@ Changes in
 - Add -c to automatically crop extraenous transparent blue pixels.
 - Add escapes for the new action 2 operations 0E, 0F and 11.
 - Prevent quotes and escapes in sprite 0.
+- Add escapes for long-format intro dates.
 
 Changes in 0.9.10 (r819)
 - (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
