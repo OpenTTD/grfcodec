@@ -168,7 +168,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 						in.unget();
 						continue;
 					case'r':{
-						char ch=in.get();
+						char ch=(char)in.get();
 						if(ch=='o' && (in.peek()=='r' || in.peek()=='t')){
 							out.put(0x11);
 							in.ignore();
@@ -299,7 +299,46 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 					if(in.peek()=='x'){// \wx
 						in.ignore();
 						x=ReadHex(in,8);
-					}else in>>x;
+					}else{
+						in>>x;
+#ifndef NO_BOOST
+						if(in.peek()=='/'||in.peek()=='-'){//date
+							in.ignore();
+							ushort y,z;
+							in>>y;
+							if(/*!in||*/(in.peek()!='/'&&in.peek()!='-'))//in.peek will return eof if !in
+								break;
+							in.ignore();
+							in>>z;
+							date d;
+							int extra=701265;
+//Boost doesn't support years out of the range 1400..9999, so move wider dates back in range.
+#define adjyear(x) \
+	while(x>9999){ \
+		x-=400; \
+		extra += 365*400 + 97; /* 97 leap years every 400 years. */ \
+	} \
+	while(x<1400){ \
+		x+=400; \
+		extra -= 365*400 + 97; \
+	}
+
+							try{
+								if(z<32){
+									adjyear(x);
+									d=date((ushort)x,y,z);
+								}else{
+									adjyear(z);
+									d=date(z,y,(ushort)x);
+								}
+								x=(d-date(1920,1,1)).days();
+							}catch(std::out_of_range){
+								break;
+							}
+							x+=extra;
+						}
+#endif // NO_BOOST
+					}
 					if(!in)break;
 					out.write(itoa(x,256,4).c_str(),4);
 					continue;
