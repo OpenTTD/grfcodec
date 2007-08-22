@@ -75,6 +75,7 @@ string UCase(string str){
 }
 
 string itoa(uint x){
+	if(!x)return"0";
 	string ret;
 	while(x){
 		ret="0123456789"[x%10]+ret;
