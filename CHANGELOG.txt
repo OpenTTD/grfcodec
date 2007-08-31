@@ -16,7 +16,7 @@ v3.4.5 to
   - House variable 63, 64.
   - Station variables 67, 68, 69.
   - Station variables 60..65 can take a parameter up to FF.
-  - Callbacks 147..14A
+  - Callbacks 147..14C.
 - Fix parameter check for global 60+x variables.
 - Allow variational 2s to take var 1A with an <and-mask> of 0.
 - Check that variational 2 operator 0F's left-hand side side was stored.
