@@ -551,17 +551,59 @@ string ReadVar(istream&in){
 	return var;
 }
 
+int ReadNum(istream&in){
+	if (in.get()=='0') {
+		if (in.get()=='x') in>>setbase(16);
+		else{
+			in.unget()>>setbase(8);
+			if (!isdigit(in.peek()))
+				return 0;
+		}
+	} else in.unget()>>setbase(10);
+	int ret;
+	in>>ret;
+	return ret;
+}
+
 int DoCalc(istream&data,int&err){
 	stack<int>nums;
-	string ops="+-/*";
+	// the unary and binary op charcters.
+	string unyops="-~)",
+		binops="+-*/%|&^<>";
 	int ch,l;
 	while(true){
-		ch=eat_white(data).peek();
+		ch=eat_white(data).get();
 		if(isdigit(ch)){
-			data>>l;
-			nums.push(l);
-		}else if(ops.find((char)ch)!=NPOS){
-			data.ignore();
+			data.unget();
+			nums.push(ReadNum(data));
+			continue;
+		}
+		if(ch == '-'){		// a minus followed immediately by digits is a negative number
+			if(isdigit(data.peek())){
+				nums.push(-ReadNum(data));
+				continue;
+			}
+		}
+		if(unyops.find((char)ch)!=NPOS){
+			if(nums.size()<1){
+				IssueMessage(0,(RenumMessageId)(err=BAD_RPN),ch);
+				return 0;
+			}
+			l = nums.top();
+			switch(ch){
+			case '~': nums.top() = ~l; continue;
+			case ')': return l;
+			case '-':
+				if (data.peek() == '-'){
+					data.ignore();
+					nums.top() = -l;
+					continue;
+				}
+				break;
+			DEFAULT(ch);
+			}
+		}
+		if(binops.find((char)ch)!=NPOS){
 			if(nums.size()<2){
 				IssueMessage(0,(RenumMessageId)(err=BAD_RPN),ch);
 				return 0;
@@ -575,18 +617,33 @@ int DoCalc(istream&data,int&err){
 			case'-':nums.top()=l-r;break;
 			case'*':nums.top()=l*r;break;
 			case'/':nums.top()=l/r;break;
+			case'%':nums.top()=l%r;break;
+			case'^':nums.top()=l^r;break;
+			case'&':nums.top()=l&r;break;
+			case'|':nums.top()=l|r;break;
+			case'<':
+				if(data.get()=='<'){
+					nums.top()=l<<r;
+					break;
+				}else{
+					IssueMessage(0,(RenumMessageId)(err=BAD_RPN),ch);
+					return 0;
+				}
+			case'>':
+				if(data.get()=='>'){
+					nums.top()=l>>r;
+					break;
+				}else{
+					IssueMessage(0,(RenumMessageId)(err=BAD_RPN),ch);
+					return 0;
+				}
 			DEFAULT(ch);
 			}
-		}else if(ch==')'){
-			if(!nums.size()){
-				IssueMessage(0,(RenumMessageId)(err=BAD_RPN),ch);
-				return 0;
-			}
-			return nums.top();
 		}else if(ch==EOF){
 			IssueMessage(0,(RenumMessageId)(err=BAD_RPN_EOF));
 			return 0;
 		}else{
+			data.unget();			// And now, restore first character of the var name.
 			string var=ReadVar(data);
 			nums.push(GetVar(var,err));
 			if(err)return 0;
