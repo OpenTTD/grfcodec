@@ -67,7 +67,7 @@ NFO_MESSAGE(INVALID_CHARACTER,"Chybny znak: \"%c\".\n",0)
 NFO_MESSAGE(INVALID_EXTENSION,"Chybna escape sekvence.\n",0)
 NFO_MESSAGE(UNTERMINATED_STRING,"Neukonceny textovy retezec.\n",0)
 MESSAGE(REAL_NO_FILENAME,"Realny sprite neobsahuje nazev souboru.\n",TO_NULL|MAKE_COMMENT)
-NFO_MESSAGE(REAL_MISSING_DATA,"Z realneho spritu nelze nacist %s.\n",0)
+NFO_MESSAGE(REAL_MISSING_DATA,"Z realneho spritu nelze nacist %t.\n",0)
 
 //FATAL
 NFO_MESSAGE(INVALID_LENGTH,"Vsechny %S jsou %S bytu dlouhe.\n",USE_PREFIX)

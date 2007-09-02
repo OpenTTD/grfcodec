@@ -82,7 +82,7 @@ NFO_MESSAGE(INVALID_CHARACTER,"Invalid character: \"%c\".\n",0)
 NFO_MESSAGE(INVALID_EXTENSION,"Invalid escape sequence.\n",0)
 NFO_MESSAGE(UNTERMINATED_STRING,"Unterminated literal string.\n",0)
 MESSAGE(REAL_NO_FILENAME,"Apparent real sprite does not contain a file name.\n",TO_NULL|MAKE_COMMENT)
-NFO_MESSAGE(REAL_MISSING_DATA,"Could not read %s from apparent real sprite.\n",0)
+NFO_MESSAGE(REAL_MISSING_DATA,"Could not read %t from apparent real sprite.\n",0)
 
 //FATAL
 NFO_MESSAGE(INVALID_LENGTH,"All %S are %S bytes long.\n",USE_PREFIX)
