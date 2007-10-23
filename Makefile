@@ -106,14 +106,14 @@ endif
 
 ifeq ($(BOOST_INCLUDE),CANNOT_FIND_BOOST_INCLUDE_DIRECTORY)
 BOOST_CMD=-DNO_BOOST
-BOOST_WARN = @echo " ** Warning: This NFORenum is being built without \\w<YMD> or \\w<DMY> support."
+BOOST_WARN = @echo "Warning: boost::date_time not found." ; echo "  \\w<date> and \\d<date> will not be supported."
 else
 BOOST_CMD=-I$(BOOST_INCLUDE)
 endif
 
 ifneq ($(NO_BOOST),0)
 BOOST_CMD=-DNO_BOOST
-BOOST_WARN = @echo " ** Warning: This NFORenum is being built without \\w<YMD> or \\w<DMY> support."
+BOOST_WARN = @echo "Warning: \\w<date> and \\d<date> support disabled by NO_BOOST setting."
 endif
 
 # targets
