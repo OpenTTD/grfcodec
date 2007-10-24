@@ -15,11 +15,9 @@ SVNVERSION = svnversion -c .	# standard SVN client (e.g. cygwin)
 # If you do not have boost, make should detect this, and compile a version
 # of grfcodec that does not include the boost-dependent parts.
 #
-# Set these as appropriate; BOOST_VERSION is used to help automatically
-# locate your boost include directory. The usual format is x_yy for x.yy.0
-# versions and x_yy_z for x.yy.z releases
-BOOST_VERSION = 1_33_1
-# If that fails, set your boost include folder here.
+# If the boost folder auto-detection fails, set your boost include folder here.
+# If boost can be found in your standard include search paths, setting this to
+# any non-empty value will cause make to assume that boost is present.
 #BOOST_INCLUDE = 
 # If make is convinced that you do have boost installed when you do not,
 # uncomment the following line:
@@ -34,9 +32,12 @@ EXE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo .exe )
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
 BOOST_INCLUDE=$(shell \
-( [ -d /usr/local/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/local/include/boost-$(BOOST_VERSION) ) || \
-( [ -d /usr/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/include/boost-$(BOOST_VERSION) ) || \
-echo CANNOT_FIND_BOOST_INCLUDE_DIRECTORY )
+find /usr/include /usr/local/include -maxdepth 1 -name 'boost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
+ifeq ($(BOOST_INCLUDE),)
+BOOST_INCLUDE=$(shell \
+( [ -d /usr/include/boost/date_time ] && echo /usr/include ) || \
+( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) )
+endif
 endif
 
 ifndef V
@@ -98,9 +99,9 @@ ifndef NO_BOOST
 NO_BOOST = 0
 endif
 
-ifeq ($(BOOST_INCLUDE),CANNOT_FIND_BOOST_INCLUDE_DIRECTORY)
+ifeq ($(BOOST_INCLUDE),)
 BOOST_CMD=-DNO_BOOST
-BOOST_WARN = @echo "Warning: boost::date_time not found." ; echo "  \\w<date> and \\d<date> will not be supported."
+BOOST_WARN = @echo "Warning: boost::date_time not found.  \\w<date> and \\d<date> will not be" ; echo "  supported.  If you have recently installed boost, try sudo updatedb."
 else
 BOOST_CMD=-I$(BOOST_INCLUDE)
 endif
