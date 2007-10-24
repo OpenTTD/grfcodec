@@ -13,16 +13,6 @@ MAKEFILELOCAL=Makefile.local
 # revision (used for adding the revision to the version string)
 SVNVERSION = svnversion -c .	# standard SVN client (e.g. cygwin)
 
-# Optional parts of NFORenum are dependent on boost::date_time
-# If you do not have boost, make should detect this, and compile a version
-# of grfcodec that does not include the boost-dependent parts.
-# Get boost from www.boost.org
-#
-# BOOST_VERSION is used to help automatically
-# locate your boost include directory. The usual format is x_yy for x.yy.0
-# versions and x_yy_z for x.yy.z releases
-BOOST_VERSION = 1_33_1
-
 # Gnu compiler settings
 SHELL = /bin/sh
 CC = g++
@@ -43,9 +33,12 @@ NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo renum.exe || echo renum)
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
 BOOST_INCLUDE=$(shell \
-( [ -d /usr/local/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/local/include/boost-$(BOOST_VERSION) ) || \
-( [ -d /usr/include/boost-$(BOOST_VERSION)/boost ] && echo /usr/include/boost-$(BOOST_VERSION) ) || \
-echo CANNOT_FIND_BOOST_INCLUDE_DIRECTORY )
+find /usr/include /usr/local/include -maxdepth 1 -name 'booost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
+ifeq ($(BOOST_INCLUDE),)
+BOOST_INCLUDE=$(shell \
+( [ -d /usr/include/boost/date_time ] && echo /usr/include ) || \
+( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) )
+endif
 endif
 
 ifndef V
@@ -104,9 +97,9 @@ ifndef NO_BOOST
 NO_BOOST = 0
 endif
 
-ifeq ($(BOOST_INCLUDE),CANNOT_FIND_BOOST_INCLUDE_DIRECTORY)
+ifeq ($(BOOST_INCLUDE),)
 BOOST_CMD=-DNO_BOOST
-BOOST_WARN = @echo "Warning: boost::date_time not found." ; echo "  \\w<date> and \\d<date> will not be supported."
+BOOST_WARN = @echo "Warning: boost::date_time not found.  \\w<date> and \\d<date> will not be" ; echo "  supported.  If you have recently installed boost, try sudo updatedb."
 else
 BOOST_CMD=-I$(BOOST_INCLUDE)
 endif
