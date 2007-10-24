@@ -16,11 +16,9 @@
 # of grfcodec that does not include the boost-dependent parts.
 # Get boost from www.boost.org
 #
-# Set these as appropriate; BOOST_VERSION is used to help automatically
-# locate your boost include directory. The usual format is x_yy for x.yy.0
-# versions and x_yy_z for x.yy.z releases
-#BOOST_VERSION = 1_33_1
-# If that fails, set your boost include folder here.
+# If the boost folder auto-detection fails, set your boost include folder here.
+# If boost can be found in your standard include search paths, setting this to
+# any non-empty value will cause make to assume that boost is present.
 #BOOST_INCLUDE = 
 # If make is convinced that you do have boost installed when you do not,
 # uncomment the following line:
