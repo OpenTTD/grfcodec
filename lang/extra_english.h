@@ -64,6 +64,9 @@ EXTRA(RECOLOR_TABLE,"recolor table")
 EXTRA(SET,"action 1 set")
 EXTRA(CID,"cargo ID")
 
+EXTRA(ACT5_SIZE,"%d (0x%x)")
+EXTRA(ACT5_ORSIZE," or %d (0x%x)")
+
 EXTRA(EOF_READING_NAME,"EOF while reading name %2x.")
 EXTRA(OVERLENGTH_NAME,"Name %2x exceeds 100 characters long.")
 

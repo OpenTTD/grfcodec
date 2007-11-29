@@ -55,6 +55,9 @@ EXTRA(RECOLOR_TABLE,"prebarvovaci tabulka")
 EXTRA(SET,"skupina z Akce 1")
 EXTRA(CID,"cargo ID")
 
+EXTRA(ACT5_SIZE,"%d (0x%x)")
+EXTRA(ACT5_ORSIZE," nebo %d (0x%x)")
+
 EXTRA(EOF_READING_NAME,"Konec souboru pri nacitani nazvu %2x.")
 EXTRA(OVERLENGTH_NAME,"Delka nazvu %2x presahuje 100 znaku.")
 
