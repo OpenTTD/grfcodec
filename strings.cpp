@@ -253,11 +253,23 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 		}else if(ch<0x88||ch==0x9A){
 			if(ch==0x9A){
 				ch=data.ExtractByte(++offs);
-				if(ch){
+				switch(ch){
+				case 0:		// print qword currency
+					if(!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
+				case 1:		// print qword currency
+				case 2:		// ignore color code
+					break;
+				case 3:		// push WORD
+					stack = string(2,char(STACK_WORD)) + stack;
+					offs++;
+					// fall through, to increment offs by 2
+				case 4:		// Delete BYTE characters
+					offs++;
+					break;
+				default:
 					IssueMessage(ERROR,INVALID_EXT_CODE,offs,ch);
 					perms|=CTRL_NO_STACK_CHECK;
-				}else if(!include_00_safe)
-					IssueMessage(WARNING1,EMBEDDED_00,offs);
+				}
 			}
 			if(~perms&CTRL_NO_STACK_CHECK){
 				switch(ch){
@@ -273,7 +285,11 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					STACK_CHECK(STACK_DWORD,4)
 				//Extended format codes (9A XX) 
 				case 0x00:
+				case 0x01:
 					STACK_CHECK(STACK_QWORD,8)
+				case 2: case 3: case 4: 
+					--ret;	// These do not read from the stack.
+					break;
 				DEFAULT(ch)
 				}
 				++ret;
