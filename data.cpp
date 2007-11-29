@@ -50,18 +50,32 @@ using namespace std;
 //Format: Bitmask
 //Bit(s)			Meaning
 //0,1,2				valid width(s) (B,W,D) (If all are clear, this is a bitmask-variable.)
-//5					write in D
-//6					read in D
-//7					read in 7
+//5	(20h)			write in D
+//6	(40h)			read in D
+//7 (80h)			read in 7
 //                                          80                              88                              90                              98                              A0
-static const char _dat79Dv[]="\x20\x02\x20\x00\xC1\x00\xC1\xC5\x80\x80\x00\x84\x00\x00\xC6\x00\xC1\xE1\xE4\x00\x00\xC1\xE6\xE6\xE6\xE6\xE1\x00\x24\x87\x00\x00\xC4\xE4\x24";
+static const char _dat79Dv[]="\x20\x03\x22\x00\xC1\x00\xC1\xC5\x80\x80\x00\x84\x00\x00\xC6\x00\xC1\xE1\xE4\x00\x00\xC1\xE6\xE6\xE6\xE6\xE1\x00\x24\x87\x00\x00\xC4\xE4\x24\x00\x84";
 
-static const char _datB[]="\x01\x01\x03\x06\x02\x02\x02\x03\x02\x02";
+static const char _datB[]="\x01\x02\x03\x07\x02\x02\x02\x03\x02\x02\x02";
 
-// Bit 15 set if recolor block, bit 14 set if mixed block
+// Bit 15 set if recolor block, bit 14 set if mixed block, bit 13 set if 80+x valid, bit 
 // Remaining bits are number of sprites expected. If 0, sprite count is not checked
-static const char _dat5[]="\x03\x04\x12\x30\x00\x4A\x00\x4B\x00\x41\x00\x06\x00\x00\x81\x71\x00\x85\x00\x10\x00\x00\x40\x0C\x00\x0F\x00\x08\x00\x08\x00";
-//                                         05      06              08                              0C                              10
+// Flags:
+// 01 -- recolor
+// 02 -- mixed
+// 04 -- word
+// 08 -- allow 80+x
+static const char _dat5[]="\x04\x00"
+	"\x13\x30\x70\xF0"			//4
+	"\x11\x30"					//5
+	"\x12\x4A\x5A"				//6
+	"\x31\x4B\x41\x06"			//7..9
+"\x85\x11\x00\x01"				//A
+	"\x31\x71\x85\x10"			//B..D
+"\x82\x11\x00"					//E
+	"\x51\x0C\x0F\x08\x08\x37"	//F..13
+"\x88\x21\x1D\x87"				//14..15
+"\x00";
 
 static const char _datTextIDs[]="\x04\x08\x35\x03\x11\x00\x25\x00\x19\x00\x5D\x00\x11\x00\x6D\x00\x08\x00\x11\x00\x3C\x00\x2A\x00\x08\x00\x19\x00\x39\x00\x80\x00\x00\x00\x08\x01\x6C\x00\x38\x00\x43\x00\x44\x00\x00\x00\x06\x00\x00\x00\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x4D\x00\x00\x00\x00\x00\x68\x01"
 //Count of IDs in class:                   -0000-                          -2000-                          -4000-                          -6000-                          -8000-                          -A000-                          -C000-                          -E000-

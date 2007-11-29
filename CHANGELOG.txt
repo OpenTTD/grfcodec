@@ -18,14 +18,17 @@ v3.4.5 to
   - Station variables 60..65 can take a parameter up to FF.
   - Callbacks 147..14C.
   - Industry properties 23, 24.
+  - Action 7 variable A1.
+  - Action B message 06.
 - Fix parameter check for global 60+x variables.
 - Allow variational 2s to take var 1A with an <and-mask> of 0.
 - Check that variational 2 operator 0F's left-hand side side was stored.
 - Prohibit storing to persistent registers when they don't exist.
 - Fix several bugs in the formatting of variable-length properties.
 - Check cargo types against the cargo translation table.
-- add \2ror and \2rot for Adv2 op 11.
+- Add \2ror and \2rot for Adv2 op 11.
 - Add \d<YMD> and \d<DMY> to generate long format intro dates.
+- Support the extended action 5 format.
 
 v3.4.4 to v3.4.5 (r1396)
 - Data file updates:
