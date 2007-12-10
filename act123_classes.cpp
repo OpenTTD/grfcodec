@@ -139,7 +139,7 @@ uint Check2v::GetEffFeature(uint feature,uint type){
 void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 	if(feature>MaxFeature())return;
 	if(var&0x80){
-		if((var&0x7F)>_p[feature].last80) IssueMessage(ERROR,NONEXISTANT_VARIABLE,offs,var);
+		if(var>_p[feature].last80) IssueMessage(ERROR,NONEXISTANT_VARIABLE,offs,var);
 		else if(!IsValid(feature, var)) IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
 		else if(shift>=_p[feature].var80[var&0x7F].width<<3)IssueMessage(WARNING4,SHIFT_TOO_FAR,offs+1,var);
 	}else if(!IsValid(feature,var))
@@ -203,7 +203,7 @@ int Check2v::VarData::Load(FILE*pFile){
 	}
 	*/
 	width&=0x7F;
-	if((var&0x60)==0x60)maxparam=GetCheckByte(2v);
+	if((var&0xE0)==0x60)maxparam=GetCheckByte(2v);
 	return var;
 }
 
