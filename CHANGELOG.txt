@@ -20,6 +20,7 @@ v3.4.5 to
   - Industry properties 23, 24.
   - Action 7 variable A1.
   - Action B message 06.
+  - Canal variables 82..83.
 - Fix parameter check for global 60+x variables.
 - Allow variational 2s to take var 1A with an <and-mask> of 0.
 - Check that variational 2 operator 0F's left-hand side side was stored.
