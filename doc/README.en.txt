@@ -1,4 +1,4 @@
-NFORenum v3.4.5
+NFORenum v3.4.6
 NFO file re-numberer and linter
 
 
