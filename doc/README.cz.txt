@@ -1,4 +1,4 @@
-﻿NFORenum v3.4.5
+﻿NFORenum v3.4.6
 Nástroj pro přečíslování a kontrolu NFO souborů
 
 
