@@ -1,4 +1,8 @@
 Changelog:
+v3.4.6 to
+- Data file updates:
+  - Action 2 variable 12.
+
 v3.4.5 to v3.4.6 (r1795)
 - Data file updates:
   - Industry texts may have arbitrary text-stack data.

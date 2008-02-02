@@ -18,3 +18,5 @@ TODO:
 - Auto-correction:
   - Action 7/9 num-sprites if it jumps to or past EOF.
 - Multiple backups
+- gcc-style output (file:line)
+- NFO version 8
