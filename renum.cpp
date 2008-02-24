@@ -389,7 +389,7 @@ bool verify_real(string&data){
 	if(state)data=data.substr(0,loc+5)+meta;
 	if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
 	if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YPOS,0);
-	if(!(comp&1)||(comp&0x0B)!=comp)IssueMessage(comp==0xFF?ERROR:WARNING1,REAL_BAD_COMP,comp);
+	if(!(comp&1)||(comp&0x4B)!=comp)IssueMessage(comp==0xFF?ERROR:WARNING1,REAL_BAD_COMP,comp);
 	if(xsize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XSIZE,1);
 	else if(xsize>0xFFFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XSIZE,0xFFFF);
 	if(ysize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YSIZE,1);
