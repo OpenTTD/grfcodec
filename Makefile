@@ -33,7 +33,7 @@ NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo renum.exe || echo renum)
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
 BOOST_INCLUDE=$(shell \
-find /usr/include /usr/local/include -maxdepth 1 -name 'booost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
+find /usr/include /usr/local/include -maxdepth 1 -name 'boost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
 ifeq ($(BOOST_INCLUDE),)
 BOOST_INCLUDE=$(shell \
 ( [ -d /usr/include/boost/date_time ] && echo /usr/include ) || \
