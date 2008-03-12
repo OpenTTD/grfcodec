@@ -315,9 +315,9 @@ void pcxread::readheader()
 		if(!memcmp(palette,defaultpalettes[i],768)) break;
 
 	if ( i == NUM_PALS ) {
-		if ( _force )
+		if ( _force ) {
 			if (!_quiet) fprintf(stderr, "Warning: Encoding despite unrecognized palette.\n");
-		else{
+		} else {
 			fprintf(stderr, "Error: Unrecognized palette, aborting.\n"
 				"Specify -f on the command line to override this check.\n");
 			exit(2);
