@@ -72,7 +72,9 @@ class pcxfile {
 	void newline();
 	void streamputpixel(U8 colour);
 	void streamputpixel(U8 *buffer, unsigned long datasize);
+private:
 	U8 streamgetpixel();
+public:
 	void streamgetpixel(U8 *buffer, unsigned long datasize);
 
 	void installreadmap(int *map);
