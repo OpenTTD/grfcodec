@@ -233,28 +233,31 @@ U8 pcxfile::streamgetpixel()
 {
 	int x = subofsx(cx, 0);
 	int y = subofsy(cy, 0);
-	int colour;
 
 	cx++;
 	if (x < 0 || y < 0)
-		colour = 255;
+		return 255;
 	else
-		colour = band[y][x];
-	if (getcolourmap[colour] == -1) {
-		printf("Agh! Getting colour %d but it has no map!\n", colour);
-		exit(2);
-	}
-
-	return getcolourmap[colour];
+		return band[y][x];
 }
+
+extern bool _mapAll;
 
 void pcxfile::streamgetpixel(U8 *buffer, unsigned long datasize)
 {
-	for (unsigned long i=0; i<datasize; i++) {
-		buffer[i] = streamgetpixel();
+	unsigned long i=0;
+	int colour;
+	bool maybeGlyph=!_mapAll;
+	for (; i<datasize; i++) {
+		colour = streamgetpixel();
+		maybeGlyph &= (colour < 3);
+		buffer[i] = colour;
 		if ( (i % px) == (unsigned long) px-1)
 			newline();
 	}
+	if (!maybeGlyph)
+		for(i=0; i<datasize; i++)
+			buffer[i] = getcolourmap[buffer[i]];
 }
 
 void pcxfile::putpixel(int x, int y, U8 colour)
@@ -485,4 +488,3 @@ void pcxfile::be_swapheader(pcxheader& header)
 	header.screen[0] = BE_SWAP16(header.screen[0]);
 	header.screen[1] = BE_SWAP16(header.screen[1]);
 #endif
-}
