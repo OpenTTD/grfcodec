@@ -423,6 +423,9 @@
 				RelativePath=".\data.h">
 			</File>
 			<File
+				RelativePath=".\escapes.h">
+			</File>
+			<File
 				RelativePath=".\ExpandingArray.h">
 			</File>
 			<File

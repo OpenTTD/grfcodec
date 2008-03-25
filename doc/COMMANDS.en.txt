@@ -82,13 +82,22 @@ When off, high-ASCII bytes (80..FF) will always be outputted in hex. When on,
 high-ASCII bytes in strings will be quoted. Regardless of the setting of this
 option, the bytes 00..1F, 7B..A0, AA, AC, AD, AF, and B4..B8 will never be
 quoted, unless in a UTF-8 sequence. High-ASCII bytes that are part of a UTF-8
-sequence are controlled by the next option. 
+sequence are controlled by the next option.
 
 QUOTEUTF8 ON|OFF (default ON)
-When off, UTF-8 sequences in strings will always be outputted in hex. When
+When off, UTF-8 sequences in strings will always be output in hex. When
 on, UTF-8 sequences will be quoted. High-ASCII bytes in strings that do not
 begin with an uppercase thorn (U+00DE, Þ) are controlled by the previous
-option.
+option. Regardless of this setting, U+E0XX codes will be output according
+to USEESCAPES.
+
+USEESCAPES ON|OFF
+When on, and when writing Info version 7 or greater, NFORenum will generate
+escape sequences instead of hex bytes for special and control characters in
+strings (including all U+E0XX and characters consumed by codes 01, 1F, 81,
+and 9A), and for condition and operation bytes in actions 2, 7, 9, and D.
+In the future, this may also generate escapes for vehicle property 00,
+properties that set TextIDs, and other related entities.
 
 GETCOOKIE
 This is replaced with @@BEAUTIFY SETCOOKIE <cookie>, where <cookie> is the

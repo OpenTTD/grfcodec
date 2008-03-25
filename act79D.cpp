@@ -2,7 +2,7 @@
  * act79D.cpp
  * Contains definitions for checking actions 7, 9, and D.
  *
- * Copyright 2005-2007 by Dale McCoy.
+ * Copyright 2005-2008 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@ using namespace std;
 #include"data.h"
 #include"pseudo.h"
 #include"command.h"
+typedef char U8;
+#define NFORENUM
+#include"escapes.h"
 
 uint numvars;
 class Vars{
@@ -93,6 +96,9 @@ int Check7(PseudoSprite&data){
 	uint desiredSize=data.Length()-5;
 	data.SetAllHex();
 	uint var=data.ExtractByte(1),var_size=data.ExtractByte(2),cond=data.ExtractByte(3);
+	for(uint k=0;k<num_esc;k++)
+		if(escapes[k].action==7&&escapes[k].byte==(char)cond)
+			data.SetEscape(3,false,mysprintf(" %t",escapes[k].str),1);
 	if(cond>0xC)IssueMessage(ERROR,BAD_CONDITION,cond);
 	else if(cond>5&&cond<0xB){
 		if(var!=0x88){
@@ -168,6 +174,9 @@ bool CheckD(PseudoSprite&data,uint length){
 	if(length<5){IssueMessage(FATAL,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9);return false;}
 	data.SetAllHex();
 	uint target=data.ExtractByte(1),op=data.ExtractByte(2),src1=data.ExtractByte(3),src2=data.ExtractByte(4);
+	for(uint k=0;k<num_esc;k++)
+		if(escapes[k].action==0xD&&escapes[k].byte==(char)op&&escapes[k].pos==2)
+			data.SetEscape(2,false,mysprintf(" %t",escapes[k].str),1);
 	if(!Vars::Instance().canWriteD(target))IssueMessage(ERROR,INVALID_TARGET);
 	if((op&0x7F)>D::Instance().maxop)IssueMessage(ERROR,INVALID_OP,2,op);
 	if(!Vars::Instance().canReadD(src1))IssueMessage(ERROR,INVALID_SRC,1);
@@ -184,6 +193,9 @@ bool CheckD(PseudoSprite&data,uint length){
 			}else if(info==0xFFFF){
 				if(src1>D::Instance().maxpatchvar)IssueMessage(ERROR,INVALID_SRC,1);
 			}else{
+				for(uint k=0;k<num_esc;k++)
+					if(escapes[k].action==0xD&&escapes[k].byte==(char)src1&&escapes[k].pos==3)
+						data.SetEscape(3,false,mysprintf(" %t",escapes[k].str),1);
 				uint feat=(info>>8)&0xFF,count=info>>16;
 				if(src1>6)IssueMessage(ERROR,INVALID_SRC,1);
 				if(feat>MaxFeature()||!D::Instance()[feat])IssueMessage(ERROR,INVALID_FEATURE);
