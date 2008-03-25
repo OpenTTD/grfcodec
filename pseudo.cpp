@@ -1,8 +1,8 @@
 /*
  * pseudo.cpp
- * Implementation of the PsuedoSprite class.
+ * Implementation of the PseudoSprite class.
  *
- * Copyright 2006-2007 by Dale McCoy.
+ * Copyright 2006-2008 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ extern int NFOversion;
 
 bool TrySetVersion(int);
 
-enum{HEX,TEXT,UTF8,ENDQUOTE,NOBREAK=4};
+enum{HEX,TEXT,UTF8,ENDQUOTE,QESC,QEXT,NQEXT,NOBREAK=0x80};
 
 
 #define cur_pos() ((uint)out.str().length()-1)
@@ -398,11 +398,12 @@ bool PseudoSprite::MayBeSprite(const string&sprite){
 uint PseudoSprite::Length()const{return(uint)(valid?packed.length():0);}
 
 PseudoSprite&PseudoSprite::SetHex(uint i){beauty[i]=HEX;return*this;}
+PseudoSprite&PseudoSprite::SetHex(uint i,uint num){while(--num)beauty[i++]=HEX;return*this;}
 PseudoSprite&PseudoSprite::SetAllHex(){beauty.clear();return*this;}
 PseudoSprite&PseudoSprite::SetUTF8(uint i,uint len){while(--len)beauty[i++]=UTF8;return*this;}
 PseudoSprite&PseudoSprite::SetText(uint i){
 	if(i&&GetState(CONVERTONLY)){
-		if((beauty[i-1]&3)==ENDQUOTE&&context[i-1]=="")context[i-1]=" ";
+		if((beauty[i-1]&~NOBREAK)==ENDQUOTE&&context[i-1]=="")context[i-1]=" ";
 	}
 	beauty[i]=TEXT;
 	return*this;
@@ -411,6 +412,40 @@ PseudoSprite&PseudoSprite::SetText(uint i,uint num){
 	for(uint j=i+num-1;i<j;i++)SetText(i);
 	return SetEot(i);
 }
+
+PseudoSprite&PseudoSprite::SetQEscape(uint i){
+	if(GetState(USEESCAPES))
+		beauty[i]=QESC;
+	else
+        SetHex(i);
+	return*this;
+}
+
+PseudoSprite&PseudoSprite::SetQEscape(uint i,uint num){
+	if(GetState(USEESCAPES)){
+		while(--num)
+			beauty[i++]=QESC;
+		return *this;
+	}
+	return SetHex(i,num);
+}
+
+PseudoSprite&PseudoSprite::SetEscapeWord(uint i){
+	return SetEscape(i,false,mysprintf(" \\wx%x",ExtractWord(i)),2);
+}
+
+PseudoSprite&PseudoSprite::SetEscape(uint i, bool quote, string ext, uint len){
+	if(GetState(USEESCAPES)){
+		while(len--){
+			ext_print[i+len]="";
+			beauty[i+len]=char(quote?QEXT:NQEXT);
+		}
+		ext_print[i]=ext;
+		return *this;
+	}
+	return SetHex(i,len);
+}
+
 PseudoSprite&PseudoSprite::SetEot(uint i){beauty[i]=ENDQUOTE;return*this;}
 PseudoSprite&PseudoSprite::SetEol(uint i,uint minbreaks,uint lead){
 	if(GetState(CONVERTONLY)||GetState(LINEBREAKS)<minbreaks||i+1==Length())return*this;
@@ -561,18 +596,34 @@ ostream&PseudoSprite::output(ostream&out){
 //from grfcodec v0.9.7: http://www.ttdpatch.net/grfcodec
 //grfcodec is Copyright 2000-2005 Josef Drexler
 	for(uint i=0;i<Length();i++) {
-		if(CanQuote((*this)[i])&&IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8))) {
+		if(DoQuote(i)){
 			if (!instr){
 				out<<" \""+((GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0);
 				count+=3-((GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0);// count close-quote here.
 				instr=true;
 			}
-			if(NFOversion>6&&(*this)[i]=='"'){
-				out<<"\\\"";
-				count+=2;
-			}else if(NFOversion>6&&(*this)[i]=='\\'){
-				out<<"\\\\";
-				count+=2;
+			if(NFOversion>6){
+				if((beauty[i]&~NOBREAK)==QESC){
+					if((*this)[i]=='\r'){
+						out<<"\\n";
+						count=+2;
+					}else{
+						out<<mysprintf("\\%2x",(*this)[i]);
+						count+=3;
+					}
+				}else if((beauty[i]&~NOBREAK)==QEXT){
+					out<<ext_print[i];
+					count+=(uint)ext_print[i].size();
+				}else if((*this)[i]=='"'){
+					out<<"\\\"";
+					count+=2;
+				}else if((*this)[i]=='\\'){
+					out<<"\\\\";
+					count+=2;
+				}else{
+					out<<(char)(*this)[i];
+					count++;
+				}
 			}else{
 				out<<(char)(*this)[i];
 				count++;
@@ -583,9 +634,14 @@ ostream&PseudoSprite::output(ostream&out){
 				out<<'"';
 				instr=false;
 			}
-			out<<mysprintf(" %2x"+((GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0),(*this)[i]);
+			if(NFOversion>6 && (beauty[i]&~NOBREAK)==NQEXT){
+				out<<ext_print[i];
+				count+=(uint)ext_print[i].size();
+			}else{
+				out<<mysprintf(" %2x"+((GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0),(*this)[i]);
+				count+=3;
+			}
 			noendl=false;
-			count+=3;
 		}
 
 		//Context control (comments, beautifier controlled newlines, &c.)
@@ -593,7 +649,7 @@ ostream&PseudoSprite::output(ostream&out){
 			out<<'"';
 			instr=false;
 		}
-		if(context[i]==" "&&instr&&i+1<Length()&&(IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8))))
+		if(context[i]==" "&&(instr&&i+1<Length()&&(IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8)))||(beauty[i]&~NOBREAK)==NQEXT))
 			context[i]="";
 		else if(context[i]!=""){
 			if(instr){
@@ -642,6 +698,11 @@ bool PseudoSprite::CanQuote(uint byte){
 		byte>0x1F&&(byte!='"'||NFOversion>6)&&(byte<0x7F||byte>0x9F);
 }
 
+bool PseudoSprite::DoQuote(uint i)const{
+	if((beauty[i]&~NOBREAK)==QESC || (beauty[i]&~NOBREAK)==QEXT) return NFOversion>6;	// Quote IFF we have escapes
+	return CanQuote((*this)[i])&&IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8));
+}
+
 void PseudoSprite::Invalidate(){
 	IssueMessage(0,PARSE_FAILURE,_spritenum);
 	valid=false;
@@ -649,16 +710,21 @@ void PseudoSprite::Invalidate(){
 }
 
 bool PseudoSprite::IsText(uint i)const{
-	return((beauty[i]&3)==TEXT||(beauty[i]&3)==ENDQUOTE)&&!(i&&(beauty[i-1]&3)==UTF8);
+	int type = beauty[i]&~NOBREAK;
+	if (NFOversion>6)
+		type = type==TEXT || type==ENDQUOTE || type==QESC || type==QEXT;
+	else
+		type = type==TEXT || type==ENDQUOTE;
+	return type &&!(i&&(beauty[i-1]&~NOBREAK)==UTF8);
 }
 bool PseudoSprite::IsUTF8(uint i)const{
-	return (beauty[i]&3)==UTF8||(i&&(beauty[i-1]&3)==UTF8);
+	return (beauty[i]&~NOBREAK)==UTF8||(i&&(beauty[i-1]&~NOBREAK)==UTF8);
 }
 bool PseudoSprite::IsEot(uint i)const{
-	return (beauty[i]&3)==ENDQUOTE;
+	return (beauty[i]&~NOBREAK)==ENDQUOTE;
 }
 bool PseudoSprite::IsLinePermitted(uint i)const{
-	return!(i&&((beauty[i-1]&3)==UTF8||beauty[i]&NOBREAK));
+	return!(i&&((beauty[i-1]&~NOBREAK)==UTF8||beauty[i]&NOBREAK));
 }
 
 bool PseudoSprite::UseOrig()const{

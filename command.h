@@ -2,7 +2,7 @@
  * command.h 
  * Defines structs and declares functions for comment commands.
  *
- * Copyright 2004-2006 by Dale McCoy.
+ * Copyright 2004-2006,2008 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,6 +106,7 @@ COMMAND_DATA(CONVERTONLY)
 COMMAND_DATA(LINEBREAKS)
 COMMAND_DATA(GETCOOKIE)
 COMMAND_DATA(SETCOOKIE)
+COMMAND_DATA(USEESCAPES)
 COMMAND_DATA_END()
 
 COMMAND_DATA_START(ext)

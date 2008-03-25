@@ -2,7 +2,7 @@
  * command.cpp
  * Defines functions for comment commands.
  *
- * Copyright 2004-2006 by Dale McCoy.
+ * Copyright 2004-2008 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,16 @@ struct command{
 	uint sanity_messages;//,verbose;
 	int real:2;
 	bool remove_messages,beautifier,diff,locked,useoldnums;
+	//7..0: MAXLEN
+	//8: QuoteHighAscii
+	//9: QuoteUTF8
+	//10: HexGRFID
+	//12..11: Linebreaks
+	//13: UseEscape
+	//14: Unused
+	//15: Unused
+	//20..16, 25..21, 30..26: Leading space 1,2,3
+	//31: CONVERTONLY
 	uint beauty;
 	Expanding0Array<int>warnstate;
 }_commandState,_CLstate;
@@ -84,7 +94,7 @@ command::command(){
 	beautifier=diff=locked=false;
 	sanity_messages=WARNING3;
 	real=0;
-	beauty=686031766;
+	beauty=686039958;
 //	verbose=0;
 }
 
@@ -281,7 +291,7 @@ bool parse_comment(const string&line){
 		break;
 	case BEAUTIFY:{
 		commandstream>>command_part;
-		uint val=find_command(command_part,beaut);
+		uint val=find_command(command_part,beaut),togglebit;
 		if(val!=(uint)-1&&val!=OFF)_commandState.beautifier=true;
 		switch(val){
 		case -1:
@@ -298,35 +308,14 @@ bool parse_comment(const string&line){
 			_commandState.beauty=_commandState.beauty&~0xFF|val;
 			break;
 		case QUOTEHIGHASCII:
-			commandstream>>command_part;
-			val=find_command(command_part,beaut);
-			if(!commandstream||val==(uint)-1){
-				IssueMessage(0,COMMAND_INVALID_ARG,gen[BEAUTIFY].name);
-				return true;
-			}
-			if(val==OFF)_commandState.beauty&=~0x100;
-			else _commandState.beauty|=0x100;
-			break;
+			togglebit = 0x100;
+			goto dotoggle;
 		case QUOTEUTF8:
-			commandstream>>command_part;
-			val=find_command(command_part,beaut);
-			if(!commandstream||val==(uint)-1){
-				IssueMessage(0,COMMAND_INVALID_ARG,gen[BEAUTIFY].name);
-				return true;
-			}
-			if(val==OFF)_commandState.beauty&=~0x200;
-			else _commandState.beauty|=0x200;
-			break;
+			togglebit = 0x200;
+			goto dotoggle;
 		case HEXGRFID:
-			commandstream>>command_part;
-			val=find_command(command_part,beaut);
-			if(!commandstream||val==(uint)-1){
-				IssueMessage(0,COMMAND_INVALID_ARG,gen[BEAUTIFY].name);
-				return true;
-			}
-			if(val==ON)_commandState.beauty|=0x400;
-			else _commandState.beauty&=~0x400;
-			break;
+			togglebit = 0x400;
+			goto dotoggle;
 		case LEADINGSPACE:{
 			commandstream>>command_part;
 			uint lead[3]={0,0,0};
@@ -355,15 +344,8 @@ bool parse_comment(const string&line){
 			_commandState.beauty|=((breaks+2)&3)<<11;
 			break;
 		}case CONVERTONLY:{
-			commandstream>>command_part;
-			val=find_command(command_part,beaut);
-			if(!commandstream||val==(uint)-1){
-				IssueMessage(0,COMMAND_INVALID_ARG,gen[BEAUTIFY].name);
-				return true;
-			}
-			if(val==ON)_commandState.beauty|=0x80000000;
-			else _commandState.beauty&=~0x80000000;
-			break;
+			togglebit = 0x80000000;
+			goto dotoggle;
 		}case GETCOOKIE:
 			inject(mysprintf("%t@@BEAUTIFY SETCOOKIE %d",COMMENT_PREFIX,_commandState.beauty));
 			return false;
@@ -373,8 +355,20 @@ bool parse_comment(const string&line){
 				return true;
 			}
 			break;
+		case USEESCAPES:
+			togglebit = 0x2000;
+			goto dotoggle;
 		default:
 			INTERNAL_ERROR(command,find_command(command_part,beaut));
+dotoggle:
+			commandstream>>command_part;
+			val=find_command(command_part,beaut);
+			if(!commandstream||val==(uint)-1){
+				IssueMessage(0,COMMAND_INVALID_ARG,gen[BEAUTIFY].name);
+				return true;
+			}
+			if(val==OFF)_commandState.beauty&=~togglebit;
+			else _commandState.beauty|=togglebit;
 		}
 		commandstream>>command_part;
 		if(_commandState.locked)_commandState=_CLstate;
@@ -493,6 +487,7 @@ uint GetState(enum beaut type,int arg){
 		case QUOTEUTF8:return beaut&0x200;
 		case HEXGRFID:return beaut&0x400;
 		case LINEBREAKS:return(((beaut&0x1800)>>11)+2)&3;
+		case USEESCAPES:return beaut&0x2000;
 		case CONVERTONLY:return beaut&0x80000000;
 		DEFAULT(type);
 	}

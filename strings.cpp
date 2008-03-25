@@ -200,38 +200,46 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			}else if(ch<256){
 				if(!valid){//invalid UTF-8, parse as bytes
 					if((/*ch>0x7A&&*/ch<0xA1)||ch==0xAA||ch==0xAC||ch==0xAD||ch==0xAF||(ch>0xB3&&ch<0xB9))
-						data.SetHex(offs);//nonprintable -- control or special.
+						data.SetQEscape(offs);//nonprintable -- control or special.
 					else data.SetText(offs);
 				}else ch=0x20;//valid UTF-8 encoding of U+0080..U+00FF; bypass control-char checks
-			}else if(ch>0xE07A&&ch<0xE100)ch&=0xFF;//UTF-8 encoding of U+E07B..U+E0FF; run control-char checks
+			}else if(ch>0xE07A&&ch<0xE100){
+				data.SetEscape(offs,true,mysprintf("\\U%x",ch),3);
+				ch&=0xFF;//UTF-8 encoding of U+E07B..U+E0FF; run control-char checks
+			}
 		}else{//!utf8
-			if((ch>0x7A&&ch<0xA1)||ch==0xAA||ch==0xAC||ch==0xAD||ch==0xAF||(ch>0xB3&&ch<0xB9))
-				data.SetHex(offs);//nonprintable -- control or special.
+			if(ch<0x20||(ch>0x7A&&ch<0xA1)||ch==0xAA||ch==0xAC||ch==0xAD||ch==0xAF||(ch>0xB3&&ch<0xB9))
+				data.SetQEscape(offs);//nonprintable -- control or special.
 			else data.SetText(offs);
 		}
-		if(ch==1){
-			if(~perms&CTRL_SPACE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
-			if(!data.ExtractByte(++offs)&&!include_00_safe)
-				IssueMessage(WARNING1,EMBEDDED_00,offs);
-		}else if(ch==0x0D){
-			if(~perms&CTRL_NEWLINE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
-			try{
-				if(data[offs+1]!=0x0D)data.SetEol(offs,2);
-				else data.SetNoEol(offs);
-			}catch(uint){}
-		}
-		else if(ch==0x0E){if(~perms&CTRL_FONT_SMALL)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);}
-		else if(ch==0x0F){if(~perms&CTRL_FONT_LARGE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);}
-		else if(ch==0x1F){
-			if(~perms&CTRL_SPACE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
-			if(!data.ExtractByte(++offs)&&!include_00_safe)
-				IssueMessage(WARNING1,EMBEDDED_00,offs);
-			if(!data.ExtractByte(++offs)&&!include_00_safe)
-				IssueMessage(WARNING1,EMBEDDED_00,offs);
-		}else if(ch<0x20)IssueMessage(WARNING3,UNUSED_CONTROL,offs,ch);
-		else if(ch<0x7B);
+		if(ch<0x20){
+			if(ch==1){
+				if(~perms&CTRL_SPACE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
+				if(!data.ExtractByte(++offs)&&!include_00_safe)
+					IssueMessage(WARNING1,EMBEDDED_00,offs);
+				data.SetQEscape(offs);
+			}else if(ch==0x0D){
+				if(~perms&CTRL_NEWLINE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
+				try{
+					if(data[offs+1]!=0x0D)data.SetEol(offs,2);
+					else data.SetNoEol(offs);
+				}catch(uint){}
+			}
+			else if(ch==0x0E){
+				if(~perms&CTRL_FONT_SMALL)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
+			}else if(ch==0x0F){
+				if(~perms&CTRL_FONT_LARGE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
+			}else if(ch==0x1F){
+				if(~perms&CTRL_SPACE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
+				if(!data.ExtractByte(++offs)&&!include_00_safe)
+					IssueMessage(WARNING1,EMBEDDED_00,offs);
+				data.SetQEscape(offs,2);
+				if(!data.ExtractByte(++offs)&&!include_00_safe)
+					IssueMessage(WARNING1,EMBEDDED_00,offs);
+			}else IssueMessage(WARNING3,UNUSED_CONTROL,offs,ch);
+		}else if(ch<0x7B);
 		else if(ch==0x81){
-			int id=data.ExtractWord(++offs);
+			int id=data.ExtractEscapeWord(++offs);
 			CheckTextID(0x49,id,offs);
 			if((!(id&0xFF)||!(id&0xFF00))&&!include_00_safe)
 				IssueMessage(WARNING1,INCLUDING_00_ID,offs,id);
@@ -252,7 +260,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			}
 		}else if(ch<0x88||ch==0x9A){
 			if(ch==0x9A){
-				ch=data.ExtractByte(++offs);
+				ch=data.ExtractQEscapeByte(++offs);
 				switch(ch){
 				case 0:		// print qword currency
 					if(!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
@@ -261,10 +269,11 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					break;
 				case 3:		// push WORD
 					stack = string(2,char(STACK_WORD)) + stack;
+					data.SetEscapeWord(++offs);
 					offs++;
-					// fall through, to increment offs by 2
+					break;
 				case 4:		// Delete BYTE characters
-					offs++;
+					data.SetQEscape(++offs);
 					break;
 				default:
 					IssueMessage(ERROR,INVALID_EXT_CODE,offs,ch);
@@ -294,13 +303,18 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				}
 				++ret;
 			}
-		}else if(ch<0x99){
+		}else if(ch<0x9A){
+			data.SetQEscape(offs);
 			if(~perms&CTRL_COLOR)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
-		}else if(ch==0x99){
-			if(~perms&CTRL_COLOR)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
-			if(!data.ExtractByte(++offs)&&!include_00_safe)
-				IssueMessage(WARNING1,EMBEDDED_00,offs);
-		}else if(ch<0x9E)IssueMessage(WARNING3,UNUSED_CONTROL,offs,ch);
+			if(ch==0x99){
+				if(!data.ExtractByte(++offs)&&!include_00_safe)
+					IssueMessage(WARNING1,EMBEDDED_00,offs);
+				data.SetQEscape(offs);
+			}
+		}else if(ch<0x9E){
+			data.SetQEscape(offs);
+			IssueMessage(WARNING3,UNUSED_CONTROL,offs,ch);
+		}
 		if(++offs>=length)break;
 	}
 	if(ch)
@@ -316,7 +330,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 	INTERNAL_ERROR(retInfo,retInfo);
 }
 
-static const uchar stackSize[]={0,2,2,2,4,2,8};
+static const uchar stackSize[]={0,1,2,2,4,2,8};
 
 string MakeStack(int items,...){
 	string ret;

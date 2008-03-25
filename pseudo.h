@@ -2,7 +2,7 @@
  * pseudo.h
  * Declaration of the PsuedoSprite class. Stores and re-writes pseudo-sprites.
  *
- * Copyright 2006 by Dale McCoy.
+ * Copyright 2006-2008 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,13 +32,21 @@ public:
 	PseudoSprite(const string&,int);
 
 	uint operator[](uint offs)const{return ExtractByte(offs);}
+	operator const char*()const{return packed.c_str();}
 	uint Length()const;
 	bool IsValid()const{return Length()!=0;}
 
 	PseudoSprite&SetText(uint);
 	PseudoSprite&SetText(uint,uint);
 	PseudoSprite&SetUTF8(uint,uint);
+
+	PseudoSprite&SetQEscape(uint);
+	PseudoSprite&SetQEscape(uint,uint);
+	PseudoSprite&SetEscape(uint,bool,string,uint);
+	PseudoSprite&SetEscapeWord(uint);
+
 	PseudoSprite&SetHex(uint);
+	PseudoSprite&SetHex(uint,uint);
 	PseudoSprite&SetAllHex();
 	PseudoSprite&SetEot(uint);
 	PseudoSprite&SetEol(uint,uint,uint);
@@ -63,6 +71,14 @@ public:
 	uint ExtendedLen(uint)const;
 	uint ExtractVariable(uint,uint)const;
 
+	uint ExtractQEscapeByte(uint offs){
+		SetQEscape(offs);
+		return ExtractByte(offs);
+	}
+	uint ExtractEscapeWord(uint offs){
+		SetEscapeWord(offs);
+		return ExtractWord(offs);
+	}
 	void AddComment(const string&,uint);
 	void TrailComment(const string&,uint);
 	void AddBlank(uint);
@@ -78,17 +94,19 @@ public:
 	static bool MayBeSprite(const string&);
 
 private:
+	bool DoQuote(uint)const;
 	bool IsText(uint)const;
 	bool IsUTF8(uint)const;
 	bool IsEot(uint)const;
 	bool IsLinePermitted(uint)const;
+	bool NoPrint(uint)const;
 
 	void Invalidate();
 	bool UseOrig()const;
 
 	string orig,packed;
 	Expanding0Array<char>beauty;
-	ExpandingArray<string>context;
+	ExpandingArray<string>context,ext_print;
 	bool valid,useorig;
 	const int oldspritenum;
 };
