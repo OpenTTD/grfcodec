@@ -1,6 +1,33 @@
 // Escapes.h
-// The 
+// The data required for writing the various not-quoted escape sequences.
+//
+// This file is shared between GRFCodec and NFORenum.
+// NFORenum defines NFORENUM. GRFCodec does not.
 
+
+#ifdef NFORENUM
+
+#define START_ESCAPES()\
+	const struct esc{\
+		char byte;\
+		char*str;\
+		char action;\
+		uint pos;\
+	}escapes[]={
+
+#define ESCAPE(byte,str,action,off)\
+	{(char)0x##byte,(char*)("\\" str),(char)0x##action,off},
+
+#define ESCAPE_79(byte,str,off)\
+	ESCAPE(byte,str,7,off)
+
+#define ESCAPE_AD(byte,str,action,off,adtl)\
+	{(char)0x##byte,(char*)("\\" str),(char)0x##action,off},
+
+#define ESCAPE_OVR(byte,str,action,ovr)\
+	{(char)0x##byte,(char*)("\\" str),(char)0x##action,0},
+
+#else	//!NFORENUM
 
 #define START_ESCAPES()\
 	const struct esc{\
@@ -24,13 +51,17 @@
 #define ESCAPE_OVR(byte,str,action,ovr)\
 	{(char)0x##byte,(char*)("\\" str),(char)0x##action,0,NULL,__ESC_OVR__##ovr},
 
-#define END_ESCAPES() };\
-	static const int num_esc=sizeof(escapes)/sizeof(escapes[0]);
-
 #define CALLBACK_AD(name)\
 	bool __ESC_AD__##name(const U8*data,uint len)
 #define CALLBACK_OVR(name)\
 	bool __ESC_OVR__##name(const U8*data,uint pos)
+
+#endif	//NFORENUM
+
+#define END_ESCAPES() };\
+	static const int num_esc=sizeof(escapes)/sizeof(escapes[0]);
+
+#ifndef NFORENUM
 
 // ***********************************************************************
 // Define callback functions for ESCAPE_* here
@@ -47,7 +78,7 @@ CALLBACK_AD(IsGRM){
 }
 
 CALLBACK_OVR(Is2Op){
-	if(pos<7||!(data[3]&0x80)||data[3]==0x80||data[3]==0x80)return false;
+	if(pos<7||!(data[3]&0x80)||data[3]==0x80||data[3]==0x83)return false;
 	uint w = 1<<((data[3]>>2)&3);
 	uint loc=4;//Start at first <var>
 	while(true){//read <var> [<param>] <varadjust> [<op> ...]. loc reports byte to be checked.
@@ -61,6 +92,8 @@ CALLBACK_OVR(Is2Op){
 		if(loc++/*<op>*/>pos)return false;//past proposed op byte
 	}
 }
+
+#endif
 
 START_ESCAPES()
 
