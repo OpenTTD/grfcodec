@@ -2,7 +2,7 @@
  * strings.cpp
  * Contains definitions for checking strings in actions 4, 8, and B.
  *
- * Copyright 2005-2006 by Dale McCoy.
+ * Copyright 2005-2008 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					else data.SetText(offs);
 				}else ch=0x20;//valid UTF-8 encoding of U+0080..U+00FF; bypass control-char checks
 			}else if(ch>0xE07A&&ch<0xE100){
-				data.SetEscape(offs,true,mysprintf("\\U%x",ch),3);
+				data.SetEscape(offs-2,true,mysprintf("\\U%x",ch),3);
 				ch&=0xFF;//UTF-8 encoding of U+E07B..U+E0FF; run control-char checks
 			}
 		}else{//!utf8
