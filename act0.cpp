@@ -2,7 +2,7 @@
  * act0.cpp
  * Contains definitions for checking action 0s.
  *
- * Copyright 2005-2007 by Dale McCoy.
+ * Copyright 2005-2008 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,7 +250,7 @@ void Check0::Check(PseudoSprite&str){
 		IssueMessage(WARNING1,NO_PROPS);
 	if(IDs==0&&(propsRemain!=1||feature||str.ExtractByte(i)!=0x1A))IssueMessage(WARNING1,NO_IDS);
 	feature!=8&&IDs&&CheckID(feature,firstID)&&CheckID(feature,maxID);
-	Expanding0Array<uint>propLoc;
+	Expanding0Array<uint>propLoc, idWidth;
 	try{
 		while(propsRemain||_autocorrect){
 			try{
@@ -306,8 +306,9 @@ void Check0::Check(PseudoSprite&str){
 					if(!CheckVar(i,str,*data,j+1<IDs,true))return;
 			}else if((len&7)==3){
 				i++;
-				for(j=0;j<IDs;j++)
+				for(j=0;j<IDs;j++){
 					i+=str.ExtendedLen(i);
+				}
 			}else{
 				i++;
 				for(uint j=0;j<IDs;j++){
@@ -478,12 +479,12 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 				break;
 			DEFAULT(ch)
 			}
-			switch((ch>>4)&3){
+			switch((ch>>4)&7){
 			case 1:str.SetText(str_loc-1-ch&7,ch&7);break;
 			case 2:str.SetDec(str_loc-1-ch&7,ch&7);break;
 			case 3:str.SetBE(str_loc-1-ch&7,ch&7);break;
 			}
-			if(ch>>6==3){
+			if(ch&0x80){
 				str.SetEol(str_loc-1,2);
 				addblank|=canaddblank;
 			}

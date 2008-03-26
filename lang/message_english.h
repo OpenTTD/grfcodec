@@ -2,7 +2,7 @@
  * message_english.h
  * Message text and data in English language.
  *
- * Copyright 2005-2007 by Dale McCoy.
+ * Copyright 2005-2008 by Dale McCoy.
  * Copyright 2006 by Dan Masek.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -258,6 +258,8 @@ NFO_MESSAGE(MASKED_BIT_SET,"GRFID has a bit set that is clear in the mask.\n",US
 NFO_MESSAGE(DISCARD_UNSTORED,"Operation 0F follows a non-store operation.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NO_PERS_REGS,"No persistent registers exist for this feature.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(DUPLICATE_TRANS_TABLE,"Cargo translation table previously found at sprite %d.\n",USE_PREFIX)
+NFO_MESSAGE(BAD_RANDSUBTYPE,"Invalid random 2 subtype.\n",USE_PREFIX)
+
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
