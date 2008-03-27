@@ -152,23 +152,33 @@ void Check2(PseudoSprite&data){
 	switch(nument1){
 	case 0x80:
 	case 0x83:
+	case 0x84:
 	{
 CHANGED_FEATURE(rand)
 		bool isRand=false;
 		unsigned int prevID=(unsigned)-1,rID,newfeature=(uint)-1;
-		nument2=data.ExtractByte(6);
+		uint base = 7;	// offset of first randID
+		if(nument1==0x84){
+			base = 8;
+			if(data.ExtractByte(4)&0x30)
+				IssueMessage(ERROR,BAD_RANDSUBTYPE);
+		}
+		nument2=data.ExtractByte(base-1);
 		if((nument2-1)&nument2/*tests for only one bit set*/||!nument2)IssueMessage(ERROR,RAND_2_NUMSETS);
 		else if(nument2==1)IssueMessage(WARNING3,ONLY_ONE_CHOICE);
-		rand2::Instance().CheckRand(feature,nument1,data.ExtractByte(4),data.ExtractByte(5),nument2);
-		if(_autocorrect&&length%2&&nument2*2!=(length-7)&&(length-7)/2<256&&!(((length-7)/2-1)&(length-7)/2)){
-			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-			IssueMessage(0,AUTOCORRECTING,6,NRAND,nument2,(length-7)/2);
-			data.SetByteAt(6,nument2=(length-7)/2);
+		rand2::Instance().CheckRand(feature,nument1,data.ExtractByte(base-3),data.ExtractByte(base-2),nument2);
+		if(_autocorrect&&!((length-base)%2)){
+			uint realcount=(length-base)/2;
+			if(nument2!=realcount && realcount<256 && !((realcount-1)&realcount)){
+				IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+				IssueMessage(0,AUTOCORRECTING,base-1,NRAND,nument2,realcount);
+				data.SetByteAt(base-1,nument2=realcount);
+			}
 		}
-		if(CheckLength(length,7+2*nument2,BAD_LENGTH,NRAND,VAL,nument2,7+2*nument2))return;
+		if(CheckLength(length,base+2*nument2,BAD_LENGTH,NRAND,VAL,nument2,base+2*nument2))return;
 		for(i=0;i<nument2;i++){
-			rID=data.SetNoEol(7+2*i).ExtractWord(7+2*i);
-			CheckCargoID(7*i+2,rID,feature,newfeature);
+			rID=data.SetNoEol(base+2*i).ExtractWord(base+2*i);
+			CheckCargoID(base+i*2,rID,feature,newfeature);
 			if(prevID!=(unsigned)-1)
 				isRand|=(prevID!=rID);
 			prevID=rID;
