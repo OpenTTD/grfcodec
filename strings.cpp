@@ -213,6 +213,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			else data.SetText(offs);
 		}
 		if(ch<0x20){
+			data.SetQEscape(offs);
 			if(ch==1){
 				if(~perms&CTRL_SPACE)IssueMessage(WARNING1,INVALID_CONTROL,offs,ch);
 				if(!data.ExtractByte(++offs)&&!include_00_safe)

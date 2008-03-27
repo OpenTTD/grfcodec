@@ -710,7 +710,7 @@ void PseudoSprite::Invalidate(){
 }
 
 bool PseudoSprite::IsText(uint i)const{
-	int type = beauty[i]&~NOBREAK;
+	int type = uchar(beauty[i])&~NOBREAK;
 	if (NFOversion>6)
 		type = type==TEXT || type==ENDQUOTE || type==QESC || type==QEXT;
 	else
