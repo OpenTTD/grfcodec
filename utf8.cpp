@@ -84,7 +84,7 @@ uint GetUtf8Char(PseudoSprite&data,uint&off,bool utf8,bool&valid){
 
 string GetUtf8Encode(uint ch){
 	if(ch<0x80)return string()+char(ch);
-	if(ch<0x8000)return string()+char(((ch>>6 )&0x1F)|0xC0)+CHAR(0);
+	if(ch<0x800)return string()+char(((ch>>6 )&0x1F)|0xC0)+CHAR(0);
 	if(ch<0x10000)return string()+char(((ch>>12)&0x0F)|0xE0)+CHAR(1)+CHAR(0);
 	if(ch<0x200000)return string()+char(((ch>>18)&0x07)|0xF0)+CHAR(2)+CHAR(1)+CHAR(0);
 	if(ch<0x4000000)return string()+char(((ch>>24)&0x03)|0xF8)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
