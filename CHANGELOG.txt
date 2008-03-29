@@ -3,7 +3,7 @@ v3.4.6 to
 - Data file updates:
   - Action 2 variable 12.
   - Bridge props 10..12.
-  - New sprites for Action 5 type 07.
+  - New sprites for Action 5 types 07, 14, 15.
 - Fix U+E0xx characters being output quoted.
 - Allow the beautifier to output escape sequences.
 - Support random 2 type 84.
