@@ -108,13 +108,13 @@ int find_command(const string&command,const commandData type[]){
 bool is_command(const string&line){
 	assert(is_comment(line));
 	size_t x=line.find_first_not_of(COMMENT+WHITESPACE);
-	return line[x]=='@'&&line[x+1]=='@';
+	return x!=string::npos&&x<(line.length()-1)&&line[x]=='@'&&line[x+1]=='@';
 }
 
 bool is_message(const string&line){
 	assert(is_comment(line));
 	size_t x=line.find_first_not_of(COMMENT+WHITESPACE);
-	return line[x]=='!'&&line[x+1]=='!';
+	return x!=string::npos&&x<(line.length()-1)&&line[x]=='!'&&line[x+1]=='!';
 }
 
 void reset_commands(){
