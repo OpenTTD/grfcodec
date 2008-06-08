@@ -243,6 +243,7 @@ NFO_MESSAGE(MASKED_BIT_SET,"GRFID ma zapnut bit, ktery je v masce vypnut.\n",USE
 NFO_MESSAGE(DISCARD_UNSTORED,"Operace 0F nenasleduje operaci ulozeni do registru.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NO_PERS_REGS,"Pro tuto feature neexistuji zadne trvale registry.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(DUPLICATE_TRANS_TABLE,"Precislovaci tabulka nakladu se jiz nachazi na spritu %d.\n",USE_PREFIX)
+NFO_MESSAGE(BAD_RANDSUBTYPE,"Chybny subtyp nahodne akce 2.\n",USE_PREFIX)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
