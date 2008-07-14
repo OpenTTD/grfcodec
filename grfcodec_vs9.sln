@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grfcodec_vs9", "grfcodec_vs9.vcproj", "{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug-NoVer|Win32 = Debug-NoVer|Win32
+		Release|Win32 = Release|Win32
+		Release-NoRev|Win32 = Release-NoRev|Win32
+		Release-NoVer|Win32 = Release-NoVer|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Debug|Win32.Build.0 = Debug|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Debug-NoVer|Win32.ActiveCfg = Debug-NoVer|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Debug-NoVer|Win32.Build.0 = Debug-NoVer|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release|Win32.ActiveCfg = Release|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release|Win32.Build.0 = Release|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release-NoRev|Win32.ActiveCfg = Release-NoRev|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release-NoRev|Win32.Build.0 = Release-NoRev|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release-NoVer|Win32.ActiveCfg = Release-NoVer|Win32
+		{C86188B5-7CD7-4382-ABA2-55E779CCE7B1}.Release-NoVer|Win32.Build.0 = Release-NoVer|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
