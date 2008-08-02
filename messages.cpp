@@ -23,6 +23,7 @@
 #include<cstdarg>
 #include<string>
 #include<cassert>
+#include<cstdlib>
 //#include<sstream>
 
 using namespace std;
@@ -72,7 +73,7 @@ string IssueMessage(int minSan,RenumMessageId id,...){
 	return vIssueMessage(minSan,id,ap);
 }
 
-string vIssueMessage(int minSan,RenumMessageId id,va_list arg_ptr){
+string vIssueMessage(int minSan,RenumMessageId id,va_list& arg_ptr){
 #if defined DEBUG || defined _DEBUG
 	curMessage=id;
 #endif

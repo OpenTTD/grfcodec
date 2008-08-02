@@ -77,7 +77,14 @@ public:
 	~apWrapper(){va_end(_ap);}
 	operator va_list&(){return _ap;}
 	operator const va_list&()const{return _ap;}
-	const va_list&operator=(const va_list&ap){return _ap=ap;}
+	va_list&operator=(va_list&ap){
+#ifdef __va_copy
+	    __va_copy(_ap,ap);
+#else
+	    _ap=ap;
+#endif
+	    return _ap;
+	}
 };
 #define WrapAp(v)\
 	apWrapper ap;\

@@ -24,6 +24,7 @@
 #include<cassert>
 #include<cstdarg>
 #include<errno.h>
+#include<cstdlib>
 using namespace std;
 
 #include"renum.h"

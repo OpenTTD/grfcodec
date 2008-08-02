@@ -29,6 +29,7 @@
 #endif
 #include<cassert>
 #include<errno.h>
+#include<cstdlib>
 
 using namespace std;
 

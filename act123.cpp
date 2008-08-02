@@ -23,6 +23,7 @@
 #include<fstream>
 #include<cassert>
 #include<errno.h>
+#include<cstdlib>
 
 using namespace std;
 

@@ -7,13 +7,15 @@
 
 /* Original version at http://xsb.sourceforge.net/api/utf8_8c-source.html */
 
-#include <cassert>
-#include "renum.h"
-#include "pseudo.h"
-#include "utf8.h"
-#include "messages.h"
-#include "command.h"
-#include "globals.h"
+#include<cassert>
+#include<cstdlib>
+
+#include"renum.h"
+#include"pseudo.h"
+#include"utf8.h"
+#include"messages.h"
+#include"command.h"
+#include"globals.h"
 
 #define CONT(i) ((data[off+i]&0xc0) == 0x80)
 #define VAL(i, s) ((data[off+i]&0x3f) << s)

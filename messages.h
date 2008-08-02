@@ -82,7 +82,7 @@
 
 // -------
 
-std::string vIssueMessage(int,RenumMessageId,std::va_list);
+std::string vIssueMessage(int,RenumMessageId,std::va_list&);
 std::string IssueMessage(int,RenumMessageId,...);
 void AutoConsoleMessages();
 void ManualConsoleMessages();
