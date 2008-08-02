@@ -26,6 +26,8 @@
 #include<iostream>
 #include<cstdarg>
 #include<cassert>
+#include<cstring>
+#include<climits>
 
 #include"globals.h"
 #include"renum.h"

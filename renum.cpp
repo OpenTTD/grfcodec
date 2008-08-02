@@ -31,6 +31,7 @@
 #include<fstream>
 #include<cerrno>
 #include<cassert>
+#include<cstdlib>
 
 using namespace std;
 

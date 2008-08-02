@@ -32,6 +32,8 @@
 #else
 #   include<map>
 #endif
+#include<cstdlib>
+
 using namespace std;
 
 #include"globals.h"

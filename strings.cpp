@@ -22,6 +22,7 @@
 #include<cstdio>
 #include<string>
 #include<cerrno>
+#include<cstdlib>
 
 using namespace std;
 
