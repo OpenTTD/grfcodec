@@ -168,10 +168,22 @@ int __cdecl main(const int argc,char**argv){
 		result=process_file(fin);
 		fin.close();
 		fout.close();
-		if(result)unlink(outfilename.c_str());
-		else if(replace){
+		if(result){
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+// unlink is deprecated in MSVS 8.0+
+			_unlink(outfilename.c_str());
+#else
+			unlink(outfilename.c_str());
+#endif
+		}else if(replace){
 			if(rename(infilename.c_str(),bakfilename.c_str())&&errno==EEXIST){
-				if(unlink(infilename.c_str())){
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+// unlink is deprecated in MSVS 8.0+
+				if(_unlink(infilename.c_str()))
+#else
+				if(unlink(infilename.c_str()))
+#endif
+				{
 					IssueMessage(0,DELETE_FAILED,infilename.c_str(),errno);
 					perror(NULL);
 					SetCode(EFILE);
