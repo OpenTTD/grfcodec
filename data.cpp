@@ -288,7 +288,12 @@ string getdir(){
 		verify(finddir(datadir)||makedir(datadir,true));
 		pret=&datadir;
 	}else{
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+// getcwd is deprecated in MSVS 8.0+
+		char*pcwd=_getcwd(NULL,0);
+#else
 		char*pcwd=getcwd(NULL,0);
+#endif
 		cwd=pcwd;
 		home=safetostring(getenv("HOME"));
 		homedrpath=safetostring(getenv("HOMEDRIVE"))+safetostring(getenv("HOMEPATH"));

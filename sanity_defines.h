@@ -77,14 +77,16 @@ public:
 	~apWrapper(){va_end(_ap);}
 	operator va_list&(){return _ap;}
 	operator const va_list&()const{return _ap;}
-	va_list&operator=(va_list&ap){
 #ifdef __va_copy
+	va_list&operator=(va_list&ap){
 	    __va_copy(_ap,ap);
-#else
-	    _ap=ap;
-#endif
-	    return _ap;
+		return _ap;
 	}
+#else
+	va_list const&operator=(va_list const&ap){
+	    return _ap=ap;
+	}
+#endif
 };
 #define WrapAp(v)\
 	apWrapper ap;\

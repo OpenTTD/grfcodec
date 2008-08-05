@@ -32,7 +32,12 @@
 
 #define sleep(x) Sleep(x*1000)
 
+#if defined(_MSC_VER) && (_MSC_VER >= 1400)
+// mkdir is deprecated in MSVS 8.0+
+inline int mkdir(const char*x,int){return _mkdir(x);}
+#else
 inline int mkdir(const char*x,int){return mkdir(x);}
+#endif
 
 //string GetOpt(char*);
 

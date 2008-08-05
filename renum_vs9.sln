@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "renum", "renum_vs9.vcproj", "{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug-NoVer|Win32 = Debug-NoVer|Win32
+		Release|Win32 = Release|Win32
+		Release-NoRev|Win32 = Release-NoRev|Win32
+		Release-NoVer|Win32 = Release-NoVer|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Debug|Win32.Build.0 = Debug|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Debug-NoVer|Win32.ActiveCfg = Debug-NoVer|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Debug-NoVer|Win32.Build.0 = Debug-NoVer|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Release|Win32.ActiveCfg = Release|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Release|Win32.Build.0 = Release|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Release-NoRev|Win32.ActiveCfg = Release-NoRev|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Release-NoRev|Win32.Build.0 = Release-NoRev|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Release-NoVer|Win32.ActiveCfg = Release-NoVer|Win32
+		{0BCC38E7-4605-49FA-8DE1-CA652FC1D902}.Release-NoVer|Win32.Build.0 = Release-NoVer|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
