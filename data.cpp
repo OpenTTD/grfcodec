@@ -74,7 +74,7 @@ using namespace std;
 // ------------------------- Feature-independent data ------------------------
 // ---------------------------------------------------------------------------
 
-/*	Action 7/9 variables
+/*	Action 7/9/D variables
 	====================
 
 	Format: Bitmask
@@ -85,13 +85,13 @@ using namespace std;
 	7 (80h)			read in 7
 
 */
-static const char _dat79Dv[]="\x20\x03"
+static const char _dat79Dv[]="\x20\x04"
 // Number of variables:
-"\x22"
+"\x25"
 //       x0              x4              x8              xC
 /*8x*/"\x00\xC1\x00\xC1\xC5\x80\x80\x00\x84\x00\x00\xC6\x00\xC1\xE1\xE4"
 /*9x*/"\x00\x00\xC1\xE6\xE6\xE6\xE6\xE1\x00\x24\x87\x00\x00\xC4\xE4\x24"
-/*Ax*/"\x00\x84"
+/*Ax*/"\x00\x84\x84\x84\x84"
 ;
 
 
@@ -115,7 +115,7 @@ static const char _datB[]="\x01\x02"
        vv Info count: NT: N sprite-count options for each of T types follow
            vv... Length(s): repeat N options for each of T types
 */
-static const char _dat5[]="\x04\x02"
+static const char _dat5[]="\x04\x03"
 	"\x13\x30\x70\xF0"			//4
 	"\x11\x30"					//5
 	"\x12\x4A\x5A"				//6
@@ -124,7 +124,7 @@ static const char _dat5[]="\x04\x02"
 	"\x31\x71\x85\x10"			//B..D
 "\x82\x11\x00"					//E
 	"\x51\x0C\x0F\x08\x08\x37"	//F..13
-"\x88\x21\x24\x90"				//14..15
+"\x88\x21\x24\x91"				//14..15
 "\x00"
 ;
 
