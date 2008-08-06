@@ -12,6 +12,7 @@ v3.4.6 to
   - Change train prop 1A to extended byte
   - Road vehicle prop 20, ship prop 1B, plane prop 1B
   - Action 7 variables A2..A4
+  - Text IDs F960..F99A.
 - Fix U+E0xx characters being output quoted.
 - Allow the beautifier to output escape sequences.
 - Support random 2 type 84.
