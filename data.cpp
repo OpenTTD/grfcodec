@@ -132,7 +132,7 @@ static const char _dat5[]="\x04\x03"
 /*	Text IDs
 	========
 */
-static const char _datTextIDs[]="\x04\x08"
+static const char _datTextIDs[]="\x04\x09"
 //-0000-          -1000-          -2000-          -3000-
 "\x35\x03\x11\x00\x25\x00\x19\x00\x5D\x00\x11\x00\x6D\x00\x08\x00"
 //-4000-          -5000-          -6000-          -7000-
@@ -140,7 +140,7 @@ static const char _datTextIDs[]="\x04\x08"
 //-8000-          -9000-          -A000-          -B000-
 "\x08\x01\x6C\x00\x38\x00\x43\x00\x44\x00\x00\x00\x06\x00\x00\x00"
 //-C000-          -D000-          -E000-          -F000-
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x4D\x00\x00\x00\x00\x00\x68\x01"
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x4D\x00\x00\x00\x00\x00\x9B\x01"
 // Number of special string ID ranges:
 "\x03"
 // High bytes of special string IDs:
