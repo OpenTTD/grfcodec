@@ -1,7 +1,10 @@
 Changelog:
 v3.4.6 to
 - Data file updates:
-  - Action 2 variable 12.
+  - Action 2 variables 12, 23, 24.
+  - Action 2 house variable 65.
+  - Action 2 vehicle variable 49.
+  - Action 2 industry variable 46.
   - Bridge props 10..12.
   - New sprites for Action 5 types 07, 14, 15.
   - Fix parameter limits on station var 60.
