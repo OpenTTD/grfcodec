@@ -46,8 +46,8 @@ using namespace std;
 chars 01,02,04 indicate bytes,words,doubles
 char 03 extended byte
 For 01..04, the high nibble indicates how to beautify:
-Lower chawmp: 0x:default 1x:quote 2x:decimal 3x:B-E hex (2x and 3x are currently unsupported)
-The upper chawmp, which only applies in FE strings:
+Lower quad: 0x:default 1x:quote 2x:decimal 3x:B-E hex (2x and 3x are currently unsupported)
+The upper quad, which only applies in FE strings:
 0x:default  Cx:linebreak;long lead
 char FE means variable length, see corresponding LengthData struct in subData
 char FF means no such property

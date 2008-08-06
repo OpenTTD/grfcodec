@@ -46,21 +46,75 @@ using namespace std;
 
 //Let's dump the data files into the source code. That sounds like fun, right?
 
+/*  Data file format
+	================
 
-//Format: Bitmask
-//Bit(s)			Meaning
-//0,1,2				valid width(s) (B,W,D) (If all are clear, this is a bitmask-variable.)
-//5	(20h)			write in D
-//6	(40h)			read in D
-//7 (80h)			read in 7
-//                                          80                              88                              90                              98                              A0
-static const char _dat79Dv[]="\x20\x03\x22\x00\xC1\x00\xC1\xC5\x80\x80\x00\x84\x00\x00\xC6\x00\xC1\xE1\xE4\x00\x00\xC1\xE6\xE6\xE6\xE6\xE1\x00\x24\x87\x00\x00\xC4\xE4\x24\x00\x84";
+	Files that appear before the DATA_FILE(feat) line in data.h have two leading
+	bytes that are checked and then eaten by myfopen.
 
-static const char _datB[]="\x01\x02\x03\x07\x02\x02\x02\x03\x02\x02\x02";
+	The first byte is a format byte; start it at \x00. Each time the file format
+	gets updated (ie the file reader changes), increment it and reset
+	the version byte to \x00.
+	
+	The second byte is a version byte; increment it every time the file
+	gets updated.
 
-// vv Flags -- 01: recolor, 02: mixed, 04: word, 08: allow 80+x, 80: is flag byte
-//     vv Infocount: NT: N sprite-count options for each of T types follow
-//         vv... Lenght(s): repeat N options for each of T types
+
+	Files that depend on feat.dat (appear below it in data.h), have three
+	leading bytes that are eaten by myfopen. The first two are as described
+	above.
+
+	The third byte is the maximum feature supported by this file.
+	This should usually match the third byte of _datfeat, but under some
+	circumstances, it is appropriate to increment the this byte without
+	changing _datfeat.
+*/
+
+// ---------------------------------------------------------------------------
+// ------------------------- Feature-independent data ------------------------
+// ---------------------------------------------------------------------------
+
+/*	Action 7/9 variables
+	====================
+
+	Format: Bitmask
+	Bit(s)			Meaning
+	0,1,2			valid width(s) (B,W,D) (If all are clear, this is a bitmask-variable.)
+	5 (20h)			write in D
+	6 (40h)			read in D
+	7 (80h)			read in 7
+
+*/
+static const char _dat79Dv[]="\x20\x03"
+// Number of variables:
+"\x22"
+//       x0              x4              x8              xC
+/*8x*/"\x00\xC1\x00\xC1\xC5\x80\x80\x00\x84\x00\x00\xC6\x00\xC1\xE1\xE4"
+/*9x*/"\x00\x00\xC1\xE6\xE6\xE6\xE6\xE1\x00\x24\x87\x00\x00\xC4\xE4\x24"
+/*Ax*/"\x00\x84"
+;
+
+
+/*	Action B
+	========
+*/
+static const char _datB[]="\x01\x02"
+// Maximum severity:
+"\x03"
+// Number of message types:
+"\x07"
+// Parameter counts for message types:
+"\x02\x02\x02\x03\x02\x02\x02"
+;
+
+
+/*	Action 5
+	========
+
+   vv Flags -- 01: recolor, 02: mixed, 04: word, 08: allow 80+x, 80: is flag byte
+       vv Info count: NT: N sprite-count options for each of T types follow
+           vv... Length(s): repeat N options for each of T types
+*/
 static const char _dat5[]="\x04\x02"
 	"\x13\x30\x70\xF0"			//4
 	"\x11\x30"					//5
@@ -71,173 +125,470 @@ static const char _dat5[]="\x04\x02"
 "\x82\x11\x00"					//E
 	"\x51\x0C\x0F\x08\x08\x37"	//F..13
 "\x88\x21\x24\x90"				//14..15
-"\x00";
+"\x00"
+;
 
-static const char _datTextIDs[]="\x04\x08\x35\x03\x11\x00\x25\x00\x19\x00\x5D\x00\x11\x00\x6D\x00\x08\x00\x11\x00\x3C\x00\x2A\x00\x08\x00\x19\x00\x39\x00\x80\x00\x00\x00\x08\x01\x6C\x00\x38\x00\x43\x00\x44\x00\x00\x00\x06\x00\x00\x00\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x4D\x00\x00\x00\x00\x00\x68\x01"
-//Count of IDs in class:                   -0000-                          -2000-                          -4000-                          -6000-                          -8000-                          -A000-                          -C000-                          -E000-
-	"\x03\xC4\xC5\xC9";
 
-//                                     --08--                          --0C--                          --10--
-static const char _dat0f8[]="\x02\x01\x30\x30\x00\xFC\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x00\x00\x00\xFF";
+/*	Text IDs
+	========
+*/
+static const char _datTextIDs[]="\x04\x08"
+//-0000-          -1000-          -2000-          -3000-
+"\x35\x03\x11\x00\x25\x00\x19\x00\x5D\x00\x11\x00\x6D\x00\x08\x00"
+//-4000-          -5000-          -6000-          -7000-
+"\x11\x00\x3C\x00\x2A\x00\x08\x00\x19\x00\x39\x00\x80\x00\x00\x00"
+//-8000-          -9000-          -A000-          -B000-
+"\x08\x01\x6C\x00\x38\x00\x43\x00\x44\x00\x00\x00\x06\x00\x00\x00"
+//-C000-          -D000-          -E000-          -F000-
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x4D\x00\x00\x00\x00\x00\x68\x01"
+// Number of special string ID ranges:
+"\x03"
+// High bytes of special string IDs:
+"\xC4\xC5\xC9"
+;
 
-// Count of CBs, then list of
-// 1) feature for callback
-// 2) one-byte bitmask of features for callback | 80h
-// 3) 7Fh followed by word-sized bitmask
-static const char _datcallbacks[]="\x05\x0C\x4D\x01"
+
+/*	Action 0 - feature 8
+	====================
+
+	Valid ID ranges for feature 8.
+	Two bytes for each property:
+	*	maxfirst ??
+	*	maxlast ??
+*/
+static const char _dat0f8[]="\x02\x01"
+//--08--          --0A--          --0C--          --0E--
+"\x30\x30\x00\xFC\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12"
+//--10--
+"\x00\x00\x00\xFF"
+;
+
+/*	Callbacks
+	=========
+
+	Count of CBs, then list of:
+	1) feature for callback
+	2) one-byte bitmask of features for callback | 80h
+	3) 7Fh followed by word-sized bitmask
+*/
+static const char _datcallbacks[]="\x05\x0C"
+// Count:
+"\x4D\x01"
+//v 00             x4              x8              xC
 "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 "\x00\x83\x8F\x04\x04\x8F\x83\x07\x9F\x8F\x07\x07\x07\x00\x07\x07"
 //v 20             x4              x8              xC
 "\x07\x07\x0A\x8F\x04\x09\x09\x09\x0A\x0A\x07\x09\x09\x8F\x07\x09"
 "\x09\x8F\x8F\xCF\x8F\x0A\x8F\x0A\x0A\x0B\x0A\x0A\x09\x0A\x80\x80"
+//v 40             x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 //v 60             x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
+//v 80             x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 //v A0             x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
+//v C0             x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 //v E0             x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
+//v 10             x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 //v 120            x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x04\x04\x04\x07\x0C\x0B\x0E\x05\x07\x04\x0A\x0A\x0A";
-
-static const char _datlangs[]="\x00\x02"
-//		x0				x1				x2				x3				x4				x5				x6				x7				x8				x9				xA				xB				xC				xD				xE				xF
-/*0x*/	"American\n"	"English\n"		"German\n"		"French\n"		"Spanish\n"		"Esperanto\n"	"\n"			"Russian\n"		"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
-/*1x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"Czech\n"		"Slovak\n"		"\n"			"Bulgarian\n"	"\n"			"\n"			"Afrikaans\n"	"\n"			"\n"			"Greek\n"		"Dutch\n"
-/*2x*/	"\n"			"\n"			"Catalan\n"		"\n"			"Hungarian\n"	"\n"			"\n"			"Italian\n"		"Romanian\n"	"Icelandic\n"	"Latvian\n"		"Lithuanian\n"	"Slovenian\n"	"Danish\n"		"Swedish\n"		"Norwegian\n"
-/*3x*/	"Polish\n"		"Galician\n"	"Frisian\n"		"Ukrainian\n"	"Estonian\n"	"Finnish\n"		"Portuguese\n"	"Brazilian Portuguese\nCroatian\nJapanese\n"	"Korean\n"		"\n"			"\n"			"\n"			"Turkish\n"		"\n"
-/*4x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
-/*5x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
-/*6x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"
-/*7x*/	"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"\n"			"any\n";
-
-static const char _datversions[]="\x00\x04\x09"
-"\xD8\x01\x31\x06\x81\x07\x70\x11";
-
-/*****************************************************************************
- *
- * Files that are defined above this line (more accurately, those that appear
- * before the DATA_FILE(feat) line in data.h) have two leading bytes that are
- * checked and then eaten by myfopen. The first byte is a format byte; start
- * it at \x00. Each time the file format gets updated (ie the file reader
- * changes), increment it and reset the version byte to \x00. The second byte
- * is a version byte; increment it every time the file gets updated. 
- *
- *****************************************************************************/
-
-// The above also applies for feat.dat.
-
-static const char _datfeat[]="\x11\x07\x0F"
-// 00              04              08              0C
-"\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x00\x50\x09"
-"\x00\x00\x00\x00\x00\x00\x00\x01\xFF\x01\x02\x00\xFF\xFF\x00\xFF";
-// First line: OR of the appropriate bits from enum ActBit
-//    {ACT0=1,ACT1=2,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20,GENERIC3=0x40,ACT3_BEFORE_PROP08=0x80};
-// Second line: Std action 2 format:
-// 0: Vehicle style		1: House style		2: Ind. prod style
-// FF: No std 2 for this feature
-
-//third chawmp: 0x:default 1x:quote 2x:decimal 3x:B-E hex (2x and 3x are currently unsupported)
-//The upper chawmp, which only applies in FE strings:
-//0x:default  Cx:linebreak;long lead
-//Full description in act0.cpp.
-static const char _dat0[]="\x0C\x07\x0F"
-"\x22\xFF\x01\x21\x21\x01\x01\x21\x01\x22\xFF\x22\xFF\x01\x04\xFF\xFF\xFF\x01\x01\x21\x01\x01\x01\x01\x01\x01\x22\x01\x34\x01\x01\x01\x01\x01\x21\x01\x01\x21\x01\x32\x32\x04\x00"
-"\x22\xFF\x01\x21\x21\xFF\x01\x21\x21\x01\x04\xFF\xFF\xFF\x01\x21\x01\x01\x01\x21\x21\x21\x34\x01\x01\x01\x01\x21\x01\x32\x32\x04\x00"
-//                                 08                              10                              18                              20                              28
-"\x22\xFF\x01\x21\x21\xFF\x01\x21\x01\x01\x01\x21\x01\x22\xFF\x01\x01\x34\x01\x01\x01\x01\x21\x01\x32\x32\x04\x00"
-"\x22\xFF\x01\x21\x21\xFF\x01\x21\x01\x01\x01\x01\x21\x01\x01\x22\xFF\x21\x01\x34\x01\x01\x21\x01\x32\x32\x04\x00"
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\xFE\x01\x01\x01\x01\xFE\x01\x22\x01\x34\x01\x01\x01\x32\x21\x02\x00"
-  "\x03r\xFE\x80\x00"//                ^^
-	"l\\\x00l\\\x00l\\\x00l\\\x00|\x34*\xFE\x01\x80\x00"
-	  "\x01\x01\x01\x01\x01\x01\x34\x00"
-  "*\xFE\x02\\\x00\\\x00\x00" //                           ^^
-	"\x01\x01r\x01x\x80\x81\xC0\x00"
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\x00"
-//                                 08                              10
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x21\x21\x21\x01\x22\xFE\x01\x04\x32\x32\x32\x00"
-  "\x01\x01r\x34x\x81\x20\xC0\x00"//                   ^^
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\x02\x01\x01\x01\x01\x01\x22\x01\x32\x02\x01\x01\x01\x04\x01\x01\x01\x01\x01\x01\x04\x01\xFE\x00"
-  "\x01r\x01\x80\x00"
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x14\x32\x24\x12\x14\x14\x22\xFE\xFE\x00"
-  "r\xFE\x0B\xFE\x00"//                                            ^^
-	"r\x01\x20\xC0\x00"
-	"r\x01\x20\x00"
-  "\x14\x14\x00"//                                                     ^^
-//                                 08                              10                              18                              20
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\x02\x02\x02\x01\x01\x02\x01\x01\x01\x00"
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\xFE\x01\x02\x02\x02\x01\x02\x04\x01\x01\x01\xFE\xFE\x01\x01\x01\x04\x02\x04\x04\x04\x02\x04\x01\x01\x24\x32\x00"
-  "\x01\xF4r\xFE\x80\x00"//                ^^
-	"l\xFE\x01\xC1|*\xFE\x02\\\x00\x80\x00"
-	  "\x00"
-	  "\x01\x01\xFE\xC0\x00"
-		"l\xFE\x02|\x01\x00"
-		  "\x00"
-  "\x01r\x01\x80\x00"//                                                                ^^
-  "r\x01\x03\x00"//                                                                        ^^
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x21\x32\x32\x32\x32\x32\x32\x01\x01\x01\x34\x01\x01\x01\x32\x14\x01\x32\x01\x00"
-//                                 08                              10                              18
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\x01\x00"
-"\x00"
-"\x00"
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\x02\x02\x00"
+//v 140            x4              x8              xC
+"\x04\x04\x04\x07\x0C\x0B\x0E\x05\x07\x04\x0A\x0A\x0A"
 ;
 
-static const char _dat2v[]="\x0D\x0A\x0F\x13"
-	"\x00\x82\x01\x81\x02\x81\x03\x81\x09\x82\x0A\x82\x0C\x82\x10\x84\x12\x81\x18\x84\x1A\xC4\x1B\x81\x1C\x84\x20\x81\x7D\x84\xFF\x7E\xC2\xFF\x7F\x84\x7F\xFF\xF0"
-"\x00\x40\x83\x41\x83\x42\x84\x43\x84\x45\x83\x46\x84\x47\x84\x48\x81\x5F\x81\x60\x81\x73\xFF\xF0"
-"\x01\x40\x83\x41\x83\x42\x83\x43\x84\x45\x83\x46\x84\x47\x84\x48\x81\x5F\x81\xFF\xF0"
-"\x02\x42\x81\x43\x84\x46\x84\x47\x84\x48\x81\x5F\x81\xFF\xF0"
-"\x03\x40\x83\x42\x81\x43\x84\x46\x84\x48\x81\x44\x82\x47\x84\x5F\x81\xFF\xF0"
-"\x08\x11\x81\x40\x84\x41\x84\x42\x82\x43\x83\x44\x81\x45\x82\x46\x84\x47\x84\x48\x85\x49\x84\x4A\x81\x5F\x83\x60\x82\xFF\x61\x81\xFF\x62\x84\xFF\x63\x81\xFF\x64\x82\xFF\x65\x81\xFF\x66\x84\xFF\x67\x82\xFF\x68\x82\xFF\x69\x81\xFF\xFF\xF0"
-"\x05\x84\x80"
-"\x00\x40\x83\x41\x83\x42\x84\x43\x84\x45\x83\x46\x84\x47\x84\x48\x81\x5F\x81\x60\x81\x73\xFF\xF0"
-"\x08\x40\x81\x41\x81\x42\x81\x43\x81\x44\x84\x45\x81\x46\x81\x5F\x81\x60\x82\x6B\x61\x82\xFF\x62\x84\xFF\x63\x81\xFF\x64\x81\xFF\x80\x80"
-"\x08\x40\x81\x41\x81\xDE\x80"
-"\x0A\x40\x81\x41\x81\x42\x81\x43\x83\x44\x81\x5F\x81\x60\x84\xFF\x61\x84\xFF\x62\x82\xFF\x80\x80"
-"\x08\x40\x82\x41\x82\x42\x82\x43\x82\x44\x81\x45\x84\x60\x82\xFF\x61\x81\xFF\x62\x84\xFF\x63\x84\xFF\x64\x84\xFF\x65\x83\xFF\x66\x83\xFF\x67\x84\xFF\x68\x84\xFF\x7C\x84\x0F\xB6\x80"
-"\x0B\x80\x80"
-"\x0C\x80\x80"
-"\x0D\x80\x80"
-"\x0E\x60\x84\xFF\x80\x80"
-"\x0F\x80\x80"
+
+/*	Languages
+	=========
+
+	Names of languages by ID (empty if not defined), each terminated by newline
+*/
+static const char _datlangs[]="\x00\x02"
+//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
+/*0x*/	"American\n"	"English\n"		"German\n"		"French\n"
+/*0x*/	"Spanish\n"		"Esperanto\n"	"\n"			"Russian\n"
+/*0x*/	"\n"			"\n"			"\n"			"\n"
+/*0x*/	"\n"			"\n"			"\n"			"\n"
+//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
+/*1x*/	"\n"			"\n"			"\n"			"\n"
+/*1x*/	"\n"			"Czech\n"		"Slovak\n"		"\n"
+/*1x*/	"Bulgarian\n"	"\n"			"\n"			"Afrikaans\n"
+/*1x*/	"\n"			"\n"			"Greek\n"		"Dutch\n"
+//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
+/*2x*/	"\n"			"\n"			"Catalan\n"		"\n"
+/*2x*/	"Hungarian\n"	"\n"			"\n"			"Italian\n"
+/*2x*/	"Romanian\n"	"Icelandic\n"	"Latvian\n"		"Lithuanian\n"
+/*2x*/	"Slovenian\n"	"Danish\n"		"Swedish\n"		"Norwegian\n"
+//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
+/*3x*/	"Polish\n"		"Galician\n"	"Frisian\n"		"Ukrainian\n"
+/*3x*/	"Estonian\n"	"Finnish\n"		"Portuguese\n"	"Brazilian Portuguese\n"
+/*3x*/	"Croatian\n"	"Japanese\n"	"Korean\n"		"\n"
+/*3x*/	"\n"			"\n"			"Turkish\n"		"\n"
+//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
+/*4x*/	"\n"			"\n"			"\n"			"\n"
+/*4x*/	"\n"			"\n"			"\n"			"\n"
+/*4x*/	"\n"			"\n"			"\n"			"\n"
+/*4x*/	"\n"			"\n"			"\n"			"\n"
+//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
+/*5x*/	"\n"			"\n"			"\n"			"\n"
+/*5x*/	"\n"			"\n"			"\n"			"\n"
+/*5x*/	"\n"			"\n"			"\n"			"\n"
+/*5x*/	"\n"			"\n"			"\n"			"\n"
+//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
+/*6x*/	"\n"			"\n"			"\n"			"\n"
+/*6x*/	"\n"			"\n"			"\n"			"\n"
+/*6x*/	"\n"			"\n"			"\n"			"\n"
+/*6x*/	"\n"			"\n"			"\n"			"\n"
+//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
+/*7x*/	"\n"			"\n"			"\n"			"\n"
+/*7x*/	"\n"			"\n"			"\n"			"\n"
+/*7x*/	"\n"			"\n"			"\n"			"\n"
+/*7x*/	"\n"			"\n"			"\n"			"any\n"
+;
+
+/*	Version check data
+	==================
+*/
+static const char _datversions[]="\x00\x04"
+// Maximum version (beta):
+"\x09"
+// Revisions (starting from beta 6)
+"\xD8\x01"	"\x31\x06"	"\x81\x07"	"\x70\x11"
+;
+
+
+/*	Features
+	========
+
+	Feature bit-mask:
+	OR of the appropriate bits from enum ActBit:
+		0x01 = ACT0
+		0x02 = ACT1
+		0x04 = ACT3
+		0x08 = ACT4
+		0x10 = EMPTY1,
+		0x20 = OVERRIDE3
+		0x40 = GENERIC3
+		0x80 = ACT3_BEFORE_PROP08
+
+	Std action 2 format:
+		0x00 = Vehicle style
+		0x01 = House style
+		0x02 = Ind. prod style
+		0xFF = No std 2 for this feature
+*/
+static const char _datfeat[]="\x11\x07"
+// Max. feature:
+"\x0F"
+// Feature bit-masks:
+// 00              04              08              0C
+"\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x00\x50\x09"
+// Std action 2 formats:
+// 00              04              08              0C
+"\x00\x00\x00\x00\x00\x00\x00\x01\xFF\x01\x02\x00\xFF\xFF\x00\xFF"
+;
+
+
+// ---------------------------------------------------------------------------
+// ------------------------- Feature-dependent data --------------------------
+// ---------------------------------------------------------------------------
+
+
+/*	Action 0 properties
+	===================
+
+	Property definitions:
+	*	Lower nibble = data type
+		x1 - BYTE, x2 - WORD, x3 - EXT.BYTE, x4 - DWORD
+	*	Third quad = formatting
+		0x - default, 1x - quote, 2x - decimal, 3x - B-E hex
+	*	Special values
+		FE - variable length (details in subdata)
+		FF - property does not exist
+		00 - list terminator
+
+	See full description in act0.cpp.
+*/
+static const char _dat0[]="\x0C\x07\x0F"
+// Feature 00:
+// x0              x4              x8              xC
+"\x22\xFF\x01\x21\x21\x01\x01\x21\x01\x22\xFF\x22\xFF\x01\x04\xFF"
+"\xFF\xFF\x01\x01\x21\x01\x01\x01\x01\x01\x01\x22\x01\x34\x01\x01"
+"\x01\x01\x01\x21\x01\x01\x21\x01\x32\x32\x04"
+"\x00"
+
+// Feature 01:
+// x0              x4              x8              xC
+"\x22\xFF\x01\x21\x21\xFF\x01\x21\x21\x01\x04\xFF\xFF\xFF\x01\x21"
+"\x01\x01\x01\x21\x21\x21\x34\x01\x01\x01\x01\x21\x01\x32\x32\x04"
+"\x00"
+
+// Feature 02:
+// x0              x4              x8              xC
+"\x22\xFF\x01\x21\x21\xFF\x01\x21\x01\x01\x01\x21\x01\x22\xFF\x01"
+"\x01\x34\x01\x01\x01\x01\x21\x01\x32\x32\x04"
+"\x00"
+
+// Feature 03:
+// x0              x4              x8              xC
+"\x22\xFF\x01\x21\x21\xFF\x01\x21\x01\x01\x01\x01\x21\x01\x01\x22"
+"\xFF\x21\x01\x34\x01\x01\x21\x01\x32\x32\x04"
+"\x00"
+
+// Feature 04:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\xFE\x01\x01\x01\x01\xFE\x01"
+"\x22\x01\x34\x01\x01\x01\x32\x21\x02"
+"\x00"
+// Subdata - prop 09:
+"\x03r\xFE\x80\x00"
+	"l\\\x00l\\\x00l\\\x00l\\\x00|\x34*\xFE\x01\x80\x00"
+		"\x01\x01\x01\x01\x01\x01\x34\x00"
+// Subdata - prop 0E:
+"*\xFE\x02\\\x00\\\x00\x00"
+	"\x01\x01r\x01x\x80\x81\xC0\x00"
+
+// Feature 05:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01"
+"\x00"
+
+// Feature 06:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x21\x21\x21\x01\x22\xFE\x01\x04"
+"\x32\x32\x32"
+"\x00"
+// Subdata - prop 0D:
+"\x01\x01r\x34x\x81\x20\xC0\x00"
+
+// Feature 07:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\x02\x01\x01\x01\x01\x01"
+"\x22\x01\x32\x02\x01\x01\x01\x04\x01\x01\x01\x01\x01\x01\x04\x01"
+"\xFE"
+"\x00"
+// Subdata - prop 20:
+"\x01r\x01\x80\x00"
+
+// Feature 08:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x14\x32\x24\x12\x14\x14\x22"
+"\xFE\xFE"
+"\x00"
+// Subdata - prop 10:
+"r\xFE\x0B\xFE\x00"
+	"r\x01\x20\xC0\x00"
+	"r\x01\x20\x00"
+// Subdata - prop 11:
+"\x14\x14\x00"
+
+// Feature 09:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\x02\x02\x02\x01\x01\x02"
+"\x01\x01\x01"
+"\x00"
+
+// Feature 0A:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\xFE\x01\x02\x02\x02\x01"
+"\x02\x04\x01\x01\x01\xFE\xFE\x01\x01\x01\x04\x02\x04\x04\x04\x02"
+"\x04\x01\x01\x24\x32"
+"\x00"
+// Subdata - prop 0A:
+"\x01\xF4r\xFE\x80\x00"
+	"l\xFE\x01\xC1|*\xFE\x02\\\x00\x80\x00"
+		"\x00"
+		"\x01\x01\xFE\xC0\x00"
+			"l\xFE\x02|\x01\x00"
+				"\x00"
+// Subdata - prop 15:
+"\x01r\x01\x80\x00"
+// Subdata - prop 16:
+"r\x01\x03\x00"
+
+// Feature 0B:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x21\x32\x32\x32\x32\x32\x32\x01"
+"\x01\x01\x34\x01\x01\x01\x32\x14\x01\x32\x01"
+"\x00"
+
+// Feature 0C:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\x01"
+"\x00"
+
+// Feature 0D:
+// x0              x4              x8              xC
+"\x00"
+
+// Feature 0E:
+// x0              x4              x8              xC
+"\x00"
+
+// Feature 0F:
+// x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\x02\x02"
+"\x00"
+;
+
+/*	Variational action 2
+	====================
+*/
+static const char _dat2v[]="\x0D\x0A\x0F"
+// Maximum operator ID for advanced VA2:
+"\x13"
+// Global variables:
+"\x00\x82"		"\x01\x81"		"\x02\x81"		"\x03\x81"
+"\x09\x82"		"\x0A\x82"		"\x0C\x82"		"\x10\x84"
+"\x12\x81"		"\x18\x84"		"\x1A\xC4"		"\x1B\x81"
+"\x1C\x84"		"\x20\x81"		"\x7D\x84\xFF"	"\x7E\xC2\xFF"
+"\x7F\x84\x7F"
+"\xFF\xF0"
+// Feature 00:
+"\x00"
+"\x40\x83"		"\x41\x83"		"\x42\x84"		"\x43\x84"
+"\x45\x83"		"\x46\x84"		"\x47\x84"		"\x48\x81"
+"\x5F\x81"		"\x60\x81\x73"
+"\xFF\xF0"
+// Feature 01:
+"\x01"
+"\x40\x83"		"\x41\x83"		"\x42\x83"		"\x43\x84"
+"\x45\x83"		"\x46\x84"		"\x47\x84"		"\x48\x81"
+"\x5F\x81"
+"\xFF\xF0"
+// Feature 02:
+"\x02"
+"\x42\x81"		"\x43\x84"		"\x46\x84"		"\x47\x84"
+"\x48\x81"		"\x5F\x81"
+"\xFF\xF0"
+// Feature 03:
+"\x03"
+"\x40\x83"		"\x42\x81"		"\x43\x84"		"\x46\x84"
+"\x48\x81"		"\x44\x82"		"\x47\x84"		"\x5F\x81"
+"\xFF\xF0"
+// Feature 04:
+"\x08"
+"\x11\x81"		"\x40\x84"		"\x41\x84"		"\x42\x82"
+"\x43\x83"		"\x44\x81"		"\x45\x82"		"\x46\x84"
+"\x47\x84"		"\x48\x85"		"\x49\x84"		"\x4A\x81"
+"\x5F\x83"		"\x60\x82\xFF"	"\x61\x81\xFF"	"\x62\x84\xFF"
+"\x63\x81\xFF"	"\x64\x82\xFF"	"\x65\x81\xFF"	"\x66\x84\xFF"
+"\x67\x82\xFF"	"\x68\x82\xFF"	"\x69\x81\xFF"
+"\xFF\xF0"
+// Feature 05:
+"\x05"
+"\x84\x80"
+// Feature 06:
+"\x00"
+"\x40\x83"		"\x41\x83"		"\x42\x84"		"\x43\x84"
+"\x45\x83"		"\x46\x84"		"\x47\x84"		"\x48\x81"
+"\x5F\x81"		"\x60\x81\x73"
+"\xFF\xF0"
+// Feature 07:
+"\x08"
+"\x40\x81"		"\x41\x81"		"\x42\x81"		"\x43\x81"
+"\x44\x84"		"\x45\x81"		"\x46\x81"		"\x5F\x81"
+"\x60\x82\x6B"	"\x61\x82\xFF"	"\x62\x84\xFF"	"\x63\x81\xFF"
+"\x64\x81\xFF"
+"\x80\x80"
+// Feature 08:
+"\x08"
+"\x40\x81"		"\x41\x81"
+"\xDE\x80"
+// Feature 09:
+"\x0A"
+"\x40\x81"		"\x41\x81"		"\x42\x81"		"\x43\x83"
+"\x44\x81"		"\x5F\x81"		"\x60\x84\xFF"	"\x61\x84\xFF"
+"\x62\x82\xFF"
+"\x80\x80"
+// Feature 0A:
+"\x08"
+"\x40\x82"		"\x41\x82"		"\x42\x82"		"\x43\x82"
+"\x44\x81"		"\x45\x84"		"\x60\x82\xFF"	"\x61\x81\xFF"
+"\x62\x84\xFF"	"\x63\x84\xFF"	"\x64\x84\xFF"	"\x65\x83\xFF"
+"\x66\x83\xFF"	"\x67\x84\xFF"	"\x68\x84\xFF"	"\x7C\x84\x0F"
+"\xB6\x80"
+// Feature 0B:
+"\x0B"
+"\x80\x80"
+// Feature 0C:
+"\x0C"
+"\x80\x80"
+// Feature 0D:
+"\x0D"
+"\x80\x80"
+// Feature 0E:
+"\x0E"
+"\x60\x84\xFF"
+"\x80\x80"
+// Feature 0F:
+"\x0F"
+"\x80\x80"
 ;
 
 static const char _datD[]="\x14\x02\x0F"
-	"\x11\x0C"            /*GRM count:*/"\x74\x00\x58\x00\x0B\x00\x29\x00\x00\x00\x00\x00\x00\x00\x00\x00\x1E\x13\x00\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00";
-//Feature:                                 --00--                          --04--                          --08--                          --0C--                          --10--
-static const char _datIDs[]="\x77\x01\x0F\x73\x00\x57\x00\x0A\x00\x28\x00\xFF\x00\x07\x00\x0A\x00\xFF\x00\x00\x00\xFF\x00\x24\x00\x1F\x00\xFF\xFF\x00\x00\x00\x00\xFF\x00";
+"\x11\x0C"
+// GRM count:
+//--00--          --02--          --04--           --06--
+"\x74\x00\x58\x00\x0B\x00\x29\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+//--08--          --0A--          --0C--           --0E--
+"\x1E\x13\x00\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+;
+
+static const char _datIDs[]="\x77\x01\x0F"
+//--00--          --02--          --04--           --06--
+"\x73\x00\x57\x00\x0A\x00\x28\x00\xFF\x00\x07\x00\x0A\x00\xFF\x00"
+//--08--          --0A--          --0C--           --0E--
+"\x00\x00\xFF\x00\x24\x00\x1F\x00\xFF\xFF\x00\x00\x00\x00\xFF\x00"
+;
+
+/*	Action 4 strings
+	================
+
+	Flags:
+		0x01 = CTRL_FONT_LARGE
+		0x02 = CTRL_FONT_SMALL
+		0x04 = CTRL_SPACE
+		0x08 = CTRL_NEWLINE
+		0x10 = CTRL_COLOR
+		0x20 = CTRL_NO_STACK_CHECK
+*/
 static const char _dat4[]="\x03\x02\x0F"
+// Rules for one-byte IDs:
+// 00              04              08              0C
 "\x04\x04\x04\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-// 00              04              08              0C              10
-"\x1C\x1C\x1C\x1C\x04\x04\x00\x04\x00\x1C\x3D\x06\x00\x00\x00\x00";
-//First line: rules for one-byte IDs
-//Second line: rules for two-byte IDs
-//enum {CTRL_FONT_LARGE=1, CTRL_FONT_SMALL=2, CTRL_SPACE=4, CTRL_NEWLINE=8
-//		CTRL_COLOR=0x10, CTRL_NO_STACK_CHECK=0x20}
+// Rules for two-byte IDs:
+// 00              04              08              0C
+"\x1C\x1C\x1C\x1C\x04\x04\x00\x04\x00\x1C\x3D\x06\x00\x00\x00\x00"
+;
 
-//byte triples: num 80 bits/num 83 bits/num triggers
-//                                        --  00  --                                      --  04  --                                      --  08  --                                      --  0C  --                                      --  10  --
-static const char _dat2r[]="\x02\x01\x0F\x08\x08\x05\x08\x08\x05\x08\x08\x05\x08\x08\x05\x20\x00\x06\x00\x00\x00\x00\x00\x00\x08\x00\x02\x00\x00\x00\x08\x10\x03\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00";
 
-/* Files that depend on feat.dat (appear below it in data.h), have three
- * leading bytes that are eaten by myfopen. The first two are as described
- * above, near line 120. The third is the maximum feature supported by this
- * file. This should usually match the third byte of _datfeat, but under some
- * circumstances, it is appropriate to increment the this byte without
- * changing _datfeat. */
+/*	Randomized action 2
+	===================
+
+	Byte triples: num 80 bits/num 83 bits/num triggers
+*/
+static const char _dat2r[]="\x02\x01\x0F"
+"\x08\x08\x05"	"\x08\x08\x05"	"\x08\x08\x05"	"\x08\x08\x05"
+"\x20\x00\x06"	"\x00\x00\x00"	"\x00\x00\x00"	"\x08\x00\x02"
+"\x00\x00\x00"	"\x08\x10\x03"	"\x10\x00\x00"	"\x00\x00\x00"
+"\x00\x00\x00"	"\x00\x00\x00"	"\x00\x00\x00"	"\x00\x00\x00"
+;
+
+
+// ---------------------------------------------------------------------------
+
 
 struct dat{
 	char*data,*name;
