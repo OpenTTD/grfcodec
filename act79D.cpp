@@ -181,7 +181,7 @@ bool CheckD(PseudoSprite&data,uint length){
 	if((op&0x7F)>D::Instance().maxop)IssueMessage(ERROR,INVALID_OP,2,op);
 	if(!Vars::Instance().canReadD(src1))IssueMessage(ERROR,INVALID_SRC,1);
 	if(op&&src2!=0xFE&&!Vars::Instance().canReadD(src2))IssueMessage(ERROR,INVALID_SRC,2);
-	if(op&&src1==0xFF&&src2==0xFF)IssueMessage(ERROR,ONLY_ONE_DATA);
+	if((op&0x7F)&&src1==0xFF&&src2==0xFF)IssueMessage(ERROR,ONLY_ONE_DATA);
 	if(src1==0xFF||src2==0xFF||src2==0xFE){
 		if(CheckLength(length,9,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9))return false;
 		if(src2==0xFE){

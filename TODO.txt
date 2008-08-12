@@ -20,3 +20,4 @@ TODO:
 - Multiple backups
 - gcc-style output (file:line)
 - NFO version 8
+- Word sized vehicle IDs (A3, A4, more?)
