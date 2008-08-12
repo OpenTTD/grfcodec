@@ -16,6 +16,7 @@ v3.4.6 to
 - Fix U+E0xx characters being output quoted.
 - Allow the beautifier to output escape sequences.
 - Support random 2 type 84.
+- Fix complaints about both params of action D operator 80 being FF.
 
 v3.4.5 to v3.4.6 (r1795)
 - Data file updates:
