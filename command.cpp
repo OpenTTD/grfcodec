@@ -405,11 +405,8 @@ dotoggle:
 		if(!commandstream)
 			id=feature;
 		else if(!IsValid2Feature(feature)){
-			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
+			IssueMessage(0,COMMAND_INVALID_ARG,gen[DEFINEID2].name);
 			return true;
-		}else{
-			inject(mysprintf("%t@@DEFINEID2 %2x",COMMENT_PREFIX,id));
-			return false;
 		}
 		sanity_define_id(feature,id);
 		return true;
@@ -419,7 +416,7 @@ dotoggle:
 		if(!commandstream)
 			id=feature;
 		else if(!IsValid2Feature(feature)){
-			IssueMessage(0,COMMAND_INVALID_ARG,gen[TESTID2].name);
+			IssueMessage(0,COMMAND_INVALID_ARG,gen[LOCATEID2].name);
 			return true;
 		}else{
 			inject(mysprintf("%t@@LOCATEID2 %2x",COMMENT_PREFIX,id));
