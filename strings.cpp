@@ -276,6 +276,9 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					break;
 				case 4:		// Delete BYTE characters
 					data.SetQEscape(++offs);
+				case 6:		// print hex byte
+				case 7:		// ... word
+				case 8:		// ... dword
 					break;
 				default:
 					IssueMessage(ERROR,INVALID_EXT_CODE,offs,ch);
@@ -284,15 +287,15 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			}
 			if(~perms&CTRL_NO_STACK_CHECK){
 				switch(ch){
-				case 0x7D:
+				case 0x7D:case 6:
 					STACK_CHECK(STACK_BYTE,1)
 				case 0x82:case 0x83:
 					STACK_CHECK(STACK_DATE,2)
-				case 0x7C:case 0x7E:case 0x84:case 0x85:case 0x87:
+				case 0x7C:case 0x7E:case 0x84:case 0x85:case 0x87:case 7:
 					STACK_CHECK(STACK_WORD,2)
 				case 0x80:
 					STACK_CHECK(STACK_TEXT,2)
-				case 0x7B:case 0x7F:
+				case 0x7B:case 0x7F:case 8:
 					STACK_CHECK(STACK_DWORD,4)
 				//Extended format codes (9A XX) 
 				case 0x00:
