@@ -171,7 +171,7 @@ static const char _dat0f8[]="\x02\x01"
 	2) one-byte bitmask of features for callback | 80h
 	3) 7Fh followed by word-sized bitmask
 */
-static const char _datcallbacks[]="\x05\x0C"
+static const char _datcallbacks[]="\x05\x0D"
 // Count:
 "\x4D\x01"
 //v 00             x4              x8              xC
@@ -205,7 +205,8 @@ static const char _datcallbacks[]="\x05\x0C"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 //v 140            x4              x8              xC
-"\x04\x04\x04\x07\x0C\x0B\x0E\x05\x07\x04\x0A\x0A\x0A"
+"\x04\x04\x04\x07\x0C\x0B\x0E\x05\x07\x7F\x10\x80"
+                                        "\x0A\x0A\x0A"
 ;
 
 
@@ -288,15 +289,15 @@ static const char _datversions[]="\x00\x04"
 		0x02 = Ind. prod style
 		0xFF = No std 2 for this feature
 */
-static const char _datfeat[]="\x11\x07"
+static const char _datfeat[]="\x11\x08"
 // Max. feature:
 "\x0F"
 // Feature bit-masks:
 // 00              04              08              0C
-"\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x00\x50\x09"
+"\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x00\x50\x0F"
 // Std action 2 formats:
 // 00              04              08              0C
-"\x00\x00\x00\x00\x00\x00\x00\x01\xFF\x01\x02\x00\xFF\xFF\x00\xFF"
+"\x00\x00\x00\x00\x00\x00\x00\x01\xFF\x01\x02\x00\xFF\xFF\x00\x01"
 ;
 
 
@@ -320,7 +321,7 @@ static const char _datfeat[]="\x11\x07"
 
 	See full description in act0.cpp.
 */
-static const char _dat0[]="\x0C\x08\x0F"
+static const char _dat0[]="\x0C\x09\x0F"
 // Feature 00:
 // x0              x4              x8              xC
 "\x22\xFF\x01\x21\x21\x01\x01\x21\x01\x22\xFF\x22\xFF\x01\x04\xFF"
@@ -439,14 +440,15 @@ static const char _dat0[]="\x0C\x08\x0F"
 
 // Feature 0F:
 // x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\x02\x02"
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\x02\x02\x01\x01\x01\x24\x24"
+"\x32"
 "\x00"
 ;
 
 /*	Variational action 2
 	====================
 */
-static const char _dat2v[]="\x0D\x0B\x0F"
+static const char _dat2v[]="\x0D\x0C\x0F"
 // Maximum operator ID for advanced VA2:
 "\x13"
 // Global variables:
@@ -500,7 +502,8 @@ static const char _dat2v[]="\x0D\x0B\x0F"
 // Feature 07:
 "\x08"
 "\x40\x81"		"\x41\x81"		"\x42\x81"		"\x43\x81"
-"\x44\x84"		"\x45\x81"		"\x46\x81"		"\x5F\x81"
+"\x44\x84"		"\x45\x81"		"\x46\x81"		"\x47\x82"
+"\x5F\x81"
 "\x60\x82\x6B"	"\x61\x82\xFF"	"\x62\x84\xFF"	"\x63\x81\xFF"
 "\x64\x81\xFF"	"\x65\x81\xFF"
 "\x80\x80"
@@ -537,6 +540,7 @@ static const char _dat2v[]="\x0D\x0B\x0F"
 "\x80\x80"
 // Feature 0F:
 "\x0F"
+"\x40\x83"		"\x41\x81"		"\x42\x82"		"\x43\x82"
 "\x80\x80"
 ;
 

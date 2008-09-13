@@ -2,7 +2,7 @@ Changelog:
 v3.4.6 to
 - Data file updates:
   - Action 2 variables 12, 23, 24.
-  - Action 2 house variable 65.
+  - Action 2 house variable 47, 65
   - Action 2 vehicle variable 49.
   - Action 2 industry variable 46.
   - Bridge props 00, 10..13.
@@ -14,6 +14,10 @@ v3.4.6 to
   - Action 7 variables A2..A4
   - Text IDs F960..F99A.
   - House props 21..22.
+  - CB149 works for objects.
+  - Enable actions 1..3 for newobjects
+  - Object variables 40..43
+  - Object properties 0B..10
 - Fix U+E0xx characters being output quoted.
 - Allow the beautifier to output escape sequences.
 - Support random 2 type 84.
