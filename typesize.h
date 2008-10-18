@@ -54,6 +54,30 @@
 	maketype(long int,32)
 	maketype(long long,64)
 
+#elif GCC32
+
+#   define HAVE_BYTES
+#   define HAVE_SHORTS
+#   define HAVE_LONGS
+#   define HAVE_LONGLONGS
+
+    maketype(char,8)
+    maketype(short int,16)
+    maketype(int,32)
+    maketype(long long,64)
+
+#elif GCC64
+
+#   define HAVE_BYTES
+#   define HAVE_SHORTS
+#   define HAVE_LONGS
+#   define HAVE_LONGLONGS
+
+    maketype(char,8)
+    maketype(short int,16)
+    maketype(int,32)
+    maketype(long int,64)
+
 #else
 #	error Unknown variables sizes, please define.
 #endif
@@ -91,6 +115,25 @@ void checksizes()
      )
 	{
 		printf("Fatal: Incorrectly sized variables.\n");
+        const char* fmt = "%s size = %d, expected = %d\n";
+#define PRINT_SZ(t,s) printf(fmt, #t, sizeof(t), s)
+#ifdef HAVE_BYTES
+        PRINT_SZ(S8,1);
+        PRINT_SZ(U8,1);
+#endif
+#ifdef HAVE_SHORTS
+        PRINT_SZ(S16,2);
+        PRINT_SZ(U16,2);
+#endif
+#ifdef HAVE_LONGS
+        PRINT_SZ(S32,4);
+        PRINT_SZ(U32,4);
+#endif
+#ifdef HAVE_LONGLONGS
+        PRINT_SZ(S64,8);
+        PRINT_SZ(U64,8);
+#endif
+#undef PRINT_SZ
 		exit(254);
 	}
 
