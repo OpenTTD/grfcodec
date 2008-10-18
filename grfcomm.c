@@ -22,9 +22,10 @@
 #include "error.h"
 //#include "sprites.h"
 
-#ifdef WIN32
+#if defined(WIN32) || defined(GCC32) || defined(GCC64)
 #	include "path.h"
 #endif
+
 
 #include "grfcomm.h"
 

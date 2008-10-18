@@ -33,7 +33,8 @@ Version 6: Add binary includes
 Version 7: Add backslash escapes
 */
 
-
+#include<cstring>
+#include<climits>
 #include<iostream>
 #include<string>
 #include<sstream>
