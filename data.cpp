@@ -598,7 +598,7 @@ static const char _dat2r[]="\x02\x01\x0F"
 
 
 struct dat{
-	char*data,*name;
+	const char*data,*name;
 	uint len;
 };
 

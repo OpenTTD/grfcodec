@@ -81,7 +81,7 @@ bool CheckSpriteNum(uint num,uint offset,act123::Act1&act1,uint feature,bool&mis
 	hasGround|=((num&1<<30)!=0);
 	int translate=num>>14&3,color=num>>16&0x3FFF;
 	if(translate==3)IssueMessage(ERROR,INVALID_COLOR_TRANS,offset);
-	else if((translate==1||translate==2&&color)&&(color<775||color>790)&&(color<795||color>803))
+	else if((translate==1||(translate==2&&color))&&(color<775||color>790)&&(color<795||color>803))
 		IssueMessage(WARNING1,INVALID_COLOR_SPRITE,offset+2,color);
 	return true;
 }

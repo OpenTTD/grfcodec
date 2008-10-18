@@ -205,13 +205,13 @@ int __cdecl main(const int argc,char**argv){
 }
 
 #define flush_buffer()\
-	if(true){\
-		if(buffer!=""){\
+	if(true) {\
+		if(buffer!="") {\
 			output_buffer(buffer,isPatch,oldspritenum);\
 			buffer="";\
 		}\
 		oldspritenum=temp;\
-	}else\
+	} else\
 		(void(0))
 
 #define SetVersion(x)\
@@ -284,13 +284,16 @@ int process_file(istream&in){
 		//IssueMessage(0,SPRITE,spritenum+1,sprite.c_str());
 		istringstream spritestream(sprite);
 		eat_white(spritestream);
-		if(spritestream.peek()==EOF)buffer+='\n';
-		else if(is_comment(spritestream)){
-			if(is_command(sprite))
+		if(spritestream.peek()==EOF) {
+            buffer+='\n';
+		} else if(is_comment(spritestream)){
+			if(is_command(sprite)) {
 				flush_buffer();
-			if(parse_comment(sprite))
+            }
+			if(parse_comment(sprite)) {
 				buffer+=sprite+'\n';
-		}else{//sprite
+            }
+		} else {//sprite
 			if(!eat_white(spritestream>>temp)){
 				spritestream.clear();
 				temp=-1;
@@ -300,8 +303,11 @@ int process_file(istream&in){
 					SetVersion(6);
 					getline(eat_white(spritestream.ignore()),datapart);
 					flush_buffer();
-					if(isPatch)check_sprite(INCLUDE);
-					else IssueMessage(ERROR,UNEXPECTED,BIN_INCLUDE);
+					if(isPatch) {
+                        check_sprite(INCLUDE);
+                    } else {
+                        IssueMessage(ERROR,UNEXPECTED,BIN_INCLUDE);
+                    }
 					_spritenum++;
 					(*pNfo)<<setw(5)<<spritenum()<<" **\t "<<datapart<<'\n';
 				}else{
@@ -320,11 +326,13 @@ int process_file(istream&in){
 			}else{
 				getline(spritestream,datapart);
 				firstnotpseudo=datapart.find_first_not_of(VALID_PSEUDO);
-				if(!spritestream||firstnotpseudo==NPOS||datapart[firstnotpseudo]=='"'||
-					(datapart[firstnotpseudo]=='\\'?TrySetVersion(7):false)||is_comment(datapart,firstnotpseudo)){
-					if(PseudoSprite::MayBeSprite(buffer)){
+				if(!spritestream || firstnotpseudo==NPOS
+                    || datapart[firstnotpseudo]=='"'
+                    || (datapart[firstnotpseudo]=='\\'?TrySetVersion(7):false)
+                    || is_comment(datapart,firstnotpseudo)) {
+					if(PseudoSprite::MayBeSprite(buffer)) {
 						buffer+=sprite+'\n';
-					}else{
+					} else {
 						IssueMessage(0,NOT_IN_SPRITE,_spritenum+1);
 						buffer+="//"+sprite+'\n';
 					}

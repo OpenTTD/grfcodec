@@ -52,7 +52,7 @@ using namespace std;
 	case _case:return _commandState._return;
 
 struct commandData{
-	char*name;
+	const char*name;
 	int value;
 };
 
@@ -307,7 +307,7 @@ bool parse_comment(const string&line){
 				commandstream.ignore(INT_MAX);
 				return true;
 			}
-			_commandState.beauty=_commandState.beauty&~0xFF|val;
+			_commandState.beauty=(_commandState.beauty&~0xFF)|val;
 			break;
 		case QUOTEHIGHASCII:
 			togglebit = 0x100;
@@ -333,7 +333,7 @@ bool parse_comment(const string&line){
 				IssueMessage(0,COMMAND_INVALID_ARG,gen[BEAUTIFY].name);
 				return true;
 			}
-			_commandState.beauty=_commandState.beauty&~0x7FFF0000|((lead[0]-1)<<16)|((lead[1]-1)<<21)|((lead[2]-1)<<26);
+			_commandState.beauty=(_commandState.beauty&~0x7FFF0000)|((lead[0]-1)<<16)|((lead[1]-1)<<21)|((lead[2]-1)<<26);
 			break;
 		}case LINEBREAKS:{
 			uint breaks=4;

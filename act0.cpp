@@ -351,11 +351,17 @@ void Check0::Check(PseudoSprite&str){
 			if(!GetState(LINEBREAKS))return;
 			bool linebreaks=(IDs>1||GetState(LINEBREAKS)==3)&&str.ExtractByte(2)>1;
 			uint maxwidth=2,data,width;
-			for(i=0;i<propLoc.size();i++)
-				if(propLoc[i])
-					if((data=_p[feature].GetData(i))==0xFE)linebreaks=true;
-					else if(data==0x14)maxwidth=max<uint>(maxwidth,6);
-					else maxwidth=max(maxwidth,uint(data&7)*3-1);
+			for(i=0;i<propLoc.size();i++) {
+				if(propLoc[i]) {
+					if((data=_p[feature].GetData(i))==0xFE) {
+                        linebreaks=true;
+					} else if(data==0x14) {
+                        maxwidth=max<uint>(maxwidth,6);
+					} else {
+                        maxwidth=max(maxwidth,uint(data&7)*3-1);
+                    }
+                }
+            }
 			if(!linebreaks)return;
 			++maxwidth; // Add an extra space between columns of the table.
 			for(i=0;i<propLoc.size();i++){
@@ -404,9 +410,9 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 					if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
 			}else if((repeat_data&7)<5){
 				switch((repeat_data>>4)&3){
-				case 1:str.SetText(str_loc-1-repeat_data&7,repeat_data&7);
-				case 2:str.SetDec(str_loc-1-repeat_data&7,repeat_data&7);
-				case 3:str.SetBE(str_loc-1-repeat_data&7,repeat_data&7);
+				case 1:str.SetText((str_loc-1-repeat_data)&7,repeat_data&7);
+				case 2:str.SetDec((str_loc-1-repeat_data)&7,repeat_data&7);
+				case 3:str.SetBE((str_loc-1-repeat_data)&7,repeat_data&7);
 				}
 				str_loc+=(repeat_data&7)*times;
 			}else{
@@ -481,9 +487,9 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			DEFAULT(ch)
 			}
 			switch((ch>>4)&7){
-			case 1:str.SetText(str_loc-1-ch&7,ch&7);break;
-			case 2:str.SetDec(str_loc-1-ch&7,ch&7);break;
-			case 3:str.SetBE(str_loc-1-ch&7,ch&7);break;
+			case 1:str.SetText((str_loc-1-ch)&7,ch&7);break;
+			case 2:str.SetDec((str_loc-1-ch)&7,ch&7);break;
+			case 3:str.SetBE((str_loc-1-ch)&7,ch&7);break;
 			}
 			if(ch&0x80){
 				str.SetEol(str_loc-1,2);
