@@ -131,9 +131,13 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 			getline(in,comment);
 			comment=white+comment;
 			white="";
-			if(is_command(comment)||parse_comment(comment))
-				if(newline)AddComment(comment,cur_pos());
-				else TrailComment(comment,cur_pos());
+			if(is_command(comment)||parse_comment(comment)) {
+				if(newline) {
+                    AddComment(comment,cur_pos());
+				} else {
+                    TrailComment(comment,cur_pos());
+                }
+            }
 			newline=true;
 			break;
 		}case'\\':
@@ -649,9 +653,9 @@ ostream&PseudoSprite::output(ostream&out){
 			out<<'"';
 			instr=false;
 		}
-		if(context[i]==" "&&(instr&&i+1<Length()&&(IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8)))||(beauty[i]&~NOBREAK)==NQEXT))
+		if(context[i]==" " && ((instr && i+1<Length() && (IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8)))) || (beauty[i]&~NOBREAK)==NQEXT)) {
 			context[i]="";
-		else if(context[i]!=""){
+		} else if(context[i]!="") {
 			if(instr){
 				out<<'"';
 				instr=false;
@@ -674,8 +678,8 @@ ostream&PseudoSprite::output(ostream&out){
 		// and when not last character
 		if(!GetState(CONVERTONLY)&&
 			IsLinePermitted(i)&&GetState(MAXLEN)&&
-			(!instr && count>=GetState(MAXLEN)-15 ||
-			(instr && (count>=GetState(MAXLEN)-15 && (*this)[i]==' ' ||
+			((!instr && count>=GetState(MAXLEN)-15) ||
+			(instr && ((count>=GetState(MAXLEN)-15 && (*this)[i]==' ') ||
 					   count>=GetState(MAXLEN))))
 			&& i<Length()-1) {
 			if(instr){
@@ -700,7 +704,7 @@ bool PseudoSprite::CanQuote(uint byte){
 
 bool PseudoSprite::DoQuote(uint i)const{
 	if((beauty[i]&~NOBREAK)==QESC || (beauty[i]&~NOBREAK)==QEXT) return NFOversion>6;	// Quote IFF we have escapes
-	return CanQuote((*this)[i])&&IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8));
+	return (CanQuote((*this)[i])&&IsText(i))||(IsUTF8(i)&&GetState(QUOTEUTF8));
 }
 
 void PseudoSprite::Invalidate(){

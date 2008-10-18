@@ -59,7 +59,7 @@
 #endif	//NFORENUM
 
 #define END_ESCAPES() };\
-	static const int num_esc=sizeof(escapes)/sizeof(escapes[0]);
+	static const unsigned int num_esc=sizeof(escapes)/sizeof(escapes[0]);
 
 #ifndef NFORENUM
 
