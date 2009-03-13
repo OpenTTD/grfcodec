@@ -32,7 +32,7 @@ wiki for the meanings of the feature bytes.
 
 45: "Invalid nument1 or random-/variational-type byte" (Fatal)
 This action 2 has a type byte with no meaning.
-Change the type byte to 80-83, 85, 86, 89, or 8A for var/random, or 00-7F
+Change the type byte to 80-86, 89, or 8A for var/random, or 00-7F
 for standard.
 
 46: "Invalid action byte." (Fatal)
