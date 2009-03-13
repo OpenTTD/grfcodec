@@ -18,6 +18,7 @@ v3.4.6 to
   - Enable actions 1..3 for newobjects
   - Object variables 40..43
   - Object properties 0B..10
+  - Fifteen new languages. See ver 43 of Action4 wiki page.
 - Fix U+E0xx characters being output quoted.
 - Allow the beautifier to output escape sequences.
 - Support random 2 type 84.
