@@ -33,10 +33,10 @@ extern bool _mapAll,_hexspritenums;
 
 #define DIGITHEIGHT 5
 #define DIGITWIDTH 4
-// DIGITHEIGHT*DIGITWIDTH*16(digits)/8(bitsperbyte) = 32 bytes
+// DIGITHEIGHT*DIGITWIDTH*16(digits)/8(bitsperbyte) = 40 bytes
 #define DIGITIND(digit,line) (digit/2+8*line)
 #define DIGITSHR(digit) (4*(digit&1))
-static unsigned char digitlines[32] = {
+static unsigned char digitlines[40] = {
 
 _( _OO_, __O_ ),_( OOO_, OOO_ ),_( __O_, OOOO),_( _OO_, OOOO),_( _OO_, _OO_ ), _( _OO_, OOO_ ), _( _OOO, OOO_ ), _( OOOO, OOOO ),
 _( O__O, _OO_ ),_( ___O, ___O ),_( _OO_, O___),_( O___, ___O),_( O__O, O__O ), _( O__O, O__O ), _( O___, O__O ), _( O___, O___ ),
