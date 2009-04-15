@@ -84,6 +84,7 @@ char *usagetext=
 	"    -xx       Disable production of both quoted and unquoted escape sequences.\n"
 	"              This has the side effect of producing a version 6 .nfo, instead\n"
 	"              of a version 7 .nfo.\n"
+	"    -X        List sprite numbers in the PCX file in hex.\n"
 	"\n"
 	"Options for encoding:\n"
 	"    -c        Crop extraneous transparent blue from real sprites\n"
@@ -713,7 +714,7 @@ static U8* findpal(char *grffile)
 
 //extern "C" void debugint(void);
 
-bool _force=false,_mapAll=false;
+bool _force=false,_mapAll=false,_hexspritenums=false;
 int _useexts=2;
 
 int main(int argc, char **argv)
@@ -736,7 +737,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dew:h:b:up:m:M:tfxqc");
+		char opt = getopt(argc, argv, "dew:h:b:up:m:M:tfxqcX");
 
 		if (opt == (char) EOF)
 			break;
@@ -804,6 +805,9 @@ int main(int argc, char **argv)
 			break;
 		case 'q':
 			_quiet++;
+			break;
+		case 'X':
+			_hexspritenums=true;
 			break;
 		default:
 			usage();

@@ -57,7 +57,10 @@ GRFCODEC
         -x
         -xx
                 Disable part or all of the Info version 7 format, reverting
-                to the Info version 6 format 
+                to the Info version 6 format.
+
+        -X
+                Print the sprite numbers in the PCX (but NOT the NFO) in hex
 
           Examples:
 
@@ -73,21 +76,27 @@ GRFCODEC
                 of the resulting .GRF file, and may reduce performance in
                 TTD because it can only cache fewer sprites.
 
-        -o
-        -oo
+        -c
                 Enable sprite-shrinking optimizations. Note that these are
-                not necessarily safe. In particular, sprites that will
-                participate share their bounding box (as for some station
-                sprites) must not have their upper-right hand corner moved,
-                and the sprite defining the bounding box must not be shrunk
-                smaller than any that will share with it.
+                not necessarily safe. In particular, sprites that will share
+                their bounding box (as for some station sprites) must not
+                have their upper-right hand corner moved, and the sprite
+                defining the bounding box must not be shrunk smaller than any
+                that will share with it.
+                Sprites with bit 6 of their compression byte set will never
+                be shrunk.
 
    When doing either:
 
+        -M <mapping>
+                Map the colour palette from one type to another, for example
+                to convert DOS GRF files to the Windows version or vice
+                versa. See -m ? for a list of possible values.
         -m <mapping>
-                Map the colour palette from one type to another, for
-                example to convert DOS GRF files to the Windows version
-                or vice versa. See -m ? for a list of possible values.
+                As above, but do not map the colors of sprites that appear to
+                be character glyphs. Such sprites use only the first three
+                entries in the palette, regardless of what colors they may
+                actually represent.
 
           Examples:
 
