@@ -303,6 +303,11 @@ void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,u
 			var.max=rangemax[width];
 		}
 		break;
+	case 0x12:case 0x13:	// <=>
+		dflt.min=0;
+		dflt.max=2;
+		break;
+	case 0x11:	// ROR
 	default:
 		dflt.min=0;
 		dflt.max=rangemax[width];
