@@ -2,7 +2,7 @@
 #include "pcxsprit.h"
 #include "ttdpal.h"
 
-extern bool _mapAll;
+extern bool _mapAll,_hexspritenums;
 
 /***********************\
 *						*
@@ -33,16 +33,16 @@ extern bool _mapAll;
 
 #define DIGITHEIGHT 5
 #define DIGITWIDTH 4
-// DIGITHEIGHT*DIGITWIDTH*10(digits)/8(bitsperbyte) = 25 bytes
-#define DIGITIND(digit,line) (digit/2+5*line)
+// DIGITHEIGHT*DIGITWIDTH*16(digits)/8(bitsperbyte) = 32 bytes
+#define DIGITIND(digit,line) (digit/2+8*line)
 #define DIGITSHR(digit) (4*(digit&1))
-static unsigned char digitlines[25] = {
+static unsigned char digitlines[32] = {
 
-_( _OO_, __O_ ),_( OOO_, OOO_ ),_( __O_, OOOO),_( _OO_, OOOO),_( _OO_, _OO_ ),
-_( O__O, _OO_ ),_( ___O, ___O ),_( _OO_, O___),_( O___, ___O),_( O__O, O__O ),
-_( O__O, __O_ ),_( _OO_, _OO_ ),_( O_O_, OOO_),_( OOOO, __O_),_( _OO_, _OOO ),
-_( O__O, __O_ ),_( O___, ___O ),_( OOOO, ___O),_( O__O, _O__),_( O__O, ___O ),
-_( _OO_, _OOO ),_( OOOO, OOO_ ),_( __O_, OOO_),_( _OO_, _O__),_( _OO_, _OO_ ),
+_( _OO_, __O_ ),_( OOO_, OOO_ ),_( __O_, OOOO),_( _OO_, OOOO),_( _OO_, _OO_ ), _( _OO_, OOO_ ), _( _OOO, OOO_ ), _( OOOO, OOOO ),
+_( O__O, _OO_ ),_( ___O, ___O ),_( _OO_, O___),_( O___, ___O),_( O__O, O__O ), _( O__O, O__O ), _( O___, O__O ), _( O___, O___ ),
+_( O__O, __O_ ),_( _OO_, _OO_ ),_( O_O_, OOO_),_( OOOO, __O_),_( _OO_, _OOO ), _( OOOO, OOO_ ), _( O___, O__O ), _( OOO_, OOO_ ),
+_( O__O, __O_ ),_( O___, ___O ),_( OOOO, ___O),_( O__O, _O__),_( O__O, ___O ), _( O__O, O__O ), _( O___, O__O ), _( O___, O___ ),
+_( _OO_, _OOO ),_( OOOO, OOO_ ),_( __O_, OOO_),_( _OO_, _O__),_( _OO_, _OO_ ), _( O__O, OOO_ ), _( _OOO, OOO_ ), _( OOOO, O___ ),
 
 };
 #undef _
@@ -150,7 +150,10 @@ void pcxwrite::showspriteno()
 {
 	char spritenum[10];
 	int newlastx;
-	sprintf(spritenum, "%d", spriteno);
+	if(_hexspritenums)
+		sprintf(spritenum, "%X", spriteno);
+	else
+		sprintf(spritenum, "%d", spriteno);
 
 	newlastx = subx+strlen(spritenum)*(DIGITWIDTH+1)+dx;
 	if (newlastx >= pcxfile::sx)
@@ -163,6 +166,8 @@ void pcxwrite::showspriteno()
 
 	for (int i=0; spritenum[i]; i++) {
 		int digit = spritenum[i] - '0';
+		if (digit > 9)
+			digit += '0' - 'A';
 		for (int y=0; y<DIGITHEIGHT; y++) {
 			int pixels = digitlines[DIGITIND(digit,y)] >> DIGITSHR(digit);
 			for (int x=DIGITWIDTH-1; x>=0; x--) {
