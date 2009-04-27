@@ -19,7 +19,7 @@ CC = g++
 CXX = g++
 
 # use 386 instructions but optimize for pentium II/III
-CFLAGS = -g -DWIN32 -O1 $(BOOST_CMD) -Wall -Wno-uninitialized $(CFLAGAPP)
+CFLAGS = -g -DWIN32 -O1 -I$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
 CXXFLAGS = $(CFLAGS)
 
 -include ${MAKEFILELOCAL}
@@ -39,6 +39,10 @@ BOOST_INCLUDE=$(shell \
 ( [ -d /usr/include/boost/date_time ] && echo /usr/include ) || \
 ( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) )
 endif
+endif
+
+ifeq ($(BOOST_INCLUDE),)
+BOOST_ERROR = echo Error: Boost not found. Compilation will fail.
 endif
 
 ifndef V
@@ -97,16 +101,8 @@ ifndef NO_BOOST
 NO_BOOST = 0
 endif
 
-ifeq ($(BOOST_INCLUDE),)
-BOOST_CMD=-DNO_BOOST
-BOOST_WARN = @echo "Warning: boost::date_time not found.  \\w<date> and \\d<date> will not be" ; echo "  supported.  If you have recently installed boost, try sudo updatedb."
-else
-BOOST_CMD=-I$(BOOST_INCLUDE)
-endif
-
 ifneq ($(NO_BOOST),0)
-BOOST_CMD=-DNO_BOOST
-BOOST_WARN = @echo "Warning: \\w<date> and \\d<date> support disabled by NO_BOOST setting."
+BOOST_WARN = echo Warning: NO_BOOST is no longer obeyed.
 endif
 
 # targets
@@ -135,6 +131,9 @@ release: FORCE
 	$(_C)upx $(_Q) --best $(NFORENUM)
 
 FORCE:
+	@$(BOOST_WARN)
+	@$(BOOST_ERROR)
+
 .rev: FORCE
 	$(_C) [ -e $@ ] || echo SVNREV=0 > $@
 	$(_C) REV=`${SVNVERSION}` perl rev.pl $@ < $@
@@ -157,11 +156,6 @@ version.h: FORCE
 
 %.o : %.cpp
 	$(_E) [CPP] $@
-	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) $<
-
-pseudo.o: pseudo.cpp
-	$(_E) [CPP] $@
-	$(BOOST_WARN)	
 	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) $<
 
 %.o.d:

@@ -7,8 +7,6 @@ Compiling
 
 Known to compile with g++ 3.4.4, g++ 4.0.2, and VS .NET, assuming Boost is
 installed. Get Boost from www.boost.org.
-The required boost header is included. If you do not have the rest of boost,
-make should detect this and remove the boost dependency.
 For more information consult 0compile.txt in the source code.
 
 
