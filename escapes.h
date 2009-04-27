@@ -59,7 +59,7 @@
 #endif	//NFORENUM
 
 #define END_ESCAPES() };\
-	static const int num_esc=sizeof(escapes)/sizeof(escapes[0]);
+	static const unsigned int num_esc=sizeof(escapes)/sizeof(escapes[0]);
 
 #ifndef NFORENUM
 
@@ -127,8 +127,11 @@ ESCAPE_OVR(0B,"2&",2,Is2Op)
 ESCAPE_OVR(0C,"2|",2,Is2Op)
 ESCAPE_OVR(0D,"2^",2,Is2Op)
 ESCAPE_OVR(0E,"2sto",2,Is2Op)
+ESCAPE_OVR(0E,"2s",2,Is2Op)
 ESCAPE_OVR(0F,"2rst",2,Is2Op)
+ESCAPE_OVR(0F,"2r",2,Is2Op)
 ESCAPE_OVR(11,"2ror",2,Is2Op)
+ESCAPE_OVR(11,"2rot",2,Is2Op)
 
 ESCAPE_79(00,"71",3)
 ESCAPE_79(01,"70",3)

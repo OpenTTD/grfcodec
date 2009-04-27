@@ -149,7 +149,6 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 	string::size_type firstnotpseudo;
 	while(true){
 		getline(in,sprite);
-		//IssueMessage(0,SPRITE,spritenum+1,sprite.c_str());
 		istringstream spritestream(sprite);
 		eat_white(spritestream);
 		if(spritestream.peek()==EOF || // blank
@@ -271,6 +270,8 @@ string GetUtf8Encode(uint ch){
 
 #undef CHAR
 
+int findescape(string);
+
 Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 	istringstream in(sprite);
 	ostringstream out;
@@ -324,111 +325,7 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 				in.ignore();
 				uint x;
 				switch(in.get()){
-				case'2':{
-					bool sign=true;
-					if(in.peek()=='u'){
-						sign=false;
-						in.ignore();
-					}
-					switch(in.get()){
-					case'+':out.put(0x00);continue;
-					case'-':out.put(0x01);continue;
-					case'<':out.put(sign?0x02:0x04);continue;
-					case'>':out.put(sign?0x03:0x05);continue;
-					case'/':out.put(sign?0x06:0x08);continue;
-					case'%':out.put(sign?0x07:0x09);continue;
-					case'*':out.put(0x0A);continue;
-					case'&':out.put(0x0B);continue;
-					case'|':out.put(0x0C);continue;
-					case'^':out.put(0x0D);continue;
-					case's':out.put(0x0E);
-						if(in.get()=='t'&&in.peek()=='o'){
-							in.ignore();
-							continue;
-						}
-						in.unget();
-						continue;
-					case'r':{
-						char ch=in.get();
-						if(ch=='o' && (in.peek()=='r' || in.peek()=='t')){
-							out.put(0x11);
-							in.ignore();
-							continue;
-						}
-						out.put(0x0F);
-						if(ch=='s' && in.peek()=='t'){
-							in.ignore();
-							continue;
-						}
-						in.unget();
-						continue;
-					}}
-					break;
-				}case'7':{
-					switch(in.get()){
-					case'1':out.put(0x00);continue;
-					case'0':out.put(0x01);continue;
-					case'=':out.put(0x02);continue;
-					case'!':out.put(0x03);continue;
-					case'<':out.put(0x04);continue;
-					case'>':out.put(0x05);continue;
-					case'G':
-						if(in.get()=='G'){// \7GG Is or will be active
-							out.put(0x09);
-							continue;
-						}
-						in.unget();
-						out.put(0x06);// \7G Is active
-						continue;
-					case'g':
-						switch(in.get()){
-						case'g':out.put(0x0A);continue;// \7gg is not and will not be active
-						case'G':out.put(0x08);continue;// \7gG is not active but will be
-						default:// \7g is not active
-							in.unget();
-							out.put(0x07);
-							continue;
-						}
-					case'c':out.put(0x0B);continue;
-					case'C':out.put(0x0C);continue;
-					}
-					break;
-				}case'D':{
-					bool sign=true;
-					if(in.peek()=='u'){
-						sign=false;
-						in.ignore();
-					}
-					switch(in.get()){
-					//<operation>
-					case'=':out.put(0x00);continue;
-					case'+':out.put(0x01);continue;
-					case'-':out.put(0x02);continue;
-					case'*':out.put(sign?0x04:0x03);continue;
-					case'<':
-						if(in.get()=='<'){
-							out.put(sign?0x06:0x05);
-							continue;
-						}
-						break;
-					case'&':out.put(0x07);continue;
-					case'|':out.put(0x08);continue;
-					case'/':out.put(sign?0x0A:0x09);continue;
-					case'%':out.put(sign?0x0C:0x0B);continue;
-					//GRM <operation>
-					case'R':out.put(0x00);continue;
-					case'F':out.put(0x01);continue;
-					case'C':out.put(0x02);continue;
-					case'M':out.put(0x03);continue;
-					case'n'://no fail
-						switch(in.get()){
-						case'F':out.put(0x04);continue; //\DnF
-						case'C':out.put(0x05);continue; //\DnC
-						}
-						break;
-					case'O':out.put(0x06);continue;
-					}
-				}case'b':
+				case'b':
 					if(in.peek()=='*'){// \b*
 						in.ignore()>>x;
 						if(!in||x>0xFFFF)break;//invalid
@@ -530,7 +427,15 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 					out.put(x>>16);
 					out.put(x>>24);
 					continue;
-				}
+				default:{
+					in.unget();
+					string esc;
+					in>>esc;
+					int byte = findescape(esc);
+					if(byte == -1) break;
+					out.put(byte);
+					continue;
+				}}
 				throw Sprite::unparseable("Could not parse unquoted escape sequence",num);
 			}
 		default:
