@@ -23,11 +23,10 @@
 #ifndef _RENUM_RENUM_H_INCLUDED_
 #define _RENUM_RENUM_H_INCLUDED_
 
-#ifdef NO_BOOST
-# include"boost/current_function.hpp"
-#else
-# include<boost/current_function.hpp>
-#endif
+/* If your compiler errors on the following line, boost is not
+ * properly installed.
+ * Get boost from http://www.boost.org */
+#include <boost/current_function.hpp>
 
 #include"getopt.h"
 
