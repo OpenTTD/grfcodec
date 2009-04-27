@@ -6,7 +6,7 @@
  * Return values:
  * See README[.txt]
  *
- * Copyright 2004-2006 by Dale McCoy.
+ * Copyright 2004-2007,2009 by Dale McCoy.
  * dalestan@gmail.com
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ using namespace std;
 #ifdef _WIN32
 #   include "win32.h"
 #endif
+#include "mapescapes.h"
 
 #ifndef _MSC_VER
 //Cygwin's GCC #defines __cdecl, but other GCCs do not
@@ -64,7 +65,6 @@ static int _retval=EOK;
 static int _force=0;
 
 void SetCode(int x){_retval=max(_retval,x);}
-
 void doexit(){exit(_retval);}
 
 //The VS project file specifies __stdcall as the default convention,
@@ -233,6 +233,8 @@ int process_file(istream&in){
 	NFOversion=4;
 	string sprite,datapart,buffer;
 	inject_into(in);
+	nfo_escapes.clear();
+	vector<string> extra_lines;
 
 	if(string(" \t\n*0123456789/;#*").find((char)in.peek())==NPOS){
 		IssueMessage(0,APPARENTLY_NOT_NFO);
@@ -263,6 +265,30 @@ int process_file(istream&in){
 			}
 			if(NFOversion>2)
 				getline(in,sprite);//Format line
+			if (NFOversion>6) {
+				// Insert default escapes
+				for (uint i=0; i<num_esc; i++)
+					nfo_escapes.insert(nfe_pair(escapes[i].str+1, escapes[i].byte));
+				while (strncmp(sprite.c_str(), "// Format: ", 11)) {
+					if (!strncmp(sprite.c_str(), "// Escapes: ", 12)) {	// Actually, that was an escapes line. Read it.
+						istringstream esc(sprite);
+						string str;
+						int byte = 0;
+						esc.ignore(12);
+						while (esc>>str)
+							if (str == "=") byte--;
+							else if (str[0] == '@')
+								byte = strtol(str.c_str()+1,NULL,16);
+							else nfo_escapes.insert(nfe_pair(str, byte++));
+					} else if (strncmp(sprite.c_str(), "// ",3)) { // EEEP! No "Format:" line in this file!
+						IssueMessage(0, APPARENTLY_NOT_NFO);
+						SetCode(EPARSE);
+						return -1;
+					} else extra_lines.push_back(sprite); // store unknown lines
+
+					getline(in,sprite);	// Try again to skip "Format: " line
+				}
+			}
 		}else{
 			IssueMessage(0,UNKNOWN_VERSION,1);
 			IssueMessage(0,PARSING_FILE);
@@ -355,6 +381,28 @@ int process_file(istream&in){
 		if(peek(in)==EOF){
 			flush_buffer();
 			(*real_out)<<NFO_HEADER(NFOversion);
+			if (NFOversion > 6) {
+				(*real_out)<<"// Escapes:";
+				nfe_right_iter it = nfo_escapes.right.begin();
+				int oldbyte = -1;
+				while (it != nfo_escapes.right.end()) {
+					if (it->first == oldbyte) {
+						(*real_out)<<" =";
+						--oldbyte;
+					} else if (it->first < oldbyte) {
+						(*real_out)<<"\n// Escapes:";
+						oldbyte = -1;
+					}
+					while (++oldbyte != it->first)
+						(*real_out)<<" "<<nfo_escapes.right.begin()->second;
+					(*real_out)<<" "<<it->second;
+					it++;
+				}
+				(*real_out)<<"\n";
+				for (uint i=0; i<extra_lines.size(); i++)
+					(*real_out)<<extra_lines[i]<<"\n";
+			}
+			(*real_out)<<NFO_FORMAT;
 			if(isPatch)(*real_out)<<"    0 * 4\t "<<mysprintf("%8x\n",GetState(DIFF)?0:_spritenum);
 			(*real_out)<<outbuffer.str();
 			pNfo=real_out;
