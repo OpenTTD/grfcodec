@@ -147,92 +147,23 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 				switch(in.get()){
 				case'b':
 					if(in.peek()=='*'){// \b*
-						in.ignore()>>x;
+						x = ReadValue(in.ignore(), _BX_);
 						if(!in||x>0xFFFF)break;//invalid
-						if(x>0xFE)out.put('\xFF').write(itoa(x,256).c_str(),2);
+						if(x>0xFE)out.put('\xFF').write(itoa(x,256,2).c_str(),2);
 						else out.put((char)x);
 						continue;
 					}
-					in>>x;
-					if(x>=1920)x-=1920;//remap years
+					x = ReadValue(in, _B_);
 					if(!in||x>0xFF)break;//invalid
 					out.put((char)x);
 					continue;
 				case'w':
-					if(in.peek()=='x'){// \wx
-						in.ignore();
-						x=ReadHex(in,4);
-					}else{
-						in>>x;
-						//delay fail check until after date parsing.
-						if(in.peek()=='/'||in.peek()=='-'){//date
-							in.ignore();
-							ushort y,z;
-							in>>y;
-							if(/*!in||*/(in.peek()!='/'&&in.peek()!='-'))//in.peek will return eof if !in
-								break;
-							in.ignore();
-							in>>z;
-							if(x==0)x=2000;
-							if(x>31&&x<100)x+=1900;
-							if(z==0)z=2000;
-							if(z>31&&z<100)z+=1900;
-							date d;
-							try{
-								if(x>1919)d=date((ushort)x,y,z);
-								else d=date(z,y,(ushort)x);
-							}catch(std::out_of_range){
-								break;
-							}
-							x=(d-date(1920,1,1)).days();
-						}
-					}
-					if(!in)break;
-					if(x>0xFFFF)break;//invalid
+					x = ReadValue(in, _W_);
+					if(!in||x>0xFFFF)break;//invalid
 					out.write(itoa(x,256,2).c_str(),2);
 					continue;
 				case'd':
-					if(in.peek()=='x'){// \wx
-						in.ignore();
-						x=ReadHex(in,8);
-					}else{
-						in>>x;
-						if(in.peek()=='/'||in.peek()=='-'){//date
-							in.ignore();
-							ushort y,z;
-							in>>y;
-							if(/*!in||*/(in.peek()!='/'&&in.peek()!='-'))//in.peek will return eof if !in
-								break;
-							in.ignore();
-							in>>z;
-							date d;
-							int extra=701265;
-//Boost doesn't support years out of the range 1400..9999, so move wider dates back in range.
-#define adjyear(x) \
-	while(x>9999){ \
-		x-=400; \
-		extra += 365*400 + 97; /* 97 leap years every 400 years. */ \
-	} \
-	while(x<1400){ \
-		x+=400; \
-		extra -= 365*400 + 97; \
-	}
-
-							try{
-								if(z<32){
-									adjyear(x);
-									d=date((ushort)x,y,z);
-								}else{
-									adjyear(z);
-									d=date(z,y,(ushort)x);
-								}
-								x=(d-date(1920,1,1)).days();
-							}catch(std::out_of_range){
-								break;
-							}
-							x+=extra;
-						}
-					}
+					x = ReadValue(in, _D_);
 					if(!in)break;
 					out.write(itoa(x,256,4).c_str(),4);
 					continue;
@@ -632,4 +563,62 @@ bool PseudoSprite::IsLinePermitted(uint i)const{
 
 bool PseudoSprite::UseOrig()const{
 	return useorig||!GetState(BEAUTIFY);
+}
+
+uint PseudoSprite::ReadValue(istream& in, width w) {
+	if (in.peek() == 'x') {		// Read any hex value
+		int ret;
+		in.ignore()>>setbase(16)>>ret>>setbase(10);
+		return ret;
+	}
+	/*if (in.peek() == '(') {		// Read any RPN value
+		//TODO: Magic goes here
+	}*/
+
+	// Read any other value
+	string str;
+	in>>str;
+	char c1, c2;
+	int y, m, d, count = sscanf(str.c_str(), "%d%c%d%c%d", &y, &c1, &m, &c2, &d);
+
+	if (count==1) {
+		// Got a decimal number
+		if (w==_B_ && y>1920) y-=1920;	// special case for byte-sized years
+		return y;
+	}
+
+	// May have a date. Check, fiddle, and invoke date_time.
+	if (count == 5 && c1 == c2 && (c1 == '-' || c1 == '/')) {
+		int extra = 0;
+
+		if (w == _W_) {
+			// word date
+			if (d==0 || (d>31 && d<100) || d>1919) swap(y, d);	// Try DMY instead
+			if (y==0) y = 2000;
+			else if (y>31 && y<100) y+=1900;
+		} else if (w == _D_) {
+			// dword date
+			extra = 701265;
+			if (d >= 32) swap(y, d); // Try DMY instead
+			// Boost doesn't support years out of the range 1400..9999
+			while (y>9999) {
+				y -= 400;
+				extra += 365*400 + 97; // 97 leap years every 400 years.
+			}
+			while (y<1400) {
+				y += 400;
+				extra -= 365*400 + 97;
+			}
+		} else goto fail;		// I can't read a date of that width.
+
+		try {
+			return (date((ushort)y, (ushort)m, (ushort)d) - date(1920, 1, 1)).days() + extra;
+		} catch (std::out_of_range) {
+			// Fall through to fail
+		}
+	}
+
+fail:	// Nothing worked
+	in.clear(ios::badbit);
+	return (uint)-1;
 }
