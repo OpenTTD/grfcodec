@@ -1,7 +1,7 @@
 # Version number
 VER = 3.4.6
 # Current year
-YEAR = 2008
+YEAR = 2009
 
 VERSIONSTR = $(VER) r${SVNREV}
 ifneq ($(NOREV),0)
