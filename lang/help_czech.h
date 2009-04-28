@@ -83,7 +83,7 @@ START_HELP_TEXT(RL_CZECH)
 "       lze take zadat seznam carkou oddelenych ID zprav, ktere maji byt\n"
 "       aktivovany ci deaktivovany.\n"
 "\n"
-"NFORenum - Copyright 2004-2006 Dale McCoy (dalestan@gmail.com)\n"
+"NFORenum - Copyright 2004-2009 Dale McCoy (dalestan@gmail.com)\n"
 "Tento program lze kopirovat a sirit dle podminek GNU General Public\n"
 "License obsazenych v souboru 'COPYING'.\n"
 "\n"
