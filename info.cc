@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iomanip>
 #include <map>
+#include <climits>
 
 #include "info.h"
 #include "sprites.h"
@@ -85,7 +86,7 @@ inforeader::inforeader(char *fn)
 }
 
 int findescape(string str) {
-	for(int i=0;i<num_esc;i++)
+	for(uint i=0;i<num_esc;i++)
 		if(str == escapes[i].str+1)
 			return escapes[i].byte;
 	map<string,int>::iterator ret = nfo_escapes.find(str);
@@ -157,7 +158,7 @@ infowriter::infowriter(FILE *info, int maxboxes, int useplaintext)
 	fprintf(info,"// (Info version %d)", _useexts ? 7 : 6);
 	if(_useexts) {
 		int oldbyte = INT_MAX;
-		for(int i=0;i<num_esc;i++){
+		for(uint i=0;i<num_esc;i++){
 			if(escapes[i].action == 9) continue;
 			if(escapes[i].byte < oldbyte) {
 				fputs("\n// Escapes:", info);
@@ -252,7 +253,7 @@ void infowriter::newband(pcxfile *pcx)
 						if (instr) {
 							fputs("\"", info); instr = 0;
 						}
-						int k=0;
+						uint k=0;
 						if (_useexts == 2 && spriteno>1) {
 							for(;k<num_esc;k++)
 								if(escapes[k].byte==d->data[j]&&
