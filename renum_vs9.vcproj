@@ -544,6 +544,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\mapescapes.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\message_mgr.cpp"
 				>
 			</File>
@@ -623,6 +627,10 @@
 			</File>
 			<File
 				RelativePath=".\language_mgr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\mapescapes.h"
 				>
 			</File>
 			<File

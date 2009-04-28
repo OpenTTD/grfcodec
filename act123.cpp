@@ -2,7 +2,7 @@
  * act123.cpp
  * Contains definitions for checking actions 1-3.
  *
- * Copyright 2004-2008 by Dale McCoy.
+ * Copyright 2004-2009 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,13 +36,11 @@ using namespace std;
 #include"act123.h"
 #include"command.h"
 #include"messages.h"
-typedef char U8;
-#define NFORENUM
-#include"escapes.h"
 
 #define MAX_TTD_SPRITE 4894
 
 uint CargoTransTable(int=0);
+string FindEscape(char, int);
 
 #define CHANGED_FEATURE(type)\
 	{\
@@ -223,9 +221,8 @@ CHANGED_FEATURE(var)
 			if((op=data.ExtractByte(off++))>Check2v::GetMaxOp())
 				IssueMessage(ERROR,INVALID_OP,off-1,op);
 			else{
-				for(uint k=0;k<num_esc;k++)
-					if(escapes[k].action==2&&escapes[k].byte==(char)op)
-						data.SetEscape(off-1,false,mysprintf(" %t",escapes[k].str),1);
+				string s = FindEscape('2', op);
+				if (s != "") data.SetEscape(off-1, false, s, 1);
 			}				
 			if(op==0xF && oldop!=0xE && oldop!=0x10)
 				IssueMessage(WARNING1,DISCARD_UNSTORED,off-1);

@@ -91,7 +91,8 @@ export _I
 NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
   act79D.cpp actB.cpp actF.cpp command.cpp data.cpp globals.cpp inject.cpp \
   messages.cpp pseudo.cpp rangedint.cpp renum.cpp sanity.cpp strings.cpp \
-  utf8.cpp getopt.cpp help.cpp message_mgr.cpp language_mgr.cpp
+  utf8.cpp getopt.cpp help.cpp message_mgr.cpp language_mgr.cpp \
+  mapescapes.cpp
 
 ifndef NOREV
 NOREV = 0

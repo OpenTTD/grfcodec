@@ -39,11 +39,7 @@ using namespace std;
 #include"inlines.h"
 #include"command.h"
 #include"utf8.h"
-#include "mapescapes.h"
-
 extern int NFOversion;
-
-nfe_map nfo_escapes;
 
 bool TrySetVersion(int);
 
@@ -60,6 +56,7 @@ enum{HEX,TEXT,UTF8,ENDQUOTE,QESC,QEXT,NQEXT,NOBREAK=0x80};
 		white="";\
 	}else ((void)0)
 
+int FindEscape(string str);
 
 PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 	orig(sprite),
@@ -243,10 +240,10 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 					in.unget();
 					string esc;
 					in>>esc;
-					nfe_left_iter it = nfo_escapes.left.find(esc);
-					if(it == nfo_escapes.left.end())
+					int byte = FindEscape(esc);
+					if(byte == -1)
 						break;
-					out.put((char)it->second);
+					out.put((char)byte);
 					continue;
 				}}
 
