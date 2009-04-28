@@ -49,6 +49,8 @@ using namespace std;
 #endif
 #include "mapescapes.h"
 
+nfe_map nfo_escapes;
+
 #ifndef _MSC_VER
 //Cygwin's GCC #defines __cdecl, but other GCCs do not
 //#undef it to prevent GCC from warning on the #define,
@@ -266,9 +268,6 @@ int process_file(istream&in){
 			if(NFOversion>2)
 				getline(in,sprite);//Format line
 			if (NFOversion>6) {
-				// Insert default escapes
-				for (uint i=0; i<num_esc; i++)
-					nfo_escapes.insert(nfe_pair(escapes[i].str+1, escapes[i].byte));
 				while (strncmp(sprite.c_str(), "// Format: ", 11)) {
 					if (!strncmp(sprite.c_str(), "// Escapes: ", 12)) {	// Actually, that was an escapes line. Read it.
 						istringstream esc(sprite);
@@ -288,6 +287,11 @@ int process_file(istream&in){
 
 					getline(in,sprite);	// Try again to skip "Format: " line
 				}
+				// Now remove all defaults. This serves two purposes:
+				// 1) Prevent incorrectly specified defaults from causing problems later.
+				// 2) Allow the beautifier to select custom escapes over built-ins.
+				foreach(const esc& e, escapes)
+					nfo_escapes.left.erase(e.str+1);
 			}
 		}else{
 			IssueMessage(0,UNKNOWN_VERSION,1);
@@ -382,21 +386,22 @@ int process_file(istream&in){
 			flush_buffer();
 			(*real_out)<<NFO_HEADER(NFOversion);
 			if (NFOversion > 6) {
+				// (re)insert default escapes
+				foreach(const esc& e, escapes)
+					nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
 				(*real_out)<<"// Escapes:";
-				nfe_right_iter it = nfo_escapes.right.begin();
 				int oldbyte = -1;
-				while (it != nfo_escapes.right.end()) {
-					if (it->first == oldbyte) {
+				foreach (const nfe_rpair& p, nfo_escapes.right) {
+					if (p.first == oldbyte) {
 						(*real_out)<<" =";
 						--oldbyte;
-					} else if (it->first < oldbyte) {
+					} else if (p.first < oldbyte) {
 						(*real_out)<<"\n// Escapes:";
 						oldbyte = -1;
 					}
-					while (++oldbyte != it->first)
+					while (++oldbyte != p.first)
 						(*real_out)<<" "<<nfo_escapes.right.begin()->second;
-					(*real_out)<<" "<<it->second;
-					it++;
+					(*real_out)<<" "<<p.second;
 				}
 				(*real_out)<<"\n";
 				for (uint i=0; i<extra_lines.size(); i++)
