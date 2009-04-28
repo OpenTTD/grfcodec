@@ -247,6 +247,34 @@ PseudoSprite&PseudoSprite::SetText(uint i,uint num){
 	return SetEot(i);
 }
 
+PseudoSprite&PseudoSprite::SetBE(uint i, uint num) {
+	assert(num>0 && num<5);
+	switch (num) {
+	case 2:
+		return SetEscapeWord(i);
+	case 3:
+		return SetEscape(i, false, mysprintf(" \\b*%x", ExtractExtended(i)), ExtendedLen(i));
+	case 4:
+		return SetEscape(i, false, mysprintf(" \\dx%x", ExtractDword(i)), 4);
+	}
+	return SetHex(i, num);
+}
+
+PseudoSprite&PseudoSprite::SetDec(uint i, uint num) {
+	assert(num>0 && num<5);
+	switch (num) {
+	case 1:
+		return SetEscape(i, false, mysprintf(" \\b%d", ExtractByte(i)), 1);
+	case 2:
+		return SetEscape(i, false, mysprintf(" \\w%d", ExtractWord(i)), 2);
+	case 3:
+		return SetEscape(i, false, mysprintf(" \\b*%d", ExtractExtended(i)), ExtendedLen(i));
+	case 4:
+		return SetEscape(i, false, mysprintf(" \\d%d", ExtractDword(i)), 4);
+	}
+	return SetHex(i, num);
+}
+
 PseudoSprite&PseudoSprite::SetQEscape(uint i){
 	if(GetState(USEESCAPES))
 		beauty[i]=QESC;

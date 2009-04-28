@@ -56,8 +56,8 @@ public:
 	PseudoSprite&SetNoEol(uint);
 	PseudoSprite&SetGRFID(uint);
 
-	PseudoSprite&SetDec(uint,uint){return*this;}
-	PseudoSprite&SetBE(uint,uint){return*this;}
+	PseudoSprite&SetDec(uint,uint);
+	PseudoSprite&SetBE(uint,uint);
 
 	PseudoSprite&SetByteAt(uint,uint);
 	PseudoSprite&Append(uchar);
