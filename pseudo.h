@@ -39,12 +39,16 @@ public:
 	PseudoSprite&SetText(uint);
 	PseudoSprite&SetText(uint,uint);
 	PseudoSprite&SetUTF8(uint,uint);
+	PseudoSprite&SetOpByte(uint,char);
+	PseudoSprite&SetPositionalOpByte(uint,char);
+	PseudoSprite&SetDate(uint,uint);
 
 	PseudoSprite&SetQEscape(uint);
 	PseudoSprite&SetQEscape(uint,uint);
+private:
 	PseudoSprite&SetEscape(uint,bool,string,uint);
-	PseudoSprite&SetEscapeWord(uint);
 
+public:
 	PseudoSprite&SetHex(uint);
 	PseudoSprite&SetHex(uint,uint);
 	PseudoSprite&SetAllHex();
@@ -71,12 +75,14 @@ public:
 	uint ExtendedLen(uint)const;
 	uint ExtractVariable(uint,uint)const;
 
+	uint ExtractUtf8(uint&, bool&); // in utf8.cpp.
+
 	uint ExtractQEscapeByte(uint offs){
 		SetQEscape(offs);
 		return ExtractByte(offs);
 	}
 	uint ExtractEscapeWord(uint offs){
-		SetEscapeWord(offs);
+		SetBE(offs,2);
 		return ExtractWord(offs);
 	}
 	void AddComment(const string&,uint);

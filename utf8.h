@@ -10,7 +10,6 @@
 #ifndef UTF8_H_INCLUDED
 #define UTF8_H_INCLUDED
 
-uint GetUtf8Char(PseudoSprite&,uint&,bool,bool&);
 string GetUtf8Encode(uint);
 
 #endif /*UTF8_H_INCLUDED*/

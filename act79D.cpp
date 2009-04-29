@@ -34,9 +34,6 @@ using namespace std;
 #include"pseudo.h"
 #include"command.h"
 
-string FindEscape(char, int);
-string FindEscape(char, int, uint);
-
 uint numvars;
 class Vars{
 public:
@@ -96,8 +93,7 @@ int Check7(PseudoSprite&data){
 	uint desiredSize=data.Length()-5;
 	data.SetAllHex();
 	uint var=data.ExtractByte(1),var_size=data.ExtractByte(2),cond=data.ExtractByte(3);
-	string s = FindEscape('7', cond);
-	if (s != "") data.SetEscape(3, false, s, 1);
+	data.SetOpByte(3, '7');
 	if(cond>0xC)IssueMessage(ERROR,BAD_CONDITION,cond);
 	else if(cond>5&&cond<0xB){
 		if(var!=0x88){
@@ -173,8 +169,7 @@ bool CheckD(PseudoSprite&data,uint length){
 	if(length<5){IssueMessage(FATAL,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9);return false;}
 	data.SetAllHex();
 	uint target=data.ExtractByte(1),op=data.ExtractByte(2),src1=data.ExtractByte(3),src2=data.ExtractByte(4);
-	string s = FindEscape('D', op, 2);
-	if (s != "") data.SetEscape(2, false, s, 1);
+	data.SetPositionalOpByte(2, 'D');
 	if(!Vars::Instance().canWriteD(target))IssueMessage(ERROR,INVALID_TARGET);
 	if((op&0x7F)>D::Instance().maxop)IssueMessage(ERROR,INVALID_OP,2,op);
 	if(!Vars::Instance().canReadD(src1))IssueMessage(ERROR,INVALID_SRC,1);
@@ -191,8 +186,7 @@ bool CheckD(PseudoSprite&data,uint length){
 			}else if(info==0xFFFF){
 				if(src1>D::Instance().maxpatchvar)IssueMessage(ERROR,INVALID_SRC,1);
 			}else{
-				string s = FindEscape('D', src1, 3);
-				if (s != "") data.SetEscape(3, false, s, 1);
+				data.SetPositionalOpByte(3, 'D');
 				uint feat=(info>>8)&0xFF,count=info>>16;
 				if(src1>6)IssueMessage(ERROR,INVALID_SRC,1);
 				if(feat>MaxFeature()||!D::Instance()[feat])IssueMessage(ERROR,INVALID_FEATURE);
