@@ -40,7 +40,6 @@ using namespace std;
 #define MAX_TTD_SPRITE 4894
 
 uint CargoTransTable(int=0);
-string FindEscape(char, int);
 
 #define CHANGED_FEATURE(type)\
 	{\
@@ -220,10 +219,8 @@ CHANGED_FEATURE(var)
 			isadv=true;
 			if((op=data.ExtractByte(off++))>Check2v::GetMaxOp())
 				IssueMessage(ERROR,INVALID_OP,off-1,op);
-			else{
-				string s = FindEscape('2', op);
-				if (s != "") data.SetEscape(off-1, false, s, 1);
-			}				
+			else
+				data.SetOpByte(off-1, '2');
 			if(op==0xF && oldop!=0xE && oldop!=0x10)
 				IssueMessage(WARNING1,DISCARD_UNSTORED,off-1);
 			else if(op==0x10 && !Check2v::Instance().IsValid(effFeature, 0x7C))

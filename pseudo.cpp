@@ -43,6 +43,9 @@ extern int NFOversion;
 
 bool TrySetVersion(int);
 
+//QESC: \n or \xx
+//		\" and \\ are implicit in TEXT.
+//QEXT: \Uxxxx, usually.
 enum{HEX,TEXT,UTF8,ENDQUOTE,QESC,QEXT,NQEXT,NOBREAK=0x80};
 
 
@@ -57,6 +60,8 @@ enum{HEX,TEXT,UTF8,ENDQUOTE,QESC,QEXT,NQEXT,NOBREAK=0x80};
 	}else ((void)0)
 
 int FindEscape(string str);
+string FindEscape(char, int);
+string FindEscape(char, int, uint);
 
 PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 	orig(sprite),
@@ -247,13 +252,54 @@ PseudoSprite&PseudoSprite::SetText(uint i,uint num){
 	return SetEot(i);
 }
 
+PseudoSprite&PseudoSprite::SetOpByte (uint i, char action) {
+	string s = FindEscape(action, ExtractByte(i));
+	if (s != "") SetEscape(i, false, s, 1);
+	return *this;
+}
+PseudoSprite&PseudoSprite::SetPositionalOpByte (uint i, char action) {
+	string s = FindEscape(action, ExtractByte(i), i);
+	if (s != "") SetEscape(i, false, s, 1);
+	return *this;
+}
+
+PseudoSprite&PseudoSprite::SetDate(uint i, uint num) {
+	assert(num==1 || num==2 || num==4);
+	switch(num){
+	case 1:
+		return SetEscape(i, false, mysprintf(" \b%d", 1920+ExtractByte(i)), 1);
+	case 2:{
+		date::ymd_type ymd = (date(1920,1,1) + days(ExtractWord(i))).year_month_day();
+		ushort y = ymd.year, m = ymd.month, d = ymd.day;
+		return SetEscape(i, false, mysprintf(" \\w%d/%d/%d", y, m, d), 2);
+	} case 4: {
+		const uint min = 511340,	// == PseudoSprite("\\d1400-1-1", 0).ExtractDword(0)
+			max = 3652424,			// == PseudoSprite("\\d9999-12-31", 0).ExtractDword(0)
+			base = 701265;			// == PseudoSprite("\\d1920-1-1", 0).ExtractDword(0)
+		int yearmod = 0;
+		uint val = ExtractDword(i);
+		while (val < min) {
+			val += 365*400 + 97;
+			yearmod -= 400;
+		}
+		while (val > max) {
+			val -= 365*400 + 97;
+			yearmod += 400;
+		}
+		date::ymd_type ymd = (date(1920,1,1) + days(val-base)).year_month_day();
+		uint y = ymd.year+yearmod, m = ymd.month, d = ymd.day;
+		return SetEscape(i, false, mysprintf(" \\d%d/%d/%d", y, m, d), 2);
+	}}
+	return SetDec(i, num);
+}
+
 PseudoSprite&PseudoSprite::SetBE(uint i, uint num) {
 	assert(num>0 && num<5);
 	switch (num) {
 	case 2:
-		return SetEscapeWord(i);
+		return SetEscape(i, false, mysprintf(" \\wx%x", ExtractWord(i)), 2);
 	case 3:
-		return SetEscape(i, false, mysprintf(" \\b*%x", ExtractExtended(i)), ExtendedLen(i));
+		return SetEscape(i, false, mysprintf(" \\b*x%x", ExtractExtended(i)), ExtendedLen(i));
 	case 4:
 		return SetEscape(i, false, mysprintf(" \\dx%x", ExtractDword(i)), 4);
 	}
@@ -290,10 +336,6 @@ PseudoSprite&PseudoSprite::SetQEscape(uint i,uint num){
 		return *this;
 	}
 	return SetHex(i,num);
-}
-
-PseudoSprite&PseudoSprite::SetEscapeWord(uint i){
-	return SetEscape(i,false,mysprintf(" \\wx%x",ExtractWord(i)),2);
 }
 
 PseudoSprite&PseudoSprite::SetEscape(uint i, bool quote, string ext, uint len){

@@ -20,9 +20,10 @@
 #define CONT(i) ((data[off+i]&0xc0) == 0x80)
 #define VAL(i, s) ((data[off+i]&0x3f) << s)
 
-uint GetUtf8Char(PseudoSprite&data,uint&off,bool utf8,bool&valid){
+uint PseudoSprite::ExtractUtf8(uint& off, bool& valid){
+	PseudoSprite& data = *this;		// Historical
 	valid=false;
-	if(data[off]<0xC0||data[off]>0xFC||!utf8)return data[off++];
+	if(data[off]<0xC0||data[off]>0xFC)return data[off++];
 	valid=true;
 										/* 2-byte, 0x80-0x7ff */
 	if ( (data[off]&0xe0) == 0xc0 && CONT(1) ){
@@ -44,6 +45,8 @@ uint GetUtf8Char(PseudoSprite&data,uint&off,bool utf8,bool&valid){
 			return data[off++];
 		}
 		data.SetUTF8(off,3);
+		if (ret>0xE07A && ret<0xE100)
+			SetEscape(off, true, mysprintf("\\U%x", ret), 3);
 		off+=3;
 		return ret;
 	}									/* 4-byte, 0x10000-0x1FFFFF */

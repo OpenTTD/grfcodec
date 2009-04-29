@@ -2,7 +2,7 @@
  * strings.cpp
  * Contains definitions for checking strings in actions 4, 8, and B.
  *
- * Copyright 2005-2008 by Dale McCoy.
+ * Copyright 2005-2009 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,7 +180,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 	const uint length=data.Length();
 	if(offs>=length)return -1;
 	uint stackoffs=0,ret=0,ch;
-	bool utf8=false,valid;
+	bool utf8=false,valid=true;
 	try{
 		utf8=data.ExtractWord(offs)==0x9EC3;
 		if(utf8){
@@ -188,7 +188,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			offs+=2;
 		}
 	}catch(uint){}
-	while(0!=(ch=GetUtf8Char(data,offs,utf8,valid))){
+	while(0 != (ch = (utf8?data.ExtractUtf8(offs, valid):data.ExtractByte(offs)))) {
 		if(ch>(uint)-10){
 			IssueMessage(ERROR,OUTOFRANGE_UTF8,offs+(int)ch);
 			continue;
@@ -204,10 +204,8 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 						data.SetQEscape(offs);//nonprintable -- control or special.
 					else data.SetText(offs);
 				}else ch=0x20;//valid UTF-8 encoding of U+0080..U+00FF; bypass control-char checks
-			}else if(ch>0xE07A&&ch<0xE100){
-				data.SetEscape(offs-2,true,mysprintf("\\U%x",ch),3);
+			}else if(ch>0xE07A&&ch<0xE100)
 				ch&=0xFF;//UTF-8 encoding of U+E07B..U+E0FF; run control-char checks
-			}
 		}else{//!utf8
 			if(ch<0x20||(ch>0x7A&&ch<0xA1)||ch==0xAA||ch==0xAC||ch==0xAD||ch==0xAF||(ch>0xB3&&ch<0xB9))
 				data.SetQEscape(offs);//nonprintable -- control or special.
@@ -271,7 +269,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					break;
 				case 3:		// push WORD
 					stack = string(2,char(STACK_WORD)) + stack;
-					data.SetEscapeWord(++offs);
+					data.SetBE(++offs,2);
 					offs++;
 					break;
 				case 4:		// Delete BYTE characters
