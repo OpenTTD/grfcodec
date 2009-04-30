@@ -18,10 +18,6 @@ SHELL = /bin/sh
 CC = g++
 CXX = g++
 
-# use 386 instructions but optimize for pentium II/III
-CFLAGS = -g -DWIN32 -O1 -I$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
-CXXFLAGS = $(CFLAGS)
-
 -include ${MAKEFILELOCAL}
 
 # OS detection: Cygwin vs Linux
@@ -29,6 +25,15 @@ ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 
 # OS dependent variables
 NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo renum.exe || echo renum)
+
+# use 386 instructions but optimize for pentium II/III
+ifeq ($(ISCYGWIN),1)
+CFLAGS = -g -mno-cygwin -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
+else
+CFLAGS = -g -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
+endif
+CXXFLAGS = $(CFLAGS)
+
 
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
@@ -153,11 +158,11 @@ version.h: FORCE
 
 %.o : %.c
 	$(_E) [CC] $@
-	$(_C)$(CC) -c -o $@ $(CFLAGS) $<
+	$(_C)$(CC) -c -o $@ $(CFLAGS) -MMD -MF $@.d -MT $@ $<
 
 %.o : %.cpp
 	$(_E) [CPP] $@
-	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) $<
+	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -MMD -MF $@.d -MT $@ $<
 
 %.o.d:
 	$(_E) [CPP DEP] $@
