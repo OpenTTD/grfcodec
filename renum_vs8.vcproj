@@ -614,10 +614,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\foreach.h"
-				>
-			</File>
-			<File
 				RelativePath=".\getopt.h"
 				>
 			</File>
