@@ -188,7 +188,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			offs+=2;
 		}
 	}catch(uint){}
-	while(0 != (ch = (utf8?data.ExtractUtf8(offs, valid):data.ExtractByte(offs)))) {
+	while(0 != (ch = (utf8?data.ExtractUtf8(offs, valid):data.ExtractByte(offs++)))) {
 		if(ch>(uint)-10){
 			IssueMessage(ERROR,OUTOFRANGE_UTF8,offs+(int)ch);
 			continue;
