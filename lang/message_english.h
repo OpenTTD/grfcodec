@@ -2,7 +2,7 @@
  * message_english.h
  * Message text and data in English language.
  *
- * Copyright 2005-2008 by Dale McCoy.
+ * Copyright 2005-2009 by Dale McCoy.
  * Copyright 2006 by Dan Masek.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -259,7 +259,7 @@ NFO_MESSAGE(DISCARD_UNSTORED,"Operation 0F follows a non-store operation.\n",USE
 NFO_MESSAGE(NO_PERS_REGS,"No persistent registers exist for this feature.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(DUPLICATE_TRANS_TABLE,"Cargo translation table previously found at sprite %d.\n",USE_PREFIX)
 NFO_MESSAGE(BAD_RANDSUBTYPE,"Invalid random 2 subtype.\n",USE_PREFIX)
-
+NFO_MESSAGE(NO_BYTE_IDS,"Cannot set (extended-)byte IDs for feature %2x.\n",USE_PREFIX)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 

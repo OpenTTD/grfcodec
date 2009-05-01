@@ -67,7 +67,8 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 	orig(sprite),
 	valid(true),
 	useorig(false),
-	oldspritenum(oldspritenum)
+	oldspritenum(oldspritenum),
+	extract_offs(0)
 {
 	istringstream in(sprite);
 	ostringstream out;
