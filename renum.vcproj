@@ -397,6 +397,9 @@
 				RelativePath=".\pseudo.cpp">
 			</File>
 			<File
+				RelativePath=".\pseudo_seq.cpp">
+			</File>
+			<File
 				RelativePath=".\rangedint.cpp">
 			</File>
 			<File

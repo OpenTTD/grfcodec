@@ -72,8 +72,10 @@ void Check4(PseudoSprite&data){
 		else
 			IssueMessage(WARNING1,NO_TEXTS);
 	}else if(feature==0x48)IssueMessage(ERROR,INVALID_FEATURE);
+	else if(feature>3)IssueMessage(ERROR,NO_BYTE_IDS,feature);
 	else if(nument!=0){
-		CheckID(feature,data.ExtractByte(4))&&CheckID(feature,data.ExtractByte(4)+nument-1);
+		CheckID(feature,data.ExtractExtended(4))&&CheckID(feature,data.ExtractExtended(4)+nument-1);
+		i+=data.ExtendedLen(4)-1;
 	}else
 		IssueMessage(WARNING1,NO_TEXTS);
 	int perms=feature==0x48?CTRL_ALL|CTRL_NO_STACK_CHECK

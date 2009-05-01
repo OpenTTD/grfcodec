@@ -407,54 +407,70 @@ CHANGED_FEATURE(std)
 }
 
 void Check3(PseudoSprite&data){
-	uint feature=data.ExtractByte(1),length=data.Length(),newfeature=(uint)-1;
-	bool isOverride=((data.ExtractByte(2)&0x80)!=0),isGeneric=((data.ExtractByte(2)&0x7F)==0);
+	PseudoSprite::Byte feature, numIDs;
+CHANGED_FEATURE(act3)
+	data.seek(1)>>feature>>numIDs;
+	uint newfeature=(uint)-1, i;
+	bool isOverride=((numIDs&0x80)!=0),isGeneric=((numIDs&0x7F)==0);
 	if(isOverride&&isGeneric)IssueMessage(ERROR,GENERIC_AND_OVERRIDE);
 	if(isOverride&&!IsValidFeature(OVERRIDE3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	else if(isGeneric&&!IsValidFeature(GENERIC3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	else if(!isGeneric&&!IsValidFeature(ACT3,feature))IssueMessage(ERROR,INVALID_FEATURE);
-	unsigned int numIDs=data.ExtractByte(2)&0x7F,numCIDs=data.ExtractByte(3+numIDs);
+	Expanding0Array<int> ids;
+	PseudoSprite::ExtByte id;
+	for(i=0;i<(numIDs&0x7F);i++){
+		data>>id;
+		if(ids[id])IssueMessage(WARNING1,DUPLICATE_ID,id.loc(),id.val(),ids[id]);
+		ids[id]=id.loc();
+		CheckID(feature,id);
+		if(!IsValidFeature(ACT3_BEFORE_PROP08,feature) && !IsProp08Set(feature,id))
+			IssueMessage(ERROR,ACT3_PRECEEDS_PROP08,id.loc(),id.val());
+	}
+
+	PseudoSprite::Byte numCIDs;
+	data>>numCIDs;
+	uint newCIDs=data.BytesRemaining()/3;
+	if(_autocorrect>=2&&(data.BytesRemaining()%3)==2&&newCIDs!=numCIDs&&newCIDs<256){
+		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+		IssueMessage(0,AUTOCORRECTING,numCIDs.loc(),NUMCID,numCIDs.val(),newCIDs);
+		numCIDs.set(newCIDs);
+	}
+
+	if(numCIDs&&feature>4)IssueMessage(WARNING1,NO_CARGOTYPES);
+
+	PseudoSprite::Byte cargo;
+	PseudoSprite::Word cid,def;
+	data.Extract(def,numCIDs.loc()+1+numCIDs*3);
+
+	for (i=0; i<numCIDs; i++) {
+		data>>cargo>>cid;
+        if(cargo>CargoTransTable() && cargo!=0xFF && (cargo!=0xFE||feature!=4))
+			IssueMessage(ERROR,INVALID_CARGO_TYPE,cargo.loc(),cargo.val());
+		CheckCargoID(cid.loc(),cid,feature,newfeature);
+		if(def==cid)
+			IssueMessage(WARNING1,REUSED_DEFAULT);
+	}
+
+	CheckCargoID(def.loc(),def,feature,newfeature);
+
+	if (isOverride && act123::Instance().act3spritenum && feature != act123::Instance().act3feature) {
+		IssueMessage(ERROR,FEATURE_MISMATCH, 3, act123::Instance().act3spritenum);
+		newfeature = act123::Instance().act3feature;
+	}
+
+	if(_autocorrect&&newfeature!=(uint)-1&&newfeature!=feature){
+		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+		IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature.val(),newfeature);
+		feature.set(newfeature);
+		goto act3ChangedFeature;
+	}
+
 	if(isGeneric)// Generic 3s cannot be followed by an override
 		act123::Instance().act3spritenum=0;
 	else if(!isOverride){
 		act123::Instance().act3feature=feature;
 		act123::Instance().act3spritenum=_spritenum;
-	}else if(!act123::Instance().act3spritenum)IssueMessage(ERROR,NO_STD_3);
-	uint newCIDs=(length-6-numIDs)/3;
-	if(_autocorrect>=2&&!((length-numIDs)%3)&&newCIDs!=numCIDs&&newCIDs<256){
-		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-		IssueMessage(0,AUTOCORRECTING,3+numIDs,NUMCID,numCIDs,newCIDs);
-		data.SetByteAt(3+numIDs,numCIDs=newCIDs);
-	}
-	if(numCIDs&&feature>4)IssueMessage(WARNING1,NO_CARGOTYPES);
-	if(CheckLength(length,6+numIDs+3*numCIDs,BAD_LENGTH,VARS,NID,NUMCID,VALS,numIDs,numCIDs,6+numIDs+3*numCIDs))return;
-CHANGED_FEATURE(act3)
-	unsigned int id,def=data.ExtractWord(4+numIDs+3*numCIDs),i,j;
-	Expanding0Array<uint>ids;
-	for(i=3;i<3+numIDs;i++){
-		id=data.ExtractByte(i);
-		if(ids[id])IssueMessage(WARNING1,DUPLICATE_ID,i,id,ids[id]);
-		ids[id]=i;
-		CheckID(feature,id);
-		if(!IsValidFeature(ACT3_BEFORE_PROP08,feature) && !IsProp08Set(feature,id))
-			IssueMessage(ERROR,ACT3_PRECEEDS_PROP08,i,id);
-	}
-	for(i=4+numIDs;i<4+numIDs+3*numCIDs;i+=2){
-		j=data.ExtractByte(i);
-        if(j>CargoTransTable() && j!=0xFF && (j!=0xFE||feature!=4))
-			IssueMessage(ERROR,INVALID_CARGO_TYPE,i,j);
-		i++;
-		CheckCargoID(i,id=data.ExtractWord(i),feature,newfeature);
-		if(def==id)
-			IssueMessage(WARNING1,REUSED_DEFAULT);
-	}
-	CheckCargoID(4+numIDs+3*numCIDs,def,feature,newfeature);
-	if(_autocorrect&&newfeature!=(uint)-1&&newfeature!=feature){
-		IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
-		IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature,newfeature);
-		data.SetByteAt(1,feature=newfeature);
-		goto act3ChangedFeature;
-	}
+	}else if(!act123::Instance().act3spritenum) IssueMessage(ERROR,NO_STD_3);
 }
 
 void Init123(){act123::Instance().init();}

@@ -117,6 +117,39 @@ private:
 	ExpandingArray<string>context,ext_print;
 	bool valid,useorig;
 	const int oldspritenum;
+
+// Support for sequential access
+public:
+#define PS_LOC_REF(size)		\
+	class size;					\
+	PseudoSprite& operator >>(size&); \
+	PseudoSprite& Extract(size&, uint);	\
+	class size {				\
+	public:						\
+		size();					\
+		size& set(uint);		\
+		uint val() const;		\
+		uint loc() const;		\
+		operator uint() const {return val();} \
+		friend PseudoSprite& PseudoSprite::operator >>(size&); \
+		friend PseudoSprite& PseudoSprite::Extract(size&, uint); \
+	private:					\
+		PseudoSprite *p;		\
+		uint offs;				\
+	};							\
+
+	PS_LOC_REF(Byte)
+	PS_LOC_REF(Word)
+	PS_LOC_REF(ExtByte)
+	PS_LOC_REF(Dword)
+
+#undef PS_LOC_REF
+
+	uint BytesRemaining() const;
+	PseudoSprite& seek(uint);
+
+private:
+	uint extract_offs;
 };
 
 #endif//_RENUM_PSEUDO_H_INCLUDED_
