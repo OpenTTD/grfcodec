@@ -64,6 +64,9 @@ EXTRA(RECOLOR_TABLE,"recolor table")
 EXTRA(SET,"action 1 set")
 EXTRA(CID,"cargo ID")
 
+EXTRA(ID,"ID")
+EXTRA(CARGO,"Cargo")
+
 EXTRA(ACT5_SIZE,"%d (0x%x)")
 EXTRA(ACT5_ORSIZE," or %d (0x%x)")
 
