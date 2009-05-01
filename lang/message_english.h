@@ -252,7 +252,7 @@ NFO_MESSAGE(GENERIC_AND_OVERRIDE,"Action 3 may not be both generic and an overri
 NFO_MESSAGE(RECURSIVE_F,"Action F may not chain to itself.\n",USE_PREFIX)
 NFO_MESSAGE(EXCESSIVE_ADD,"<add-in-%d> should not be negative.\n",USE_PREFIX|HAS_OFFSET)
   MESSAGE_UNUSED(NOT_A_REGISTER)//,"Attempt to access non-existant register %4x.\n",USE_PREFIX|HAS_OFFSET)
-NFO_MESSAGE(DUPLICATE_ID,"ID %2x previously specified at offset %d.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(DUPLICATE,"%s %2x previously specified at offset %d.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(ACT3_PRECEEDS_PROP08,"Prop 08 has not been set for ID %2x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(MASKED_BIT_SET,"GRFID has a bit set that is clear in the mask.\n",USE_PREFIX)
 NFO_MESSAGE(DISCARD_UNSTORED,"Operation 0F follows a non-store operation.\n",USE_PREFIX|HAS_OFFSET)

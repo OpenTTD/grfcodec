@@ -619,8 +619,9 @@ This industry production callback has an add-in set to a negative value.
 Set the add-in to 0 if you want no effect.
 
 199: "<off> ID <id> previously specified at offset <off>." (Warn 1)
-The named ID was specified twice in this action 3.
-Remove the second specification.
+199: "<off> Cargo <id> previously specified at offset <off>." (Warn 1)
+The specified cargo or ID appears twice in this action 3.
+Remove the extraneous appearance(s).
 
 200: "Prop 08 has not been set for ID %2x." (Error)
 For several features, property 08 must be set before an Action 3 will have
@@ -651,3 +652,9 @@ Also, because NFORenum is a single-pass linter, changing the translation
 table partway through the NFO may cause NFORenum to object to valid cargos,
 or accept invalid ones.
 To prevent this, place the translation table before all action 3s.
+
+205: "Invalid random 2 subtype." (Error)
+One of the reserved bits in <count> for a type 84 random is set.
+Make sure that you did not set bits 4 or 5 (the low two bits of the high
+nibble).
+

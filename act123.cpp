@@ -420,7 +420,8 @@ CHANGED_FEATURE(act3)
 	PseudoSprite::ExtByte id;
 	for(i=0;i<(numIDs&0x7F);i++){
 		data>>id;
-		if(ids[id])IssueMessage(WARNING1,DUPLICATE_ID,id.loc(),id.val(),ids[id]);
+		if(ids[id])
+			IssueMessage(WARNING1,DUPLICATE,id.loc(),ID,id.val(),ids[id]);
 		ids[id]=id.loc();
 		CheckID(feature,id);
 		if(!IsValidFeature(ACT3_BEFORE_PROP08,feature) && !IsProp08Set(feature,id))
@@ -442,10 +443,15 @@ CHANGED_FEATURE(act3)
 	PseudoSprite::Word cid,def;
 	data.Extract(def,numCIDs.loc()+1+numCIDs*3);
 
+	ids.clear();	// Reuse as cargos
+	ids.reserve(256);
 	for (i=0; i<numCIDs; i++) {
 		data>>cargo>>cid;
         if(cargo>CargoTransTable() && cargo!=0xFF && (cargo!=0xFE||feature!=4))
 			IssueMessage(ERROR,INVALID_CARGO_TYPE,cargo.loc(),cargo.val());
+		if(ids[cargo])
+			IssueMessage(WARNING1,DUPLICATE,cargo.loc(),CARGO,cargo.val(),ids[cargo]);
+		ids[cargo] = cargo.loc();
 		CheckCargoID(cid.loc(),cid,feature,newfeature);
 		if(def==cid)
 			IssueMessage(WARNING1,REUSED_DEFAULT);
