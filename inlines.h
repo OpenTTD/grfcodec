@@ -50,8 +50,11 @@ inline bool is_comment(istream&in){
 	if(strchr("#;",in.peek()))return true;
 	if(in.peek()!='/')return false;
 	in.ignore();
-	if(in.peek()=='/')return true;
-	in.putback('/');
+	if(in.peek()=='/'){
+		in.unget();
+		return true;
+	}
+	in.unget();
 	return false;
 }
 
