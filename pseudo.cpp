@@ -130,21 +130,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 				out.put(ch);
 			}
 			break;
-		case'/':case'#':case';':{
-			string comment;
-			getline(in,comment);
-			comment=white+comment;
-			white="";
-			if(is_command(comment)||parse_comment(comment)) {
-				if(newline) {
-                    AddComment(comment,cur_pos());
-				} else {
-                    TrailComment(comment,cur_pos());
-                }
-            }
-			newline=true;
-			break;
-		}case'\\':
+		case'\\':
 			if(TrySetVersion(7)){
 				ProcessWhite();
 				newline=false;
@@ -190,7 +176,20 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 			}
 			//fall through to default when !GetState(EXTENSIONS)
 		default:
-			if(isspace(in.peek()))
+			if (is_comment(in)) {
+				string comment;
+				getline(in,comment);
+				comment=white+comment;
+				white="";
+				if(is_command(comment)||parse_comment(comment)) {
+					if(newline) {
+						AddComment(comment,cur_pos());
+					} else {
+						TrailComment(comment,cur_pos());
+					}
+				}
+				newline=true;
+			} else if(isspace(in.peek()))
 				if(in.peek()=='\n'&&!GetState(CONVERTONLY)){
 					if(newline)AddBlank(cur_pos());
 					newline=true;
