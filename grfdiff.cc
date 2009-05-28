@@ -60,7 +60,8 @@
 
 U32 GRDmagic = 0x67fb49ad;
 
-char *grffile[2], *grdfile = NULL;
+const char *grffile[2];
+char *grdfile = NULL;
 FILE *grd = NULL;
 long grdstart;
 int selfextr = 0, alwaysyes = 0, onlylist = 0;
@@ -70,11 +71,11 @@ int difflistfrom, difflistto;
 
 int differences[32][2], diffruns;
 
-char *exts[2] = { ".GRD", ".EXE" };
+const char *exts[2] = { ".GRD", ".EXE" };
 
 
 
-char *usagetext=
+const char *usagetext=
 	"%sUsage:\n"
 	"    GRFDiff [options] <Org. GRF-File> <New GRF-File>\n"
 	"	Compare the two GRF files and produce a GRD file containing only the\n"

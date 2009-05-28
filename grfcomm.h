@@ -10,7 +10,7 @@ extern char *lastspritefilename;
 
 extern const char *e_openfile;
 
-void usage(char *extratext
+void usage(const char *extratext
 #ifdef __cplusplus
 	 = ""
 #endif
