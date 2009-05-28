@@ -434,15 +434,16 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 				else{
 					i=info.imgsize-(i+info.sx-i%info.sx/*begining of next line*/);
 					info.sy-=i/info.sx;
-					info.imgsize-=i;
 
-					for(i=0;i<info.imgsize;i++)if(image[i])break; // Find first non-blue pixel
+					for(i=0;i<info.imgsize;i++){
+						if(image[i])
+							break; // Find first non-blue pixel
+					}
 					i-=i%info.sx;// Move to beginning of line
 
 					info.sy-=i/info.sx;
 					*((S16*)(info.inf+6))/*rely*/+=i/info.sx;
-					info.imgsize-=i;
-					if(i)memmove(image,image+i,info.imgsize);
+					if(i)memmove(image,image+i,info.imgsize-i);
 					for(i=0;i<info.sx;i++){
 						for(j=0;j<info.sy;j++){
 							if(image[i+j*info.sx])goto foundfirst;
@@ -472,6 +473,7 @@ foundlast:
 				}
 				*((S16*)(info.inf+2))=info.sx;
 				*((S8*)(info.inf+1))=info.sy;
+				info.imgsize = info.sx * info.sy;
 			}
 
 			U16 compsize;
