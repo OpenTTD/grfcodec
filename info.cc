@@ -95,7 +95,7 @@ int findescape(string str) {
 	return ret->second;
 }
 
-inforeader::~inforeader() 
+inforeader::~inforeader()
 {
 	delete imgfile;
 }
@@ -233,7 +233,7 @@ void infowriter::newband(pcxfile *pcx)
 					//int nexttxt = j+1<d->size && ((d->data[j+1]>=32 && d->data[j+1]<127) || d->data[j+1] > 158);
 
 					if (spriteno>1 &&
-							istxt(0) && useplaintext && (instr || 
+							istxt(0) && useplaintext && (instr ||
 							//two in a row for 8 and E
 							(istxt(1) && (d->data[0]==8 || d->data[0]==0xE ||
 							//four in a row for everything else.
@@ -274,7 +274,7 @@ void infowriter::newband(pcxfile *pcx)
 					// after 60 text characters
 					count++;
 					if ( ((!instr && count>=32) ||
-							(instr && (count>=32 && d->data[j]==' ' 
+							(instr && ((count>=32 && d->data[j]==' ')
 							|| count>=50)))
 							&& j<d->size-1) {
 						if (instr) {

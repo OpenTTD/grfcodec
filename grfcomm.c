@@ -35,7 +35,7 @@ char *lastspritefilename;
 const char *e_openfile = "Error opening %.228s";
 
 
-void usage(char *extratext)
+void usage(const char *extratext)
 {
 	printf(usagetext, extratext);
 

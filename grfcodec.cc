@@ -62,7 +62,7 @@
 
 BEGINC
 
-char *usagetext=
+const char *usagetext=
 	"%sUsage:\n"
 	"    GRFCODEC -d [<Options>] <GRF-File> [<Directory>]\n"
 	"        Decode all sprites in the GRF file and put them in the directory\n"

@@ -443,24 +443,28 @@ void pcxfile::endencoding()
 int pcxfile::subofsx(int x, int checkbound)
 {
 	int ofsx = subx + x + dx;
-	if (ofsx >= sx)
+	if (ofsx >= sx) {
 		if (checkbound) {
 			printf("\nofsx too large: is %d=%d+%d+%d, sx=%d\n", ofsx, subx, x, dx, sx);
 			exit(2);
-		} else
+		} else {
 			return -1;
+		}
+	}
 	return ofsx;
 }
 
 int pcxfile::subofsy(int y, int checkbound)
 {
 	int ofsy = y + dy;
-	if (ofsy >= bandlines)
+	if (ofsy >= bandlines) {
 		if (checkbound) {
 			printf("\nofsy too large\n");
 			exit(2);
-		} else
+		} else {
 			return -1;
+		}
+	}
 	return ofsy;
 }
 
@@ -488,6 +492,6 @@ void pcxfile::be_swapheader(pcxheader& header)
 	header.screen[0] = BE_SWAP16(header.screen[0]);
 	header.screen[1] = BE_SWAP16(header.screen[1]);
 }
-#else 
+#else
 void pcxfile::be_swapheader(pcxheader&){}
 #endif
