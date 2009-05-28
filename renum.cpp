@@ -47,6 +47,7 @@ using namespace std;
 #ifdef _WIN32
 #   include "win32.h"
 #endif
+
 #include "mapescapes.h"
 
 nfe_map nfo_escapes;
@@ -345,7 +346,7 @@ int process_file(istream&in){
 					flush_buffer();
 					if(_spritenum==(uint)-1){
 						isPatch=true;
-						if(size!=4)
+						if(size!=4 && size!=0)
 							outbuffer<<COMMENT_PREFIX<<sprite<<endl;
 						_spritenum=0;
 					}else{
@@ -386,24 +387,24 @@ int process_file(istream&in){
 			flush_buffer();
 			(*real_out)<<NFO_HEADER(NFOversion);
 			if (NFOversion > 6) {
-				// (re)insert default escapes
-				foreach(const esc& e, escapes)
-					nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
-				(*real_out)<<"// Escapes:";
-				int oldbyte = -1;
-				foreach (const nfe_rpair& p, nfo_escapes.right) {
-					if (p.first == oldbyte) {
-						(*real_out)<<" =";
-						--oldbyte;
-					} else if (p.first < oldbyte) {
-						(*real_out)<<"\n// Escapes:";
-						oldbyte = -1;
+					// (re)insert default escapes
+					foreach(const esc& e, escapes)
+						nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
+					(*real_out)<<"// Escapes:";
+					int oldbyte = -1;
+					foreach (const nfe_rpair& p, nfo_escapes.right) {
+						if (p.first == oldbyte) {
+							(*real_out)<<" =";
+							--oldbyte;
+						} else if (p.first < oldbyte) {
+							(*real_out)<<"\n// Escapes:";
+							oldbyte = -1;
+						}
+						while (++oldbyte != p.first)
+							(*real_out)<<" "<<nfo_escapes.right.begin()->second;
+						(*real_out)<<" "<<p.second;
 					}
-					while (++oldbyte != p.first)
-						(*real_out)<<" "<<nfo_escapes.right.begin()->second;
-					(*real_out)<<" "<<p.second;
-				}
-				(*real_out)<<"\n";
+					(*real_out)<<"\n";
 				for (uint i=0; i<extra_lines.size(); i++)
 					(*real_out)<<extra_lines[i]<<"\n";
 			}
