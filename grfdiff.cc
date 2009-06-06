@@ -389,7 +389,7 @@ int mkdiff()
 	}
 
 	if (grd) {
-		char *noext = basename(grffile[1]);
+		char *noext = basename((char *)grffile[1]);
 		char *p;
 
 		for (p = noext; *p; p++) { *p = tolower(*p); }
