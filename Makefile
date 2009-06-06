@@ -126,7 +126,7 @@ renum:	$(NFORENUMSRC:%.cpp=%.o)
 
 
 clean:
-	rm -rf *.o *.exe *.EXE renum
+	rm -rf *.o *.d *.exe *.EXE renum
 
 release: FORCE
 	$(_E)[REBUILD] $(NFORENUM)
