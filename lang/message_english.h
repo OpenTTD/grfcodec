@@ -42,7 +42,7 @@ ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%t(%d): Fatal error parsing sprite %d: %t canno
 			"\t(function %t).\n",0)
 ERR_MESSAGE(INVALID_DATAFILE,"Data file \"%t\" contains invalid data. (%S)\n",0)
 ERR_MESSAGE(NO_INPUT_FILE,"Could not open \"%t\" specified on the command line.\n",0)
-ERR_MESSAGE(NO_OUTPUT_FILE,"Could not open output file \"%t\" for input \"%s\".\n",0)
+ERR_MESSAGE(NO_OUTPUT_FILE,"Could not open output file \"%t\" for input \"%t\".\n",0)
 ERR_MESSAGE(REPLACE_FAILED,"Could not replace old file (%t) with new file (%t). (%d)\n",0)
 ERR_MESSAGE(DATAFILE_ERROR,"Failed to %s data file: \"%t\". %S\n",0)
 ERR_MESSAGE(CREATE_FAILED,"Could not create .renum directory in %t. (%d)\n",0)

@@ -26,7 +26,7 @@ ERR_MESSAGE(INTERNAL_ERROR_TEXT,"%t(%d): Kriticka chyba pri analyze spritu %d: %
 			"\t(funkce %t).\n",0)
 ERR_MESSAGE(INVALID_DATAFILE,"Datovy soubor \"%t\" obsahuje chybna data. (%S)\n",0)
 ERR_MESSAGE(NO_INPUT_FILE,"Nelze otevrit soubor \"%t\" specifikovany na prikazove radce.\n",0)
-ERR_MESSAGE(NO_OUTPUT_FILE,"Nelze otevrit vystupni soubor \"%t\" pro vstupni soubor \"%s\".\n",0)
+ERR_MESSAGE(NO_OUTPUT_FILE,"Nelze otevrit vystupni soubor \"%t\" pro vstupni soubor \"%t\".\n",0)
 ERR_MESSAGE(REPLACE_FAILED,"Nelze nahradit puvodni soubor (%t) novym souborem (%t). (%d)\n",0)
 ERR_MESSAGE(DATAFILE_ERROR,"Nelze %s datovy soubor: \"%t\". %S\n",0)
 ERR_MESSAGE(CREATE_FAILED,"Nelze vytvorit adresar .renum v %t. (%d)\n",0)
