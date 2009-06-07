@@ -32,6 +32,11 @@ CFLAGS = -g -mno-cygwin -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized 
 else
 CFLAGS = -g -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
 endif
+
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG
+endif
+
 CXXFLAGS = $(CFLAGS)
 
 
