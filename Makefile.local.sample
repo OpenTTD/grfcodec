@@ -28,6 +28,7 @@
 #SHELL = /bin/sh
 #CC = g++
 #CXX = g++
+#STRIP = strip
 
 # use 386 instructions but optimize for pentium II/III
 #CFLAGS = -g -DWIN32 -O1 $(BOOST_CMD) -Wall -Wno-uninitialized $(CFLAGAPP)
