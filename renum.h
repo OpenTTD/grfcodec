@@ -28,8 +28,6 @@
  * Get boost from http://www.boost.org */
 #include <boost/current_function.hpp>
 
-#include"getopt.h"
-
 /* file handling defs:
  * dirname contains the name of the sprites directory 
  * foo_ext contains the extention to use for foo
