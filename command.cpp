@@ -38,6 +38,7 @@ using namespace std;
 
 #include"globals.h"
 #include"renum.h"
+#include"getopt.h"
 #include"command.h"
 #include"inlines.h"
 #include"sanity.h"
