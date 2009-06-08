@@ -17,6 +17,7 @@ SVNVERSION = svnversion -c .	# standard SVN client (e.g. cygwin)
 SHELL = /bin/sh
 CC = g++
 CXX = g++
+STRIP = strip
 
 -include ${MAKEFILELOCAL}
 
@@ -138,7 +139,7 @@ release: FORCE
 	$(_C)rm -f $(NFORENUM)
 	$(_C)make $(_S)
 	$(_E) [STRIP/UPX] $(NFORENUM)
-	$(_C)strip $(NFORENUM)
+	$(_C)$(STRIP) $(NFORENUM)
 	$(_C)upx $(_Q) --best $(NFORENUM)
 
 FORCE:
