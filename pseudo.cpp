@@ -647,7 +647,10 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 
 	// Read any other value
 	string str;
-	in>>str;
+	// can't use operator>> -- that will consume comments in cases like \w12000//comment
+	while(in && !is_comment(in) && !isspace(in.peek()) && in.peek() != EOF)
+		str += (char)in.get();
+
 	char c1, c2;
 	int y, m, d, count = sscanf(str.c_str(), "%d%c%d%c%d", &y, &c1, &m, &c2, &d);
 
