@@ -406,7 +406,7 @@ uint Pseudo::_ReadValue(istream& in, width w)
 #endif
 {
 	if (in.peek() == 'x') {		// Read any hex value
-		int ret;
+		uint ret;
 		in.ignore()>>setbase(16)>>ret>>setbase(10);
 		return ret;
 	}
