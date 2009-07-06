@@ -637,7 +637,7 @@ bool PseudoSprite::UseOrig()const{
 
 uint PseudoSprite::ReadValue(istream& in, width w) {
 	if (in.peek() == 'x') {		// Read any hex value
-		int ret;
+		uint ret;
 		in.ignore()>>setbase(16)>>ret>>setbase(10);
 		return ret;
 	}
