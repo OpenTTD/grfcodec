@@ -18,38 +18,16 @@
    You should have received a copy of the GNU Library General Public
    License along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
-
-/* AIX requires this to be the first thing in the file. */
 
-#ifdef __GNUC__
-#ifndef alloca
-#define alloca __builtin_alloca
-#endif
-#else /* not __GNUC__ */
-#if defined(HAVE_ALLOCA_H) || (defined(sparc) && (defined(sun) || (!defined(USG) && !defined(SVR4) && !defined(__svr4__))))
-#include <alloca.h>
-#else
-#ifdef _AIX
- #pragma alloca
-#else
-char *alloca ();
-#endif
-#endif /* alloca.h */
-#endif /* not __GNUC__ */
+
+/* Portions of this file not necessary to NFORenum's purposes have been
+   removed by Dale McCoy, at various times between 2004 and 2009. */
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* This needs to come after some library #include
-   to get __GNU_LIBRARY__ defined.  */
-#ifdef	__GNU_LIBRARY__
-#undef	alloca
-#include <stdlib.h>
-#include <string.h>
-#else	/* Not GNU C library.  */
-#define	__alloca	alloca
-#endif	/* GNU C library.  */
 
 #ifndef __STDC__
 #define const
