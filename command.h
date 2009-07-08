@@ -2,7 +2,7 @@
  * command.h 
  * Defines structs and declares functions for comment commands.
  *
- * Copyright 2004-2006,2008 by Dale McCoy.
+ * Copyright 2004-2006,2008-2009 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ bool is_command(const string&);
 bool parse_comment(const string&);
 void reset_commands();
 int DoCalc(const string&,size_t&);
-void CLCommand(int);
+bool CLCommand(int);
 
 #endif//_RENUM_COMMAND_H_FUNCTIONS_INCLUDED_
 

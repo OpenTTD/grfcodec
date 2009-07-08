@@ -2,7 +2,7 @@
  * command.cpp
  * Defines functions for comment commands.
  *
- * Copyright 2004-2008 by Dale McCoy.
+ * Copyright 2004-2009 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ string GetOnOffString(string str){
 	return str;
 }
 
-void CLCommand(int command){
+bool CLCommand(int command){
 	bool locked=_commandState.locked;
 	_commandState.locked=false;
 	switch(command){
@@ -150,8 +150,12 @@ void CLCommand(int command){
 	case'o':parse_comment("//@@USEOLDSPRITENUMS "+GetOnOffString(optarg));break;
 	case 256:locked=true;break;
 	case'w':case'W':{
-		istringstream arg(optarg);
-		int opt;
+		string s(optarg);
+		if (s.find_first_not_of("0123456789,") != NPOS) return false;
+		uint opt;
+		while ( (opt=(uint)s.find_first_of(',')) != NPOS)
+			s[opt]='+';
+		istringstream arg(s);
 		while(arg>>opt){
 			parse_comment((command=='w'?"//@@WARNING DISABLE ":"//@@WARNING ENABLE ")+itoa(opt));
 			arg.ignore();
@@ -162,6 +166,7 @@ void CLCommand(int command){
 	_commandState.locked=locked;
 	_CLstate=_commandState;
 	_CLvar=_varmap;
+	return true;
 }
 
 void SetVar(const string&,const string&);
