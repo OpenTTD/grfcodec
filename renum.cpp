@@ -131,7 +131,10 @@ int __cdecl main(const int argc,char**argv){
 		case EOF:
 			if(optind==argc)doexit();
 			basename=argv[optind++];break;
-		default:CLCommand(opt);continue;
+		default:
+			if(!CLCommand(opt))
+				IssueMessage(0,BAD_CL_ARG,opt,optarg);
+			continue;
 		}
 		pNfo=&fout;
 		bakfilename=basename+bak_ext;

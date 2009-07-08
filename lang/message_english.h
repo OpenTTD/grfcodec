@@ -270,6 +270,7 @@ ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist.\n",0)
 #endif
 ERR_MESSAGE(DATAFILE_MISMATCH,"%t contains information for fewer features than does feat.dat.\n" \
 			"Update it, or delete feat.dat.\n",0)
+ERR_MESSAGE(BAD_CL_ARG,"Unrecognized command-line argument: \"-%c %t\"\n",0)
 OUT_MESSAGE(DATA_FOUND_AT,"Data files loaded from '%t/.renum'.\n",0)
 
 END_MESSAGES()
