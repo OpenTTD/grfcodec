@@ -126,7 +126,7 @@ grfdiff.exe:	$(GRFDIFFSRC:%.c=%.obj)
 grfmerge.exe:	$(GRFMERGESRC:%.c=%.obj)
 
 clean:
-	rm -rf *.o *.os *.d *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.ah
+	rm -rf *.o *.os *.d *.obj *.OBJ *.exe *.EXE *.map *.MAP *.bin grfmrg.c
 
 remake: clean all
 

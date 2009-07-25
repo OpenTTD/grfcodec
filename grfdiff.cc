@@ -284,7 +284,7 @@ void mkselfextr()
 	U8 r = 0, e;
 	long newr = 0, chunk = 0, grdofs, blank;
 
-	fwrite(&grfmrg, 1, grfmrgsize, grd);
+	fwrite(grfmrg, 1, grfmrgsize, grd);
 
 	e = 0;
 
