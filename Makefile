@@ -6,7 +6,6 @@ include Makefile.setup
 MAKEFILE = Makefile
 
 # OS dependent variables
-NASMFORMAT = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo coff || echo elf )
 REL_EXE = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo .exe )
 
 # Borland compiler settings

@@ -7,7 +7,6 @@ include Makefile.setup
 MAKEFILE = Makefile.win
 
 # OS dependent variables
-NASMFORMAT = coff
 PREFIX = $(shell \
 ( [ \( $(ISCYGWIN) -eq 1 \) ] ) || \
 ( [ -e /usr/bin/i586-mingw32msvc-g++ ] && echo i586-mingw32msvc- ) || \

@@ -11,11 +11,6 @@ FORCE:
 
 release: grfcodec_r grfdiff_r grfmerge_r
 
-# grfmrg.bin (the binary code included in grfdiff) can be either BCC or GCC code
-grfmrg.bin:	grfmerge.exe
-	$(_E) [UPX] $@
-	$(_C)upx $(_Q) --best $< -o $@
-
 # make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
 grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
 	$(_C)rm -f $@
@@ -25,20 +20,9 @@ grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
 	$(_C)strip $@
 	$(_C)upx $(_Q) --best $@
 
-# making an assembly file which includes the above code; first for BCC
-grfmrg.ah:	grfmrg.bin 
+grfmrg.c:	grfmrgc.bin grfmrgc.pl
 	$(_E) [PERL] $@
-	$(_C)perl mkmrg.pl "db " '0$${_}h' < $< > $@
-	$(_C)perl -le "print '_grfmrgsize dd ', (stat '$<')[7]" >> $@
-
-grfmrg.obj:	grfmrg.asm grfmrg.ah
-	$(_E) [TASM] $@
-	$(_C)tasm32 /dM32 /ml $< -c -o $@
-
-# and then for GCC
-grfmrg.o:	grfmrgc.asm grfmrgc.bin
-	$(_E) [NASM] $@
-	$(_C)nasm -f $(NASMFORMAT) $< -o $@
+	$(_C)perl -w grfmrgc.pl > $@
 
 ttdpal.h:	$(PAL_FILES) pal2c.pl
 	$(_E) [PERL] $@

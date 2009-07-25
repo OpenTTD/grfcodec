@@ -3,8 +3,8 @@
 
 BEGINC
 
-extern unsigned char grfmrg;
-extern U32 grfmrgsize;
+extern const char grfmrg[];
+extern const U32 grfmrgsize;
 extern U32 grfmrgcrc;
 
 ENDC
