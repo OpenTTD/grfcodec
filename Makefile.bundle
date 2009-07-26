@@ -1,0 +1,87 @@
+#
+# Creation of bundles
+#
+
+# The revision is needed for the bundle name.
+ifdef REVISION
+REV := $(REVISION)
+else
+# Detect the revision
+VERSIONS := $(shell AWK="$(AWK)" "./findversion.sh")
+REV      := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
+endif
+
+# Make sure we have something in REV
+ifeq ($(REV),)
+REV := norev000
+endif
+
+ifeq (${V},1)
+VERBOSE := 1
+endif
+
+ifndef BUNDLE_NAME
+BUNDLE_NAME = nforenum-custom-$(REV)
+endif
+
+ROOT_DIR = $(shell pwd)
+
+ifndef BUNDLE_DIR
+BUNDLE_DIR := "$(ROOT_DIR)/bundle"
+endif
+
+ifndef BUNDLES_DIR
+BUNDLES_DIR := "$(ROOT_DIR)/bundles"
+endif
+
+bundle: release
+	$(_E) '[BUNDLE] Constructing bundle'
+	$(_C)rm -rf   "$(BUNDLE_DIR)"
+	$(_C)mkdir -p "$(BUNDLE_DIR)"
+	$(_C)cp $(NFORENUM)        "$(BUNDLE_DIR)/"
+	$(_C)cp COPYING.txt        "$(BUNDLE_DIR)/"
+	$(_C)cp CHANGELOG.txt      "$(BUNDLE_DIR)/"
+	$(_C)cp doc/*.txt          "$(BUNDLE_DIR)/"
+ifeq ($(NFORENUM), renum.exe)
+	$(_C)unix2dos "$(BUNDLE_DIR)/"*.txt
+endif
+
+### Packing the current bundle into several compressed file formats ###
+#
+# Zips & dmgs do not contain a root folder, i.e. they have files in the root of the zip/dmg.
+# gzip, bzip2 and lha archives have a root folder, with the same name as the bundle.
+#
+# One can supply a custom name by adding BUNDLE_NAME:=<name> to the make command.
+#
+bundle_zip: bundle
+	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).zip'
+	$(_C)mkdir -p "$(BUNDLES_DIR)"
+	$(_C)cd "$(BUNDLES_DIR)" && zip -r $(shell if test -z "$(VERBOSE)"; then echo '-q'; fi) "$(BUNDLES_DIR)/$(BUNDLE_NAME).zip" .
+
+bundle_gzip: bundle
+	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.gz'
+	$(_C)mkdir -p "$(BUNDLES_DIR)/.gzip/$(BUNDLE_NAME)"
+	$(_C)cp -R    "$(BUNDLE_DIR)/"* "$(BUNDLES_DIR)/.gzip/$(BUNDLE_NAME)/"
+	$(_C)cd "$(BUNDLES_DIR)/.gzip" && tar -zc$(shell if test -n "$(VERBOSE)"; then echo 'v'; fi)f "$(BUNDLES_DIR)/$(BUNDLE_NAME).tar.gz" "$(BUNDLE_NAME)"
+	$(_C)rm -rf   "$(BUNDLES_DIR)/.gzip"
+
+bundle_bzip2: bundle
+	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.bz2'
+	$(_C)mkdir -p "$(BUNDLES_DIR)/.bzip2/$(BUNDLE_NAME)"
+	$(_C)cp -R    "$(BUNDLE_DIR)/"* "$(BUNDLES_DIR)/.bzip2/$(BUNDLE_NAME)/"
+	$(_C)cd "$(BUNDLES_DIR)/.bzip2" && tar -jc$(shell if test -n "$(VERBOSE)"; then echo 'v'; fi)f "$(BUNDLES_DIR)/$(BUNDLE_NAME).tar.bz2" "$(BUNDLE_NAME)"
+	$(_C)rm -rf   "$(BUNDLES_DIR)/.bzip2"
+
+bundle_lha: bundle
+	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).lha'
+	$(_C)mkdir -p "$(BUNDLES_DIR)/.lha/$(BUNDLE_NAME)"
+	$(_C)cp -R    "$(BUNDLE_DIR)/"* "$(BUNDLES_DIR)/.lha/$(BUNDLE_NAME)/"
+	$(_C)cd "$(BUNDLES_DIR)/.lha" && lha ao6 "$(BUNDLES_DIR)/$(BUNDLE_NAME).lha" "$(BUNDLE_NAME)"
+	$(_C)rm -rf   "$(BUNDLES_DIR)/.lha"
+
+bundle_dmg: bundle
+	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).dmg'
+	$(_C)mkdir -p "$(BUNDLES_DIR)/NFORenum $(REV)"
+	$(_C)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/NFORenum $(REV)"
+	$(_C)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/NFORenum $(REV)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
+	$(_C)rm -fr "$(BUNDLES_DIR)/NFORenum $(REV)"
