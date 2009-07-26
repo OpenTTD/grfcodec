@@ -18,6 +18,7 @@ SHELL = /bin/sh
 CC = g++
 CXX = g++
 STRIP = strip
+AWK = awk
 
 -include ${MAKEFILELOCAL}
 
@@ -132,7 +133,7 @@ renum:	$(NFORENUMSRC:%.cpp=%.o)
 
 
 clean:
-	rm -rf *.o *.d *.exe *.EXE renum
+	rm -rf *.o *.d *.exe *.EXE renum bundle bundles
 
 release: FORCE
 	$(_E)[REBUILD] $(NFORENUM)
@@ -177,3 +178,5 @@ version.h: FORCE
 ifndef NO_MAKEFILE_DEP
 -include $(NFORENUMSRC:.cpp=.o.d)
 endif
+
+include Makefile.bundle

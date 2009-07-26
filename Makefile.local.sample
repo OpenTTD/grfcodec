@@ -19,7 +19,7 @@
 # If the boost folder auto-detection fails, set your boost include folder here.
 # If boost can be found in your standard include search paths, setting this to
 # any non-empty value will cause make to assume that boost is present.
-#BOOST_INCLUDE = 
+#BOOST_INCLUDE =
 # If make is convinced that you do have boost installed when you do not,
 # uncomment the following line:
 #NO_BOOST = 1
@@ -29,6 +29,7 @@
 #CC = g++
 #CXX = g++
 #STRIP = strip
+#AWK = awk
 
 # use 386 instructions but optimize for pentium II/III
 #CFLAGS = -g -DWIN32 -O1 $(BOOST_CMD) -Wall -Wno-uninitialized $(CFLAGAPP)
