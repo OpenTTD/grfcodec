@@ -20,13 +20,13 @@ CXX = g++
 STRIP = strip
 AWK = awk
 
--include ${MAKEFILELOCAL}
-
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 
 # OS dependent variables
 NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo renum.exe || echo renum)
+
+-include ${MAKEFILELOCAL}
 
 # use 386 instructions but optimize for pentium II/III
 ifeq ($(ISCYGWIN),1)
@@ -119,7 +119,7 @@ BOOST_WARN = echo Warning: NO_BOOST is no longer obeyed.
 endif
 
 # targets
-all: renum
+all: $(NFORENUM)
 remake: clean all
 
 ${MAKEFILELOCAL}:
@@ -127,7 +127,7 @@ ${MAKEFILELOCAL}:
         echo ${MAKEFILELOCAL} did not exist, using defaults. Please edit it if compilation fails. && \
         cp ${MAKEFILELOCAL}.sample $@"
 
-renum:	$(NFORENUMSRC:%.cpp=%.o)
+$(NFORENUM): $(NFORENUMSRC:%.cpp=%.o)
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(CFLAGS) $^ $(LDOPT)
 
@@ -138,7 +138,7 @@ clean:
 release: FORCE
 	$(_E)[REBUILD] $(NFORENUM)
 	$(_C)rm -f $(NFORENUM)
-	$(_C)make $(_S)
+	$(_C)$(MAKE) $(_S)
 	$(_E) [STRIP/UPX] $(NFORENUM)
 	$(_C)$(STRIP) $(NFORENUM)
 	$(_C)upx $(_Q) --best $(NFORENUM)

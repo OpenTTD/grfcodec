@@ -56,7 +56,7 @@ endif
 bundle_zip: bundle
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).zip'
 	$(_C)mkdir -p "$(BUNDLES_DIR)"
-	$(_C)cd "$(BUNDLES_DIR)" && zip -r $(shell if test -z "$(VERBOSE)"; then echo '-q'; fi) "$(BUNDLES_DIR)/$(BUNDLE_NAME).zip" .
+	$(_C)cd "$(BUNDLE_DIR)" && zip -r $(shell if test -z "$(VERBOSE)"; then echo '-q'; fi) "$(BUNDLES_DIR)/$(BUNDLE_NAME).zip" .
 
 bundle_gzip: bundle
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.gz'
