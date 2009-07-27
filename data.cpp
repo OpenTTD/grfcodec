@@ -243,7 +243,7 @@ static const char _datlangs[]="\x00\x02"
 /*4x*/	"\n"			"\n"			"\n"			"\n"
 //		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
 /*5x*/	"\n"			"\n"			"\n"			"\n"
-/*5x*/	"\n"			"\n"			"Chinese (Simp)\n" "\n"
+/*5x*/	"Vietnamese\n"	"\n"			"Chinese (Simp)\n" "\n"
 /*5x*/	"\n"			"\n"			"Indonesian\n"	"\n"
 /*5x*/	"Urdu\n"		"\n"			"\n"			"\n"
 //		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
