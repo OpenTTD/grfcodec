@@ -22,9 +22,10 @@ AWK = awk
 
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
+ISMINGW = $(shell [ `$(CC) -dumpmachine` != mingw32 ]; echo $$?)
 
 # OS dependent variables
-NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) ] && echo renum.exe || echo renum)
+NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) -o \( $(ISMINGW) -eq 1 \) ] && echo renum.exe || echo renum)
 
 -include ${MAKEFILELOCAL}
 
