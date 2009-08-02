@@ -33,7 +33,7 @@ NOCYGWIN = 1		# Cygwin builds default to -mno-cygwin.
 endif
 
 # OS dependent variables
-EXE = $(shell ( [ \( $(ISCYGWIN) -eq 1 \) ] || [ \( "$(MACHINE)" = "mingw32" \) ] ) && echo .exe)
+EXE = $(shell ( [ \( $(ISCYGWIN) -eq 1 \) -o \( "$(MACHINE)" = "mingw32" \) ] ) && echo .exe)
 GRFCODEC = grfcodec$(EXE)
 GRFDIFF  = grfdiff$(EXE)
 GRFMERGE = grfmerge$(EXE)
@@ -176,8 +176,7 @@ clean:
 
 mrproper: clean
 	rm -f *.d .rev version.h grfmrg.c version.h.tmp
-	@touch -ct 9901010000 ttdpal.h	# don't delete it, so we don't confuse
-					# svn, but force it to be remade
+	@touch -ct 9901010000 ttdpal.h	# don't delete it, so we don't confuse svn, but force it to be remade
 
 FORCE:
 	@$(BOOST_WARN)
@@ -226,11 +225,11 @@ ttdpal.h:	$(PAL_FILES) pal2c.pl
 
 %.o : %.c
 	$(_E) [CC] $@
-	$(_C)$(CC) -c -o $@ -MMD -MG -MF $@.d $(CFLAGS) $<
+	$(_C)$(CC) -c -o $@ -MMD -MF $@.d $(CFLAGS) $<
 
 %.o : %.cc
 	$(_E) [CPP] $@
-	$(_C)$(CXX) -c -o $@ -MMD -MG -MF $@.d $(CXXFLAGS) $<
+	$(_C)$(CXX) -c -o $@ -MMD -MF $@.d $(CXXFLAGS) $<
 
 % : %.o
 	$(_E) [LD] $@
@@ -249,7 +248,7 @@ ttdpal.h:	$(PAL_FILES) pal2c.pl
 # same as above but optimized for size not speed
 %.os : %.c
 	$(_E) [CC] $@
-	$(_C)$(CC) -c -o $@ -MMD -MG -MF $@.d $(CFLAGS) -Os $<
+	$(_C)$(CC) -c -o $@ -MMD -MF $@.d $(CFLAGS) -Os $<
 
 % :: %.os
 	$(_E) [LD] $@
