@@ -115,16 +115,17 @@ static const char _datB[]="\x01\x02"
        vv Info count: NT: N sprite-count options for each of T types follow
            vv... Length(s): repeat N options for each of T types
 */
-static const char _dat5[]="\x04\x03"
+static const char _dat5[]="\x04\x04"
 	"\x13\x30\x70\xF0"			//4
 	"\x11\x30"					//5
 	"\x12\x4A\x5A"				//6
 	"\x31\x5D\x41\x06"			//7..9
 "\x85\x11\x00\x01"				//A
-	"\x31\x71\x85\x10"			//B..D
+	"\x21\x71\x85"				//B..C
+	"\x12\x10\x12"				//D
 "\x82\x11\x00"					//E
 	"\x51\x0C\x0F\x08\x08\x37"	//F..13
-"\x88\x21\x24\x91"				//14..15
+"\x88\x21\x24\x96"				//14..15
 "\x00"
 ;
 
