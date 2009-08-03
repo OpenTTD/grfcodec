@@ -73,10 +73,6 @@ BOOST_INCLUDE=$(shell \
 endif
 endif
 
-ifeq ($(BOOST_INCLUDE),)
-BOOST_ERROR = echo Error: Boost not found. Compilation will fail.
-endif
-
 ifndef V
 V=0 # verbose build default off
 endif
@@ -155,8 +151,8 @@ remake: clean all
 
 ${MAKEFILELOCAL}:
 	@/bin/sh -c "export PATH=\"/bin\" && \
-        echo ${MAKEFILELOCAL} did not exist, using defaults. Please edit it if compilation fails. && \
-        cp ${MAKEFILELOCAL}.sample $@"
+	echo ${MAKEFILELOCAL} did not exist, using defaults. Please edit it if compilation fails. && \
+	cp ${MAKEFILELOCAL}.sample $@"
 
 $(GRFCODEC): $(GRFCODECSRC:%.c=%.o)
 	$(_E) [LD] $@
@@ -229,7 +225,7 @@ ttdpal.h:	$(PAL_FILES) pal2c.pl
 
 %.o : %.cc
 	$(_E) [CPP] $@
-	$(_C)$(CXX) -c -o $@ -MMD -MF $@.d $(CXXFLAGS) $<
+	$(_C)$(CXX) -c -o $@ -MMD -MF $@.d $(CXXFLAGS) $(BOOST_CMD) $<
 
 % : %.o
 	$(_E) [LD] $@
