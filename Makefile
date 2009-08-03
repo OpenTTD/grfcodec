@@ -28,8 +28,9 @@ AWK = awk
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 MACHINE = $(shell $(CC) -dumpmachine || echo '??' )
 
+# Cygwin builds default to -mno-cygwin.
 ifndef NOCYGWIN
-NOCYGWIN = 1		# Cygwin builds default to -mno-cygwin.
+NOCYGWIN = 1
 endif
 
 # OS dependent variables
