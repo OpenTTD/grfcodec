@@ -331,17 +331,17 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			const char *bininclude=((const Include&)info[i]).GetName();
 			FILE *bin = fopen(bininclude, "rb");
 			if (!bin) {
-				fperror("Cannot include %s: Could not open.\n", bininclude);
+				fperror("%s:%i: Error: Cannot include %s: Could not open.\n", file, i, bininclude);
 				exit(2);
 			}
 
 			struct stat stat_buf;
 			if ( fstat(fileno(bin), &stat_buf) ) {
-				fperror("Could not stat %s.\n", bininclude);
+				fperror("%s:%i: Error: Could not stat %s.\n", file, i, bininclude);
 				exit(2);
 			}
 			if ( stat_buf.st_mode & S_IFDIR ) {
-				printf("Cannot include %s: Is a directory.\n", bininclude);
+				fprintf(stderr, "%s:%i: Error: Cannot include %s: Is a directory.\n", file, i, bininclude);
 				exit(2);
 			}
 			off_t fsize = stat_buf.st_size;
@@ -356,17 +356,17 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			}
 			int namelen = strlen(nameofs);
 			if (namelen > 255) {
-				fprintf(stderr, "Error: binary include has too long filename %s\n", nameofs);
+				fprintf(stderr, "%s:%i: Error: binary include has too long filename %s\n", file, i, nameofs);
 				exit(2);
 			}
 
 			int spritesize = 3 + namelen + fsize;
 			if (spritesize < 5) {
-				fprintf(stderr, "Error: binary include %s is empty\n", nameofs);
+				fprintf(stderr, "%s:%i: Error: binary include %s is empty\n", file, i, nameofs);
 				exit(2);
 			}
 			if (spritesize > 65535) {
-				fprintf(stderr, "Error: binary include %s is too large\n", nameofs);
+				fprintf(stderr, "%s:%i: Error: binary include %s is too large\n", file, i, nameofs);
 				exit(2);
 			}
 
@@ -408,7 +408,8 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 				int reported = *((S32*)sprite.GetData());
 				reported = BE_SWAP32(reported) + 1;
 				if(reported != info.size() && !_quiet)
-					printf("Warning: Found %d %s sprites than sprite 0 reports.\n",
+					fprintf(stderr, "%s:1: Warning: Found %d %s sprites than sprite 0 reports.\n",
+					file,
 					abs(info.size() - reported),
 					info.size()>reported?"more":"fewer");
 			}
@@ -419,7 +420,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			info.PrepareReal(sprite);
 			U8 *image = (U8*) malloc(info.imgsize);
 			if (!image) {
-				printf("Error: can't allocate sprite memory (%ld bytes)\n", info.imgsize);
+				fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
 				exit(2);
 			}
 
@@ -430,8 +431,8 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 				if (image[j] == 0xFF) k++;
 
 			if (k && !_quiet)
-				printf("Warning: %d of %ld pixels (%ld%%) in sprite %d are pure white\n",
-					k, info.imgsize, k*100/info.imgsize, i);
+				fprintf(stderr, "%s:%d: Warning: %d of %ld pixels (%ld%%) are pure white\n",
+					file, i, k, info.imgsize, k*100/info.imgsize);
 
 			if(_crop && !DONOTCROP(info.inf)){
 				int i=0,j=0;
@@ -507,7 +508,7 @@ foundlast:
 		}
 			break;
 		default:
-			printf("What type of sprite is that?");
+			fprintf(stderr, "%s:%d: Error: What type of sprite is that?", file, i);
 			exit(2);
 		}
 	}
@@ -573,7 +574,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 		pcx = new pcxwrite(new spritefiles(file, dir));
 
 	if (!pcx) {
-		printf("Error opening PCX file\n");
+		fprintf(stderr, "%s: Error opening PCX file\n", file);
 		exit(2);
 	}
 
@@ -645,7 +646,7 @@ static U8 *readpal(const char *filearg)
 	case BCP:
 	case UNK:
 		if (fread(pal, 1, 256*3, f) != 256*3) {
-			printf("%s is not a BCP file.\n", filearg);
+			fprintf(stderr, "Error: %s is not a BCP file.\n", filearg);
 			exit(1);
 		}
 		break;
@@ -653,19 +654,19 @@ static U8 *readpal(const char *filearg)
 		char fmt[16];
 		fgets(fmt, sizeof(fmt), f);
 		if (strcmp(fmt, "JASC-PAL\r\n")) {
-			printf("%s is not a PSP palette file.\n", filearg);
+			fprintf(stderr, "Error: %s is not a PSP palette file.\n", filearg);
 			exit(1);
 		}
 		int nument, nument2;
 		fscanf(f, "%x\n", &nument);
 		fscanf(f, "%d\n", &nument2);
 		if ( (nument != nument2) || (nument != 256) ) {
-			printf("GRFCodec supports only 256 colour palette files.\n");
+			fprintf(stderr, "%s: Error: GRFCodec supports only 256 colour palette files.\n", filearg);
 			exit(1);
 		}
 		for (int i=0; i<nument; i++) {
 			if (!fscanf(f, "%cd %cd %cd\n", pal + i*3, pal+i*3+1, pal+i*3+2)) {
-				printf("Error reading palette.\n");
+				fprintf(stderr, "Error reading palette.\n");
 				exit(1);
 			}
 		}
@@ -673,7 +674,7 @@ static U8 *readpal(const char *filearg)
 	case GPL:
 		fgets(fmt, sizeof(fmt), f);
 		if (strcmp(fmt, "GIMP Palette\r\n")) {
-			printf("%s is not a GIMP palette file.\n", filearg);
+			fprintf(stderr, "Error: %s is not a GIMP palette file.\n", filearg);
 			exit(1);
 		}
 		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Name: ...
@@ -682,7 +683,7 @@ static U8 *readpal(const char *filearg)
 		uint r, g, b;
 		for (int i=0; i<256; i++) {
 			if (!fscanf(f, "%d %d %d\n", &r, &g, &b) || r > 255 || g > 255 || b > 255) {
-				printf("Error reading palette.\n");
+				fprintf(stderr, "%s: Error: reading palette.\n", filearg);
 				exit(1);
 			}
 			pal[3*i] = (U8) r;

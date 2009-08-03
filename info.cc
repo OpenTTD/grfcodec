@@ -348,7 +348,7 @@ void infowriter::adddata(U16 size, U8 *data)
 void infowriter::done(int count)
 {
 	if (count != spriteno) {
-		printf("\nError: GRFCodec thinks it has written %d sprites but the info file only got %d\n", count, spriteno);
+		fprintf(stderr, "\nError: GRFCodec thinks it has written %d sprites but the info file only got %d\n", count, spriteno);
 		exit(2);
 	}
 }
