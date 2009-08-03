@@ -41,7 +41,31 @@ GRFMERGE = grfmerge$(EXE)
 
 TYPESIZE = GCC32
 
+INSTALLPATH_CYGWIN=/usr/local/bin
+INSTALLPATH_CYGWIN_MINGW=$(shell echo $$SYSTEMROOT | sed -e "s/\(.\):/\\/cygdrive\\/\\1/" -e s/\\//\\\\/g)
+INSTALLPATH_MSYS_MINGW=$(SYSTEMROOT)
+INSTALLPATH_LINUX=/usr/local/bin
+
 -include ${MAKEFILELOCAL}
+
+
+ifndef INSTALLPATH
+
+# make an educated guess on the install path.
+ifeq ($(EXE),.exe)
+ifeq ($(ISCYGWIN),1)
+ifeq ($(NOCYGWIN),1)
+INSTALLPATH=$(INSTALLPATH_CYGWIN_MINGW)
+else
+INSTALLPATH=$(INSTALLPATH_CYGWIN)
+endif
+else
+INSTALLPATH=$(INSTALLPATH_MSYS_MINGW)
+endif
+else 
+INSTALLPATH=$(INSTALLPATH_LINUX)
+endif
+endif
 
 # use 386 instructions but optimize for pentium II/III
 CFLAGS = -g -D$(TYPESIZE) -O3 -I. -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
@@ -288,3 +312,9 @@ ifndef NO_MAKEFILE_DEP
 endif
 
 include Makefile.bundle
+
+install:
+	$(_E) [INSTALL]
+	$(_C)cp $(GRFCODEC) $(INSTALLPATH)
+	$(_C)cp $(GRFMERGE) $(INSTALLPATH)
+	$(_C)cp $(GRFDIFF) $(INSTALLPATH)

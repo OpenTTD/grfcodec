@@ -24,6 +24,18 @@
 # uncomment the following line:
 #NO_BOOST = 1
 
+# The path for installation may be set directly, by:
+#INSTALLPATH =
+# Or, it may be intuited from the shell and (for Cygwin) compiler settings:
+#   Cygwin shell, Cygwin native compiler:
+#INSTALLPATH_CYGWIN = /usr/local/bin
+#   Cygwin shell, MinGW32 compiler:
+#INSTALLPATH_CYGWIN_MINGW = /cygdrive/c/windows
+#   MSYS shell, MinGW32 compiler:
+#INSTALLPATH_MSYS_MINGW = c:\windows
+#   Everything else:
+#INSTALLPATH_LINUX = /usr/local/bin
+
 # Gnu compiler settings
 #SHELL = /bin/sh
 #CC = g++
@@ -48,5 +60,5 @@
 #TYPESIZE = WIN32
 
 # On Cygwin, uncomment to build Cygwin-dependent binaries
-# (Required to compile with gcc 4)
+# (Required to compile with Cygwin's gcc 4)
 #NOCYGWIN = 0
