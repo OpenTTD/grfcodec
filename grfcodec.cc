@@ -97,6 +97,13 @@ const char *usagetext=
 	"        If both of these are specified, only the last is obeyed.\n"
 	"        (-m ? or -M ? for a list of colour translations.)\n"
 	"\n"
+#ifdef NO_BOOST
+	"This GRFCodec was compiled without boost. The \\w<date> and \\d<date> escape\n"
+	"sequences have been disabled, but all other escapes work correctly.\n"
+#else
+	"This GRFCodec was compiled with boost. All features are enabled.\n"
+#endif
+	"\n"
 	"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>\n"
 	"You may copy and redistribute it under the terms of the GNU General Public\n"
 	"License, as stated in the file 'COPYING'.\n";
