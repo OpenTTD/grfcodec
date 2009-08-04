@@ -12,6 +12,11 @@
 #include "error.h"
 #include "escapes.h"
 
+#if defined _MSC_VER || defined MINGW
+	#include <io.h>
+	#define isatty _isatty
+#endif
+
 const char *infoline = "%s %d %d %02X %d %d %d %d";
 //		<PCX-File> <X> <Y> <info[0..7]>
 //		extended if info[0]&8: info[1]*<%d %d> linelen linestart
@@ -106,7 +111,9 @@ void inforeader::PrepareReal(const Real&sprite){
 
 		delete imgfile;
 
-		printf("Loading %s\n", sprite.GetName());
+		if (isatty(fileno(stdout))) {
+			printf("Loading %s\n", sprite.GetName());
+		}
 
 		imgname = sprite.GetName();
 		imgfile = MakeReader();

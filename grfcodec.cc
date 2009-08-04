@@ -27,11 +27,13 @@
 #ifdef MINGW
 	#include <io.h>
 	#define mkdir(a,b) mkdir(a)
+	#define isatty _isatty
 #elif defined(_MSC_VER)
 	#include <io.h>
 	#include <direct.h>
 	#define mkdir(a,b) mkdir(a)
 	#define F_OK 0
+	#define isatty _isatty
 #else
 	#include <unistd.h>
 #endif//_MSC_VER
@@ -188,6 +190,7 @@ static const defpal defpals[] =
 
 static int *colourmaps[] = { palmap0, palmap1 };
 
+static bool _interactive;
 
 static int movetoreal(char *newfile, char *realfile)
 {
@@ -206,7 +209,7 @@ static int movetoreal(char *newfile, char *realfile)
 	if (!tmp && (errno == ENOENT)) {
 		// .bak doesn't exist, rename orig to .bak
 		// XXX: Shouldn't we rename orig to .bak even if .bak already exists? --pasky
-		printf("\nRenaming %s to %s", realfile, bakfile);
+		if (_interactive) printf("\nRenaming %s to %s", realfile, bakfile);
 		if (rename(realfile, bakfile)) {
 			errno = EEXIST;		// go delete it
 		} else {
@@ -219,14 +222,14 @@ static int movetoreal(char *newfile, char *realfile)
 
 	// delete grf if it exists
 	if (access(realfile, F_OK) == 0) {
-		printf("\nDeleting %s",realfile);
+		if (_interactive) printf("\nDeleting %s",realfile);
 		if (remove(realfile))
 			fperror("\nError deleting %s", realfile);
 	}
 
 	// rename tmp to grf
 
-	printf("\nReplacing %s with %s\n", realfile, newfile);
+	if (_interactive) printf("\nReplacing %s with %s\n", realfile, newfile);
 
 	if (rename(newfile, realfile)) {
 		fperror("Error renaming %s to %s", newfile, realfile);
@@ -296,7 +299,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 	doopen(file, "", ".new", "wb", &grfnew, &grf, 0);
 	doopen(file, dir, ".nfo", "rt", &infofile, NULL, 1);
 
-	printf("Encoding in temporary file %s\n", grfnew);
+	if (_interactive) printf("Encoding in temporary file %s\n", grfnew);
 
 	inforeader info(infofile);
 
@@ -321,10 +324,12 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 		//int comp5 = totalreg / totalunreg;
 		int comp6 = (100L * totalreg / totalunreg);// % 100;
 
-		printf("\rSprite%5d  Done:%3d%%  "
-			"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
-			spriteno, (int) (i*100L/info.size()),
-			comp2, comp4, comp6);
+		if (_interactive) {
+			printf("\rSprite%5d  Done:%3d%%  "
+				"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
+				spriteno, (int) (i*100L/info.size()),
+				comp2, comp4, comp6);
+		}
 
 		switch(info[i].GetType()){
 		case Sprite::ST_INCLUDE:{
@@ -591,12 +596,12 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 
 	count = 0;
 
-	printf("Decoding:\n");
+	if (_interactive) printf("Decoding:\n");
 
 	do {
 		int newpct = 100L*ftell(grf)/fsize;
 
-		if (newpct != lastpct) {
+		if (_interactive && newpct != lastpct) {
 			lastpct = newpct;
 			printf("Sprite %d at %lX, %3d%% done\r", count, ftell(grf), lastpct);
 		}
@@ -613,7 +618,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 
 	fclose(info);
 
-	printf("%s has %d sprites, maxx %d, maxy %d, maxs %d.\n",
+	if (_interactive) printf("%s has %d sprites, maxx %d, maxy %d, maxs %d.\n",
 		file, count, maxx, maxy, maxs);
 	fclose(grf);
 
@@ -737,7 +742,9 @@ int main(int argc, char **argv)
 	int *colourmap = NULL;
 	int useplaintext = 1;
 
-	puts("GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler");
+	_interactive = (isatty(fileno(stdout)) != 0);
+
+	if (_interactive) puts("GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler");
 
 	checksizes();
 
