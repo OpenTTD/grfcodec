@@ -42,7 +42,7 @@ GRFMERGE = grfmerge$(EXE)
 TYPESIZE = GCC32
 
 INSTALLPATH_CYGWIN=/usr/local/bin
-INSTALLPATH_CYGWIN_MINGW=$(shell echo $$SYSTEMROOT | sed -e "s/\(.\):/\\/cygdrive\\/\\1/" -e s/\\//\\\\/g)
+INSTALLPATH_CYGWIN_MINGW=$(shell echo $$SYSTEMROOT | sed -e "s/\(.\):/\\/cygdrive\\/\\1/" -e s/\\\\/\\//g)
 INSTALLPATH_MSYS_MINGW=$(SYSTEMROOT)
 INSTALLPATH_LINUX=/usr/local/bin
 
@@ -202,7 +202,7 @@ mrproper: clean
 FORCE:
 	@$(BOOST_WARN)
 
-.rev: FORCE
+.rev: #FORCE
 	$(_C) [ -e $@ ] || echo SVNREV=0 > $@
 	$(_C) REV=`${SVNVERSION}` perl rev.pl $@ < $@
 
@@ -313,7 +313,7 @@ endif
 
 include Makefile.bundle
 
-install:
+install: $(GRFCODEC) $(GRFMERGE) $(GRFDIFF)
 	$(_E) [INSTALL]
 	$(_C)cp $(GRFCODEC) $(INSTALLPATH)
 	$(_C)cp $(GRFMERGE) $(INSTALLPATH)
