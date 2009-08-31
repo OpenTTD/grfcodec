@@ -446,7 +446,7 @@ bool verify_real(string&data){
 		"%d %d %2x %d %d %d %d%t"};
 	const char*const var_names[7]={"xpos","ypos","comp","ysize","xsize","xrel","yrel"};
 	string meta=data.substr(loc+5);
-	size_t offs=NPOS;
+	string::size_type offs=NPOS;
 	uchar state=0; // bitmask of calculated variables
 	int var;
 	while((var=sscanf(meta.c_str(),"%d %d %2x %d %d %d %d",&xpos,&ypos,&comp,&ysize,&xsize,&xrel,&yrel))!=7){
