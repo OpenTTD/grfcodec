@@ -346,7 +346,8 @@ int process_file(istream&in){
 					_spritenum++;
 					(*pNfo)<<setw(5)<<spritenum()<<" **\t "<<datapart<<'\n';
 				}else{
-					eat_white(spritestream>>size);
+					(spritestream>>size).clear();
+					eat_white(spritestream);
 					flush_buffer();
 					if(_spritenum==(uint)-1){
 						isPatch=true;
