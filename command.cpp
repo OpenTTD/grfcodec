@@ -110,13 +110,13 @@ int find_command(const string&command,const commandData type[]){
 
 bool is_command(const string&line){
 	assert(is_comment(line));
-	size_t x=line.find_first_not_of(COMMENT+WHITESPACE);
+	string::size_type x=line.find_first_not_of(COMMENT+WHITESPACE);
 	return x!=string::npos&&x<(line.length()-1)&&line[x]=='@'&&line[x+1]=='@';
 }
 
 bool is_message(const string&line){
 	assert(is_comment(line));
-	size_t x=line.find_first_not_of(COMMENT+WHITESPACE);
+	string::size_type x=line.find_first_not_of(COMMENT+WHITESPACE);
 	return x!=string::npos&&x<(line.length()-1)&&line[x]=='!'&&line[x+1]=='!';
 }
 
@@ -152,10 +152,11 @@ bool CLCommand(int command){
 	case'w':case'W':{
 		string s(optarg);
 		if (s.find_first_not_of("0123456789,") != NPOS) return false;
-		uint opt;
-		while ( (opt=(uint)s.find_first_of(',')) != NPOS)
-			s[opt]='+';
+		string::size_type loc;
+		while ( (loc=s.find_first_of(',')) != NPOS)
+			s[loc]='+';
 		istringstream arg(s);
+		uint opt;
 		while(arg>>opt){
 			parse_comment((command=='w'?"//@@WARNING DISABLE ":"//@@WARNING ENABLE ")+itoa(opt));
 			arg.ignore();

@@ -460,7 +460,7 @@ void PseudoSprite::AddBlank(uint i){
 	else if(context[i]=="")context[i]="\n\n";
 	else if(!Length())context[i]+='\n';
 	else{
-		uint offs=(uint)context[i].find_first_of('\n');
+		string::size_type offs=context[i].find_first_of('\n');
 		if(offs==NPOS||context[i].substr(offs,2)!="\n\n")
 			context[i]=context[i].substr(0,offs)+'\n'+context[i].substr(offs);
 	}
