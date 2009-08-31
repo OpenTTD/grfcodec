@@ -302,13 +302,13 @@ void check_sprite(PseudoSprite&data){
 			break;
 		}
 		uint offs=6;
-		CheckString(data,offs,0);
+		CheckString(data,offs,CTRL_COLOR);
 		try{
 			if(data[offs])data.SetEol(offs-1,1);
 		}catch(uint){
 			IssueMessage(WARNING1,NO_NULL_FOUND);
 		}
-		CheckString(data,offs,CTRL_NEWLINE);
+		CheckString(data,offs,CTRL_COLOR|CTRL_NEWLINE);
 		if(offs<length)IssueMessage(WARNING2,EXTRA_DATA,offs);
 		break;
 	}case 0xA:
