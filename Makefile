@@ -27,8 +27,6 @@ ISMINGW = $(shell [ `$(CC) -dumpmachine` != mingw32 ]; echo $$?)
 # OS dependent variables
 NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) -o \( $(ISMINGW) -eq 1 \) ] && echo renum.exe || echo renum)
 
--include ${MAKEFILELOCAL}
-
 # use 386 instructions but optimize for pentium II/III
 ifeq ($(ISCYGWIN),1)
 CFLAGS = -g -mno-cygwin -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
@@ -36,12 +34,14 @@ else
 CFLAGS = -g -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
 endif
 
-ifeq ($(DEBUG),1)
-CFLAGS += -DDEBUG
-endif
-
 CXXFLAGS = $(CFLAGS)
 
+-include ${MAKEFILELOCAL}
+
+ifeq ($(DEBUG),1)
+CFLAGS += -DDEBUG
+CXXFLAGS += -DDEBUG
+endif
 
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
