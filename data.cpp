@@ -2,7 +2,7 @@
  * data.cpp
  * Data file contents and implementation of helper functions.
  *
- * Copyright 2005-2008 by Dale McCoy.
+ * Copyright 2005-2009 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,9 +172,9 @@ static const char _dat0f8[]="\x02\x01"
 	2) one-byte bitmask of features for callback | 80h
 	3) 7Fh followed by word-sized bitmask
 */
-static const char _datcallbacks[]="\x05\x0D"
+static const char _datcallbacks[]="\x05\x0E"
 // Count:
-"\x4D\x01"
+"\x4E\x01"
 //v 00             x4              x8              xC
 "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 "\x00\x83\x8F\x04\x04\x8F\x83\x07\x9F\x8F\x07\x07\x07\x00\x07\x07"
@@ -199,7 +199,7 @@ static const char _datcallbacks[]="\x05\x0D"
 //v E0             x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v 10             x4              x8              xC
+//v 100            x4              x8              xC
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 //v 120            x4              x8              xC
@@ -207,7 +207,7 @@ static const char _datcallbacks[]="\x05\x0D"
 "\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
 //v 140            x4              x8              xC
 "\x04\x04\x04\x07\x0C\x0B\x0E\x05\x07\x7F\x10\x80"
-                                        "\x0A\x0A\x0A"
+                                        "\x0A\x0A\x0A\x07"
 ;
 
 
@@ -508,7 +508,7 @@ static const char _dat2v[]="\x0D\x0D\x0F"
 "\x60\x82\x6B"	"\x61\x82\xFF"	"\x62\x84\xFF"	"\x63\x81\xFF"
 "\x64\x81\xFF"	"\x65\x81\xFF"
 "\x80\x80"
-// Feature 08:
+// Town variables ("Feature 08" *cough*cough*)
 "\x08"
 "\x40\x81"		"\x41\x81"
 "\xDE\x80"
