@@ -460,11 +460,7 @@ bool verify_real(string&data){
 			return COMMENTOFF();
 		}
 		state|=1<<var;//Mark calculation
-		// **FIXME** 64-bit safety (?) (next 2 lines)
-		//store pointer to remainder of metadata immediately after calculated datum, and ...
-		(const char*&)(var_list[var+1])=meta.c_str()+offs;
-		//... pass it as one or two 32-bit integers, to be read with va_arg(ap,char*).
-		meta=mysprintf(format_list[var],xpos,ypos,comp,ysize,xsize,xrel,yrel,var_list[7],var_list[8]);
+		meta=mysprintf(format_list[var],xpos,ypos,comp,ysize,xsize,xrel,yrel,meta.c_str()+offs);
 	}
 	if(state)data=data.substr(0,loc+5)+meta;
 	if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
