@@ -2,7 +2,7 @@
  * act0.cpp
  * Contains definitions for checking action 0s.
  *
- * Copyright 2005-2008 by Dale McCoy.
+ * Copyright 2005-2009 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,6 +233,22 @@ void Init0(){
 	CargoTransTable(-1);
 }
 
+#define GetWidth(x)		((x)&7)
+#define GetFormat(x)	((x>>4)&3)
+#define GetLinebreak(x)	((x>>6)&3)
+
+static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const uint IDs = 1) {
+	for(uint j=0;j<IDs;j++){
+		switch(GetFormat(format)){
+		case 1:str.SetText(ofs,GetWidth(format));break;
+		case 2:str.SetDec(ofs,GetWidth(format));break;
+		case 3:str.SetBE(ofs,GetWidth(format));break;
+		}
+
+		if (GetWidth(format)==3) ofs+=str.ExtendedLen(ofs);
+		else ofs+=GetWidth(format);
+	}
+}
 
 void Check0::Check(PseudoSprite&str){
 	assert(str.ExtractByte(0)==0);
@@ -299,28 +315,13 @@ void Check0::Check(PseudoSprite&str){
 			}
 			if(propLoc[prop])
 				IssueMessage(WARNING2,REPEATED_PROP,i,prop,propLoc[prop]);
-			propLoc[prop]=i;
+			propLoc[prop]=i++;
 			if(len==0xFE){
-				i++;
 				const PropData*data=_p[feature].GetVarLength(prop);
 				for(j=0;j<IDs;j++)
 					if(!CheckVar(i,str,*data,j+1<IDs,true))return;
-			}else if((len&7)==3){
-				i++;
-				for(j=0;j<IDs;j++){
-					i+=str.ExtendedLen(i);
-				}
-			}else{
-				i++;
-				for(uint j=0;j<IDs;j++){
-					switch((len>>4)&3){
-					case 1:str.SetText(i,len&7);break;
-					case 2:str.SetDec(i,len&7);break;
-					case 3:str.SetBE(i,len&7);break;
-					}
-					i+=(len&7);
-				}
-			}
+			}else
+				FormatSprite(str,i,len,IDs);
 			propsRemain--;
 		}
 		if(i>str.Length())
@@ -328,16 +329,11 @@ void Check0::Check(PseudoSprite&str){
 		else{
 			if(i<str.Length()){
 				len=_p[feature].GetData(str.ExtractByte(4+str.ExtendedLen(4)));
-				if(_autocorrect&&str.ExtractByte(2)==1&&(len&7)<5){
-					while(i+((len&7)==3?str.ExtendedLen(i):(len&7))<=str.Length()&&IDs<0xFF){
-						switch((len>>4)&3){
-						case 1:str.SetText(i,len&7);break;
-						case 2:str.SetDec(i,len&7);break;
-						case 3:str.SetBE(i,len&7);break;
-						}
+				if(_autocorrect&&str.ExtractByte(2)==1&&GetWidth(len)<5){
+					// If setting one property, assume setting same prop for more IDs 
+					while(i+(GetWidth(len)==3?str.ExtendedLen(i):GetWidth(len))<=str.Length()&&IDs<0xFF){
+						FormatSprite(str,i,len);
 						IDs++;
-						if(len==3)i+=str.ExtendedLen(i);
-						else i+=len&7;
 					}
 					if(IDs!=str.ExtractByte(3)){
 						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
@@ -358,7 +354,7 @@ void Check0::Check(PseudoSprite&str){
 					} else if(data==0x14) {
                         maxwidth=max<uint>(maxwidth,6);
 					} else {
-                        maxwidth=max(maxwidth,uint(data&7)*3-1);
+                        maxwidth=max<uint>(maxwidth,GetWidth(data)*3-1);
                     }
                 }
             }
@@ -368,10 +364,10 @@ void Check0::Check(PseudoSprite&str){
 				if(!propLoc[i])continue;
 				str.SetEol(propLoc[i]-1,1);
 				if((data=_p[feature].GetData(i))==0xFE)continue;
-				if((width=(data==0x14)?6:(data&7)*3-1)<maxwidth){
+				if((width=(data==0x14)?6:GetWidth(data)*3-1)<maxwidth){
 					uint j=IDs;
 					for(;j;j--)
-						str.PadAfter(propLoc[i]+(data&7)*j,maxwidth-width);
+						str.PadAfter(propLoc[i]+GetWidth(data)*j,maxwidth-width);
 				}
 			}
 		}
@@ -408,13 +404,8 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			if(repeat_data==0xFE){
 				for(uint j=0;j<times;j++)
 					if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
-			}else if((repeat_data&7)<5){
-				switch((repeat_data>>4)&3){
-				case 1:str.SetText((str_loc-1-repeat_data)&7,repeat_data&7);
-				case 2:str.SetDec((str_loc-1-repeat_data)&7,repeat_data&7);
-				case 3:str.SetBE((str_loc-1-repeat_data)&7,repeat_data&7);
-				}
-				str_loc+=(repeat_data&7)*times;
+			}else if(GetWidth(repeat_data)<5){
+				FormatSprite(str,str_loc,repeat_data,times);
 			}else{
 				IssueMessage(0,INVALID_DATAFILE,"0.dat",DAT2,'r',repeat_data);
 				exit(EDATA);
@@ -448,14 +439,14 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 				exit(EDATA);
 			}
 			try{
-				if((repeat_data&7)<5){
-					while((str.*ExtractTerm)(str_loc)!=term)
-						str_loc+=repeat_data;
-				}else if(repeat_data==0xFE){
+				if(repeat_data==0xFE){
 					while((str.*ExtractTerm)(str_loc)!=term)
 						if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
+				}else if(GetWidth(repeat_data)<5){
+					while((str.*ExtractTerm)(str_loc)!=term)
+						FormatSprite(str,str_loc,repeat_data);
 				}else{
-					IssueMessage(0,INVALID_DATAFILE,DAT2,"0.dat",'*',repeat_data);
+					IssueMessage(0,INVALID_DATAFILE,"0.dat",DAT2,'*',repeat_data);
 					exit(EDATA);
 				}
 				str_loc+=term_len;
@@ -472,26 +463,18 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			CheckVar(str_loc,str,*vdata.GetVarLength(i),false,false,pass);
 			break;
 		default:
-			switch(ch&7){
-			case 3:
-				decoded.push_back(str.ExtractExtended(str_loc));
-				str_loc+=str.ExtendedLen(str_loc);
-				break;
+			switch(GetWidth(ch)){
 			case 1:
 			case 2:
+			case 3:
 			case 4:
-				decoded.push_back(str.ExtractVariable(str_loc,ch&7));
-				str_loc+=(ch&7);
+				decoded.push_back(str.ExtractVariable(str_loc,GetWidth(ch)));
+				FormatSprite(str,str_loc,ch);
 			case 0:
 				break;
 			DEFAULT(ch)
 			}
-			switch((ch>>4)&7){
-			case 1:str.SetText((str_loc-1-ch)&7,ch&7);break;
-			case 2:str.SetDec((str_loc-1-ch)&7,ch&7);break;
-			case 3:str.SetBE((str_loc-1-ch)&7,ch&7);break;
-			}
-			if(ch&0x80){
+			if(GetLinebreak(ch)==0xC){
 				str.SetEol(str_loc-1,2);
 				addblank|=canaddblank;
 			}
