@@ -267,7 +267,7 @@ PseudoSprite&PseudoSprite::SetDate(uint i, uint num) {
 	assert(num==1 || num==2 || num==4);
 	switch(num){
 	case 1:
-		return SetEscape(i, false, mysprintf(" \b%d", 1920+ExtractByte(i)), 1);
+		return SetEscape(i, false, mysprintf(" \\b%d", 1920+ExtractByte(i)), 1);
 	case 2:{
 		date::ymd_type ymd = (date(1920,1,1) + days(ExtractWord(i))).year_month_day();
 		ushort y = ymd.year, m = ymd.month, d = ymd.day;
@@ -500,10 +500,13 @@ ostream&PseudoSprite::output(ostream&out){
 //from grfcodec v0.9.7: http://www.ttdpatch.net/grfcodec
 //grfcodec is Copyright 2000-2005 Josef Drexler
 	for(uint i=0;i<Length();i++) {
+		// Most output strings contain a leading space, but this should be omitted if CONVERTONLY.
+		// ... unless there was no space between the preceeding byte and this one.
+		const int skipspace = (GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0;
 		if(DoQuote(i)){
 			if (!instr){
-				out<<" \""+((GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0);
-				count+=3-((GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0);// count close-quote here.
+				out<<" \""+skipspace;
+				count+=3-skipspace;// count close-quote here.
 				instr=true;
 			}
 			if(NFOversion>6){
@@ -538,13 +541,13 @@ ostream&PseudoSprite::output(ostream&out){
 				out<<'"';
 				instr=false;
 			}
-			if(NFOversion>6 && (beauty[i]&~NOBREAK)==NQEXT){
-				out<<ext_print[i];
-				count+=(uint)ext_print[i].size();
-			}else{
-				out<<mysprintf(" %2x"+((GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0),(*this)[i]);
-				count+=3;
-			}
+			string str;
+			if(NFOversion>6 && (beauty[i]&~NOBREAK)==NQEXT)
+				str = ext_print[i].c_str()+skipspace;
+			else
+				str = mysprintf(" %2x"+skipspace,(*this)[i]);
+			out<<str;
+			count+=(uint)str.size();
 			noendl=false;
 		}
 
