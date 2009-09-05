@@ -200,7 +200,7 @@ NFO_MESSAGE(REAL_VAL_TOO_LARGE,"Chybna metadata. %s nesmi byt vyssi nez %d.\n",U
 NFO_MESSAGE(REAL_BAD_COMP,"Chybna metadata. Komprese muze mit nastevene jen bity 0, 1, 3 a/nebo 6.\n",USE_PREFIX)
 NFO_MESSAGE(REAL_SPRITE_TOO_LARGE,"Chybna metadata. Velikost spritu presahuje 64K.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_TEXTID,"TextID %4x neexistuje.\n",USE_PREFIX|HAS_OFFSET)
-  MESSAGE_UNUSED(DWORD_CALLBACK)
+//NFO_MESSAGE(UNDEFINED_TEXTID,"Text ID %4x has not been defined.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(CHECK_0C_RANGE,"Zkouseni promenne 0C v rozsahu [%2x,%2x].\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_CALLBACK,"Pro tuto feature callback %2x neexistuje.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_FONT,"Font %2x neexistuje.\n",USE_PREFIX|HAS_OFFSET)

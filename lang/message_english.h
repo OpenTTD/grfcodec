@@ -215,7 +215,7 @@ NFO_MESSAGE(REAL_VAL_TOO_LARGE,"Metadata invalid. %s must not be larger than %d.
 NFO_MESSAGE(REAL_BAD_COMP,"Metadata invalid. compression can only have bits 0, 1, 3 and/or 6 set.\n",USE_PREFIX)
 NFO_MESSAGE(REAL_SPRITE_TOO_LARGE,"Metadata invalid. Sprite size exceeds 64K.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_TEXTID,"Text ID %4x is not a valid text ID.\n",USE_PREFIX|HAS_OFFSET)
-  MESSAGE_UNUSED(DWORD_CALLBACK)
+NFO_MESSAGE(UNDEFINED_TEXTID,"Text ID %x has not been defined.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(CHECK_0C_RANGE,"Checking for var0C in the range [%2x,%2x].\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_CALLBACK,"%2x is not a valid callback for this feature.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_FONT,"%2x is not a valid font.\n",USE_PREFIX|HAS_OFFSET)
@@ -260,6 +260,7 @@ NFO_MESSAGE(NO_PERS_REGS,"No persistent registers exist for this feature.\n",USE
 NFO_MESSAGE(DUPLICATE_TRANS_TABLE,"Cargo translation table previously found at sprite %d.\n",USE_PREFIX)
 NFO_MESSAGE(BAD_RANDSUBTYPE,"Invalid random 2 subtype.\n",USE_PREFIX)
 NFO_MESSAGE(NO_BYTE_IDS,"Cannot set (extended-)byte IDs for feature %2x.\n",USE_PREFIX)
+NFO_MESSAGE(COULD_NOT_VERIFY,"Cannot check for usage of undefined IDs: Cannot find feature to check.\n",USE_PREFIX)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 

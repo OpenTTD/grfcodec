@@ -34,6 +34,7 @@ using namespace std;
 #include"sanity_defines.h"
 #include"data.h"
 #include"command.h"
+#include"ExpandingArray.h"
 
 class IDs:public Guintp{
 public:
@@ -52,9 +53,15 @@ class TextIDs{
 public:
 	uint idClasses[0x20],numspecials;
 	bool CheckID(uint,uint);
+	void Define(uint);
+	bool IsDefined(uint);
+	static void Clear();
 	AUTO_ARRAY(uchar);
 	SINGLETON(TextIDs);
+private:
+	static Expanding0Array<bool> _m;
 };
+Expanding0Array<bool> TextIDs::_m;
 
 TextIDs::TextIDs(){
 	FILE*pFile=myfopen(TextIDs);
@@ -79,12 +86,39 @@ bool TextIDs::CheckID(uint feature,uint ID){
 	return(ID&0x7FF)<idClasses[ID>>11];
 }
 
+void TextIDs::Define(uint ID){
+	if(idClasses[ID>>11]==0xFFFF){
+		ID-=0xC000;
+		_m[ID]=true;
+	}
+}
+bool TextIDs::IsDefined(uint ID){
+	if(idClasses[ID>>11]==0xFFFF)
+		return const_cast<const Expanding0Array<bool>& >(_m)[ID-0xC000];
+	return (ID&0x7FF)<idClasses[ID>>11];
+}
+
+void TextIDs::Clear() {
+	_m.clear();
+}
+
+void ClearTextIDs() {
+	TextIDs::Clear();
+}
+
 bool CheckTextID(uint feature,uint ID,uint offset){
 	VERIFY(feature==0x48||feature==0x49,feature);
 	VERIFY(ID<0x10000,ID);
-	if(TextIDs::Instance().CheckID(feature,ID))return true;
+	if(TextIDs::Instance().CheckID(feature,ID)){
+		if (feature==0x48) TextIDs::Instance().Define(ID);
+		return true;
+	}
 	IssueMessage(ERROR,INVALID_TEXTID,offset,ID);
 	return false;
+}
+
+bool IsTextDefined(uint ID) {
+	return TextIDs::Instance().IsDefined(ID);
 }
 
 bool CheckID(uint feature,uint ID){

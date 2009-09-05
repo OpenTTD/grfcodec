@@ -476,6 +476,13 @@ Specify a valid textID.
 In an action 4, if <off> specifies byte 3, then the ID (in bytes 4..5) is OK,
 but <num-ent> is too large.
 
+162: "<off> Text ID %x has not been defined." (Error)
+The specified ID is either not a valid TTD ID, or a DCxx ID that has not been
+defined.
+Ensure that you are using a valid ID, and, if DCxx, move the definition before
+this action 0.
+DCxx IDs must be defined before they may be used in Action 0s.
+
 163: "<off> Checking for var0C in the range [<min>,<max>]." (Warn 1)
 A check of var 0C has <min> not equal to <max>.
 Change one of <min> or <max> so they match.
@@ -624,10 +631,12 @@ The specified cargo or ID appears twice in this action 3.
 Remove the extraneous appearance(s).
 
 200: "Prop 08 has not been set for ID %2x." (Error)
-For several features, property 08 must be set before an Action 3 will have
+1) For several features, property 08 must be set before an Action 3 will have
 any effect. This is one of those features.
-Move this ID's action 0 before the action 3, or add an action 0 that sets
-prop 08.
+2) Some features reference objects of a different feature. The referenced
+object(s) must be defined before they can be referenced.
+Move the action 0 for the specified ID to somewhere before this sprite, or add
+an action 0 that sets prop 08.
 
 201: "GRFID has a bit set that is clear in the mask." (Warn 1)
 When testing for multiple IDs, the specified GRFID should already have had
@@ -658,3 +667,9 @@ One of the reserved bits in <count> for a type 84 random is set.
 Make sure that you did not set bits 4 or 5 (the low two bits of the high
 nibble).
 
+206: "Cannot set (extended-)byte IDs for feature <feat>." (Error)
+Non-vehicle features do not accept byte-sized IDs.
+Set an ID from the C4xx, C5xx, C9xx, D0xx, or DCxx ranges instead.
+
+207: "Cannot check for usage of undefined IDs: ..." (Warn 1)
+Your copy of 0.dat or 2v.dat is broken. Ask for a new one.

@@ -106,6 +106,7 @@ static const sanity&crStatus=status;
 
 void Init123();
 void InitF();
+void ClearTextIDs();
 void Check0(PseudoSprite&);
 int  Check1(PseudoSprite&);
 void Check2(PseudoSprite&);
@@ -125,6 +126,7 @@ void reset_sanity(){
 	Init123();
 	Init7();
 	InitF();
+	ClearTextIDs();
 }
 
 bool IsLabel(uint x){
