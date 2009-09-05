@@ -474,7 +474,7 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 				break;
 			DEFAULT(ch)
 			}
-			if(GetLinebreak(ch)==0xC){
+			if(GetLinebreak(ch)==3){
 				str.SetEol(str_loc-1,2);
 				addblank|=canaddblank;
 			}
