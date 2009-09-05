@@ -41,19 +41,40 @@ using namespace std;
 #include"data.h"
 #include"pseudo.h"
 #include"command.h"
+#include"rangedint.h"
+#include"act123.h"
 
 /*Data Format:
-chars 01,02,04 indicate bytes,words,doubles
-char 03 extended byte
-For 01..04, the high nibble indicates how to beautify:
-Lower quad: 0x:default 1x:quote 2x:decimal 3x:B-E hex (2x and 3x are currently unsupported)
-The upper quad, which only applies in FE strings:
+bits   indicate width:
+0-2		width
+3		special formatting or checks
+5-4		Basic formatting
+7-6		(FE strings only) linebreak formatting
+
+Width:
+1-4: byte, word, extended byte, double; resp.
+
+Special formatting/checks:
+If set:
+- Print decimal values as dates
+- Check BE words against defined TTD and DCxx IDs
+- Check BE doubles against remaining size of property (e.g. indu prop 0A) (TODO: Implement)
+- Check default words against defined IDs for feature that relates to this one
+	(i.e. Check that tiles used in indu prop 0A are defined.)
+
+Basic formatting:
+0:default 1:quote 2:decimal 3:B-E hex
+
+linebreak formatting:
 0x:default  Cx:linebreak;long lead
+
+Special cases:
 char FE means variable length, see corresponding LengthData struct in subData
 char FF means no such property
 
+
 for variable length properties only:
-01..04 as above 
+As above, with special cases as follows:
 char r means the next char is repeated some number of times, set by the char
   after it, for which chars 80-FF take on the value of the data indicated by
   char num&0x7F of this string (well, sorta--FEs aren't counted, for one)
@@ -66,10 +87,11 @@ char | means what is on either side is valid -- the left side MUST have at
 least one literal. (ex: \x03 == l\xFF\x02|\x01)
 char FD takes the same type of parameter as r, but adds that value to the
   list of 80+x values for all following FE substrings.
-char FE means variable, see corresponding LengthData struct in subData
-char x0 means apply top nibble to previous byte
+char FE as above
+char C0 means to insert a linebreak (as if encountering C1..C4) but without
+  reading any bytes
 A backslash is used to escape nulls that are not end-of-string characters
-all other characters are undef
+char FF is undef
 */
 
 typedef basic_string<uchar> ustring;
@@ -234,19 +256,55 @@ void Init0(){
 }
 
 #define GetWidth(x)		((x)&7)
+#define IsSpecial(x)	((x)&8)
 #define GetFormat(x)	((x>>4)&3)
 #define GetLinebreak(x)	((x>>6)&3)
 
+bool IsTextDefined(uint);
+
 static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const uint IDs = 1) {
+	uint feature = str.ExtractByte(1);
 	for(uint j=0;j<IDs;j++){
 		switch(GetFormat(format)){
-		case 1:str.SetText(ofs,GetWidth(format));break;
-		case 2:str.SetDec(ofs,GetWidth(format));break;
-		case 3:str.SetBE(ofs,GetWidth(format));break;
-		}
+		case 0:		// default
+			if (GetWidth(format)==2 && IsSpecial(format)) {	// Check word against defined IDs.
+				uint k=0;
+				for (;k<=MaxFeature();k++)
+					if (Check2v::GetEffFeature(k,0x82)==feature) break;
 
-		if (GetWidth(format)==3) ofs+=str.ExtendedLen(ofs);
-		else ofs+=GetWidth(format);
+				static Expanding0Array<bool> warned;
+				if (k>MaxFeature()) {
+					if (!warned[feature]) IssueMessage(WARNING1,COULD_NOT_VERIFY);
+					warned[feature]=true;
+					break;
+				}
+
+				if (!IsProp08Set(k,str.ExtractWord(ofs)))
+					IssueMessage(ERROR,ACT3_PRECEEDS_PROP08,ofs,str.ExtractWord(ofs));
+			}
+			break;
+		case 1:str.SetText(ofs,GetWidth(format));break;
+		case 2:		// Decimal (or date)
+			if (IsSpecial(format))
+				str.SetDate(ofs,GetWidth(format));
+			else
+				str.SetDec(ofs,GetWidth(format));
+			break;
+		case 3:		// BE hex
+			if (IsSpecial(format))
+				if (GetWidth(format)==2) {	// Check word against defined TextIDs.
+					if(!IsTextDefined(str.ExtractWord(ofs)))
+						IssueMessage(ERROR,UNDEFINED_TEXTID,ofs,str.ExtractWord(ofs));
+				} else if (GetWidth(format)==4) {	// Check dword against prop length
+					// TODO: Implement!
+				}
+			str.SetBE(ofs,GetWidth(format));
+			break;
+		}
+		if(GetWidth(format)==3)
+			ofs+=str.ExtendedLen(ofs);
+		else
+			ofs+=GetWidth(format);
 	}
 }
 
