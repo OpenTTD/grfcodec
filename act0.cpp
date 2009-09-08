@@ -291,13 +291,14 @@ static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const ui
 				str.SetDec(ofs,GetWidth(format));
 			break;
 		case 3:		// BE hex
-			if (IsSpecial(format))
+			if (IsSpecial(format)) {
 				if (GetWidth(format)==2) {	// Check word against defined TextIDs.
 					if(!IsTextDefined(str.ExtractWord(ofs)))
 						IssueMessage(ERROR,UNDEFINED_TEXTID,ofs,str.ExtractWord(ofs));
 				} else if (GetWidth(format)==4) {	// Check dword against prop length
 					// TODO: Implement!
 				}
+			}
 			str.SetBE(ofs,GetWidth(format));
 			break;
 		}
