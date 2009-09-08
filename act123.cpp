@@ -368,7 +368,7 @@ CHANGED_FEATURE(std)
 				if(!hasGround)IssueMessage(WARNING2,NO_GROUNDSPRITE,NONTRANS);
 			}else{//Basic format
 				if(!ground)IssueMessage(ERROR,NO_GROUNDSPRITE,GROUND);
-				if(CheckLength(length,17,INVALID_LENGTH,TYPE,BASICSTD2,HOUSE_INSTYTILE,17))break;
+				if(CheckLength(length,17,INVALID_LENGTH,TYPE,BASICSTD2,HOUSE_INSTYTILE,EXACTLY,17))break;
 				uint building=data.ExtractDword(8),xoff=data.ExtractByte(12),yoff=data.ExtractByte(13),
 					x=data.ExtractByte(14),y=data.ExtractByte(15);//,z=data.ExtractByte(16);
 				if(building){
