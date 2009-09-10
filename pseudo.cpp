@@ -237,9 +237,9 @@ bool PseudoSprite::MayBeSprite(const string&sprite){
 uint PseudoSprite::Length()const{return(uint)(valid?packed.length():0);}
 
 PseudoSprite&PseudoSprite::SetHex(uint i){beauty[i]=HEX;return*this;}
-PseudoSprite&PseudoSprite::SetHex(uint i,uint num){while(--num)beauty[i++]=HEX;return*this;}
+PseudoSprite&PseudoSprite::SetHex(uint i,uint num){while(num--)beauty[i++]=HEX;return*this;}
 PseudoSprite&PseudoSprite::SetAllHex(){beauty.clear();return*this;}
-PseudoSprite&PseudoSprite::SetUTF8(uint i,uint len){while(--len)beauty[i++]=UTF8;return*this;}
+PseudoSprite&PseudoSprite::SetUTF8(uint i,uint len){while(len--)beauty[i++]=UTF8;return*this;}
 PseudoSprite&PseudoSprite::SetText(uint i){
 	if(i&&GetState(CONVERTONLY)){
 		if((beauty[i-1]&~NOBREAK)==ENDQUOTE&&context[i-1]=="")context[i-1]=" ";
@@ -288,7 +288,7 @@ PseudoSprite&PseudoSprite::SetDate(uint i, uint num) {
 		}
 		date::ymd_type ymd = (date(1920,1,1) + days(val-base)).year_month_day();
 		uint y = ymd.year+yearmod, m = ymd.month, d = ymd.day;
-		return SetEscape(i, false, mysprintf(" \\d%d/%d/%d", y, m, d), 2);
+		return SetEscape(i, false, mysprintf(" \\d%d/%d/%d", y, m, d), 4);
 	}}
 	return SetDec(i, num);
 }
@@ -331,7 +331,7 @@ PseudoSprite&PseudoSprite::SetQEscape(uint i){
 
 PseudoSprite&PseudoSprite::SetQEscape(uint i,uint num){
 	if(GetState(USEESCAPES)){
-		while(--num)
+		while(num--)
 			beauty[i++]=QESC;
 		return *this;
 	}
@@ -625,7 +625,7 @@ bool PseudoSprite::IsText(uint i)const{
 	return type &&!(i&&(beauty[i-1]&~NOBREAK)==UTF8);
 }
 bool PseudoSprite::IsUTF8(uint i)const{
-	return (beauty[i]&~NOBREAK)==UTF8||(i&&(beauty[i-1]&~NOBREAK)==UTF8);
+	return (beauty[i]&~NOBREAK)==UTF8;
 }
 bool PseudoSprite::IsEot(uint i)const{
 	return (beauty[i]&~NOBREAK)==ENDQUOTE;
