@@ -286,11 +286,13 @@ static const char _datversions[]="\x00\x04"
 
 	Std action 2 format:
 		0x00 = Vehicle style
-		0x01 = House style
-		0x02 = Ind. prod style
+		0x01 = Station style	(<num-ent1> may be 0)
+		0x02 = Cargo style		(<num-ent1> must be 1, <num-ent2> must be 0)
+		0x03 = House style
+		0x04 = Ind. prod style
 		0xFF = No std 2 for this feature
 */
-static const char _datfeat[]="\x11\x08"
+static const char _datfeat[]="\x12\x00"
 // Max. feature:
 "\x0F"
 // Feature bit-masks:
@@ -298,7 +300,7 @@ static const char _datfeat[]="\x11\x08"
 "\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x00\x50\x0F"
 // Std action 2 formats:
 // 00              04              08              0C
-"\x00\x00\x00\x00\x00\x00\x00\x01\xFF\x01\x02\x00\xFF\xFF\x00\x01"
+"\x00\x00\x00\x00\x01\x02\x02\x03\xFF\x03\x04\x02\xFF\xFF\x00\x03"
 ;
 
 

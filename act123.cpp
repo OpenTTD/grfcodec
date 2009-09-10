@@ -280,20 +280,21 @@ CHANGED_FEATURE(std)
 			return;
 		}
 		switch(Get2Type(feature)){
-		case 0:{ // Standard format
+		case 0:
+		case 1:
+		case 2:{ // Standard format
 			bool mismatch=false,no1=false;
 			if(CheckLength(length,2*(nument1+nument2)+5,BAD_LENGTH,VARS,NUMENT1,NUMENT2,VALS,nument1,nument2,
 						   2*(nument1+nument2)+5))
 				break;
-			switch(feature){
-			case 0x0B:
-			case 5:
+			if (Get2Type(feature) == 0) {
+				if(!nument1)IssueMessage(ERROR,NO_REQD_SETS,LOADED);
+				if(!nument2)IssueMessage(ERROR,NO_REQD_SETS,LOADING);
+			} else if (Get2Type(feature) == 1) {
+				if(!nument2)IssueMessage(ERROR,NO_REQD_SETS,LOTS);
+			} else {
 				if(nument1!=1)IssueMessage(ERROR,INVALID_LITERAL,3,nument1,1);
 				if(nument2)IssueMessage(ERROR,INVALID_LITERAL,4,nument2,0);
-				break;
-			default:
-				if(!nument1&&feature!=4)IssueMessage(ERROR,NO_REQD_SETS,LOADED);
-				if(!nument2)IssueMessage(ERROR,NO_REQD_SETS,(feature==4)?LOTS:LOADING);
 			}
 			for(i=0;i<nument1+nument2;i++){
 				j=data.ExtractWord(2*i+5);
@@ -305,7 +306,7 @@ CHANGED_FEATURE(std)
 				}else if(feature!=act1.feature&&!mismatch&&!no1){
 					mismatch=true;
 					IssueMessage(ERROR,FEATURE_MISMATCH,1,act1.spritenum);
-					if(_autocorrect==2||(_autocorrect&&(act1.feature<6||act1.feature==0xB))){
+					if(_autocorrect==2||(_autocorrect&&Get2Type(act1.feature)<3)){
 						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 						IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature,act1.feature);
 						data.SetByteAt(1,feature=act1.feature);
@@ -317,7 +318,7 @@ CHANGED_FEATURE(std)
 				else act1.use(j);
 			}
 			break;
-		}case 1:{ // House/Industry tile format
+		}case 3:{ // House/Industry tile format
 			uint ground=data.ExtractDword(4);
 			bool mismatch=false,hasGround=(ground!=0);
 			if(ground)CheckSpriteNum(ground,4,act1,feature,mismatch,hasGround);
@@ -330,7 +331,7 @@ CHANGED_FEATURE(std)
 						uint building=data.ExtractDword(off+1),xoff=data.ExtractByte(off+5),
 							yoff=data.ExtractByte(off+6),zoff=data.ExtractByte(off+7);
 						if(!CheckSpriteNum(building,off+1,act123::Instance().act1,feature,mismatch,hasGround)&&
-							(_autocorrect==2||(_autocorrect&&(act1.feature==7||act1.feature==9)))){
+							(_autocorrect==2||(_autocorrect&&Get2Type(act1.feature)==3))){
 							IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 							IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature,act1.feature);
 							data.SetByteAt(1,feature=act1.feature);
@@ -373,7 +374,7 @@ CHANGED_FEATURE(std)
 					x=data.ExtractByte(14),y=data.ExtractByte(15);//,z=data.ExtractByte(16);
 				if(building){
 					if(!CheckSpriteNum(building,8,act1,feature,mismatch,hasGround)&&
-						(_autocorrect==2||(_autocorrect&&(act1.feature==7||act1.feature==9)))){
+						(_autocorrect==2||(_autocorrect&&Get2Type(act1.feature)==3))){
 						IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 						IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature,act1.feature);
 						data.SetByteAt(1,feature=act1.feature);
@@ -387,7 +388,7 @@ CHANGED_FEATURE(std)
 				}
 			}
 			break;
-		}case 2: // Industry format
+		}case 4: // Industry format
 			switch(data.ExtractByte(3)){ // Callback version
 			case 0:
 				if(CheckLength(length,15,INVALID_LENGTH,TYPE,PROD2S,INDUSTRIES,ONE_OF,10,15))break;
