@@ -262,6 +262,8 @@ void Init0(){
 
 bool IsTextDefined(uint);
 
+static vector<uint> lengthlist;
+
 static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const uint IDs = 1) {
 	uint feature = str.ExtractByte(1);
 	for(uint j=0;j<IDs;j++){
@@ -295,9 +297,8 @@ static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const ui
 				if (GetWidth(format)==2) {	// Check word against defined TextIDs.
 					if(!IsTextDefined(str.ExtractWord(ofs)))
 						IssueMessage(ERROR,UNDEFINED_TEXTID,ofs,str.ExtractWord(ofs));
-				} else if (GetWidth(format)==4) {	// Check dword against prop length
-					// TODO: Implement!
-				}
+				} else if (GetWidth(format)==4)		// Check dword against prop length
+					lengthlist.push_back(ofs);
 			}
 			str.SetBE(ofs,GetWidth(format));
 			break;
@@ -377,8 +378,23 @@ void Check0::Check(PseudoSprite&str){
 			propLoc[prop]=i++;
 			if(len==0xFE){
 				const PropData*data=_p[feature].GetVarLength(prop);
-				for(j=0;j<IDs;j++)
+				for(j=0;j<IDs;j++){
 					if(!CheckVar(i,str,*data,j+1<IDs,true))return;
+					while (lengthlist.size()) {
+						const uint loc = lengthlist.back(),
+							val = str.ExtractDword(loc),
+							dist = i-(loc+4);
+						if (val != dist) {
+							IssueMessage(ERROR,LENGTH_MISMATCH,loc,val,dist);
+							if (_autocorrect) {
+								IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
+								IssueMessage(0,AUTOCORRECTING,loc,PROPLENGTH,val,dist);
+								str.SetDwordAt(loc,dist);
+							}
+						}
+						lengthlist.pop_back();
+					}
+				}
 			}else
 				FormatSprite(str,i,len,IDs);
 			propsRemain--;

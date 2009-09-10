@@ -64,6 +64,8 @@ public:
 	PseudoSprite&SetBE(uint,uint);
 
 	PseudoSprite&SetByteAt(uint,uint);
+	PseudoSprite&SetWordAt(uint,uint);
+	PseudoSprite&SetDwordAt(uint,uint);
 	PseudoSprite&Append(uchar);
 
 	PseudoSprite&PadAfter(uint,uint);
