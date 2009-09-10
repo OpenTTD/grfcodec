@@ -2,7 +2,7 @@
  * extra_english.h
  * Extra program text in English language.
  *
- * Copyright 2005-2006 by Dale McCoy.
+ * Copyright 2005-2006,2009 by Dale McCoy.
  * Copyright 2006 by Dan Masek.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,7 +41,7 @@ EXTRA(LOADED,"loaded")
 EXTRA(LOTS,"lots-of-cargo")
 EXTRA(HOUSE_INSTYTILE,"houses and industry tiles")
 EXTRA(INDUSTRIES,"industries")
-EXTRA(BASICSTD2,"Basic standard 02s")
+EXTRA(BASICSTD2,"basic standard 02s")
 EXTRA(PROD2S,"Production callbacks")
 EXTRA(PROD2,"production callback")
 EXTRA(GROUND,"ground")
@@ -63,6 +63,7 @@ EXTRA(BIN_INCLUDE,"binary include")
 EXTRA(RECOLOR_TABLE,"recolor table")
 EXTRA(SET,"action 1 set")
 EXTRA(CID,"cargo ID")
+EXTRA(PROPLENGTH,"declared property length")
 
 EXTRA(ID,"ID")
 EXTRA(CARGO,"Cargo")

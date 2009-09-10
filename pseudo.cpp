@@ -381,8 +381,29 @@ PseudoSprite&PseudoSprite::SetByteAt(uint off,uint byte){
 	VERIFY(off<packed.length(),off);
 	assert(byte<0x100);
 	packed[off]=(uchar)byte;
+	SetHex(off);		// Remove any escape the beautifier might have generated an escape from the old value.
 	return*this;
 }
+
+PseudoSprite&PseudoSprite::SetWordAt(uint off, uint word){
+	VERIFY(off+1<packed.length(),off);
+	assert(word<0x10000);
+	packed[off]=(uchar)word;
+	packed[off+1]=(uchar)(word>>8);
+	SetHex(off,2);				// Remove any escape the beautifier might have generated an escape from the old value.
+	return*this;
+}
+
+PseudoSprite&PseudoSprite::SetDwordAt(uint off, uint dword){
+	VERIFY(off+3<packed.length(),off);
+	packed[off]=(uchar)dword;
+	packed[off+1]=(uchar)(dword>>8);
+	packed[off+2]=(uchar)(dword>>16);
+	packed[off+3]=(uchar)(dword>>24);
+	SetHex(off,4);				// Remove any escape the beautifier might have generated an escape from the old value.
+	return*this;
+}
+
 
 PseudoSprite&PseudoSprite::Append(uchar byte){
 	context.resize(Length()+1);
