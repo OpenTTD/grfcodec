@@ -273,11 +273,11 @@ PseudoSprite&PseudoSprite::SetDate(uint i, uint num) {
 		ushort y = ymd.year, m = ymd.month, d = ymd.day;
 		return SetEscape(i, false, mysprintf(" \\w%d/%d/%d", y, m, d), 2);
 	} case 4: {
-		const uint min = 511340,	// == PseudoSprite("\\d1400-1-1", 0).ExtractDword(0)
+		const int min = 511340,		// == PseudoSprite("\\d1400-1-1", 0).ExtractDword(0)
 			max = 3652424,			// == PseudoSprite("\\d9999-12-31", 0).ExtractDword(0)
 			base = 701265;			// == PseudoSprite("\\d1920-1-1", 0).ExtractDword(0)
 		int yearmod = 0;
-		uint val = ExtractDword(i);
+		int val = ExtractDword(i);
 		while (val < min) {
 			val += 365*400 + 97;
 			yearmod -= 400;
@@ -381,7 +381,7 @@ PseudoSprite&PseudoSprite::SetByteAt(uint off,uint byte){
 	VERIFY(off<packed.length(),off);
 	assert(byte<0x100);
 	packed[off]=(uchar)byte;
-	SetHex(off);		// Remove any escape the beautifier might have generated an escape from the old value.
+	SetHex(off);		// Remove any escape the beautifier might have generated from the old value.
 	return*this;
 }
 
@@ -390,7 +390,7 @@ PseudoSprite&PseudoSprite::SetWordAt(uint off, uint word){
 	assert(word<0x10000);
 	packed[off]=(uchar)word;
 	packed[off+1]=(uchar)(word>>8);
-	SetHex(off,2);				// Remove any escape the beautifier might have generated an escape from the old value.
+	SetHex(off,2);		// Remove any escape the beautifier might have generated from the old value.
 	return*this;
 }
 
@@ -400,7 +400,7 @@ PseudoSprite&PseudoSprite::SetDwordAt(uint off, uint dword){
 	packed[off+1]=(uchar)(dword>>8);
 	packed[off+2]=(uchar)(dword>>16);
 	packed[off+3]=(uchar)(dword>>24);
-	SetHex(off,4);				// Remove any escape the beautifier might have generated an escape from the old value.
+	SetHex(off,4);		// Remove any escape the beautifier might have generated from the old value.
 	return*this;
 }
 
