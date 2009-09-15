@@ -249,14 +249,14 @@ void check_sprite(PseudoSprite&data){
 	try{
 	const int act=data.ExtractByte(0);
 	if(act!=3&&act!=6&&act!=7&&act!=9&&act!=0xC)invalidate_act3();
+	if(act<6 || act==0xA || act==0xF || act>0x11)
+		Seen8(act);
 	switch(act){
 	case 0:
-		Seen8(0);
 		data.SetAllHex();
 		Check0(data);
 		break;
 	case 1:
-		Seen8(1);
 		data.SetAllHex();
 		status.expectedsprites=Check1(data);
 		SetState(FIND_REAL);
@@ -264,20 +264,16 @@ void check_sprite(PseudoSprite&data){
 		status.seensprites=0;
 		break;
 	case 2:
-		Seen8(2);
 		Check2(data);
 		break;
 	case 3:
-		Seen8(3);
 		data.SetAllHex();
 		Check3(data);
 		break;
 	case 4:
-		Seen8(4);
 		Check4(data);
 		break;
 	case 5:
-		Seen8(5);
 		data.SetAllHex();
 		status.expectedsprites=Check5(data,status.state);
 		SetState(status.state);
@@ -314,7 +310,6 @@ void check_sprite(PseudoSprite&data){
 		if(offs<length)IssueMessage(WARNING2,EXTRA_DATA,offs);
 		break;
 	}case 0xA:
-		Seen8(0xA);
 		data.SetAllHex();
 		status.state=UNKNOWN;
 		status.seensprites=data.ExtractByte(1);
@@ -365,7 +360,6 @@ void check_sprite(PseudoSprite&data){
 		delete[]id;
 		break;
 	}case 0xF:
-		Seen8(0xF);
 		CheckF(data);
 		break;
 	case 0x10:{
@@ -393,7 +387,6 @@ void check_sprite(PseudoSprite&data){
 		status.seensprites=0;
 		break;
 	case 0x12:
-		Seen8(0x12);
 		data.SetAllHex();
 		status.state=UNKNOWN;
 		status.seensprites=data.ExtractByte(1);
@@ -421,7 +414,6 @@ void check_sprite(PseudoSprite&data){
 		SetState(FIND_REAL);
 		break;
 	case 0x13:
-		Seen8(0x13);
 		Check13(data);
 		break;
 	case 0xFE:{
