@@ -436,15 +436,14 @@ bool verify_real(string&data){
 		if(isspace(data[loc+4]))break;
 	}
 	string name=data.substr(0,loc+4);
-	int var_list[9]={0,0,1,1,1,0,0},&xpos=var_list[0],&ypos=var_list[1],&comp=var_list[2],&ysize=var_list[3],&xsize=var_list[4],
-		&xrel=var_list[5],&yrel=var_list[6];
-	const char*const format_list[7]={
-		"%d%t",
-		"%d %d%t",NULL,
-		"%d %d %2x %d%t",
-		"%d %d %2x %d %d%t",
-		"%d %d %2x %d %d %d%t",
-		"%d %d %2x %d %d %d %d%t"};
+	int var_list[7]={0,0,1,1,1,0,0},
+	    &xpos=var_list[0],
+	    &ypos=var_list[1],
+	    &comp=var_list[2],
+	    &ysize=var_list[3],
+	    &xsize=var_list[4],
+		&xrel=var_list[5],
+		&yrel=var_list[6];
 	const char*const var_names[7]={"xpos","ypos","comp","ysize","xsize","xrel","yrel"};
 	string meta=data.substr(loc+5);
 	string::size_type offs=NPOS;
@@ -460,7 +459,15 @@ bool verify_real(string&data){
 			return COMMENTOFF();
 		}
 		state|=1<<var;//Mark calculation
-		meta=mysprintf(format_list[var],xpos,ypos,comp,ysize,xsize,xrel,yrel,meta.c_str()+offs);
+		const char* rest(meta.c_str()+offs);
+		switch(var) {
+		case 0: meta=mysprintf("%d%t",xpos,rest); break;
+		case 1: meta=mysprintf("%d %d%t",xpos,ypos,rest); break;
+		case 3: meta=mysprintf("%d %d %2x %d%t",xpos,ypos,comp,ysize,rest); break;
+		case 4: meta=mysprintf("%d %d %2x %d %d%t",xpos,ypos,comp,ysize,xsize,rest); break;
+		case 5: meta=mysprintf("%d %d %2x %d %d %d%t",xpos,ypos,comp,ysize,xsize,xrel,rest); break;
+		default: meta=mysprintf("%d %d %2x %d %d %d %d%t",xpos,ypos,comp,ysize,xsize,xrel,yrel,rest); break;
+		}
 	}
 	if(state)data=data.substr(0,loc+5)+meta;
 	if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
