@@ -30,8 +30,8 @@ struct pcxheader {
 	U8 version;	// 5
 	U8 encoding;	// 1
 	U8 bpp;		// 1, 2, 4 or 8 (per plane)
-	S16 window[4];	// x1,y1,x2,x2
-	S16 dpi[2];	// x,y
+	U16 window[4];	// x1,y1,x2,x2
+	U16 dpi[2];	// x,y
 	U8 cmap[48];	// colormap
 	U8 reserved;	// 0
 	U8 nplanes;

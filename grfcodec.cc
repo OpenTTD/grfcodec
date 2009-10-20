@@ -767,10 +767,10 @@ int main(int argc, char **argv)
 			action = 2;
 			break;
 		case 'w':
-			width = atoi(optarg);
+			width = min(max(atoi(optarg), 0), 65535);
 			break;
 		case 'h':
-			height = atoi(optarg);
+			height = min(max(atoi(optarg), 0), 65535);
 			break;
 		case 'b':
 			box = atoi(optarg);
