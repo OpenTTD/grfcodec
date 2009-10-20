@@ -37,7 +37,7 @@ string FindEscape(char action, int byte) {
 	// Look for a built-in escape
 	foreach(const esc& e, escapes)
 		if (e.action==ctoi(action) && e.byte==byte)
-			return ' ' + e.str;
+			return ' ' + string(e.str);
 	return "";
 }
 
@@ -45,7 +45,7 @@ string FindEscape(char action, int byte, uint offset) {
 	// This time, look for a built-in escape first
 	foreach(const esc& e, escapes)
 		if (e.action==ctoi(action) && e.byte==byte && e.pos==offset)
-			return ' ' + e.str;
+			return ' ' + string(e.str);
 	// Look for a custom escape
 	foreach(const nfe_rpair& p, nfo_escapes.right.equal_range(byte))
 		if (p.second[0] == action)
