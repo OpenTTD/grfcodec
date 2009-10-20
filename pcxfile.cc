@@ -47,7 +47,7 @@ pcxfile::pcxfile()
 	run = 0;
 	curfile = NULL;
 	mfile = NULL;
-	header.window[2] = -1;
+	header.window[2] = 65535;
 	codecing = 0;
 	notify = NULL;
 
@@ -94,7 +94,7 @@ void pcxfile::newheader(int sx)
 {
 	const static pcxheader baseheader =
 	{ 10, 5, 1, 8,		// manuf, version, encoding, bpp
-	{0, 0, -1, -1},	// window[4]
+	{0, 0, 65535, 65535},	// window[4]
 	{72, 72},		// dpi[2]
 	{0},			// cmap[48]
 	0, 1, -1, 1,		// reserved, nplanes, bpl, palinfo
