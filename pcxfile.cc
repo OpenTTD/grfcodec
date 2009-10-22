@@ -77,7 +77,7 @@ void pcxfile::newfile(int sx)
 	}
 
 	// is it really a new file, or still the old one?
-	if (getnextfile() || (header.window[2] == -1)) {
+	if (getnextfile() || (header.window[2] == 65535)) {
 		curfile = getcurfile();
 		newheader(sx);
 		totaly = 0;

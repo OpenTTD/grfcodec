@@ -85,7 +85,7 @@ inforeader::inforeader(char *fn)
 	try{
 		read_file(f,infover,nfofile);
 	}catch(Sprite::unparseable e){
-		printf("%s",e);
+		printf(e);
 		exit(1);
 	}
 }
