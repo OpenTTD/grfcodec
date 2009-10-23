@@ -23,7 +23,10 @@
 uint PseudoSprite::ExtractUtf8(uint& off, bool& valid){
 	PseudoSprite& data = *this;		// Historical
 	valid=false;
-	if(data[off]<0xC0||data[off]>0xFC)return data[off++];
+	if(data[off]<0xC0||data[off]>0xFC){
+		CheckLinkage(off,1);
+		return data[off++];
+	}
 	valid=true;
 										/* 2-byte, 0x80-0x7ff */
 	if ( (data[off]&0xe0) == 0xc0 && CONT(1) ){
@@ -34,6 +37,7 @@ uint PseudoSprite::ExtractUtf8(uint& off, bool& valid){
 			return data[off++];
 		}
 		data.SetUTF8(off,2);
+		CheckLinkage(off,2);
 		off+=2;
 		return ret;
 	}									/* 3-byte, 0x800-0xffff */
@@ -45,6 +49,7 @@ uint PseudoSprite::ExtractUtf8(uint& off, bool& valid){
 			return data[off++];
 		}
 		data.SetUTF8(off,3);
+		CheckLinkage(off,3);
 		if (ret>0xE07A && ret<0xE100)
 			SetEscape(off, true, mysprintf("\\U%x", ret), 3);
 		off+=3;
