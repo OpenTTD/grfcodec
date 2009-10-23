@@ -673,3 +673,19 @@ Set an ID from the C4xx, C5xx, C9xx, D0xx, or DCxx ranges instead.
 
 207: "Cannot check for usage of undefined IDs: ..." (Warn 1)
 Your copy of 0.dat or 2v.dat is broken. Ask for a new one.
+
+208: "<off> Declared length <len> does not match actual length <len>." (Error)
+A field that is supposed to contain the remaining length of the current
+property does not.
+Replace the old value with the specified value.
+
+209: "<off> Found byte <num> of a <num>-byte escape while ..." (Warn 2)
+NFORenum is reading an atomic data block (such as <and> in a varaction2) that
+does not consist of either (1) exactly one escape and no hex bytes, or
+(2) only hex bytes.
+If the byte indices (first and third numbers) match, but the lengths (second
+and fourth) do not, the escape is probably the wrong width for the field
+it is supposed to represent. Narrow or widen the escape as necessary. If
+the byte indices do not match, then check the preceeding code for validity.
+If possible, add escapes so this check will trigger earlier.
+Unlike every other offset in NFORenum, these are 1-based offsets, not 0-based.

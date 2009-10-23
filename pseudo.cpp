@@ -107,10 +107,16 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 						if(x>0x7FF){
 							SetUTF8(next_pos(),3);
 							out.write(GetUtf8Encode(x).c_str(),3);
+							LinkBytes(3,out.str().length());
 							continue;
 						}else if(x>0x7F){
 							SetUTF8(next_pos(),2);
 							out.write(GetUtf8Encode(x).c_str(),2);
+							LinkBytes(2,out.str().length());
+							continue;
+						}else{
+							out.put(ch);
+							LinkBytes(1,out.str().length());
 							continue;
 						}
 						break;
@@ -141,23 +147,31 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 					if(in.peek()=='*'){// \b*
 						x = ReadValue(in.ignore(), _BX_);
 						if(!in||x>0xFFFF)break;//invalid
-						if(x>0xFE)out.put('\xFF').write(itoa(x,256,2).c_str(),2);
-						else out.put((char)x);
+						if(x>0xFE){
+							out.put('\xFF').write(itoa(x,256,2).c_str(),2);
+							LinkBytes(3,out.str().length());
+						}else{
+							out.put((char)x);
+							LinkBytes(1,out.str().length());
+						}
 						continue;
 					}
 					x = ReadValue(in, _B_);
 					if(!in||x>0xFF)break;//invalid
 					out.put((char)x);
+					LinkBytes(1,out.str().length());
 					continue;
 				case'w':
 					x = ReadValue(in, _W_);
 					if(!in||x>0xFFFF)break;//invalid
 					out.write(itoa(x,256,2).c_str(),2);
+					LinkBytes(2,out.str().length());
 					continue;
 				case'd':
 					x = ReadValue(in, _D_);
 					if(!in)break;
 					out.write(itoa(x,256,4).c_str(),4);
+					LinkBytes(4,out.str().length());
 					continue;
 				default:{
 					in.unget();
@@ -167,6 +181,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 					if(byte == -1)
 						break;
 					out.put((char)byte);
+					LinkBytes(1,out.str().length());
 					continue;
 				}}
 
@@ -217,6 +232,26 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 		if((cur_context()!=""&&cur_context().find('\n')!=NPOS)||GetState(CONVERTONLY))cur_context()+=white;
 		white="";
 	};
+}
+
+void PseudoSprite::LinkBytes(int count, size_t e){
+	int end = (int)e;
+ 	for(int i=end-count,high=0; i<end; i++,high++)
+		linkage[i]=high<<8|count;
+}
+
+bool PseudoSprite::ignorelinkage=false;
+
+void PseudoSprite::CheckLinkage(int ofs, int count)const{
+	if(!ignorelinkage){
+		for(int i=0;i<count;i++){
+			if(linkage[ofs+i] != 0 && linkage[ofs+i] != (i<<8 | count))
+			{
+				IssueMessage(WARNING2,EXTENSION_MISMATCH,ofs+i,((linkage[ofs+i]>>8)&0xFF)+1,linkage[ofs+i]&0xFF,i+1,count);
+				return;
+			}
+		}
+	}
 }
 
 bool PseudoSprite::MayBeSprite(const string&sprite){
@@ -430,30 +465,48 @@ uint PseudoSprite::ExtendedLen(uint offs)const{
 	return ExtractByte(offs)!=0xFF?1:3;
 }
 
-uint PseudoSprite::ExtractByte(uint offs)const{
+uint PseudoSprite::LinkSafeExtractByte(uint offs)const{
 	VERIFY(IsValid(),IsValid());
 	if(Length()<=offs)
 		throw offs|1<<24;
 	return(uchar)packed[offs];
 }
 
+uint PseudoSprite::ExtractByte(uint offs)const{
+	CheckLinkage(offs,1);
+	return LinkSafeExtractByte(offs);
+}
+
 uint PseudoSprite::ExtractWord(uint offs)const{
 	try{
-		return ExtractByte(offs)|ExtractByte(offs+1)<<8;
+		CheckLinkage(offs,2);
+		return LinkSafeExtractByte(offs)|LinkSafeExtractByte(offs+1)<<8;
 	}catch(unsigned int){
 		throw offs|2<<24;
 	}
 }
 
 uint PseudoSprite::ExtractExtended(uint offs)const{
-	uint byte=ExtractByte(offs);
-	if(byte!=0xFF)return byte;
-	return ExtractWord(offs+1);
+	uint val=LinkSafeExtractByte(offs);
+	if(val!=0xFF){
+		CheckLinkage(offs,1);
+		return val;
+	}
+	if(linkage[offs]!=0 && linkage[offs]!=1)
+		CheckLinkage(offs,3);
+		ignorelinkage = true;
+	val = ExtractWord(offs+1);
+	ignorelinkage = false;
+	return val;
 }
 
 uint PseudoSprite::ExtractDword(uint offs)const{
 	try{
-		return ExtractWord(offs)|ExtractWord(offs+2)<<16;
+		CheckLinkage(offs,4);
+		ignorelinkage=true;
+		uint val = ExtractWord(offs)|ExtractWord(offs+2)<<16;
+		ignorelinkage=false;
+		return val;
 	}catch(unsigned int){
 		throw offs|4<<24;
 	}

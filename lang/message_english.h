@@ -262,6 +262,7 @@ NFO_MESSAGE(BAD_RANDSUBTYPE,"Invalid random 2 subtype.\n",USE_PREFIX)
 NFO_MESSAGE(NO_BYTE_IDS,"Cannot set (extended-)byte IDs for feature %2x.\n",USE_PREFIX)
 NFO_MESSAGE(COULD_NOT_VERIFY,"Cannot check for usage of undefined IDs: Cannot find feature to check.\n",USE_PREFIX)
 NFO_MESSAGE(LENGTH_MISMATCH,"Declared length %d does not match actual length %d.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(EXTENSION_MISMATCH,"Found byte %d of a %d-byte escape while reading byte %d of a %d-byte field.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 

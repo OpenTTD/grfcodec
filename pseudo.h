@@ -31,6 +31,14 @@ public:
 	//PseudoSprite();
 	PseudoSprite(const string&,int);
 
+	void CheckLinkage(int ofs,int count)const;
+	uint LinkSafeExtractByte(uint)const;
+private:
+	void LinkBytes(int,size_t);
+	Expanding0Array<int> linkage;
+	static bool ignorelinkage;
+
+public:
 	uint operator[](uint offs)const{return ExtractByte(offs);}
 	operator const char*()const{return packed.c_str();}
 	uint Length()const;
