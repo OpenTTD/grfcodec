@@ -112,10 +112,10 @@ static const char _datB[]="\x01\x02"
 	========
 
    vv Flags -- 01: recolor, 02: mixed, 04: word, 08: allow 80+x, 80: is flag byte
-       vv Info count: NT: N sprite-count options for each of T types follow
+       vv Info count: TN: N sprite-count options for each of T types follow
            vv... Length(s): repeat N options for each of T types
 */
-static const char _dat5[]="\x04\x04"
+static const char _dat5[]="\x04\x05"
 	"\x13\x30\x70\xF0"			//4
 	"\x11\x30"					//5
 	"\x12\x4A\x5A"				//6
@@ -125,7 +125,7 @@ static const char _dat5[]="\x04\x04"
 	"\x12\x10\x12"				//D
 "\x82\x11\x00"					//E
 	"\x51\x0C\x0F\x08\x08\x37"	//F..13
-"\x88\x21\x24\x96"				//14..15
+"\x88\x21\x24\x97"				//14..15
 "\x00"
 ;
 
@@ -172,9 +172,9 @@ static const char _dat0f8[]="\x02\x01"
 	2) one-byte bitmask of features for callback | 80h
 	3) 7Fh followed by word-sized bitmask
 */
-static const char _datcallbacks[]="\x05\x0E"
+static const char _datcallbacks[]="\x05\x0F"
 // Count:
-"\x4E\x01"
+"\x50\x01"
 //v 00             x4              x8              xC
 "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 "\x00\x83\x8F\x04\x04\x8F\x83\x07\x9F\x8F\x07\x07\x07\x00\x07\x07"
@@ -510,7 +510,7 @@ static const char _dat2v[]="\x0D\x0D\x0F"
 "\x44\x84"		"\x45\x81"		"\x46\x81"		"\x47\x82"
 "\x5F\x81"
 "\x60\x82\x6B"	"\x61\x82\xFF"	"\x62\x84\xFF"	"\x63\x81\xFF"
-"\x64\x81\xFF"	"\x65\x81\xFF"
+"\x64\x81\xFF"	"\x65\x81\xFF"  "\x66\x84\xFF"  "\x67\x84\xFF"
 "\x80\x80"
 // Town variables ("Feature 08" *cough*cough*)
 "\x08"
