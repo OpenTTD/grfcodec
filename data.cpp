@@ -216,7 +216,7 @@ static const char _datcallbacks[]="\x05\x0F"
 
 	Names of languages by ID (empty if not defined), each terminated by newline
 */
-static const char _datlangs[]="\x00\x02"
+static const char _datlangs[]="\x00\x03"
 //		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
 /*0x*/	"American\n"	"English\n"		"German\n"		"French\n"
 /*0x*/	"Spanish\n"		"Esperanto\n"	"Ido\n"			"Russian\n"
@@ -228,7 +228,7 @@ static const char _datlangs[]="\x00\x02"
 /*1x*/	"Bulgarian\n"	"\n"			"\n"			"Afrikaans\n"
 /*1x*/	"\n"			"\n"			"Greek\n"		"Dutch\n"
 //		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*2x*/	"\n"			"\n"			"Catalan\n"		"Luxembourgish\n"
+/*2x*/	"\n"			"Basque\n"		"Catalan\n"		"Luxembourgish\n"
 /*2x*/	"Hungarian\n"	"\n"			"Macedonian\n"	"Italian\n"
 /*2x*/	"Romanian\n"	"Icelandic\n"	"Latvian\n"		"Lithuanian\n"
 /*2x*/	"Slovenian\n"	"Danish\n"		"Swedish\n"		"Norwegian (Bokmal)\n"
