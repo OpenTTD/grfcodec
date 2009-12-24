@@ -574,6 +574,7 @@ ostream&PseudoSprite::output(ostream&out){
 //This section contains a rewrite of lines 402-438 or thereabouts of info.cc
 //from grfcodec v0.9.7: http://www.ttdpatch.net/grfcodec
 //grfcodec is Copyright 2000-2005 Josef Drexler
+	ignorelinkage = true;
 	for(uint i=0;i<Length();i++) {
 		// Most output strings contain a leading space, but this should be omitted if CONVERTONLY.
 		// ... unless there was no space between the preceeding byte and this one.
@@ -667,6 +668,7 @@ ostream&PseudoSprite::output(ostream&out){
 			out<<(noendl?"":"\n")<<string(count=GetState(LEADINGSPACE,2),' ');
 		}
 	}
+	ignorelinkage=false;
 	if (instr)out<<'"';
 	if(noendl)return out;
 	return out<<endl;
