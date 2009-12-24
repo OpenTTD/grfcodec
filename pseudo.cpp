@@ -274,7 +274,12 @@ uint PseudoSprite::Length()const{return(uint)(valid?packed.length():0);}
 PseudoSprite&PseudoSprite::SetHex(uint i){beauty[i]=HEX;return*this;}
 PseudoSprite&PseudoSprite::SetHex(uint i,uint num){while(num--)beauty[i++]=HEX;return*this;}
 PseudoSprite&PseudoSprite::SetAllHex(){beauty.clear();return*this;}
-PseudoSprite&PseudoSprite::SetUTF8(uint i,uint len){while(len--)beauty[i++]=UTF8;return*this;}
+PseudoSprite&PseudoSprite::SetUTF8(uint i,uint len){
+	while(--len)
+		beauty[i++]=uchar(UTF8|NOBREAK);
+	beauty[i++]=UTF8;
+	return*this;
+}
 PseudoSprite&PseudoSprite::SetText(uint i){
 	if(i&&GetState(CONVERTONLY)){
 		if((beauty[i-1]&~NOBREAK)==ENDQUOTE&&context[i-1]=="")context[i-1]=" ";
@@ -694,12 +699,11 @@ void PseudoSprite::Invalidate(){
 }
 
 bool PseudoSprite::IsText(uint i)const{
-	int type = uchar(beauty[i])&~NOBREAK;
+	int type = beauty[i]&~NOBREAK;
 	if (NFOversion>6)
-		type = type==TEXT || type==ENDQUOTE || type==QESC || type==QEXT;
+		return type==TEXT || type==ENDQUOTE || type==QESC || type==QEXT;
 	else
-		type = type==TEXT || type==ENDQUOTE;
-	return type &&!(i&&(beauty[i-1]&~NOBREAK)==UTF8);
+		return type==TEXT || type==ENDQUOTE;
 }
 bool PseudoSprite::IsUTF8(uint i)const{
 	return (beauty[i]&~NOBREAK)==UTF8;
@@ -708,7 +712,7 @@ bool PseudoSprite::IsEot(uint i)const{
 	return (beauty[i]&~NOBREAK)==ENDQUOTE;
 }
 bool PseudoSprite::IsLinePermitted(uint i)const{
-	return!(i&&((beauty[i-1]&~NOBREAK)==UTF8||beauty[i]&NOBREAK));
+	return!(beauty[i]&NOBREAK);
 }
 
 bool PseudoSprite::UseOrig()const{

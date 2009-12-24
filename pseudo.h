@@ -123,7 +123,7 @@ private:
 	bool UseOrig()const;
 
 	string orig,packed;
-	Expanding0Array<char>beauty;
+	Expanding0Array<uchar>beauty;
 	ExpandingArray<string>context,ext_print;
 	bool valid,useorig;
 	const int oldspritenum;
