@@ -135,6 +135,7 @@ $(NFORENUM): $(NFORENUMSRC:%.cpp=%.o)
 
 clean:
 	rm -rf *.o *.d *.exe *.EXE renum bundle bundles
+	rm -f .rev version.h
 
 release: FORCE
 	$(_E)[REBUILD] $(NFORENUM)
