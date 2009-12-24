@@ -23,6 +23,7 @@
 #include<iostream>
 #include<iomanip>
 #include<cstdarg>
+#include<cstdio>
 
 /* If your compiler errors on the following line, boost is not
  * properly installed.
@@ -243,10 +244,9 @@ void PseudoSprite::LinkBytes(int count, size_t e){
 bool PseudoSprite::ignorelinkage=false;
 
 void PseudoSprite::CheckLinkage(int ofs, int count)const{
-	if(!ignorelinkage){
-		for(int i=0;i<count;i++){
-			if(linkage[ofs+i] != 0 && linkage[ofs+i] != (i<<8 | count))
-			{
+	if(!ignorelinkage) {
+		for(int i=0;i<count;i++) {
+			if(linkage[ofs+i] != 0 && linkage[ofs+i] != (i<<8 | count)) {
 				IssueMessage(WARNING2,EXTENSION_MISMATCH,ofs+i,((linkage[ofs+i]>>8)&0xFF)+1,linkage[ofs+i]&0xFF,i+1,count);
 				return;
 			}
@@ -492,9 +492,10 @@ uint PseudoSprite::ExtractExtended(uint offs)const{
 		CheckLinkage(offs,1);
 		return val;
 	}
-	if(linkage[offs]!=0 && linkage[offs]!=1)
+	if(linkage[offs]!=0 && linkage[offs]!=1) {
 		CheckLinkage(offs,3);
 		ignorelinkage = true;
+	}
 	val = ExtractWord(offs+1);
 	ignorelinkage = false;
 	return val;

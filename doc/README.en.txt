@@ -2,6 +2,16 @@ NFORenum v3.4.6
 NFO file re-numberer and linter
 
 
+About
+=====
+NFORenum is a tool checking NFO code for errors, and for beautifying that
+code -- inasmuch as NFO can be beautified :)
+
+NFORenum is licensed under the GNU General Public License version 2, or at
+your option, any later version. For more information, see 'COPYING.txt'
+(GPL version 2), or later versions at <http://www.gnu.org/licenses/>.
+
+
 Compiling
 =========
 
