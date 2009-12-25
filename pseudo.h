@@ -32,6 +32,8 @@ public:
 	PseudoSprite(const string&,int);
 
 	void CheckLinkage(int ofs,int count)const;
+	// Use to read a single byte if you don't know/care about its meaning.
+	// To read a field that happens to be one byte wide, use ExtractByte.
 	uint LinkSafeExtractByte(uint)const;
 private:
 	void LinkBytes(int,size_t);
@@ -39,7 +41,9 @@ private:
 	static bool ignorelinkage;
 
 public:
-	uint operator[](uint offs)const{return ExtractByte(offs);}
+	// Use to read a single byte if you don't know/care about its meaning.
+	// To read a field that happens to be one byte wide, use ExtractByte.
+	uint operator[](uint offs)const{return LinkSafeExtractByte(offs);}
 	operator const char*()const{return packed.c_str();}
 	uint Length()const;
 	bool IsValid()const{return Length()!=0;}
