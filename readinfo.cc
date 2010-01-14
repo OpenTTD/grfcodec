@@ -39,6 +39,7 @@ Version 7: Add backslash escapes
 #include<string>
 #include<sstream>
 #include<iomanip>
+#include<cstdio>
 
 using namespace std;
 
