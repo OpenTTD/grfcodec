@@ -42,11 +42,11 @@ Fix the action byte.
 47: "<off> Invalid property <prop>." (Fatal)
 The byte at offset <off> appears to be a property byte, but is not a
 known propery.
-Fix this byte and/or check preceeding properties for validity.
+Fix this byte and/or check preceding properties for validity.
 
 48: "Action 6 appears to be missing terminating FF." (Fatal)
 The parser hit end-of-sprite before finding the expected FF terminating byte.
-Ensure that the FF exists and that the preceeding <param> <size> <offset>
+Ensure that the FF exists and that the preceding <param> <size> <offset>
 triplets are all valid.
 
 49: "Insufficient <type>. ..." (Error)
@@ -59,16 +59,16 @@ most action 5 blocks.
 
 51: "<type> unexpected here." (Error)
 There was no reason to expect a <type> sprite here; the immediately
-preceeding sprite was not an Action 1/5/A/11/12.
+preceding sprite was not an Action 1/5/A/11/12.
 Remove the sprite, or add an action 1/5/A/11/12.
 Note that "* 1 00" is interpreted as a real sprite in action 1 blocks and
 most action 5 blocks.
 
 52: "Feature byte does not match feature byte of preceding ..." (Error)
 This standard action 2 declares a cargoID for a different feature than the
-preceeding Action 1.  **OR**
+preceding Action 1.  **OR**
 This override action 3 attempts to override for a feature other than the one
-the preceeding action 3 set sprites for.
+the preceding action 3 set sprites for.
 Change one or both of the feature bytes so they agree.
 
 53: "Rand02s require power-of-two sets to choose from." (Error)
@@ -80,9 +80,9 @@ This action 2/3 attempts to use an invalid ID.
 If you are trying to declare a callback, ensure that the high bit is set.
 Otherwise, ensure that you padded the ID with "00".
 
-56: "<off> Sprite set <set> does not appear in the preceeding ..." (Error)
+56: "<off> Sprite set <set> does not appear in the preceding ..." (Error)
 This standard action 2 attempts to use sets that are not defined by the
-preceeding action 1.
+preceding action 1.
 Add sprites to the action 1 or choose a defined spriteset for the action 2.
 
 57: "<off> Invalid cargo type: ..." (Error)
@@ -130,11 +130,11 @@ exists.
 This NFO file has two or more action 8/11s.
 Remove one of the action 8/11s.
 
-68: "An action 8 must preceed action <act>." (Error)
+68: "An action 8 must precede action <act>." (Error)
 No action 8 has been seen.
 Add an action 8 before this sprite.
 This error will only be issued once.
-Note that not all action Ds require a preceeding 8; this message will not be
+Note that not all action Ds require a preceding 8; this message will not be
 issued on non-resource-management Ds.
 
 69: "Invalid <type> version number."  (Error)
@@ -196,7 +196,7 @@ Specify a ground sprite or at least one non-transparent building sprite.
 85: "No standard action 3 exists prior to this livery override..." (Error)
 A livery override action 3 was the first action 3 seen in the file.
 Correct this sprite, or add a standard action 3.
-This message will only be issued once, even if multiple override 3s preceed
+This message will only be issued once, even if multiple override 3s precede
 the first standard 3.
 
 86: "<off> Testing nonexistant variable <var>." (Error/Warn 1)
@@ -204,7 +204,7 @@ This variational action 2 or action 7 tests a variable that does not exist.
 Change the feature, type, and/or variable.
 
 87: "Action 6 attempts to modify data beyond the end of this sprite." (Error)
-The action 6 preceeding this message attempts to add data to the end of this
+The action 6 preceding this message attempts to add data to the end of this
 sprite.
 Add padding to the end of this sprite, or fix the action 6.
 
@@ -303,7 +303,7 @@ Check other variables or remove the sprite.
 
 115: "No preceding action 1." (Error)
 This standard action 2 attempts to return graphics, but there is no
-preceeding action 1.
+preceding action 1.
 Add an action 1 or change the results to callback results.
 
 117: "<off> Invalid operation <op>." (Error)
@@ -644,7 +644,7 @@ the mask applied.
 AND the GRFID with the mask and use that value for the GRFID instead.
 
 202: "<off> Operation 0F follows a non-store operation." (Warn 1)
-The operation preceeding this operation 0F was neither operation 0E or 10,
+The operation preceding this operation 0F was neither operation 0E or 10,
 meaning that the calculated value was discarded without being stored.
 Trim the unnecessary parts of the left-hand side, or remove the op 0F.
 This is message is based on the same theory as #194.
@@ -686,6 +686,6 @@ does not consist of either (1) exactly one escape and no hex bytes, or
 If the byte indices (first and third numbers) match, but the lengths (second
 and fourth) do not, the escape is probably the wrong width for the field
 it is supposed to represent. Narrow or widen the escape as necessary. If
-the byte indices do not match, then check the preceeding code for validity.
+the byte indices do not match, then check the preceding code for validity.
 If possible, add escapes so this check will trigger earlier.
 Unlike every other offset in NFORenum, these are 1-based offsets, not 0-based.

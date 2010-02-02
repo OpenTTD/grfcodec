@@ -426,7 +426,7 @@ CHANGED_FEATURE(act3)
 		ids[id]=id.loc();
 		CheckID(feature,id);
 		if(!IsValidFeature(ACT3_BEFORE_PROP08,feature) && !IsProp08Set(feature,id))
-			IssueMessage(ERROR,ACT3_PRECEEDS_PROP08,id.loc(),id.val());
+			IssueMessage(ERROR,ACT3_PRECEDES_PROP08,id.loc(),id.val());
 	}
 
 	PseudoSprite::Byte numCIDs;
