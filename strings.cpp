@@ -262,6 +262,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			}
 		}else if(ch<0x88||ch==0x9A){
 			if(ch==0x9A){
+				uint arg;
 				ch=data.ExtractQEscapeByte(++offs);
 				switch(ch){
 				case 0:		// print qword currency
@@ -272,10 +273,13 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				case 3:		// push WORD
 					stack = string(2,char(STACK_WORD)) + stack;
 					data.SetBE(++offs,2);
-					offs++;
+					arg=data.ExtractWord(offs++);
+					if(!(arg&0xFF)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs-1);
+					if(!(arg>>8)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
 					break;
 				case 4:		// Delete BYTE characters
-					data.SetQEscape(++offs);
+					arg=data.SetQEscape(++offs).ExtractWord(offs);
+					if(!arg&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs-1);
 				case 6:		// print hex byte
 				case 7:		// ... word
 				case 8:		// ... dword
