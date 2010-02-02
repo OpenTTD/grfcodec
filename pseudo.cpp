@@ -582,7 +582,7 @@ ostream&PseudoSprite::output(ostream&out){
 	ignorelinkage = true;
 	for(uint i=0;i<Length();i++) {
 		// Most output strings contain a leading space, but this should be omitted if CONVERTONLY.
-		// ... unless there was no space between the preceeding byte and this one.
+		// ... unless there was no space between the preceding byte and this one.
 		const int skipspace = (GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0;
 		if(DoQuote(i)){
 			if (!instr){

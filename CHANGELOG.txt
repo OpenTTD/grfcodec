@@ -108,7 +108,7 @@ v3.4.2 to v3.4.3 (r1244)
   - TextIDs F90A..F940.
 - Add $HOMEDRIVE$HOMEPATH to the list of search paths for .renum/
 - Allow multiple sizes for some action 7/9 variables.
-- Accept GRF version 7 lang-id bytes in action Bs that preceed the action 8.
+- Accept GRF version 7 lang-id bytes in action Bs that precede the action 8.
 - Allow Action 6 <param-size> entries with bit 7 set.
 
 v3.4.1 to v3.4.2 (r1057)
@@ -626,7 +626,7 @@ v2.3.5 to v2.3.6
 v2.3.4 to v2.3.5
 - (bugfix) Gives the correct offset for an incorrect operation code.
 - (bugfix) Enabled variable 80 for vehicles. (Used in AI callbacks.)
-- (bugfix) Reports correct location of preceeding action 1.
+- (bugfix) Reports correct location of preceding action 1.
 
 v2.3.3 to v2.3.4
 - (bugfix) No longer overruns the sprite on variational action 2s where
@@ -671,7 +671,7 @@ v2.2.3 to v2.3.0
 - (bugfix) "Feature byte does not match..." message would output jibberish
   instead of the location of the previous action 3.
 - Added checks:
-  Standard action 3 preceeds override action 3
+  Standard action 3 precedes override action 3
   Override action 3 closely follows standard 3
   Variable in variational action 2 exists.
   Variable in variational action 2 is not being shifted into oblivion.

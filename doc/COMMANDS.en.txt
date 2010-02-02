@@ -112,7 +112,7 @@ returned <cookie>. <cookie> has no other useful purpose.
 @@CLEARACTION2
 
 Causes the action 1/2/3 parser to behave as if an end-of-file has been hit.
-Any unused sprite sets from the preceeding action 1 are warned about, and
+Any unused sprite sets from the preceding action 1 are warned about, and
 the end-of-file unused-cargoID checks are run, after which all cargo IDs
 are marked as undefined.
 

@@ -16,7 +16,7 @@ Action 0 <num-info>: Corrected after <num-props>, and only if <num-props> is
 House/industry tile action 2 <num-sprites>: Changed to the number of valid
   sprite blocks (<sprite> followed by 3 or 6 bytes of meta-deta), but not if
   either the original or new values are 00.
-Standard action 2 <feature>: Corrected to the feature of the preceeding action
+Standard action 2 <feature>: Corrected to the feature of the preceding action
   1 if it requires sprites from an action 1, or if the feature is not valid.
   ([*] when changing from an invalid feature, or between the standard
   (features 00..05,0B) and house/industry tile (features 07/09) formats.)

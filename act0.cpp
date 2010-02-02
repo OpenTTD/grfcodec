@@ -282,7 +282,7 @@ static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const ui
 				}
 
 				if (!IsProp08Set(k,str.ExtractWord(ofs)))
-					IssueMessage(ERROR,ACT3_PRECEEDS_PROP08,ofs,str.ExtractWord(ofs));
+					IssueMessage(ERROR,ACT3_PRECEDES_PROP08,ofs,str.ExtractWord(ofs));
 			}
 			break;
 		case 1:str.SetText(ofs,GetWidth(format));break;
