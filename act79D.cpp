@@ -179,13 +179,15 @@ bool CheckD(PseudoSprite&data,uint length){
 		if(CheckLength(length,9,INVALID_LENGTH,ACTION,0xD,ONE_OF,5,9))return false;
 		if(src2==0xFE){
 			uint info=data.ExtractDword(5);
-			if(op!=0)IssueMessage(ERROR,INVALID_OP,2,op);
 			if((info&0xFF)!=0xFF){
+				if(op&0x7F)IssueMessage(ERROR,INVALID_OP,2,op);
 				if(src1&0x80)IssueMessage(ERROR,INVALID_SRC,1);
 				data.SetGRFID(5);
 			}else if(info==0xFFFF){
+				if(op&0x7F)IssueMessage(ERROR,INVALID_OP,2,op);
 				if(src1>D::Instance().maxpatchvar)IssueMessage(ERROR,INVALID_SRC,1);
 			}else{
+				if(op)IssueMessage(ERROR,INVALID_OP,2,op);
 				data.SetPositionalOpByte(3, 'D');
 				uint feat=(info>>8)&0xFF,count=info>>16;
 				if(src1>6)IssueMessage(ERROR,INVALID_SRC,1);
