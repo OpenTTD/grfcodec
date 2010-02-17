@@ -2,7 +2,7 @@
  * pseudo.h
  * Declaration of the PsuedoSprite class. Stores and re-writes pseudo-sprites.
  *
- * Copyright 2006-2009 by Dale McCoy.
+ * Copyright 2006-2010 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ public:
 	PseudoSprite&SetDwordAt(uint,uint);
 	PseudoSprite&Append(uchar);
 
-	PseudoSprite&PadAfter(uint,uint);
+	PseudoSprite&ColumnAfter(uint);
 
 	uint ExtractByte(uint offs)const;
 	uint ExtractWord(uint offs)const;

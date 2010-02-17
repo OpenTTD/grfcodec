@@ -2,7 +2,7 @@
  * act0.cpp
  * Contains definitions for checking action 0s.
  *
- * Copyright 2005-2009 by Dale McCoy.
+ * Copyright 2005-2010 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -421,29 +421,16 @@ void Check0::Check(PseudoSprite&str){
 			}
 			if(!GetState(LINEBREAKS))return;
 			bool linebreaks=(IDs>1||GetState(LINEBREAKS)==3)&&str.ExtractByte(2)>1;
-			uint maxwidth=2,data,width;
-			for(i=0;i<propLoc.size();i++) {
-				if(propLoc[i]) {
-					if((data=_p[feature].GetData(i))==0xFE) {
-                        linebreaks=true;
-					} else if(data==0x14) {
-                        maxwidth=max<uint>(maxwidth,6);
-					} else {
-                        maxwidth=max<uint>(maxwidth,GetWidth(data)*3-1);
-                    }
-                }
-            }
+			uint data;
+			for(i=0;i<propLoc.size();i++)
+				linebreaks |= propLoc[i] && _p[feature].GetData(i)==0xFE;
 			if(!linebreaks)return;
-			++maxwidth; // Add an extra space between columns of the table.
 			for(i=0;i<propLoc.size();i++){
 				if(!propLoc[i])continue;
 				str.SetEol(propLoc[i]-1,1);
 				if((data=_p[feature].GetData(i))==0xFE)continue;
-				if((width=(data==0x14)?6:GetWidth(data)*3-1)<maxwidth){
-					uint j=IDs;
-					for(;j;j--)
-						str.PadAfter(propLoc[i]+GetWidth(data)*j,maxwidth-width);
-				}
+				for(uint j=IDs;j;j--)
+					str.ColumnAfter(propLoc[i]+GetWidth(data)*j);
 			}
 		}
 	}catch(uint off){
