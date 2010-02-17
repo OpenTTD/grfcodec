@@ -2,7 +2,7 @@
  * pseudo.cpp
  * Implementation of the PseudoSprite class.
  *
- * Copyright 2006-2009 by Dale McCoy.
+ * Copyright 2006-2010 by Dale McCoy.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +25,19 @@
 #include<cstdarg>
 #include<cstdio>
 
-/* If your compiler errors on the following line, boost is not
+/* If your compiler errors on the following lines, boost is not
  * properly installed.
  * Get boost from http://www.boost.org */
 #include <boost/date_time/gregorian/gregorian_types.hpp>
-using namespace boost::gregorian;
+#include <boost/foreach.hpp>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
+#include <boost/tokenizer.hpp>
 
+using namespace boost::gregorian;
+using namespace boost::lambda;
+using namespace boost;
+#define foreach BOOST_FOREACH
 using namespace std;
 
 #include"renum.h"
@@ -453,8 +460,8 @@ PseudoSprite&PseudoSprite::Append(uchar byte){
 	return*this;
 }
 
-PseudoSprite&PseudoSprite::PadAfter(uint i,uint width){
-	if(context[i]=="")context[i]=string(width,' ');
+PseudoSprite&PseudoSprite::ColumnAfter(uint i){
+	context[i]+='\t';
 	return*this;
 }
 
@@ -555,6 +562,28 @@ ostream&operator<<(ostream&out,PseudoSprite&sprite){
 	return out;
 }
 
+// Modified from a tokenizer in the C++ Programming HOW-TO by Al Dev (Alavoor Vasudevan)
+// http://oopweb.com/CPP/Documents/CPPHOWTO/Volume/C++Programming-HOWTO-7.html#ss7.3
+// "Copyright policy is GNU/GPL as per LDP (Linux Documentation project)."
+// http://oopweb.com/CPP/Documents/CPPHOWTO/Volume/C++Programming-HOWTO-22.html
+vector<string> Tokenize(const string& str, char delimiter) {
+	vector<string> tokens;
+    // Skip delimiters at beginning.
+	string::size_type lastPos = str.find_first_not_of(delimiter);
+    // Find first "non-delimiter".
+	string::size_type pos     = str.find_first_of(delimiter, lastPos);
+
+    while (string::npos != pos || string::npos != lastPos) {
+        // Found a token, add it to the vector.
+        tokens.push_back(str.substr(lastPos, pos - lastPos));
+        // Skip delimiters.  Note the "not_of"
+        lastPos = str.find_first_not_of(delimiter, pos);
+        // Find next "non-delimiter"
+        pos = str.find_first_of(delimiter, lastPos);
+    }
+	return tokens;
+}
+
 ostream&PseudoSprite::output(ostream&out){
 	if(!valid){
 		istringstream datastream(orig);
@@ -576,6 +605,8 @@ ostream&PseudoSprite::output(ostream&out){
 	uint count=16;
 	out<<setw(5)<<spritenum()<<" * "<<(GetState(DIFF)?0:Length())<<"\t";
 
+	ostringstream outbuf;	// buffer output for potential tab expansion
+
 //This section contains a rewrite of lines 402-438 or thereabouts of info.cc
 //from grfcodec v0.9.7: http://www.ttdpatch.net/grfcodec
 //grfcodec is Copyright 2000-2005 Josef Drexler
@@ -586,40 +617,40 @@ ostream&PseudoSprite::output(ostream&out){
 		const int skipspace = (GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0;
 		if(DoQuote(i)){
 			if (!instr){
-				out<<" \""+skipspace;
+				outbuf<<" \""+skipspace;
 				count+=3-skipspace;// count close-quote here.
 				instr=true;
 			}
 			if(NFOversion>6){
 				if((beauty[i]&~NOBREAK)==QESC){
 					if((*this)[i]=='\r'){
-						out<<"\\n";
+						outbuf<<"\\n";
 						count=+2;
 					}else{
-						out<<mysprintf("\\%2x",(*this)[i]);
+						outbuf<<mysprintf("\\%2x",(*this)[i]);
 						count+=3;
 					}
 				}else if((beauty[i]&~NOBREAK)==QEXT){
-					out<<ext_print[i];
+					outbuf<<ext_print[i];
 					count+=(uint)ext_print[i].size();
 				}else if((*this)[i]=='"'){
-					out<<"\\\"";
+					outbuf<<"\\\"";
 					count+=2;
 				}else if((*this)[i]=='\\'){
-					out<<"\\\\";
+					outbuf<<"\\\\";
 					count+=2;
 				}else{
-					out<<(char)(*this)[i];
+					outbuf<<(char)(*this)[i];
 					count++;
 				}
 			}else{
-				out<<(char)(*this)[i];
+				outbuf<<(char)(*this)[i];
 				count++;
 			}
 			noendl=false;
 		} else {
 			if(instr){
-				out<<'"';
+				outbuf<<'"';
 				instr=false;
 			}
 			string str;
@@ -627,21 +658,21 @@ ostream&PseudoSprite::output(ostream&out){
 				str = ext_print[i].c_str()+skipspace;
 			else
 				str = mysprintf(" %2x"+skipspace,(*this)[i]);
-			out<<str;
+			outbuf<<str;
 			count+=(uint)str.size();
 			noendl=false;
 		}
 
 		//Context control (comments, beautifier controlled newlines, &c.)
 		if(IsEot(i)&&instr){
-			out<<'"';
+			outbuf<<'"';
 			instr=false;
 		}
 		if(context[i]==" " && ((instr && i+1<Length() && (IsText(i)||(IsUTF8(i)&&GetState(QUOTEUTF8)))) || (beauty[i]&~NOBREAK)==NQEXT)) {
 			context[i]="";
 		} else if(context[i]!="") {
 			if(instr){
-				out<<'"';
+				outbuf<<'"';
 				instr=false;
 			}
 			for(const char*ch=context[i].c_str();*ch;ch++){
@@ -650,7 +681,7 @@ ostream&PseudoSprite::output(ostream&out){
 					count=0;
 					noendl=true;
 				}
-				out<<*ch;
+				outbuf<<*ch;
 			}
 		}
 		// Insert line-breaks after current charater:
@@ -667,14 +698,43 @@ ostream&PseudoSprite::output(ostream&out){
 					   count>=GetState(MAXLEN))))
 			&& i<Length()-1) {
 			if(instr){
-				out<<'"';
+				outbuf<<'"';
 				instr=false;
 			}
-			out<<(noendl?"":"\n")<<string(count=GetState(LEADINGSPACE,2),' ');
+			outbuf<<(noendl?"":"\n")<<string(count=GetState(LEADINGSPACE,2),' ');
 		}
 	}
 	ignorelinkage=false;
-	if (instr)out<<'"';
+	if (instr)outbuf<<'"';
+
+	// Collected all output; perform tab expansion
+	string buffer = outbuf.str();
+	if(buffer.find('\t')!=NPOS){
+		// Split into columns
+		vector<vector<string> > sections;
+		foreach(const string &line, (Tokenize(buffer, '\n')))
+			sections.push_back(Tokenize(line, '\t'));
+		
+		// Count the columns
+		uint columns = (uint)max_element(sections.begin(),sections.end(), bind(&vector<string>::size,_1) < bind(&vector<string>::size,_2))->size();
+
+		// For each column,
+		for(uint i=0;i<columns;i++){
+			// determine how wide it must be,
+			string::size_type padWidth = 0;
+			foreach(const vector<string> &section, sections)
+				if(section.size()>i+1) padWidth = max(padWidth, section[i].length()+1);
+			// and make it that wide.
+			foreach(vector<string> &section, sections)
+				if(section.size()>i+1) section[i] += string(padWidth - section[i].length(), ' ');
+		}
+
+		// Tabs are expanded, write each line
+		foreach(const vector<string>&line, sections)
+			for_each(line.begin(),line.end(),out<<_1)('\n');
+
+	}else out<<buffer;
+
 	if(noendl)return out;
 	return out<<endl;
 }
