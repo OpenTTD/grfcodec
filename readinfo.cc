@@ -423,7 +423,7 @@ uint Pseudo::_ReadValue(istream& in, width w)
 
 	if (count==1) {
 		// Got a decimal number
-		if (w==_B_ && y>1920) y-=1920;	// special case for byte-sized years
+		if (w==_B_ && y>=1920) y-=1920;	// special case for byte-sized years
 		return y;
 	}
 
