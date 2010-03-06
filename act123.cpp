@@ -125,7 +125,7 @@ int Check1(PseudoSprite&data){
 	if(!act1.numsets)IssueMessage(WARNING1,NO_SETS,1);
 	int numsprites=data.ExtractExtended(3);
 	if(!numsprites&&!IsValidFeature(EMPTY1,act1.feature))IssueMessage(WARNING1,NO_SPRITES,1);
-	else if(numsprites&&!IsValidFeature(ACT1,act1.feature))IssueMessage(WARNING1,NO_SPRITES,1);
+	if(numsprites&&!IsValidFeature(ACT1,act1.feature)&&IsValidFeature(EMPTY1,act1.feature))IssueMessage(ERROR,INVALID_FEATURE);
 	if((numsprites>4&&(act1.feature==7||act1.feature==9))||(numsprites>8&&act1.feature<4)||
 		(numsprites>1&&act1.feature==0x0B))IssueMessage(WARNING1,SET_TOO_LARGE);
 	else if(numsprites>4&&numsprites<8&&act1.feature<4)IssueMessage(WARNING1,STRANGE_SET_SIZE);
@@ -414,9 +414,9 @@ CHANGED_FEATURE(act3)
 	uint newfeature=(uint)-1, i;
 	bool isOverride=((numIDs&0x80)!=0),isGeneric=((numIDs&0x7F)==0);
 	if(isOverride&&isGeneric)IssueMessage(ERROR,GENERIC_AND_OVERRIDE);
-	if(isOverride&&!IsValidFeature(OVERRIDE3,feature))IssueMessage(ERROR,INVALID_FEATURE);
+	if(!isGeneric&&!IsValidFeature(ACT3,feature)){IssueMessage(FATAL,INVALID_FEATURE);return;}
+	else if(isOverride&&!IsValidFeature(OVERRIDE3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	else if(isGeneric&&!IsValidFeature(GENERIC3,feature))IssueMessage(ERROR,INVALID_FEATURE);
-	else if(!isGeneric&&!IsValidFeature(ACT3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	Expanding0Array<int> ids;
 	PseudoSprite::ExtByte id;
 	for(i=0;i<(numIDs&0x7F);i++){
