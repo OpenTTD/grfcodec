@@ -100,15 +100,18 @@ typedef vector<int> int_str;
 class PropData:public auto_array<PropData>{
 public:
 	PropData(){}
-	void Init(FILE*);
+	void Init(FILE*,bool);
 	uchar GetData(uint)const;
 	uint GetLength()const{return(uint)length.length();}
 	const PropData*GetVarLength(int)const;
 	uint GetValue(uint&,const int_str&)const;
+	uint maxfirst(int prop){return idRange[prop]&0xFF;}
+	uint maxlast(int prop){return (idRange[prop]>>8)&0xFF;}
 private:
 	ustring length;
-	static ustring readString(FILE*);
-	static int CountFE(const ustring&);
+	vector<uint> idRange;
+	void readString(FILE*,bool);
+	int CountFE();
 	void operator=(const PropData&);
 	PropData(const PropData&);
 };
@@ -124,30 +127,6 @@ private:
 	void operator=(const Check0&);
 	Check0(const Check0&);
 };
-
-class Feat8{
-	SINGLETON(Feat8)
-public:
-	struct Feat8sub{
-		uint maxfirst;
-		uint maxlast;
-	};
-	const Feat8sub&operator[](uint i)const{return _p[i];}
-	const Feat8&operator=(Feat8sub*ptr){_p=ptr;return*this;}
-private:
-	auto_array<Feat8::Feat8sub>_p;
-};
-
-Feat8::Feat8(){
-	uint numprops=Check0::Instance().GetFeat8();
-	_p=new Feat8sub[numprops];
-	FILE*pFile=myfopen(0f8);
-	for(uint i=8;i<numprops;i++){
-		_p[i].maxfirst=GetCheckByte(0f8);
-		_p[i].maxlast=GetCheckByte(0f8);
-	}
-	fclose(pFile);
-}
 
 void Check0(PseudoSprite&str){
 	Check0::Instance().Check(str);
@@ -177,17 +156,17 @@ uint PropData::GetValue(uint&len_off,const int_str&decoded)const{
 	return value;
 }
 
-void PropData::Init(FILE*pFile){
-	int j=CountFE(length=readString(pFile));
+void PropData::Init(FILE*pFile, bool withIDs){
+	readString(pFile, withIDs);
+	int j=CountFE();
 	if(j){
 		_p=new PropData[j];
 		for(int k=0;k<j;k++)
-			_p[k].Init(pFile);
+			_p[k].Init(pFile, false);
 	}
 }
 
-ustring PropData::readString(FILE*pFile){
-	ustring ret;
+void PropData::readString(FILE*pFile, bool withIDs){
 	int ch;
 	bool escape=false;
 	do{
@@ -201,15 +180,20 @@ ustring PropData::readString(FILE*pFile){
 			}
 		}
 		escape=false;
-		ret.append(1,(char)ch);
+		if(withIDs){
+			if(ch!=0xFF)
+				idRange.push_back(GetCheckWord(0));
+			else 
+				idRange.push_back(0);
+		}
+		length.append(1,(char)ch);
 	}while(true);
-	return ret;
 }
 
-int PropData::CountFE(const ustring&str){
+int PropData::CountFE(){
 	int ret=0;
 	size_t start=0;
-	while((start=str.find_first_of((unsigned char)0xFE,start)+1)!=0)ret++;
+	while((start=length.find_first_of((unsigned char)0xFE,start)+1)!=0)ret++;
 	return ret;
 }
 
@@ -368,10 +352,10 @@ void Check0::Check(PseudoSprite&str){
 				return;
 			}
 			if(feature==8){
-				if(firstID>Feat8::Instance()[prop].maxfirst)
-					IssueMessage(ERROR,INVALID_ID,firstID,0,Feat8::Instance()[prop].maxfirst);
-				if(IDs&&maxID>Feat8::Instance()[prop].maxlast)
-					IssueMessage(ERROR,INVALID_ID,maxID,0,Feat8::Instance()[prop].maxlast);
+				if(firstID>_p[feature].maxfirst(prop))
+					IssueMessage(ERROR,INVALID_ID,firstID,0,_p[feature].maxfirst(prop));
+				if(IDs&&maxID>_p[feature].maxlast(prop))
+					IssueMessage(ERROR,INVALID_ID,maxID,0,_p[feature].maxlast(prop));
 			}
 			if(propLoc[prop])
 				IssueMessage(WARNING2,REPEATED_PROP,i,prop,propLoc[prop]);
@@ -557,6 +541,6 @@ Check0::Check0(){
 	FILE*pFile=myfopen(0);
 	_p=new PropData[MaxFeature()+1];
 	for(uint i=0;i<=MaxFeature();i++)
-		_p[i].Init(pFile);
+		_p[i].Init(pFile,i==8);
 	fclose(pFile);
 }

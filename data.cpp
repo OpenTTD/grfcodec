@@ -148,22 +148,6 @@ static const char _datTextIDs[]="\x04\x09"
 "\xC4\xC5\xC9"
 ;
 
-
-/*	Action 0 - feature 8
-	====================
-
-	Valid ID ranges for feature 8.
-	Two bytes for each property:
-	*	max value for the action 0's <ID> entity
-	*	max ID that can be set
-*/
-static const char _dat0f8[]="\x02\x01"
-//--08--          --0A--          --0C--          --0E--
-"\x30\x30\x00\xFC\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12\x12"
-//--10--
-"\x00\x00\x00\xFF"
-;
-
 /*	Callbacks
 	=========
 
@@ -324,7 +308,7 @@ static const char _datfeat[]="\x12\x01"
 
 	See full description in act0.cpp.
 */
-static const char _dat0[]="\x0C\x0C\x10"
+static const char _dat0[]="\x0D\x00\x10"
 // Feature 00:
 // x0              x4              x8              xC
 "\x2A\xFF\x01\x21\x21\x01\x01\x21\x01\x22\xFF\x22\xFF\x01\x04\xFF"
@@ -389,9 +373,16 @@ static const char _dat0[]="\x0C\x0C\x10"
 "\x01r\x01\x80\x00"
 
 // Feature 08:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x14\x3A\x24\x12\x14\x14\x22"
-"\xFE\xFE"
+// Different format this feature only
+// For non-FF properties only, each prop is followed by two bytes:
+//		The max value for the action 0's <ID> entity
+//		The max ID that can be set
+// (0f8.dat was merged into here to prevent it from getting out of sync.)
+
+// 00              04              --- 08 ---              --- 0A ---              --- 0C ---              --- 0E ---
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x30\x30\x14\x00\xFC\x3A\x12\x12\x24\x12\x12\x12\x12\x12\x14\x12\x12\x14\x12\x12\x22\x12\x12"
+// --- 10 ---              
+"\xFE\x00\x00\xFE\x00\xFF"
 "\x00"
 // Subdata - prop 10:
 "r\xFE\x0B\xFE\x00"
