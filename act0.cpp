@@ -50,6 +50,7 @@ bits   indicate width:
 3		special formatting or checks
 5-4		Basic formatting
 7-6		(FE strings only) linebreak formatting
+7		(Non-FE strings only) permit property multiple times
 
 Width:
 1-4: byte, word, extended byte, double; resp.
@@ -58,7 +59,7 @@ Special formatting/checks:
 If set:
 - Print decimal values as dates
 - Check BE words against defined TTD and DCxx IDs
-- Check BE doubles against remaining size of property (e.g. indu prop 0A) (TODO: Implement)
+- Check BE doubles against remaining size of property (e.g. indu prop 0A)
 - Check default words against defined IDs for feature that relates to this one
 	(i.e. Check that tiles used in indu prop 0A are defined.)
 
@@ -83,8 +84,9 @@ char * means the next char is repeated an arbitrary number of times. This is
   followed by the length of the terminator (1, 2, or 4) and then the
   terminator
 char l means the next character appears in the NFO
-char | means what is on either side is valid -- the left side MUST have at
-least one literal. (ex: \x03 == l\xFF\x02|\x01)
+char | means what is on either side is valid -- right side will be ignored if
+left side does not have at least one literal (ex: \x03 == l\xFF\x02|\x01, but
+\x01|l\xFF\x02 will always read exactly one byte.)
 char FD takes the same type of parameter as r, but adds that value to the
   list of 80+x values for all following FE substrings.
 char FE as above
@@ -357,7 +359,7 @@ void Check0::Check(PseudoSprite&str){
 				if(IDs&&maxID>_p[feature].maxlast(prop))
 					IssueMessage(ERROR,INVALID_ID,maxID,0,_p[feature].maxlast(prop));
 			}
-			if(propLoc[prop])
+			if(propLoc[prop]&&!(len&0x80))
 				IssueMessage(WARNING2,REPEATED_PROP,i,prop,propLoc[prop]);
 			propLoc[prop]=i++;
 			if(len==0xFE){
