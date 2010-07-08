@@ -1,7 +1,5 @@
-%define ver %{echo %dz_version | cut -b2-}
-
 Name:           %{dz_repo}
-Version:        0.9.10+r3%{ver}
+Version:        0.9.10+r2294+%{dz_version}
 Release:        %{_vendor}%{?suse_version}
 Summary:        A suite of programs to modify Transport Tycoon Deluxe's GRF files
 Group:          Development/Tools
