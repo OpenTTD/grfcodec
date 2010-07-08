@@ -43,6 +43,11 @@
 #STRIP = strip
 #AWK = awk
 
+# If you want to UPX compress the binaries (default)
+#UPX = upx
+# If you do not want to UPX compress the binaries
+#UPX =
+
 # use 386 instructions but optimize for pentium II/III
 #CFLAGS = -g -DWIN32 -O1 $(BOOST_CMD) -Wall -Wno-uninitialized $(CFLAGAPP)
 #CXXFLAGS = $(CFLAGS)
