@@ -6,7 +6,6 @@ syntax: glob
 *.os
 
 Makefile.local
-.rev
 
 grfcodec
 grfdiff
