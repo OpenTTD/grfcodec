@@ -29,6 +29,7 @@
 #CC = g++
 #CXX = g++
 #STRIP = strip
+#UPX = upx
 #AWK = awk
 
 # use 386 instructions but optimize for pentium II/III
