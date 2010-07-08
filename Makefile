@@ -44,6 +44,17 @@ INSTALLPATH_LINUX=/usr/local/bin
 
 -include ${MAKEFILELOCAL}
 
+# GCC 4.5.0 has an optimisation bug that influences GRFCodec.
+# As such we disable optimisation when GCC 4.5.0 is detected.
+# The issue has been fixed in GCC 4.5.1
+ifndef CFLAGOPT
+ifeq ($(shell $(CC) -v 2>&1 | grep "4\.5\.0" || true),)
+CFLAGOPT = -O2
+else
+CFLAGOPT = -O0
+endif
+endif
+
 
 ifndef INSTALLPATH
 
@@ -64,7 +75,7 @@ endif
 endif
 
 # use 386 instructions but optimize for pentium II/III
-CFLAGS = -g -D$(TYPESIZE) -O3 -I. -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
+CFLAGS = -g -D$(TYPESIZE) -I. -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGOPT) $(CFLAGAPP)
 
 ifeq ($(DEBUG),1)
 CFLAGS += -DDEBUG
