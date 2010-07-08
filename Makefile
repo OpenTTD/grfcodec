@@ -22,6 +22,7 @@ SHELL = /bin/sh
 CC = g++
 CXX = g++
 STRIP = strip
+UPX = upx
 AWK = awk
 
 # OS detection: Cygwin vs Linux
@@ -219,9 +220,12 @@ FORCE:
 	$(_E) [REBUILD] $(@:%_r=%)
 	$(_C)rm -f $(@:%_r=%)
 	$(_C)$(MAKE) ${_S} $(@:%_r=%)
-	$(_E) [STRIP/UPX] $(@:%_r=%)
+	$(_E) [STRIP] $(@:%_r=%)
 	$(_C)$(STRIP)  $(@:%_r=%)
-	$(_C)upx $(_Q) --best  $(@:%_r=%)
+ifneq ($(UPX),)
+	$(_E) [UPX] $(@:%_r=%)
+	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
+endif
 
 release: $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r
 
@@ -230,9 +234,12 @@ grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
 	$(_C)rm -f $@
 	$(_E) [LD] $@
 	$(_C)$(CC) -o $@ $(CFLAGS) -Os $^
-	$(_E) [STRIP/UPX] $@
+	$(_E) [STRIP] $@
 	$(_C)$(STRIP) $@
-	$(_C)upx $(_Q) --best $@
+ifneq ($(UPX),)
+	$(_E) [UPX] $@
+	$(_C)$(UPX) $(_Q) --best $@
+endif
 
 grfmrg.c:	grfmrgc.bin grfmrgc.pl
 	$(_E) [PERL] $@
