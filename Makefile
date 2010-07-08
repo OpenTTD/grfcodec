@@ -18,6 +18,7 @@ SHELL = /bin/sh
 CC = g++
 CXX = g++
 STRIP = strip
+UPX = upx
 AWK = awk
 
 # OS detection: Cygwin vs Linux
@@ -141,9 +142,12 @@ release: FORCE
 	$(_E)[REBUILD] $(NFORENUM)
 	$(_C)rm -f $(NFORENUM)
 	$(_C)$(MAKE) $(_S)
-	$(_E) [STRIP/UPX] $(NFORENUM)
+	$(_E) [STRIP] $(NFORENUM)
 	$(_C)$(STRIP) $(NFORENUM)
-	$(_C)upx $(_Q) --best $(NFORENUM)
+ifneq ($(UPX),)
+	$(_E) [UPX] $(@:%_r=%)
+	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
+endif
 
 FORCE:
 	@$(BOOST_WARN)
