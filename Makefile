@@ -8,11 +8,6 @@
 
 MAKEFILELOCAL=Makefile.local
 
-# A command to return the current SVN revision of the source tree; it should
-# it in the format [##:]##, where the second set of digits is the current
-# revision (used for adding the revision to the version string)
-SVNVERSION = svnversion -c .	# standard SVN client (e.g. cygwin)
-
 # Gnu compiler settings
 SHELL = /bin/sh
 CC = g++
@@ -141,7 +136,7 @@ $(NFORENUM): $(NFORENUMSRC:%.cpp=%.o)
 
 clean:
 	rm -rf *.o *.d *.exe *.EXE renum bundle bundles
-	rm -f .rev version.h
+	rm -f version.h
 
 release: FORCE
 	$(_E)[REBUILD] $(NFORENUM)
@@ -158,11 +153,6 @@ FORCE:
 	@$(BOOST_WARN)
 	@$(BOOST_ERROR)
 
-.rev: FORCE
-	$(_C) [ -e $@ ] || echo SVNREV=0 > $@
-	$(_C) REV=`${SVNVERSION}` perl rev.pl $@ < $@
-
--include .rev
 include version.def
 
 version.h: FORCE
