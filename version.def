@@ -3,7 +3,10 @@ VER = 3.4.6
 # Current year
 YEAR = 2009
 
-VERSIONSTR = $(VER) r${SVNREV}
+VERSIONS := $(shell AWK="$(AWK)" "./findversion.sh")
+SVNREV   := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
+
+VERSIONSTR = $(VER) ${SVNREV}
 ifneq ($(NOREV),0)
 VERSIONSTR = $(VER)
 endif
