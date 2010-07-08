@@ -12,11 +12,6 @@ MAKEFILELOCAL=Makefile.local
 # (note, this must match the text in grfcodec.cc and grftut.txt)
 PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars&ttw_pb_pal1&ttw_pb_pal2
 
-# A command to return the current SVN revision of the source tree; it should
-# it in the format [##:]##, where the second set of digits is the current
-# revision (used for adding the revision to the version string)
-SVNVERSION = svnversion -c .	# standard SVN client (e.g. cygwin)
-
 # Gnu compiler settings
 SHELL = /bin/sh
 CC = g++
@@ -63,7 +58,7 @@ endif
 else
 INSTALLPATH=$(INSTALLPATH_MSYS_MINGW)
 endif
-else 
+else
 INSTALLPATH=$(INSTALLPATH_LINUX)
 endif
 endif
@@ -201,17 +196,12 @@ clean:
 	rm -rf *.o *.os *.bin $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) bundle bundles
 
 mrproper: clean
-	rm -f *.d .rev version.h grfmrg.c version.h.tmp
+	rm -f *.d version.h grfmrg.c version.h.tmp
 	@touch -ct 9901010000 ttdpal.h	# don't delete it, so we don't confuse svn, but force it to be remade
 
 FORCE:
 	@$(BOOST_WARN)
 
-.rev: #FORCE
-	$(_C) [ -e $@ ] || echo SVNREV=0 > $@
-	$(_C) REV=`${SVNVERSION}` perl rev.pl $@ < $@
-
--include .rev
 include version.def
 
 version.h: FORCE
