@@ -126,8 +126,9 @@ char *spritefilename(const char *basefilename, const char *reldirectory, const c
 	strcpy(directory, reldirectory);
 	getspritefilename(filename, basefilename, directory, ext, spriteno);
 
-	if (directory[strlen(directory)-1] == '\\' || directory[strlen(directory)-1] == '/')
-		directory[strlen(directory)-1] = 0;	// cut off trailing backslash
+	size_t dir_len = strlen(directory);
+	if (dir_len != 0 && (directory[dir_len-1] == '\\' || directory[dir_len-1] == '/'))
+		directory[dir_len-1] = 0;	// cut off trailing backslash
 
 	while (mustexist) {	// actuall mustexist doesn't change, loop is terminated by explicit break
 		sprite = fopen(filename, mode);

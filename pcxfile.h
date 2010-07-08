@@ -126,7 +126,7 @@ public:
 				map[i]=i;
 		}
 		~colourmap(){
-			if(deletemap) delete map;
+			if(deletemap) delete[] map;
 		}
 		const colourmap&operator=(int*p){
 			if(deletemap) delete map;
