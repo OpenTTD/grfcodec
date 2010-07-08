@@ -1,0 +1,17 @@
+# Use glob syntax:
+syntax: glob
+
+*.d
+*.o
+*.os
+
+Makefile.local
+.rev
+
+grfcodec
+grfdiff
+grfmerge
+
+grfmrg.c
+grfmrgc.bin
+version.h
