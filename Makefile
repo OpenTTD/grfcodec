@@ -122,7 +122,12 @@ endif
 
 # targets
 all: $(NFORENUM)
-remake: clean all
+remake:
+	$(_E) [CLEAN]
+	$(_C)$(MAKE) ${_S} clean
+	$(_E) [REBUILD]
+	$(_C)$(MAKE) ${_S} all
+
 
 ${MAKEFILELOCAL}:
 	@/bin/sh -c "export PATH=\"/bin\" && \
