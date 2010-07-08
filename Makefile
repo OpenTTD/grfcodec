@@ -173,7 +173,11 @@ PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 
 # deafult targets
 all: $(GRFCODEC) $(GRFDIFF) $(GRFMERGE)
-remake: clean all
+remake:
+	$(_E) [CLEAN]
+	$(_C)$(MAKE) ${_S} clean
+	$(_E) [REBUILD]
+	$(_C)$(MAKE) ${_S} all
 
 ${MAKEFILELOCAL}:
 	@/bin/sh -c "export PATH=\"/bin\" && \
@@ -227,7 +231,7 @@ ifneq ($(UPX),)
 	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
 endif
 
-release: $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r
+release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r
 
 # make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
 grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
