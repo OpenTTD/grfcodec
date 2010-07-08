@@ -81,13 +81,13 @@ ifeq (${V},1)
 else
 	# not verbose, _C = @ (suppress cmd line), _E = @echo (echo type&target)
 	_C=@
-	_E:=@echo -e ${_I}
+	_E:=@echo ${_I}
 	_Q=-qqq
 	_S=-s
 endif
 
 # increase indentation level for sub-makes
-_I := ${_I}\\t
+_I := ${_I}"	"
 export _I
 
 # standard compilation commands should be of the form
