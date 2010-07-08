@@ -59,8 +59,8 @@ pcxfile::~pcxfile()
 
 	if (band) {
 		for (int i=0; i<bandlines; i++)
-			delete(band[i]);
-		delete(band);
+			delete[](band[i]);
+		delete[](band);
 	}
 }
 
@@ -149,7 +149,7 @@ void pcxfile::alloclines(int newlines)
 		}
 	}
 
-	delete(band);
+	delete[](band);
 
 	band = newband;
 	i = bandlines;
