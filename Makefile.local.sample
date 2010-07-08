@@ -55,6 +55,10 @@
 #LDOPT = -Wl,--subsystem,console,-s
 #LDOPT += -Wl,-Map,$(@:%=%.map)		# to make map files
 
+# CFLAGS for the optimisation level to use. -O2 by default, unless GCC 4.5.0;
+# then it's -O0 due to an optimisation bug in GCC 4.5.0
+#CFLAGOPT = -O1
+
 # for profiling
 #CFLAGS += -pg
 #LDOPT += -pg
