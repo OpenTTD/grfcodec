@@ -1,0 +1,12 @@
+# Use glob syntax:
+syntax: glob
+
+*.d
+*.o
+*.os
+
+Makefile.local
+nforenum
+renum
+
+version.h
