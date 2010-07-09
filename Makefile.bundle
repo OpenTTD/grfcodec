@@ -88,4 +88,4 @@ bundle_dmg: bundle
 	
 bundle_src:
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tgz'
-	$(_C) hg archive -t tgz $(BUNDLE_NAME).tgz -X "\.hg*"
+	$(_C) hg archive -t tgz $(BUNDLE_NAME).tgz -X "\.hg*" -X "\.devzone*"
