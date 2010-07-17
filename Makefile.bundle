@@ -89,7 +89,7 @@ bundle_dmg: bundle
 	$(_C)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/GRFCodec $(REV)"
 	$(_C)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/GRFCodec $(REV)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
 	$(_C)rm -fr "$(BUNDLES_DIR)/GRFCodec $(REV)"
-	
+
 bundle_src:
-	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tgz'
-	$(_C) hg archive -t tgz $(BUNDLE_NAME).tgz -X "\.hg*" -X "\.devzone*"
+	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.gz'
+	$(_C) hg archive -t tgz $(BUNDLE_NAME).tar.gz -X "\.hg*" -X "\.devzone*"
