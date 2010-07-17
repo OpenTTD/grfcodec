@@ -87,5 +87,5 @@ bundle_dmg: bundle
 	$(_C)rm -fr "$(BUNDLES_DIR)/NFORenum $(REV)"
 	
 bundle_src:
-	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tgz'
-	$(_C) hg archive -t tgz $(BUNDLE_NAME).tgz -X "\.hg*" -X "\.devzone*"
+	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.gz'
+	$(_C) hg archive -t tgz $(BUNDLE_NAME).tar.gz -X "\.hg*" -X "\.devzone*"
