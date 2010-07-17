@@ -91,6 +91,10 @@ CFLAGS += -DMINGW -mno-cygwin
 endif
 endif
 
+ifeq ($(shell uname),Darwin)
+CFLAGS += -isystem/opt/local/include
+endif
+
 CXXFLAGS = $(CFLAGS)
 
 
@@ -101,7 +105,8 @@ find /usr/include /usr/local/include -maxdepth 1 -name 'boost-*' 2> /dev/null | 
 ifeq ($(BOOST_INCLUDE),)
 BOOST_INCLUDE=$(shell \
 ( [ -d /usr/include/boost/date_time ] && echo /usr/include ) || \
-( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) )
+( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) || \
+( [ -d /opt/local/include/boost/date_time ] && echo /opt/local/include ) )
 endif
 endif
 
