@@ -306,15 +306,18 @@ ttdpal.h:	$(PAL_FILES) pal2c.pl
 	$(_E) [LD] $@
 	$(_C)$(BCC) $(LOPTS) $^ -e$@
 
-%.o.d:
+# On some installations a version.h exists in /usr/include. This one is then
+# found by the dependency tracker and thus the dependencies do not contain
+# a reference to version.h, so it isn't generated and compilation fails.
+%.o.d: version.h
 	$(_E) [CPP DEP] $@
 	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG $*.c* -MF $@
 
-%.os.d:
+%.os.d: version.h
 	$(_E) [CPP DEP] $@
 	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG -MT ${subst .d,,$@} -MF $@ $*.c*
 
-%.obj.d: $(wildcard %.c*)
+%.obj.d: $(wildcard %.c*) version.h
 	$(_E) [CPP DEP] $@
 	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG -MT ${subst .d,,$@} -MF $@ $*.c*
 
