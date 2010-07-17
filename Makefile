@@ -15,6 +15,8 @@ CXX = g++
 STRIP = strip
 UPX = upx
 AWK = awk
+SRCZIP_FLAGS = -9
+SRCZIP = gzip
 
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
