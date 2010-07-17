@@ -31,6 +31,8 @@
 #STRIP = strip
 #UPX = upx
 #AWK = awk
+#SRCZIP_FLAGS = -9
+#SRCZIP = gzip
 
 # use 386 instructions but optimize for pentium II/III
 #CFLAGS = -g -DWIN32 -O1 $(BOOST_CMD) -Wall -Wno-uninitialized $(CFLAGAPP)
