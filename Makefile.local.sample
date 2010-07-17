@@ -42,6 +42,8 @@
 #CXX = g++
 #STRIP = strip
 #AWK = awk
+#SRCZIP_FLAGS = -9
+#SRCZIP = gzip
 
 # If you want to UPX compress the binaries (default)
 #UPX = upx

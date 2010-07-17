@@ -1,10 +1,19 @@
 # Version number
 VER = 0.9.10
 
+ifdef REVISION
+REV := $(REVISION)
+else
 VERSIONS := $(shell AWK="$(AWK)" "./findversion.sh")
-SVNREV   := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
+REV      := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
+endif
 
-VERSIONSTR = $(VER) ${SVNREV}
+# Make sure we have something in REV
+ifeq ($(REV),)
+REV := norev000
+endif
+
+VERSIONSTR = $(VER) ${REV}
 ifneq ($(NOREV),0)
 VERSIONSTR = $(VER)
 endif

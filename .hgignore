@@ -14,3 +14,5 @@ grfmerge
 grfmrg.c
 grfmrgc.bin
 version.h
+
+grfcodec-*
