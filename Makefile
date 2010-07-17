@@ -177,7 +177,10 @@ version.h: FORCE
 	$(_E) [CPP] $@
 	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -MMD -MF $@.d -MT $@ $<
 
-%.o.d:
+# On some installations a version.h exists in /usr/include. This one is then
+# found by the dependency tracker and thus the dependencies do not contain
+# a reference to version.h, so it isn't generated and compilation fails.
+%.o.d: version.h
 	$(_E) [CPP DEP] $@
 	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG $*.c* -MF $@
 
