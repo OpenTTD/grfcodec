@@ -30,6 +30,10 @@ else
 CFLAGS = -g -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
 endif
 
+ifeq ($(shell uname),Darwin)
+CFLAGS += -isystem/opt/local/include
+endif
+
 CXXFLAGS = $(CFLAGS)
 
 -include ${MAKEFILELOCAL}
@@ -42,11 +46,12 @@ endif
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
 BOOST_INCLUDE=$(shell \
-find /usr/include /usr/local/include -maxdepth 1 -name 'boost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
+find /usr/include /usr/local/include /opt/local/include -maxdepth 1 -name 'boost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
 ifeq ($(BOOST_INCLUDE),)
 BOOST_INCLUDE=$(shell \
 ( [ -d /usr/include/boost/date_time ] && echo /usr/include ) || \
-( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) )
+( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) || \
+( [ -d /opt/local/include/boost/date_time ] && echo /opt/local/include ) )
 endif
 endif
 
