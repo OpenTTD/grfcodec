@@ -1,2 +1,2 @@
 R;/usr/src/packages/RPMS/x86_64/*.x86_64.rpm
-%{BUILD}/*.tar.gz
+5;%{BUILD}/*.tar.gz
