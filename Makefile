@@ -23,7 +23,7 @@ ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 ISMINGW = $(shell [ `$(CC) -dumpmachine` != mingw32 ]; echo $$?)
 
 # OS dependent variables
-NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) -o \( $(ISMINGW) -eq 1 \) ] && echo renum.exe || echo renum)
+NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) -o \( $(ISMINGW) -eq 1 \) ] && echo nforenum.exe || echo nforenum)
 
 # use 386 instructions but optimize for pentium II/III
 ifeq ($(ISCYGWIN),1)
@@ -142,7 +142,7 @@ $(NFORENUM): $(NFORENUMSRC:%.cpp=%.o)
 
 
 clean:
-	rm -rf *.o *.d *.exe *.EXE renum bundle bundles
+	rm -rf *.o *.d *.exe *.EXE nforenum bundle bundles
 	rm -f version.h
 
 release: FORCE
