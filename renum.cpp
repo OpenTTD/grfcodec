@@ -383,7 +383,7 @@ int process_file(istream&in){
 					}else{
 						buffer+="//"+sprite+'\n';
 						SetCode(EPARSE);
-						IssueMessage(0,PARTIAL_PARSE_FAILURE,--_spritenum);
+						IssueMessage(0,PARTIAL_PARSE_FAILURE,_spritenum--);
 					}
 				}
 			}
