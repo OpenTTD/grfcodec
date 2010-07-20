@@ -204,7 +204,7 @@ static const char _datlangs[]="\x00\x03"
 //		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
 /*0x*/	"American\n"	"English\n"		"German\n"		"French\n"
 /*0x*/	"Spanish\n"		"Esperanto\n"	"Ido\n"			"Russian\n"
-/*0x*/	"\n"			"\n"			"\n"			"\n"
+/*0x*/	"Irish\n"		"Maltese\n"		"Tamil\n"		"Chuvash\n"
 /*0x*/	"Chinese (Trad)\n" "Serbian\n" "Norwegian (Nynorsk)\n" "Welsh\n"
 //		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
 /*1x*/	"\n"			"\n"			"\n"			"\n"
