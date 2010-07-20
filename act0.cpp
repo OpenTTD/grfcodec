@@ -311,7 +311,10 @@ void Check0::Check(PseudoSprite&str){
 	uint maxID=firstID+IDs-1;
 	if(propsRemain==0)
 		IssueMessage(WARNING1,NO_PROPS);
-	if(IDs==0&&(propsRemain!=1||feature||str.ExtractByte(i)!=0x1A))IssueMessage(WARNING1,NO_IDS);
+	if(IDs==0&&(propsRemain!=1||feature||str.ExtractByte(i)!=0x1A)){
+		IssueMessage(WARNING1,NO_IDS);
+		return;
+	}
 	feature!=8&&IDs&&CheckID(feature,firstID)&&CheckID(feature,maxID);
 	Expanding0Array<uint>propLoc, idWidth;
 	try{
