@@ -72,10 +72,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/renum.exe"
+				OutputFile="$(OutDir)/nforenum.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/renum.pdb"
+				ProgramDatabaseFile="$(OutDir)/nforenum.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -162,7 +162,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/renum.exe"
+				OutputFile="$(OutDir)/nforenum.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				GenerateMapFile="true"
@@ -256,7 +256,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/renum.exe"
+				OutputFile="$(OutDir)/nforenum.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				GenerateMapFile="true"
@@ -346,10 +346,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/renum.exe"
+				OutputFile="$(OutDir)/nforenum.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/renum.pdb"
+				ProgramDatabaseFile="$(OutDir)/nforenum.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -435,7 +435,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="$(OutDir)/renum.exe"
+				OutputFile="$(OutDir)/nforenum.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="false"
 				GenerateMapFile="true"

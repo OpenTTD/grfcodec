@@ -23,11 +23,11 @@ For more information consult 0compile.txt in the source code.
 Installation
 ============
 
-To install, copy renum.exe into any directory, preferably one in your path.
-NFORenum will (if necessary) create a .renum directory. All its data files
+To install, copy nforenum.exe into any directory, preferably one in your path.
+NFORenum will (if necessary) create a .nforenum directory. All its data files
 will be placed in that directory, and updated as needed.
-It is not necessary to remove the .renum directory before upgrading.
-To uninstall, delete renum.exe and any .renum directories.
+It is not necessary to remove the .nforenum directory before upgrading.
+To uninstall, delete nforenum.exe and any .nforenum directories.
 
 
 Usage
@@ -35,9 +35,9 @@ Usage
 
 To renumber NFO files (for example MyGRF1.NFO and MyGRF2.NFO), use
 
- > renum [options] MyGRF1 MyGRF2
+ > nforenum [options] MyGRF1 MyGRF2
 
-(Run renum -? or renum --help for a list of command line options.)
+(Run nforenum -? or nforenum --help for a list of command line options.)
 
 This will correct sprite numbers, sprite sizes, and sprite 0, and do a
 partial lint of the NFO. If a NFO header is not detected, one will be added.
@@ -64,11 +64,11 @@ NFORenum will look for the NFO in the following locations, in this order:
 If no command-line arguments are specified, NFORenum will read from standard
 input and write to standard output.
 
-The default search paths for the .renum directory are as follows:
+The default search paths for the .nforenum directory are as follows:
   .
   $HOME
   $HOMEDRIVE$HOMEPATH
-If the .renum directory is not found in any of these locations, NFORenum will
+If the .nforenum directory is not found in any of these locations, NFORenum will
 attempt to create one in each location, starting from the bottom of the list
 and working up. This can be overridden with the --data option.
 
