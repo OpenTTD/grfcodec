@@ -283,6 +283,8 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				case 6:		// print hex byte
 				case 7:		// ... word
 				case 8:		// ... dword
+				case 11:		// ... qword
+				case 12:		// print name of station
 					break;
 				default:
 					IssueMessage(ERROR,INVALID_EXT_CODE,offs,ch);
