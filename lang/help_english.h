@@ -25,7 +25,7 @@
 //
 // The actual help is just one long string.
 START_HELP_TEXT(RL_ENGLISH)
-"Usage: renum [options] [file1 [file2 [file3 [...]]]]\n"
+"Usage: nforenum [options] [file1 [file2 [file3 [...]]]]\n"
 "   Any number of files may be specified.\n"
 "   If no files or options are specified, NFORenum will read a file from\n"
 "   standard input and write it to standard output.\n"
@@ -35,13 +35,13 @@ START_HELP_TEXT(RL_ENGLISH)
 "       style that NFORenum will use. This will not change the header, because\n"
 "       grfcodec requires that the header be commented in C++-style.\n"
 "   --data[=<dir>] -D[<dir>]\n"
-"       If <dir> is specified, look for the .renum directory in <dir>, and\n"
+"       If <dir> is specified, look for the .nforenum directory in <dir>, and\n"
 "       create it if not found.\n"
-"       If <dir> is not specified, report the location of the .renum directory.\n"
+"       If <dir> is not specified, report the location of the .nforenum directory.\n"
 "       In either case, eliminate the 5-second wait used to ensure that those\n"
 "       not running NFORenum from a command line can see the directory-created\n"
 "       message.\n"
-"       Default: Look for  the .renum directory in the current directory, and\n"
+"       Default: Look for  the .nforenum directory in the current directory, and\n"
 "       then in the environment variable HOME, if defined. If not found attempt\n"
 "       to create in HOME, then in .\n"
 "   --force -f\n"
@@ -89,5 +89,5 @@ START_HELP_TEXT(RL_ENGLISH)
 "License, as stated in the file 'COPYING'.\n"
 "\n"
 "If this message scrolls by too quickly, you may want to try\n"
-"   renum -? | more\n"
+"   nforenum -? | more\n"
 END_HELP_TEXT()
