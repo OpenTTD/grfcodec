@@ -28,7 +28,7 @@ bundle: release
 	$(_C)cp COPYING.txt        "$(BUNDLE_DIR)/"
 	$(_C)cp CHANGELOG.txt      "$(BUNDLE_DIR)/"
 	$(_C)cp doc/*.txt          "$(BUNDLE_DIR)/"
-ifeq ($(NFORENUM), renum.exe)
+ifeq ($(NFORENUM), nforenum.exe)
 	$(_C)unix2dos "$(BUNDLE_DIR)/"*.txt
 endif
 
@@ -71,7 +71,7 @@ bundle_dmg: bundle
 	$(_C)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/NFORenum $(REV)"
 	$(_C)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/NFORenum $(REV)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
 	$(_C)rm -fr "$(BUNDLES_DIR)/NFORenum $(REV)"
-	
+
 bundle_src:
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.gz'
 	$(_C) hg archive -t tar $(BUNDLE_NAME).tar -X "\.hg*" -X "\.devzone*"

@@ -45,10 +45,10 @@ ERR_MESSAGE(NO_INPUT_FILE,"Could not open \"%t\" specified on the command line.\
 ERR_MESSAGE(NO_OUTPUT_FILE,"Could not open output file \"%t\" for input \"%t\".\n",0)
 ERR_MESSAGE(REPLACE_FAILED,"Could not replace old file (%t) with new file (%t). (%d)\n",0)
 ERR_MESSAGE(DATAFILE_ERROR,"Failed to %s data file: \"%t\". %S\n",0)
-ERR_MESSAGE(CREATE_FAILED,"Could not create .renum directory in %t. (%d)\n",0)
+ERR_MESSAGE(CREATE_FAILED,"Could not create .nforenum directory in %t. (%d)\n",0)
 ERR_MESSAGE(DELETE_FAILED,"Could not remove old file %t. (%d)\n",0)
 
-OUT_MESSAGE(CREATED_DIR,"Created .renum directory in %t.\n",0)
+OUT_MESSAGE(CREATED_DIR,"Created .nforenum directory in %t.\n",0)
 OUT_MESSAGE(PROCESSING,"Processing from standard input.\n",0)
 OUT_MESSAGE(PROCESSING_FILE,"Processing file \"%t\".\n",0)
 OUT_MESSAGE(PROCESSING_COMPLETE,"Processing complete.\n",0)
@@ -274,6 +274,6 @@ ERR_MESSAGE(BAD_STRING,"Error: String %d does not exist.\n",0)
 ERR_MESSAGE(DATAFILE_MISMATCH,"%t contains information for fewer features than does feat.dat.\n" \
 			"Update it, or delete feat.dat.\n",0)
 ERR_MESSAGE(BAD_CL_ARG,"Unrecognized command-line argument: \"-%c %t\"\n",0)
-OUT_MESSAGE(DATA_FOUND_AT,"Data files loaded from '%t/.renum'.\n",0)
+OUT_MESSAGE(DATA_FOUND_AT,"Data files loaded from '%t/.nforenum'.\n",0)
 
 END_MESSAGES()

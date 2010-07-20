@@ -55,7 +55,7 @@ using namespace std;
 	The first byte is a format byte; start it at \x00. Each time the file format
 	gets updated (ie the file reader changes), increment it and reset
 	the version byte to \x00.
-	
+
 	The second byte is a version byte; increment it every time the file
 	gets updated.
 
@@ -381,7 +381,7 @@ static const char _dat0[]="\x0D\x02\x10"
 
 // 00              04              --- 08 ---              --- 0A ---              --- 0C ---              --- 0E ---
 "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x41\x41\x14\x00\xFC\x3A\x12\x12\x24\x12\x12\x12\x12\x12\x14\x12\x12\x14\x12\x12\x22\x12\x12"
-// --- 10 ---              
+// --- 10 ---
 "\xFE\x00\x00\xFE\x00\xFF"
 "\x00"
 // Subdata - prop 10:
@@ -622,7 +622,7 @@ struct dat{
 #undef DATA_FILE
 #define DATA() static const dat data[]={
 #define DATA_FILE(name)\
-	{(char*)_dat##name,"/.renum/" #name ".dat",sizeof(_dat##name)-1},\
+	{(char*)_dat##name,"/.nforenum/" #name ".dat",sizeof(_dat##name)-1},\
 
 #include "data.h"
 
@@ -631,7 +631,7 @@ bool makedir(const string&dir,bool dieonfail=false){
 		if(dieonfail)exit(EDATA);
 		return false;
 	}
-	if(mkdir((dir+"/.renum").c_str(),0755)){
+	if(mkdir((dir+"/.nforenum").c_str(),0755)){
 		IssueMessage(0,CREATE_FAILED,dir.c_str(),errno);
 		perror(NULL);
 		if(dosleep)sleep(5);
@@ -649,7 +649,7 @@ bool finddir(string&dir){
 	struct stat Stat;
 	if(dir[dir.length()-1]=='\\'||dir[dir.length()-1]=='/')
 		dir[dir.length()-1]='\0';
-	if(stat((dir+"/.renum").c_str(),&Stat))return false;
+	if(stat((dir+"/.nforenum").c_str(),&Stat))return false;
 	else if(Stat.st_mode&S_IFREG)return false;
 	return true;
 }

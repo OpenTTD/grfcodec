@@ -29,10 +29,10 @@ ERR_MESSAGE(NO_INPUT_FILE,"Nelze otevrit soubor \"%t\" specifikovany na prikazov
 ERR_MESSAGE(NO_OUTPUT_FILE,"Nelze otevrit vystupni soubor \"%t\" pro vstupni soubor \"%t\".\n",0)
 ERR_MESSAGE(REPLACE_FAILED,"Nelze nahradit puvodni soubor (%t) novym souborem (%t). (%d)\n",0)
 ERR_MESSAGE(DATAFILE_ERROR,"Nelze %s datovy soubor: \"%t\". %S\n",0)
-ERR_MESSAGE(CREATE_FAILED,"Nelze vytvorit adresar .renum v %t. (%d)\n",0)
+ERR_MESSAGE(CREATE_FAILED,"Nelze vytvorit adresar .nforenum v %t. (%d)\n",0)
 ERR_MESSAGE(DELETE_FAILED,"Nelze odstranit stary soubor %t. (%d)\n",0)
 
-OUT_MESSAGE(CREATED_DIR,"Datovy adresar .renum byl vytvoren v adresari %t.\n",0)
+OUT_MESSAGE(CREATED_DIR,"Datovy adresar .nforenum byl vytvoren v adresari %t.\n",0)
 OUT_MESSAGE(PROCESSING,"Rezim zpracovani standardniho vstupu.\n",0)
 OUT_MESSAGE(PROCESSING_FILE,"Zpracovavam soubor \"%t\".\n",0)
 OUT_MESSAGE(PROCESSING_COMPLETE,"Zpracovani ukonceno.\n",0)
@@ -254,6 +254,6 @@ ERR_MESSAGE(BAD_STRING,"Chyba: Retezec %d neexistuje.\n",0)
 #endif
 ERR_MESSAGE(DATAFILE_MISMATCH,"%t obsahuje informace pro mene features nez je v souboru feat.dat.\n" \
 			"Nahradte jej novejsi verzi nebo smazte feat.dat.\n",0)
-OUT_MESSAGE(DATA_FOUND_AT,"Datove soubory nacteny z adresare '%t/.renum'.\n",0)
+OUT_MESSAGE(DATA_FOUND_AT,"Datove soubory nacteny z adresare '%t/.nforenum'.\n",0)
 
 END_MESSAGES()

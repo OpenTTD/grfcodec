@@ -20,7 +20,7 @@
  */
 
 START_HELP_TEXT(RL_CZECH)
-"Pouziti: renum [moznosti] [soubor1 [soubor2 [soubor3 [...]]]]\n"
+"Pouziti: nforenum [moznosti] [soubor1 [soubor2 [soubor3 [...]]]]\n"
 "   Je mozne specifikovat libovolne mnozstvi vstupnich souboru.\n"
 "   V pripade, ze nebyly specifikovany zadne soubory ani prepinace\n"
 "   NFORenum bude cist ze standardniho vstupniho proudu a zapisovat\n"
@@ -32,14 +32,14 @@ START_HELP_TEXT(RL_CZECH)
 "       hlavicku souboru kvuli pozadavkum programu grfcodec.\n"
 "   --data[=<adresar>] -D[<adresar>]\n"
 "       Jestlize je specifikovan <adresar>, NFORenum v nem bude hledat\n"
-"       adresar .renum a v pripade, ze neexistuje jej vytvori.\n"
+"       adresar .nforenum a v pripade, ze neexistuje jej vytvori.\n"
 "       Jestlize neni specifikovan <adresar>, NFORenum vypise cestu\n"
 "       k stavajicimu datovemu adresari.\n"
 "       V kazdem pripade pouziti tohoto parametru odstrani 5 vterinovou\n"
-"       pauzu po vytvoreni adresare .renum urcenou pro to, aby uzivatele,\n"
+"       pauzu po vytvoreni adresare .nforenum urcenou pro to, aby uzivatele,\n"
 "       kteri nespousteji program z prikazove radky, meli moznost spatrit\n"
 "       zpravu o vytvoreni adresare.\n"
-"       Standardni chovani: NFORenum hleda adresar .renum ve stavajicim\n"
+"       Standardni chovani: NFORenum hleda adresar .nforenum ve stavajicim\n"
 "       adresari a potom v adresari nastavenem v promenne prostredi HOME\n"
 "       (je-li definovana). V pripade, ze adresar neni nalezen, NFORenum\n"
 "       jej nejprve zkusi vytvorit v HOME a pote ve stavajicim adresari.\n"
@@ -88,5 +88,5 @@ START_HELP_TEXT(RL_CZECH)
 "License obsazenych v souboru 'COPYING'.\n"
 "\n"
 "V pripade, ze jste nestihli precist celou zpravu, zkuste pouzit\n"
-"   renum -? | more\n"
+"   nforenum -? | more\n"
 END_HELP_TEXT()
