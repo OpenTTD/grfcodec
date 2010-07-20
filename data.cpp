@@ -308,7 +308,7 @@ static const char _datfeat[]="\x12\x01"
 
 	See full description in act0.cpp.
 */
-static const char _dat0[]="\x0D\x02\x10"
+static const char _dat0[]="\x0D\x03\x10"
 // Feature 00:
 // x0              x4              x8              xC
 "\x2A\xFF\x01\x21\x21\x01\x01\x21\x01\x22\xFF\x22\xFF\x01\x04\xFF"
@@ -382,7 +382,7 @@ static const char _dat0[]="\x0D\x02\x10"
 // 00              04              --- 08 ---              --- 0A ---              --- 0C ---              --- 0E ---
 "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x41\x41\x14\x00\xFC\x3A\x12\x12\x24\x12\x12\x12\x12\x12\x14\x12\x12\x14\x12\x12\x22\x12\x12"
 // --- 10 ---
-"\xFE\x00\x00\xFE\x00\xFF"
+"\xFE\x00\x00\xFE\x00\xFF\x14\x00\xFC"
 "\x00"
 // Subdata - prop 10:
 "r\xFE\x0B\xFE\x00"
@@ -454,7 +454,7 @@ static const char _dat0[]="\x0D\x02\x10"
 /*	Variational action 2
 	====================
 */
-static const char _dat2v[]="\x0D\x0E\x10"
+static const char _dat2v[]="\x0D\x0F\x10"
 // Maximum operator ID for advanced VA2:
 "\x13"
 // Global variables:
@@ -549,7 +549,7 @@ static const char _dat2v[]="\x0D\x0E\x10"
 "\x40\x83"		"\x41\x82"		"\x42\x82"		"\x43\x82"
 "\x80\x80"
 // Feature 10:
-"\x0D"
+"\x10"
 "\x40\x81"		"\x41\x81"		"\x42\x81"
 "\x80\x80"
 ;
