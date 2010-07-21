@@ -454,7 +454,7 @@ static const char _dat0[]="\x0D\x04\x10"
 /*	Variational action 2
 	====================
 */
-static const char _dat2v[]="\x0D\x0F\x10"
+static const char _dat2v[]="\x0D\x10\x10"
 // Maximum operator ID for advanced VA2:
 "\x13"
 // Global variables:
@@ -468,7 +468,7 @@ static const char _dat2v[]="\x0D\x0F\x10"
 "\x00"
 "\x40\x83"		"\x41\x83"		"\x42\x84"		"\x43\x84"
 "\x45\x83"		"\x46\x84"		"\x47\x84"		"\x48\x81"
-"\x49\x84"		"\x5F\x81"		"\x60\x81\x73"
+"\x49\x84"		"\x4A\x84"		"\x5F\x81"		"\x60\x81\x73"
 "\xFF\xF0"
 // Feature 01:
 "\x01"
