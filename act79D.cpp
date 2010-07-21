@@ -94,7 +94,7 @@ int Check7(PseudoSprite&data){
 	data.SetAllHex();
 	uint var=data.ExtractByte(1),var_size=data.ExtractByte(2),cond=data.ExtractByte(3);
 	data.SetOpByte(3, '7');
-	if(cond>0xC)IssueMessage(ERROR,BAD_CONDITION,cond);
+	if(cond>0xE)IssueMessage(ERROR,BAD_CONDITION,cond);
 	else if(cond>5&&cond<0xB){
 		if(var!=0x88){
 			IssueMessage(ERROR,GRFCOND_NEEDS_GRFVAR,cond);
