@@ -308,7 +308,7 @@ static const char _datfeat[]="\x12\x01"
 
 	See full description in act0.cpp.
 */
-static const char _dat0[]="\x0D\x03\x10"
+static const char _dat0[]="\x0D\x04\x10"
 // Feature 00:
 // x0              x4              x8              xC
 "\x2A\xFF\x01\x21\x21\x01\x01\x21\x01\x22\xFF\x22\xFF\x01\x04\xFF"
@@ -443,7 +443,7 @@ static const char _dat0[]="\x0D\x03\x10"
 // Feature 10:
 // x0              x4              x8              xC
 "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\x02\x02\x02\x02\x02\xFE\xFE"
-"\x01\x01\x01\x01\x02\x01"
+"\x01\x01\x01\x02\x02\x01\x01"
 "\x00"
 // Subdata - prop 0E:
 "\x01r\x14\x80\x00"
