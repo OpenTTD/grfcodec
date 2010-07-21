@@ -38,7 +38,10 @@ uint numvars;
 class Vars{
 public:
 	bool canRead7(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x80));}
-	bool canReadD(uint v){return(v<0x80||v==0xFF||(v<numvars&&_p[v&0x7F]&0x40));}
+	bool canReadD(uint v){
+	
+		return (v<0x80||v==0xFF||(v<numvars&&_p[v&0x7F]&0x40));
+	}
 	bool canWriteD(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x20));}
 	bool isBitmask(uint v){return(v<numvars&&_p[v&0x7F]&7)==0;}
 	bool lenOK(uint v,uint len){
