@@ -188,7 +188,7 @@ NFO_MESSAGE(NO_PROBABILITY,"A probability of 0 was specified for this part.\n",U
 NFO_MESSAGE(PARAM_TOO_LARGE,"Parameter %2x out of valid range for variable %2x.\n",HAS_OFFSET|USE_PREFIX)
 NFO_MESSAGE(NO_BUILDING_SPRITE,"Building sprites may not be null.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(OVERRAN_SPRITE,"Unexpected end-of-sprite reading building sprite %d.\n",USE_PREFIX)
-NFO_MESSAGE(FIRST_SPRITE_CANNOT_SHARE,"First building sprite cannot share its bounding box with the previous sprite.\n",USE_PREFIX)
+  MESSAGE_UNUSED(FIRST_SPRITE_CANNOT_SHARE)
 NFO_MESSAGE(INVALID_GRFID,"Action %x references reserved GRFid.\n",USE_PREFIX|HAS_OFFSET)
   MESSAGE_UNUSED(INSUFFICIENT_INCLUDE)
   MESSAGE_UNUSED(EXTRA_INCLUDE)
