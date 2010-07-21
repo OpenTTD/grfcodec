@@ -636,6 +636,8 @@ struct dat{
 #define DATA_FILE(name)\
 	{(char*)_dat##name,"/.nforenum/" #name ".dat",sizeof(_dat##name)-1},\
 
+#define NFORENUM_DIR_LEN (11)
+
 #include "data.h"
 
 bool makedir(const string&dir,bool dieonfail=false){
@@ -711,7 +713,7 @@ FILE*_myfopen(files file){
 	if(pFile){
 		if(fgetc(pFile)==data[file].data[0]&&fgetc(pFile)>=data[file].data[1]){
 			if(file>datfeat && (uint)fgetc(pFile)<MaxFeature()){
-				IssueMessage(0,DATAFILE_MISMATCH,data[file].name+8);
+				IssueMessage(0,DATAFILE_MISMATCH,data[file].name+NFORENUM_DIR_LEN);
 				assert(false);
 				exit(EDATA);
 			}
@@ -730,7 +732,7 @@ FILE*_myfopen(files file){
 	fgetc(pFile);
 	fgetc(pFile);
 	if(file>datfeat && (uint)fgetc(pFile)<MaxFeature()){
-		IssueMessage(0,DATAFILE_MISMATCH,data[file].name+8);
+		IssueMessage(0,DATAFILE_MISMATCH,data[file].name+NFORENUM_DIR_LEN);
 		assert(false);
 		exit(EDATA);
 	}
@@ -739,7 +741,7 @@ FILE*_myfopen(files file){
 
 int _CheckEOF(int dat,files file,const char*src,int line){
 	if(dat==EOF){
-		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+8,FILELINE,src,line);
+		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+NFORENUM_DIR_LEN,FILELINE,src,line);
 		assert(false);
 		exit(EDATA);
 	}
@@ -753,7 +755,7 @@ int _GetCheckWord(FILE*pFile,files file,const char*src,int line){
 
 void _myfread(FILE*pFile,uchar*target,uint count,files file,const char*src,int line){
 	if(fread(target,1,count,pFile)!=count){
-		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+8,FILELINE,src,line);
+		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+NFORENUM_DIR_LEN,FILELINE,src,line);
 		assert(false);
 		exit(EDATA);
 	}
