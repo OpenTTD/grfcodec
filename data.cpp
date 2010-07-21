@@ -597,7 +597,7 @@ static const char _datIDs[]="\x77\x03\x11"
 		0x10 = CTRL_COLOR
 		0x20 = CTRL_NO_STACK_CHECK
 */
-static const char _dat4[]="\x03\x03\x10"
+static const char _dat4[]="\x03\x04\x11"
 // Rules for one-byte IDs:
 // 00              04              08              0C
 "\x04\x04\x04\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
