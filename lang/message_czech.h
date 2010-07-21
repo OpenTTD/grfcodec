@@ -173,7 +173,7 @@ NFO_MESSAGE(NO_PROBABILITY,"Pro tuto cast byla specifikovana nulova pravdepodobn
 NFO_MESSAGE(PARAM_TOO_LARGE,"Parametr %2x presahuje maximalni povolenou hodnotu promenne %2x.\n",HAS_OFFSET|USE_PREFIX)
 NFO_MESSAGE(NO_BUILDING_SPRITE,"Sprity budovy nesmi byt prazdne.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(OVERRAN_SPRITE,"Neocekavany konec spritu pri cteni spritu %d.\n",USE_PREFIX)
-NFO_MESSAGE(FIRST_SPRITE_CANNOT_SHARE,"Prvni sprite budovy nemuze sdilet bounding box s predchozim spritem.\n",USE_PREFIX)
+  MESSAGE_UNUSED(FIRST_SPRITE_CANNOT_SHARE)
 NFO_MESSAGE(INVALID_GRFID,"Akce %x odkazuje na vyhrazene GRFID.\n",USE_PREFIX|HAS_OFFSET)
   MESSAGE_UNUSED(INSUFFICIENT_INCLUDE)
   MESSAGE_UNUSED(EXTRA_INCLUDE)
