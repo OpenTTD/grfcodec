@@ -438,7 +438,7 @@ CHANGED_FEATURE(act3)
 		numCIDs.set(newCIDs);
 	}
 
-	if(numCIDs&&feature>4)IssueMessage(WARNING1,NO_CARGOTYPES);
+	if(numCIDs&&feature>4&&feature!=0x10)IssueMessage(WARNING1,NO_CARGOTYPES);
 
 	PseudoSprite::Byte cargo;
 	PseudoSprite::Word cid,def;
