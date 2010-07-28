@@ -32,7 +32,7 @@ v3.4.6 to
   - Action 2 callbacks 14D..150, 152..154.
   - Action 5 types 07, 0D, 14, 15.
   - Action 4 text IDs F960..F99A.
-  - Action 4 twenty one new languages.
+  - Action 4 twenty two new languages.
   - Action 7 variables A2..A4.
   - Action D variables A1..A4 were not readable.
 - Fix U+E0xx characters being output quoted.
