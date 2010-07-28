@@ -208,7 +208,7 @@ static const char _datlangs[]="\x00\x03"
 /*0x*/	"Irish\n"		"Maltese\n"		"Tamil\n"		"Chuvash\n"
 /*0x*/	"Chinese (Trad)\n" "Serbian\n" "Norwegian (Nynorsk)\n" "Welsh\n"
 //		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*1x*/	"\n"			"\n"			"\n"			"\n"
+/*1x*/	"Belarusian\n"	"\n"			"\n"			"\n"
 /*1x*/	"Arabic (Egypt)\n" "Czech\n"	"Slovak\n"		"\n"
 /*1x*/	"Bulgarian\n"	"\n"			"\n"			"Afrikaans\n"
 /*1x*/	"\n"			"\n"			"Greek\n"		"Dutch\n"
