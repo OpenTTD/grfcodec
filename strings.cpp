@@ -373,7 +373,9 @@ langNames::langNames(){
 	FILE*pFile=myfopen(langs);
 	char buffer[102];
 	for(uint i=0;i<0x80;i++){
-		fgets(buffer,102,pFile);
+		if (fgets(buffer,102,pFile) == NULL) {
+			IssueMessage(0,DATAFILE_ERROR,LOAD,"langs.dat",EOF_READING_NAME,i);
+		}
 		if(buffer[strlen(buffer)-1]!='\n'){
 			if(strlen(buffer)==101)
 				IssueMessage(0,DATAFILE_ERROR,LOAD,"langs.dat",OVERLENGTH_NAME,i);
