@@ -27,10 +27,12 @@ NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) -o \( $(ISMINGW) -eq 1 \) ] && echo
 
 # use 386 instructions but optimize for pentium II/III
 ifeq ($(ISCYGWIN),1)
-CFLAGS = -g -O1 -I $(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
+CFLAGS = -g -O1 -I $(BOOST_INCLUDE)
 else
-CFLAGS = -g -O1 -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGAPP)
+CFLAGS = -g -O1 -idirafter$(BOOST_INCLUDE)
 endif
+CFLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2
+CFLAGS += -D_FORTIFY_SOURCE=2 $(CFLAGOPT) $(CFLAGAPP)
 
 ifeq ($(shell uname),Darwin)
 CFLAGS += -isystem/opt/local/include
