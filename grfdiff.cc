@@ -254,7 +254,7 @@ void grfstore::getorgdata(U16 *size, U8 **data)
 	}
 
 	fseek(grf, fpos_start, SEEK_SET);
-	fread(*data, 1, *size, grf);
+	cfread("reading GRF", *data, 1, *size, grf);
 	fseek(grf, fpos_cur, SEEK_SET);
 }
 
