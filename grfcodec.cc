@@ -335,6 +335,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 		switch(info[i].GetType()){
 		case Sprite::ST_INCLUDE:{
+			static const char *action = "copying binary blob";
 			const char *bininclude=((const Include&)info[i]).GetName();
 			FILE *bin = fopen(bininclude, "rb");
 			if (!bin) {
@@ -382,18 +383,18 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			spriteno++;
 
 			U16 le_spritesize = BE_SWAP16(spritesize);
-			fwrite(&le_spritesize, 1, 2, grf);
+			cfwrite(action, &le_spritesize, 1, 2, grf);
 			fputc(0xff, grf);
 			fputc(0xff, grf);
 			fputc(namelen, grf);
-			fwrite(nameofs, namelen+1, 1, grf);
+			cfwrite(action, nameofs, namelen+1, 1, grf);
 
 			char *buffer = new char[16384];
 			while (fsize > 0) {
 				int chunk = 16384;
 				if (chunk > fsize) chunk=fsize;
-				cfread("copying binary blob", buffer, chunk, 1, bin);
-				fwrite(buffer, chunk, 1, grf);
+				cfread(action, buffer, chunk, 1, bin);
+				cfwrite(action, buffer, chunk, 1, grf);
 				fsize -= chunk;
 			}
 			delete[]buffer;
@@ -401,6 +402,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 		}
 			break;
 		case Sprite::ST_PSEUDO:{
+			static const char *action = "writing pseudo sprite";
 			const Pseudo&sprite=(const Pseudo&)info[i];
 			U16 size=sprite.size();
 			totalcomp += size;
@@ -408,9 +410,9 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			spriteno++;
 
 			U16 le_size = BE_SWAP16(size);
-			fwrite(&le_size, 1, 2, grf);
+			cfwrite(action, &le_size, 1, 2, grf);
 			fputc(0xff, grf);
-			fwrite(sprite.GetData(),1,size,grf);
+			cfwrite(action, sprite.GetData(),1,size,grf);
 			if(spriteno == 1 && sprite.size() == 4){
 				int reported = *((S32*)sprite.GetData());
 				reported = BE_SWAP32(reported) + 1;
@@ -522,8 +524,8 @@ foundlast:
 
 	U16 endoffile = 0;
 	U32 checksum = 0;
-	fwrite(&endoffile, 1, 2, grf);
-	fwrite(&checksum, 1, 4, grf);
+	cfwrite("writing end-of-file", &endoffile, 1, 2, grf);
+	cfwrite("writing checksum", &checksum, 1, 4, grf);
 
 	fclose(grf);
 

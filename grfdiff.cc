@@ -122,7 +122,7 @@ void closegrd()
 
 		GRDmagic = ~GRDmagic;
 
-		fwrite(&GRDmagic, 4, 1, grd);
+		cfwrite("writing end-of-file", &GRDmagic, 4, 1, grd);
 
 		// might have some trailing garbage if the last set of comparisons
 		// was empty (but others weren't), but I don't know how to truncate
@@ -285,11 +285,12 @@ char *strmtime(time_t mtime)
 
 void mkselfextr()
 {
+	static const char *action = "writing exe";
 	char *block;
 	U8 r = 0, e;
 	long newr = 0, chunk = 0, grdofs, blank;
 
-	fwrite(grfmrg, 1, grfmrgsize, grd);
+	cfwrite(action, grfmrg, 1, grfmrgsize, grd);
 
 	e = 0;
 
@@ -308,9 +309,9 @@ void mkselfextr()
 
 	fseek(grd, 0x1c, SEEK_SET);
 
-	fwrite("JD", 2, 1, grd);
-	fwrite(&r, 1, 1, grd);
-	fwrite(&e, 1, 1, grd);
+	cfwrite(action, "JD", 2, 1, grd);
+	cfwrite(action, &r, 1, 1, grd);
+	cfwrite(action, &e, 1, 1, grd);
 
 	fseek(grd, 0, SEEK_END);
 	if (ftell(grd) != (S32) grfmrgsize) {
@@ -329,7 +330,7 @@ void mkselfextr()
 		}
 
 		memset(block, 0, blank);
-		fwrite(block, 1, blank, grd);
+		cfwrite(action, block, 1, blank, grd);
 
 		free(block);
 	}
@@ -362,6 +363,7 @@ void opengrd()
 
 int mkdiff()
 {
+	static const char *action = "writing GRD";
 	FILE *grf[2];
 	long grfsize, thisgrdstart = 0;
 	int res[2], i, isdiff, numdiff = 0, numdiffofs = 0, lastpct = -1;
@@ -401,18 +403,18 @@ int mkdiff()
 
 		thisgrdstart = ftell(grd);
 
-		fwrite(&GRDmagic, 4, 1, grd);
+		cfwrite(action, &GRDmagic, 4, 1, grd);
 
 		i = 1;	// GRD file version
-		fwrite(&i, 2, 1, grd);
+		cfwrite(action, &i, 2, 1, grd);
 
 		numdiffofs = ftell(grd);
-		fwrite(&numdiff, 2, 1, grd);
+		cfwrite(action, &numdiff, 2, 1, grd);
 
 		i = strlen(noext) + 1;
-		fwrite(&i, 1, 1, grd);
+		cfwrite(action, &i, 1, 1, grd);
 
-		fwrite(noext, 1, i, grd);
+		cfwrite(action, noext, 1, i, grd);
 	} else
 		grdfile = NULL;
 
@@ -510,8 +512,8 @@ int mkdiff()
 				grfdata[1]->getorgdata(&size, &data);
 
 				// store the modified sprite
-				fwrite(&spriteno, 2, 1, grd);
-				fwrite(data, 1, size, grd);
+				cfwrite(action, &spriteno, 2, 1, grd);
+				cfwrite(action, data, 1, size, grd);
 			}
 
 			if ( (diffruns < 0) || (spriteno != differences[diffruns][1]+1) ) {
@@ -534,7 +536,7 @@ int mkdiff()
 	if (!onlylist) {
 		long grdcur = ftell(grd);
 		fseek(grd, numdiffofs, SEEK_SET);
-		fwrite(&numdiff, 2, 1, grd);
+		cfwrite(action, &numdiff, 2, 1, grd);
 		fseek(grd, grdcur, SEEK_SET);
 	}
 	if (diffruns < 0) {

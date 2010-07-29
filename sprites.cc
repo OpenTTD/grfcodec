@@ -646,8 +646,8 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int
 
 	U16 le_size = size;
 	le_size = BE_SWAP16(le_size);
-	fwrite(&le_size, 1, 2, grf);
-	fwrite(compr, 1, realcompsize + 8, grf);
+	cfwrite("writing sprite", &le_size, 1, 2, grf);
+	cfwrite("writing sprite", compr, 1, realcompsize + 8, grf);
 
 	free(compr);
 	free(uncomp);
