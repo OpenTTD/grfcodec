@@ -659,14 +659,14 @@ static U8 *readpal(const char *filearg)
 		break;
 	case PSP:
 		char fmt[16];
-		fgets(fmt, sizeof(fmt), f);
-		if (strcmp(fmt, "JASC-PAL\r\n")) {
+		if (fgets(fmt, sizeof(fmt), f) == NULL || strcmp(fmt, "JASC-PAL\r\n")) {
+psp_error:
 			fprintf(stderr, "Error: %s is not a PSP palette file.\n", filearg);
 			exit(1);
 		}
 		int nument, nument2;
-		fscanf(f, "%x\n", &nument);
-		fscanf(f, "%d\n", &nument2);
+		if (fscanf(f, "%x\n", &nument)  != 1) goto psp_error;
+		if (fscanf(f, "%d\n", &nument2) != 1) goto psp_error;
 		if ( (nument != nument2) || (nument != 256) ) {
 			fprintf(stderr, "%s: Error: GRFCodec supports only 256 colour palette files.\n", filearg);
 			exit(1);
@@ -679,14 +679,14 @@ static U8 *readpal(const char *filearg)
 		}
 		break;
 	case GPL:
-		fgets(fmt, sizeof(fmt), f);
-		if (strcmp(fmt, "GIMP Palette\r\n")) {
+		if (fgets(fmt, sizeof(fmt), f) == NULL || strcmp(fmt, "GIMP Palette\r\n")) {
+gpl_error:
 			fprintf(stderr, "Error: %s is not a GIMP palette file.\n", filearg);
 			exit(1);
 		}
-		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Name: ...
-		do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// Columns: ...
-		fgets(fmt, sizeof(fmt), f); // #
+		while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' );// Name: ...
+		while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' );// Columns: ...
+		if (fgets(fmt, sizeof(fmt), f) == NULL) goto gpl_error; // #
 		uint r, g, b;
 		for (int i=0; i<256; i++) {
 			if (!fscanf(f, "%d %d %d\n", &r, &g, &b) || r > 255 || g > 255 || b > 255) {
@@ -696,7 +696,7 @@ static U8 *readpal(const char *filearg)
 			pal[3*i] = (U8) r;
 			pal[3*i+1] = (U8) g;
 			pal[3*i+2] = (U8) b;
-			do{fgets(fmt, sizeof(fmt), f);}while ( fmt[strlen(fmt)-1] != '\n' );// color name
+			while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' );// color name
 		}
 		break;
 	}
