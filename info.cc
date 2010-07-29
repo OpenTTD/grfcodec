@@ -17,7 +17,7 @@
 	#define isatty _isatty
 #endif
 
-const char *infoline = "%s %d %d %02X %d %d %d %d";
+#define infoline "%s %d %d %02X %d %d %d %d"
 //		<PCX-File> <X> <Y> <info[0..7]>
 //		extended if info[0]&8: info[1]*<%d %d> linelen linestart
 
@@ -85,7 +85,7 @@ inforeader::inforeader(char *fn)
 	try{
 		read_file(f,infover,nfofile);
 	}catch(Sprite::unparseable e){
-		printf(e);
+		printf("%s", e.reason.c_str());
 		exit(1);
 	}
 }
