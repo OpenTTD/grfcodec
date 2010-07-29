@@ -11,6 +11,7 @@
 #include "sprites.h"
 #include "error.h"
 #include "escapes.h"
+#include "grfcomm.h"
 
 #if defined _MSC_VER || defined MINGW
 	#include <io.h>
@@ -228,7 +229,7 @@ void infowriter::newband(pcxfile *pcx)
 					fperror("Cannot write to %s", filename);
 					exit(2);
 				}
-				fwrite(d->data+3+namelen, d->size-3-namelen, 1, bin);
+				cfwrite("writing binary include", d->data+3+namelen, d->size-3-namelen, 1, bin);
 				delete[]filename;
 				fclose(bin);
 			} else {

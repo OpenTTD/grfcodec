@@ -214,7 +214,7 @@ void pcxwrite::writeheader()
 	#else
 		pcxheader& le_header = header;
 	#endif
-	fwrite(&le_header, sizeof(pcxheader), 1, curfile);
+	cfwrite("writing pcx header", &le_header, sizeof(pcxheader), 1, curfile);
 	fseek(curfile, oldpos, SEEK_SET);
 }
 
@@ -225,7 +225,7 @@ void pcxwrite::writepal()
 	fseek(curfile, 0, SEEK_END);
 
 	fputc(12, curfile);
-	fwrite(palette, 768, 1, curfile);
+	cfwrite("writing palette", palette, 768, 1, curfile);
 
 	fseek(curfile, oldpos, SEEK_SET);
 }
