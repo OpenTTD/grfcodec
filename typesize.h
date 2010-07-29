@@ -115,8 +115,7 @@ void checksizes()
      )
 	{
 		printf("Fatal: Incorrectly sized variables.\n");
-        const char* fmt = "%s size = %d, expected = %d\n";
-#define PRINT_SZ(t,s) printf(fmt, #t, sizeof(t), s)
+#define PRINT_SZ(t,s) printf("%s size = %d, expected = %d\n", #t, (int)sizeof(t), s)
 #ifdef HAVE_BYTES
         PRINT_SZ(S8,1);
         PRINT_SZ(U8,1);

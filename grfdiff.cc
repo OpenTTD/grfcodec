@@ -74,36 +74,41 @@ int differences[32][2], diffruns;
 const char *exts[2] = { ".GRD", ".EXE" };
 
 
+static void usage(void)
+{
+	printf(
+		"Usage:\n"
+		"    GRFDiff [options] <Org. GRF-File> <New GRF-File>\n"
+		"	Compare the two GRF files and produce a GRD file containing only the\n"
+		"	sprites from the second file that are different from the first file.\n"
+		"\n"
+		"GRFDiff makes a .GRD file with the same basename as the new GRF file.\n"
+		"\n"
+		"Options:\n"
+		"	-h   Show this help\n"
+		"	-l <Numbers>\n"
+		"	     Save the sprites with these numbers in the .GRD instead of\n"
+		"	     finding the modified sprites.  With this option, the first\n"
+		"	     GRF file can be omitted.\n"
+		"	     Format of the numbers: <from1>[-<to1>][,<from2>[-<to2>]]...\n"
+		"		e.g.  1-5,8,20-31 (must be increasing numbers)\n"
+		"	-n   Only show a list of modified sprites, don't make a .GRD file\n"
+		"	-o <GRD-File>\n"
+		"	     Write to this file instead\n"
+		"	-x   Make a self-extracting (.EXE) file instead of a .GRD\n"
+		"	-y   Answer 'y' to all questions\n"
+		"\n"
+		"You can specify several sets of GRF files along with their -l options by\n"
+		"separating them with a double-dash `--'.  The result will be written to a\n"
+		"single .GRD file.  Only -l is valid after the first set.\n"
+		"\n"
+		"GRFDiff is Copyright (C) 2003 by Josef Drexler <jdrexler@uwo.ca>\n"
+		"You may copy and redistribute it under the terms of the GNU General Public\n"
+		"License, as stated in the file 'COPYING'.\n"
+		);
 
-const char *usagetext=
-	"%sUsage:\n"
-	"    GRFDiff [options] <Org. GRF-File> <New GRF-File>\n"
-	"	Compare the two GRF files and produce a GRD file containing only the\n"
-	"	sprites from the second file that are different from the first file.\n"
-	"\n"
-	"GRFDiff makes a .GRD file with the same basename as the new GRF file.\n"
-	"\n"
-	"Options:\n"
-	"	-h   Show this help\n"
-	"	-l <Numbers>\n"
-	"	     Save the sprites with these numbers in the .GRD instead of\n"
-	"	     finding the modified sprites.  With this option, the first\n"
-	"	     GRF file can be omitted.\n"
-	"	     Format of the numbers: <from1>[-<to1>][,<from2>[-<to2>]]...\n"
-	"		e.g.  1-5,8,20-31 (must be increasing numbers)\n"
-	"	-n   Only show a list of modified sprites, don't make a .GRD file\n"
-	"	-o <GRD-File>\n"
-	"	     Write to this file instead\n"
-	"	-x   Make a self-extracting (.EXE) file instead of a .GRD\n"
-	"	-y   Answer 'y' to all questions\n"
-	"\n"
-	"You can specify several sets of GRF files along with their -l options by\n"
-	"separating them with a double-dash `--'.  The result will be written to a\n"
-	"single .GRD file.  Only -l is valid after the first set.\n"
-	"\n"
-	"GRFDiff is Copyright (C) 2003 by Josef Drexler <jdrexler@uwo.ca>\n"
-	"You may copy and redistribute it under the terms of the GNU General Public\n"
-	"License, as stated in the file 'COPYING'.\n";
+	exit(1);
+}
 
 
 void closegrd()

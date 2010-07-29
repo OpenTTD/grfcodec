@@ -29,18 +29,10 @@
 
 #include "grfcomm.h"
 
-extern char* usagetext;
 char *lastspritefilename;
 
 const char *e_openfile = "Error opening %.228s";
 
-
-void usage(const char *extratext)
-{
-	printf(usagetext, extratext);
-
-	exit(1);
-}
 
 
 static int getspritefilename(char *filename, const char *basefilename, char *subdirectory, const char *ext, long spriteno)

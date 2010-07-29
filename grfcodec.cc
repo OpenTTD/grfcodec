@@ -62,55 +62,57 @@
 #	include "path.h"
 #endif
 
-BEGINC
-
-const char *usagetext=
-	"%sUsage:\n"
-	"    GRFCODEC -d [<Options>] <GRF-File> [<Directory>]\n"
-	"        Decode all sprites in the GRF file and put them in the directory\n"
-	"    GRFCODEC -e [<Options>] <GRF-File> [<Directory>]\n"
-	"        Encode all sprites in the directory and combine them in the GRF file\n"
-	"\n"
-	"<GRF-File> denotes the .GRF file you want to work on, e.g. TRG1.GRF\n"
-	"<Directory> is where the individual sprites should be saved. If omitted, they\n"
-	"\twill default to a subdirectory called sprites/.\n"
-	"\n"
-	"Options for decoding:\n"
-	"    -w <num>  Write PCX files with the given width (default 800, minimum 16)\n"
-	"    -h <num>  Split PCX files when they reach this height (default no limit,\n"
-	"              minimum 16)\n"
-	"    -b <num>  Organize sprites in boxes of this size (default 16)\n"
-	"    -p <pal>  Use this palette instead of the default.  See -p ? for a list.\n"
-	"    -t        Disable decoding of plain text characters as strings.\n"
-	"    -x        Disable production of unquoted escape sequences.\n"
-	"    -xx       Disable production of both quoted and unquoted escape sequences.\n"
-	"              This has the side effect of producing a version 6 .nfo, instead\n"
-	"              of a version 7 .nfo.\n"
-	"    -X        List sprite numbers in the PCX file in hex.\n"
-	"\n"
-	"Options for encoding:\n"
-	"    -c        Crop extraneous transparent blue from real sprites\n"
-	"    -u        Save uncompressed data (probably not a good idea)\n"
-	"    -q        Suppress warning messages\n"
-	"\n"
-	"Options for both encoding and decoding:\n"
-	"    -m <num>  Apply colour translation to all sprites except character-glyphs.\n"
-	"    -M <num>  Apply colour translation to all sprites.\n"
-	"        If both of these are specified, only the last is obeyed.\n"
-	"        (-m ? or -M ? for a list of colour translations.)\n"
-	"\n"
+static void usage(void)
+{
+	printf(
+		"Usage:\n"
+		"    GRFCODEC -d [<Options>] <GRF-File> [<Directory>]\n"
+		"        Decode all sprites in the GRF file and put them in the directory\n"
+		"    GRFCODEC -e [<Options>] <GRF-File> [<Directory>]\n"
+		"        Encode all sprites in the directory and combine them in the GRF file\n"
+		"\n"
+		"<GRF-File> denotes the .GRF file you want to work on, e.g. TRG1.GRF\n"
+		"<Directory> is where the individual sprites should be saved. If omitted, they\n"
+		"\twill default to a subdirectory called sprites/.\n"
+		"\n"
+		"Options for decoding:\n"
+		"    -w <num>  Write PCX files with the given width (default 800, minimum 16)\n"
+		"    -h <num>  Split PCX files when they reach this height (default no limit,\n"
+		"              minimum 16)\n"
+		"    -b <num>  Organize sprites in boxes of this size (default 16)\n"
+		"    -p <pal>  Use this palette instead of the default.  See -p ? for a list.\n"
+		"    -t        Disable decoding of plain text characters as strings.\n"
+		"    -x        Disable production of unquoted escape sequences.\n"
+		"    -xx       Disable production of both quoted and unquoted escape sequences.\n"
+		"              This has the side effect of producing a version 6 .nfo, instead\n"
+		"              of a version 7 .nfo.\n"
+		"    -X        List sprite numbers in the PCX file in hex.\n"
+		"\n"
+		"Options for encoding:\n"
+		"    -c        Crop extraneous transparent blue from real sprites\n"
+		"    -u        Save uncompressed data (probably not a good idea)\n"
+		"    -q        Suppress warning messages\n"
+		"\n"
+		"Options for both encoding and decoding:\n"
+		"    -m <num>  Apply colour translation to all sprites except character-glyphs.\n"
+		"    -M <num>  Apply colour translation to all sprites.\n"
+		"        If both of these are specified, only the last is obeyed.\n"
+		"        (-m ? or -M ? for a list of colour translations.)\n"
+		"\n"
 #ifdef NO_BOOST
-	"This GRFCodec was compiled without boost. The \\w<date> and \\d<date> escape\n"
-	"sequences have been disabled, but all other escapes work correctly.\n"
+		"This GRFCodec was compiled without boost. The \\w<date> and \\d<date> escape\n"
+		"sequences have been disabled, but all other escapes work correctly.\n"
 #else
-	"This GRFCodec was compiled with boost. All features are enabled.\n"
+		"This GRFCodec was compiled with boost. All features are enabled.\n"
 #endif
-	"\n"
-	"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>\n"
-	"You may copy and redistribute it under the terms of the GNU General Public\n"
-	"License, as stated in the file 'COPYING'.\n";
+		"\n"
+		"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>\n"
+		"You may copy and redistribute it under the terms of the GNU General Public\n"
+		"License, as stated in the file 'COPYING'.\n"
+		);
 
-ENDC
+	exit(1);
+}
 
 static void showpalettetext()
 {
