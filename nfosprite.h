@@ -44,7 +44,6 @@ public:
 	public:
 		unparseable(string reason,size_t sprite);
 		string reason;
-		operator const char*()const{return reason.c_str();}
 	};
 };
 

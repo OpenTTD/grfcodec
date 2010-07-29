@@ -124,7 +124,7 @@ static int yesno(const char *txt)
 		getc(stdin);
 
 		if (c != 'y') {
-			printf(txt);
+			printf("%s", txt);
 			return 0;
 		}
 	}
@@ -224,7 +224,7 @@ static U16 copysprite(FILE *from, FILE *to)
 			reallen = code ? code : 128;
 			copyblock(reallen, from, to);
 		}
-		if (size < reallen) 
+		if (size < reallen)
 			die("\nOops, got too many bytes. How did that happen?\n"
 			"Size is %d, len is %d at GRF file pos %ld\n",
 			size, reallen, ftell(from));
