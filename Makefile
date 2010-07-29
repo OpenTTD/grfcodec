@@ -76,8 +76,9 @@ INSTALLPATH=$(INSTALLPATH_LINUX)
 endif
 endif
 
-# use 386 instructions but optimize for pentium II/III
-CFLAGS = -g -D$(TYPESIZE) -I. -idirafter$(BOOST_INCLUDE) -Wall -Wno-uninitialized $(CFLAGOPT) $(CFLAGAPP)
+CFLAGS  = -g -D$(TYPESIZE) -I. -idirafter$(BOOST_INCLUDE) -D_FORTIFY_SOURCE=2
+CFLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2 -Wredundant-decls
+CFLAGS += $(CFLAGOPT) $(CFLAGAPP)
 
 ifeq ($(DEBUG),1)
 CFLAGS += -DDEBUG
