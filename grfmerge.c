@@ -147,7 +147,7 @@ static void copyblock(size_t size, FILE *from, FILE *to)
 
 		cfread("copying block", block, 1, thisblock, from);
 
-		if (to) fwrite(block, 1, thisblock, to);
+		if (to) cfwrite("copying block", block, 1, thisblock, to);
 
 		size -= thisblock;
 	}
@@ -379,7 +379,7 @@ static int mergeset(FILE *grd, const char *grffile)
 
 		// write the dummy checksum
 		dummy = 0;
-		fwrite(&dummy, 4, 1, tmp);
+		cfwrite("writing dummy checksum", &dummy, 4, 1, tmp);
 	}
 
 	if (tmp) fclose(tmp);

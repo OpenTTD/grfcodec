@@ -183,3 +183,13 @@ void cfread(const char *action, void *ptr, size_t size, size_t n, FILE *stream)
 		exit(2);
 	}
 }
+
+void cfwrite(const char *action, const void *ptr, size_t size, size_t n, FILE *stream)
+{
+	size_t written = fwrite(ptr, 1, size * n, stream);
+
+	if (written != size * n) {
+		fperror("\nError while %s, got %d, wanted %d", action, written, size * n);
+		exit(2);
+	}
+}
