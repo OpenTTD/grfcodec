@@ -1,5 +1,5 @@
 /*
- * sanity_defines.h 
+ * sanity_defines.h
  * Internal sprite linting stuff.
  *
  * Copyright 2004-2006 by Dale McCoy.
@@ -55,7 +55,7 @@ public:
 	~auto_array(){delete[]_p;}
 	operator _Ty*&(){return _p;}
 	operator const _Ty*()const{return _p;}
-	_Ty*const operator=(_Ty*p){return _p=p;}
+	const _Ty* operator=(_Ty*p){return _p=p;}
 protected:
 	_Ty*_p;
 private:
