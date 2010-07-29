@@ -392,7 +392,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			while (fsize > 0) {
 				int chunk = 16384;
 				if (chunk > fsize) chunk=fsize;
-				fread(buffer, chunk, 1, bin);
+				cfread("copying binary blob", buffer, chunk, 1, bin);
 				fwrite(buffer, chunk, 1, grf);
 				fsize -= chunk;
 			}

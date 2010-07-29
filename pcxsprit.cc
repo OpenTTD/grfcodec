@@ -1,6 +1,7 @@
 
 #include "pcxsprit.h"
 #include "ttdpal.h"
+#include "grfcomm.h"
 
 extern bool _mapAll,_hexspritenums;
 
@@ -236,7 +237,7 @@ void pcxwrite::setpalette(const U8 *palette)
 
 /*void pcxwrite::setpalette(FILE *palfile)
 {
-	fread(palette, 1, 768, palfile);
+	cfread(palette, 1, 768, palfile);
 }*/
 
 
@@ -295,7 +296,7 @@ void pcxread::readheader()
 	long oldpos = ftell(curfile);
 	fseek(curfile, 0, SEEK_SET);
 
-	fread(&header, sizeof(pcxheader), 1, curfile);
+	cfread("reading pcx header", &header, sizeof(pcxheader), 1, curfile);
 	be_swapheader(header);
 
 	if (header.nplanes == 3) {
@@ -310,7 +311,7 @@ void pcxread::readheader()
 	fseek(curfile,-768,SEEK_END);
 	U8 palette[768];
 
-	if ( fread(palette,1,768,curfile) != 768 ) {
+	if (fread(palette,1,768,curfile) != 768 ) {
 		fprintf(stderr, "Could not read palette from PCX file!\n");
 		exit(2);
 	}

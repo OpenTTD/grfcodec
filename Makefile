@@ -160,7 +160,7 @@ GRFCODECSRC=grfcomm.c pcxfile.c sprites.c pcxsprit.c info.c \
 
 GRFDIFFSRC=grfcomm.c error.c sprites.c getopt.c grfdiff.c path.c
 
-GRFMERGESRC=getopt.c grfmerge.c
+GRFMERGESRC=grfcomm.c error.c getopt.c grfmerge.c path.c
 
 ifndef NOREV
 NOREV = 0

@@ -28,6 +28,7 @@
 
 #include "typesize.h"
 #include "version.h"
+#include "grfcomm.h"
 
 static const U32 GRDmagic = 0x67fb49ad;
 #define TEMPFILE "grfmerge.tmp"
@@ -61,6 +62,7 @@ static void usage(void)
 
 static int checkisselfextr(const char *exe)
 {
+	static const char *action = "reading exe";
 	FILE *f;
 	char c[3];
 	U8 r, e;
@@ -77,22 +79,22 @@ static int checkisselfextr(const char *exe)
 	}
 	if (!f) return 0;
 
-	fread(c, 2, 1, f);
+	cfread(action, c, 2, 1, f);
 	if (c[0] != 'M' || c[1] != 'Z')
 		return 0;
 
 	fseek(f, 0x1c, SEEK_SET);
-	fread(c, 2, 1, f);
+	cfread(action, c, 2, 1, f);
 	c[2] = 0;
 
 	if (!strcmp(c, "JD")) {
-		fread(&r, 1, 1, f);
-		fread(&e, 1, 1, f);
+		cfread(action, &r, 1, 1, f);
+		cfread(action, &e, 1, 1, f);
 
 		grdofs = (long) r * (1L << e);
 		fseek(f, grdofs, SEEK_SET);
 
-		fread(&magic, 4, 1, f);
+		cfread(action, &magic, 4, 1, f);
 	}
 	fclose(f);
 
@@ -143,7 +145,7 @@ static void copyblock(size_t size, FILE *from, FILE *to)
 		else
 			thisblock = size;
 
-		fread(block, 1, thisblock, from);
+		cfread("copying block", block, 1, thisblock, from);
 
 		if (to) fwrite(block, 1, thisblock, to);
 
@@ -252,6 +254,7 @@ static void showpct(long now, long total, int spriteno, int *pct)
 
 static int mergeset(FILE *grd, const char *grffile)
 {
+	static const char *action = "reading GRD";
 	FILE *grf = NULL, *tmp = NULL;
 	char grflen, *grfname;
 	const char *c;
@@ -262,17 +265,17 @@ static int mergeset(FILE *grd, const char *grffile)
 	U32 dummy;
 	int skipped = onlyshow;
 
-	fread(&version, 2, 1, grd);
+	cfread(action, &version, 2, 1, grd);
 
 	if (version > 1) die("This is a GRD file version %d, I don't know how to handle that.\n", version);
 
-	fread(&numsprites, 2, 1, grd);
-	fread(&grflen, 1, 1, grd);
+	cfread(action, &numsprites, 2, 1, grd);
+	cfread(action, &grflen, 1, 1, grd);
 
 	grfname = (char*) malloc(grflen + 4);		// +4 for .bak extension (safety margin)
 	if (!grfname) die("Out of memory.\n");
 
-	fread(grfname, 1, grflen, grd);
+	cfread(action, grfname, 1, grflen, grd);
 
 	if (onlyshow) {
 		printf("Generated from: %s.grf\nSprites in file: ", grfname);
@@ -295,7 +298,7 @@ static int mergeset(FILE *grd, const char *grffile)
 				printf("Are you sure you want to apply it to %s?", grffile);
 				if (!yesno("Skipping file\n")) {
 					for (i=0; i<numsprites; i++) {
-						fread(&spriteno, 2, 1, grd);
+						cfread(action, &spriteno, 2, 1, grd);
 						skipsprite(grd);
 					}
 					return 1;
@@ -335,7 +338,7 @@ static int mergeset(FILE *grd, const char *grffile)
 
 	curno = 0;
 	for (i=0; i<numsprites; i++) {
-		fread(&spriteno, 2, 1, grd);
+		cfread(action, &spriteno, 2, 1, grd);
 
 		if (skipped) {
 			if (onlyshow) {
@@ -446,7 +449,7 @@ static int domerge(int argc, char **argv)
 			break;
 
 		fseek(grd, grdofs, SEEK_SET);
-		fread(&magic, 4, 1, grd);
+		cfread("reading GRD", &magic, 4, 1, grd);
 
 		if (magic != GRDmagic) {
 			if (first)
