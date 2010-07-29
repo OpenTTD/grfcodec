@@ -16,4 +16,6 @@ int doopen(const char *grffile, const char *dir, const char *ext, const char *mo
 
 ENDC
 
+void cfread(const char *action, void *ptr, size_t size, size_t n, FILE *stream);
+
 #endif /* _GRFCOMM_H */

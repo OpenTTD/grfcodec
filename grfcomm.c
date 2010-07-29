@@ -173,3 +173,13 @@ int doopen(const char *grffile, const char *dir, const char *ext, const char *mo
 	return 1;
 }
 
+void cfread(const char *action, void *ptr, size_t size, size_t n, FILE *stream)
+{
+	size_t read = fread(ptr, 1, size * n, stream);
+
+	if (read != size * n) {
+		fperror("\nError while %s, got %d, wanted %d, at %ld", action, read, size * n,
+			ftell(stream));
+		exit(2);
+	}
+}

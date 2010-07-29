@@ -21,17 +21,7 @@
 
 #define _SPRITES_C
 #include "sprites.h"
-
-static void cfread(void *ptr, size_t size, size_t n, FILE *stream)
-{
-	unsigned int read = fread(ptr, 1, size * n, stream);
-
-	if (read != size * n) {
-		fperror("\nError in cfread, got %d, wanted %d, at %ld", read, size * n,
-			ftell(stream));
-		exit(2);
-	}
-}
+#include "grfcomm.h"
 
 
 static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
@@ -158,6 +148,7 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 {
+	static const char *action = "decoding sprite";
 	unsigned long size, orgsize, datasize, inbufsize, outbufsize, startpos;
 	U16 wsize;
 	U8 info[8];
@@ -171,7 +162,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 
 	store->newsprite();
 
-	cfread(&wsize, 2, 1, grf);
+	cfread(action, &wsize, 2, 1, grf);
 	wsize = BE_SWAP16(wsize);
 	size = wsize;
 
@@ -179,19 +170,19 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 		return 0;
 
 	startpos = ftell(grf);
-	cfread(info, 1, 1, grf);
+	cfread(action, info, 1, 1, grf);
 
 	if (info[0] == 0xff) {
 		store->setsize(1, 0);
 		outbuffer = (U8*) malloc(size);
 		//outbuffer[0] = 0xff;
-		fread(outbuffer, 1, size, grf);
+		cfread(action, outbuffer, 1, size, grf);
 		writer->adddata(size, outbuffer/*+1*/);
 		store->spritedone();
 		return 1;
 	}
 
-	cfread(info+1, 1, 7, grf);
+	cfread(action, info+1, 1, 7, grf);
 
 	orgsize = size;
 
@@ -224,7 +215,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 	long result;
 	do {
 		fseek(grf, startpos, SEEK_SET);
-		fread(inbuffer, 1, inbufsize, grf);
+		cfread(action, inbuffer, 1, inbufsize, grf);
 		result = uncompress(size, inbuffer, &inbufsize, outbuffer, outbufsize);
 		if (result < 0) {
 			outbufsize = -result;
