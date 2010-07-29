@@ -98,8 +98,8 @@ void pcxfile::newheader(int sx)
 	{72, 72},		// dpi[2]
 	{0},			// cmap[48]
 	0, 1, -1, 1,		// reserved, nplanes, bpl, palinfo
-	{-1, -1}		// screen[2]
-	};			// filler[54]
+	{-1, -1},		// screen[2]
+	{0 }};			// filler[54]
 
 	header = baseheader;
 	header.window[2] = sx - 1;
