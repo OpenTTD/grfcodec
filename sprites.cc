@@ -215,7 +215,11 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 	long result;
 	do {
 		fseek(grf, startpos, SEEK_SET);
-		cfread(action, inbuffer, 1, inbufsize, grf);
+		inbufsize = fread(inbuffer, 1, inbufsize, grf);
+		if (inbufsize == 0) {
+			printf("\nError reading sprite\n");
+			exit(2);
+		}
 		result = uncompress(size, inbuffer, &inbufsize, outbuffer, outbufsize);
 		if (result < 0) {
 			outbufsize = -result;
