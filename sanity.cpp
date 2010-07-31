@@ -118,6 +118,7 @@ void CheckB(PseudoSprite&);
 bool CheckD(PseudoSprite&,uint);
 void CheckF(PseudoSprite&);
 void Check13(PseudoSprite&);
+void Check14(PseudoSprite&);
 void invalidate_act3();
 
 void reset_sanity(){
@@ -138,6 +139,12 @@ void Seen8(int action){
 	if(status.act8==0){
 		IssueMessage(ERROR,MISSING_8,action);
 		status.act8=(unsigned)-1;
+	}
+}
+
+void Before8(int action){
+	if(status.act8!=0){
+		IssueMessage(ERROR,BEFORE_8,action);
 	}
 }
 
@@ -249,7 +256,9 @@ void check_sprite(PseudoSprite&data){
 	try{
 	const int act=data.ExtractByte(0);
 	if(act!=3&&act!=6&&act!=7&&act!=9&&act!=0xC)invalidate_act3();
-	if(act<6 || act==0xA || act==0xF || act>0x11)
+	if(act == 0x14)
+		Before8(act);
+	else if(act<6 || act==0xA || act==0xF || act>0x11)
 		Seen8(act);
 	switch(act){
 	case 0:
@@ -415,6 +424,9 @@ void check_sprite(PseudoSprite&data){
 		break;
 	case 0x13:
 		Check13(data);
+		break;
+	case 0x14:
+		Check14(data);
 		break;
 	case 0xFE:{
 		if(CheckLength(length,8,INVALID_LENGTH,IMPORTS,EXACTLY,8))return;
