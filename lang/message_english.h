@@ -115,6 +115,7 @@ NFO_MESSAGE(INSUFFICIENT_DATA2,"Expected %d more bytes for prop %2x.\n",USE_PREF
 NFO_MESSAGE(MISSING_TERMINATOR,"Property data is missing terminating byte(s).\n",USE_PREFIX)
 NFO_MESSAGE(DUPLICATE_ACT,"Action %x already found at sprite %d.\n",USE_PREFIX)
 NFO_MESSAGE(MISSING_8,"An action 8 must precede action %x.\n",USE_PREFIX)
+NFO_MESSAGE(BEFORE_8,"Action %x must precede action 8.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_VERSION,"Invalid %s version number.\n",USE_PREFIX)
   MESSAGE_UNUSED(BAD_VARIABLE)
 NFO_MESSAGE(BAD_VARSIZE,"Variable size %2x is invalid.\n",USE_PREFIX)
