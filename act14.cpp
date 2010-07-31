@@ -35,7 +35,7 @@ static bool Check14(PseudoSprite&data, uint&offset)
 {
 	uint type = data.ExtractByte(offset++);
 	while (type != 0) {
-		uint id = data.ExtractDword(offset);
+		//uint id = data.ExtractDword(offset);
 		offset += 4;
 
 		switch (type) {
