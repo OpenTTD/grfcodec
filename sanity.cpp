@@ -84,10 +84,10 @@ static struct sanity{
 	void init(){
 		state=FIND_PSEUDO;
 		defined10IDs.init();
-		act8=act11=0;
+		act8=act11=act14=0;
 	}
 	sanstate state;
-	unsigned int expectedsprites,seensprites,spritenum,act8,act11,minnextlen;
+	unsigned int expectedsprites,seensprites,spritenum,act8,act11,act14,minnextlen;
 	class labelArray{
 	public:
 		labelArray(){init();}
@@ -301,6 +301,7 @@ void check_sprite(PseudoSprite&data){
 		status.act8=_spritenum;
 		_grfver=data.ExtractByte(1);
 		if(_grfver<2||_grfver>7)IssueMessage(ERROR,INVALID_VERSION,GRF);
+		if(status.act14!=0&&_grfver<7)IssueMessage(ERROR,INVALID_VERSION_ACT14,_grfver);
 		const uint GRFid=data.ExtractDword(2);
 		data.SetGRFID(2);
 		if((GRFid&0xFF)==0xFF&&GRFid!=0xFFFFFFFF)IssueMessage(WARNING1,RESERVED_GRFID);
@@ -426,6 +427,7 @@ void check_sprite(PseudoSprite&data){
 		Check13(data);
 		break;
 	case 0x14:
+		if (status.act14==0) status.act14=_spritenum;
 		Check14(data);
 		break;
 	case 0xFE:{
