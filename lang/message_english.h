@@ -115,7 +115,6 @@ NFO_MESSAGE(INSUFFICIENT_DATA2,"Expected %d more bytes for prop %2x.\n",USE_PREF
 NFO_MESSAGE(MISSING_TERMINATOR,"Property data is missing terminating byte(s).\n",USE_PREFIX)
 NFO_MESSAGE(DUPLICATE_ACT,"Action %x already found at sprite %d.\n",USE_PREFIX)
 NFO_MESSAGE(MISSING_8,"An action 8 must precede action %x.\n",USE_PREFIX)
-NFO_MESSAGE(BEFORE_8,"Action %x must precede action 8.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_VERSION,"Invalid %s version number.\n",USE_PREFIX)
   MESSAGE_UNUSED(BAD_VARIABLE)
 NFO_MESSAGE(BAD_VARSIZE,"Variable size %2x is invalid.\n",USE_PREFIX)
@@ -264,6 +263,9 @@ NFO_MESSAGE(NO_BYTE_IDS,"Cannot set (extended-)byte IDs for feature %2x.\n",USE_
 NFO_MESSAGE(COULD_NOT_VERIFY,"Cannot check for usage of undefined IDs: Cannot find feature to check.\n",USE_PREFIX)
 NFO_MESSAGE(LENGTH_MISMATCH,"Declared length %d does not match actual length %d.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(EXTENSION_MISMATCH,"Found byte %d of a %d-byte escape while reading byte %d of a %d-byte field.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(BEFORE_8,"Action %x must precede action 8.\n",USE_PREFIX)
+NFO_MESSAGE(INVALID_VERSION_ACT14,"Action 14 requires version number 7 or higher, found %x.\n",USE_PREFIX)
+NFO_MESSAGE(UNKNOWN_ACT14_TYPE,"Unrecognized type %2x, ignoring rest.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
