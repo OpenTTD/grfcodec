@@ -29,7 +29,7 @@
 #include <boost/current_function.hpp>
 
 /* file handling defs:
- * dirname contains the name of the sprites directory 
+ * dirname contains the name of the sprites directory
  * foo_ext contains the extention to use for foo
  * These used to be all caps on _WIN32 systems, but I decided that
  * consistancy was preferable, and Win32 systems are case-insensitive.

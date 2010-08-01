@@ -1,5 +1,5 @@
 /*
- * language_mgr.h 
+ * language_mgr.h
  * Declares classes and functions for management of program language.
  *
  * Copyright (c) 2006, Dan Masek.

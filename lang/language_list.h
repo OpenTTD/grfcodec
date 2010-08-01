@@ -1,5 +1,5 @@
 /*
- * language_list.h 
+ * language_list.h
  * List of definitions of supported languages.
  *
  * Copyright (c) 2006, Dan Masek.

@@ -1,5 +1,5 @@
 /*
- * inject.cpp 
+ * inject.cpp
  * Contains functions for injecting new sprites into the NFO.
  *
  * Copyright 2004-2006 by Dale McCoy.

@@ -1,6 +1,6 @@
 /****************************************************************************
  *                               utf8.c[pp]
- * This file contains functions to decode utf8 characters data the input 
+ * This file contains functions to decode utf8 characters data the input
  * stream.
  *
  **************************************************************************/
