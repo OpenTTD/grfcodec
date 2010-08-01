@@ -438,7 +438,7 @@ CHANGED_FEATURE(act3)
 		numCIDs.set(newCIDs);
 	}
 
-	if(numCIDs&&feature>4&&feature!=0x10)IssueMessage(WARNING1,NO_CARGOTYPES);
+	if(numCIDs&&feature>4&&feature!=0xF&&feature!=0x10)IssueMessage(WARNING1,NO_CARGOTYPES);
 
 	PseudoSprite::Byte cargo;
 	PseudoSprite::Word cid,def;
@@ -448,7 +448,9 @@ CHANGED_FEATURE(act3)
 	ids.reserve(256);
 	for (i=0; i<numCIDs; i++) {
 		data>>cargo>>cid;
-        if(cargo>CargoTransTable() && cargo!=0xFF && (cargo!=0xFE||feature!=4))
+		if ((feature == 0x0F && cargo != 0x00 && cargo != 0xFF) ||
+				(feature == 0x10 && cargo >= 0x09) ||
+				(feature <= 0x04 && cargo>CargoTransTable() && cargo != 0xFF && (cargo != 0xFE || feature != 4)))
 			IssueMessage(ERROR,INVALID_CARGO_TYPE,cargo.loc(),cargo.val());
 		if(ids[cargo])
 			IssueMessage(WARNING1,DUPLICATE,cargo.loc(),CARGO,cargo.val(),ids[cargo]);
