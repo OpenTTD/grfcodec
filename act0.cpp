@@ -185,7 +185,7 @@ void PropData::readString(FILE*pFile, bool withIDs){
 		if(withIDs){
 			if(ch!=0xFF)
 				idRange.push_back(GetCheckWord(0));
-			else 
+			else
 				idRange.push_back(0);
 		}
 		length.append(1,(char)ch);
@@ -394,7 +394,7 @@ void Check0::Check(PseudoSprite&str){
 			if(i<str.Length()){
 				len=_p[feature].GetData(str.ExtractByte(4+str.ExtendedLen(4)));
 				if(_autocorrect&&str.ExtractByte(2)==1&&GetWidth(len)<5){
-					// If setting one property, assume setting same prop for more IDs 
+					// If setting one property, assume setting same prop for more IDs
 					while(i+(GetWidth(len)==3?str.ExtendedLen(i):GetWidth(len))<=str.Length()&&IDs<0xFF){
 						FormatSprite(str,i,len);
 						IDs++;

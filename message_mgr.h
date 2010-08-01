@@ -1,5 +1,5 @@
 /*
- * message_mgr.h 
+ * message_mgr.h
  * Declares classes and functions for handling of program messages in multiple languages.
  *
  * Copyright (c) 2004-2006, Dale McCoy.
@@ -105,7 +105,7 @@ private:
 	std::string GetMessage(const std::string& prefix = "") const;
 
 	/*! A string inserted between comment delimiter and the beginning of a message. */
-	const static std::string commentPrefix; 
+	const static std::string commentPrefix;
 	lang2str_map textMap; /*!< Contains message texts for each language. */
 	char props; /*!< Message properties */
 };
@@ -138,7 +138,7 @@ public:
 	/*!	Adds new message data for the specified message ID.
 		\param i Message ID to add.
 		\param props Properties of this message.
-		\return true if successful. 
+		\return true if successful.
 			If message data for the speficied ID already exists,
 			this function returns false.
 	*/

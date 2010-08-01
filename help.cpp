@@ -1,5 +1,5 @@
 /*
- * help.cpp 
+ * help.cpp
  * Defines functions for displaying program help in multiple languages.
  *
  * Copyright (c) 2004-2006, Dale McCoy.

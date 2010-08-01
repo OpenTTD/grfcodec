@@ -1,5 +1,5 @@
 /*
- * sanity.h 
+ * sanity.h
  * Declares general functions for sprite sanity checking.
  *
  * Copyright 2004-2006 by Dale McCoy.

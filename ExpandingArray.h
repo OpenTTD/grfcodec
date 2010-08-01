@@ -1,5 +1,5 @@
 /*
- * ExpandingArray.h 
+ * ExpandingArray.h
  * Subclasses of the vector class that expand to hold the data put in them.
  * Reading not-yet-defined data has a defined result, either a cast from 0,
  * or the result of the default constructor.

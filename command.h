@@ -1,5 +1,5 @@
 /*
- * command.h 
+ * command.h
  * Defines structs and declares functions for comment commands.
  *
  * Copyright 2004-2006,2008-2009 by Dale McCoy.
@@ -57,7 +57,7 @@ COMMAND_DATA(DEFINEID2)
 COMMAND_DATA(LOCATEID2)
 COMMAND_DATA(USEOLDSPRITENUMS)
 //COMMAND_DATA(VERBOSE)
-/* Add new comment commands here; if they need arguments, create a new 
+/* Add new comment commands here; if they need arguments, create a new
  * COMMENT_DATA_START/.../COMMENT_DATA_END block.
  * Also add code to parse_comment in command.cpp and, if necessary, one or
  * both of GetState(enum gen) or a new GetState.

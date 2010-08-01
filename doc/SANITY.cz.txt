@@ -30,7 +30,7 @@ je způsobuje prosím zašlete autorům programu.
 44: "Chybna hodnota polozky feature." (Kritická/Chyba)
 ->	Je zadána hodnota feature, kterou TTDPatch nepodporuje.
 =>	Použijte hodnotu v rozmezí 00-0F. Množina povolených hodnot závisí na
-	Akci, kterou právě kódujete. Pro více informací konzultujte wiki. 
+	Akci, kterou právě kódujete. Pro více informací konzultujte wiki.
 
 45: "Chybna hodnota polozky nument1 nebo typ nahodne/variabilni Akce 2."
     (Kritická)

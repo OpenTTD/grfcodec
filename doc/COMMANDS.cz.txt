@@ -38,7 +38,7 @@ rozsah a standardní hodnoty jsou uvedeny v následujícím textu.
 
 ON|OFF
 Vypíná a zapíná beautifier. Standardní hodnota je OFF, ale beautifier bude
-automaticky zapnut při nastavení kteréhokoliv jiného parametru (včetně 
+automaticky zapnut při nastavení kteréhokoliv jiného parametru (včetně
 GETCOOKIE).
 
 CONVERTONLY ON|OFF (standardně OFF)
@@ -96,7 +96,7 @@ GETCOOKIE
 Příkaz bude nahrazen "@@BEAUTIFY SETCOOKIE <cookie>", kde <cookie> je stávající
 tzv. "magic cookie" - hodnota představující kompletní nastavení beautifieru.
 Zadání parametru "-b getcookie" nebo jeho ekvivalentu na příkazové řádce způsobí
-zaslání příkazu SETCOOKIE na standardní výstup. 
+zaslání příkazu SETCOOKIE na standardní výstup.
 
 SETCOOKIE <cookie>
 Tento příkaz obnoví nastavení všech předchozích parametrů do stavu, ve kterém
@@ -110,7 +110,7 @@ Tento příkaz způsobí, že se analyzér akcí 1/2/3 zachová jako by narazil 
 souboru. Analyzér vydá varování o všech dosud nepoužitých skupinách spritů
 z přecházejících akcí 1. Analyzér dále provede veškeré kontroly nevyužitých
 cargo ID, které jsou obvykle prováděny na konci souboru, a poté označí všechna
-cargo ID jako nedefinovaná.  
+cargo ID jako nedefinovaná.
 
 
 @@CLEARACTIONF

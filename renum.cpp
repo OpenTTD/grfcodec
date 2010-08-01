@@ -1,5 +1,5 @@
 /*
- * renum.cpp 
+ * renum.cpp
  * Renumbers and lints an NFO file specified on the commandline or piped
  * in via standard input.
  *
