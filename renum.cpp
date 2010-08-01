@@ -397,17 +397,22 @@ int process_file(istream&in){
 						nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
 					(*real_out)<<"// Escapes:";
 					int oldbyte = -1;
-					foreach (const nfe_rpair& p, nfo_escapes.right) {
-						if (p.first == oldbyte) {
-							(*real_out)<<" =";
-							--oldbyte;
-						} else if (p.first < oldbyte) {
-							(*real_out)<<"\n// Escapes:";
-							oldbyte = -1;
+
+					for (int act = 0; act < 255; act++) {
+						foreach (const nfe_rpair& p, nfo_escapes.right) {
+							if (p.second[0] != act) continue;
+
+							if (p.first == oldbyte) {
+								(*real_out)<<" =";
+								--oldbyte;
+							} else if (p.first < oldbyte) {
+								(*real_out)<<"\n// Escapes:";
+								oldbyte = -1;
+							}
+							while (++oldbyte != p.first)
+								(*real_out)<<" "<<nfo_escapes.right.begin()->second;
+							(*real_out)<<" "<<p.second;
 						}
-						while (++oldbyte != p.first)
-							(*real_out)<<" "<<nfo_escapes.right.begin()->second;
-						(*real_out)<<" "<<p.second;
 					}
 					(*real_out)<<"\n";
 				for (uint i=0; i<extra_lines.size(); i++)
