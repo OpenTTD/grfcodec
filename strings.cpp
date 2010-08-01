@@ -303,11 +303,11 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					STACK_CHECK(STACK_TEXT,2)
 				case 0x7B:case 0x7F:case 8:
 					STACK_CHECK(STACK_DWORD,4)
-				//Extended format codes (9A XX) 
+				//Extended format codes (9A XX)
 				case 0x00:
 				case 0x01:
 					STACK_CHECK(STACK_QWORD,8)
-				case 2: case 3: case 4: 
+				case 2: case 3: case 4:
 					--ret;	// These do not read from the stack.
 					break;
 				DEFAULT(ch)

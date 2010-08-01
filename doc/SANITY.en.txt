@@ -390,7 +390,7 @@ Remove the offending GRFid.
 This resource-management action D attempts to {reserve/mark/check/find} more
 IDs than are available for the corresponding feature.
 Request fewer IDs, or change the feature.
- 
+
 141: "ID <ID> is out of valid range (<range>)." (Error)
 <ID> is out of range for the specified feature. The given range is valid.
 Check the feature, ID, and (if applicable) numIDs bytes.

@@ -1,5 +1,5 @@
 /*
- * globals.h 
+ * globals.h
  * Contains global variables and constants (some #defined) for renum.
  *
  * Copyright 2004-2006,2009 by Dale McCoy.

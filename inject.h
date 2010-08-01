@@ -1,5 +1,5 @@
 /*
- * inject.h 
+ * inject.h
  * Contains definitions for injecting new sprites into the NFO.
  *
  * Copyright 2005 by Dale McCoy.
