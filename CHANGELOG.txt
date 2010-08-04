@@ -33,7 +33,7 @@ v3.4.6 to
   - Action 2 callbacks 14D..150, 152..154.
   - Action 5 types 07, 0D, 14, 15.
   - Action 4 text IDs F960..F99A.
-  - Action 4 twenty two new languages.
+  - Action 4 twenty three new languages.
   - Action 7 variables A2..A4.
   - Action D variables A1..A4 were not readable.
 - Fix U+E0xx characters being output quoted.
@@ -48,10 +48,12 @@ v3.4.6 to
 - Fix an action0 with no IDs caused a hang of NFORenum.
 - Fix the error message "A portion of sprite xx could not be processed."
   reported the sprite before the one with the error.
+- Fix a warning on newobject's buy menu sprite cargo type.
 - Remove warning 135 (first sprite cannot share bounding box with
   previous sprite) as it's no longer a valid warning since both openttd
   and ttdpatch support multiple ground sprites
 - Make -w/-W <list> work the way it is supposed to.
+- Make NFO error/warning messages go to stderr.
 - Allow the beautifier to output escape sequences.
 - Allow extended byte IDs in actions 3 and 4.
 - Allow hex escapes that have bit 31 set.
@@ -60,13 +62,16 @@ v3.4.6 to
 - 0.dat can now specify that certain properties may exist multiple
   times in an action 0.
 - Check action 3s for cargos that are specified twice.
-- Add escapes for the new action 2 operations 0E and 0F.
+- Add escapes for the new action 2 operations 14, 15 and 16.
+- Support bridge IDs 0B and 0C.
 - Support random 2 type 84.
 - Support string codes 9A 06, 9A 07, 9A 08, 9A 0B, 9A 0C.
-- Support action 7/9 condition types 0D and 0E
+- Support action 7/9 condition types 0D and 0E.
+- Support action 14.
 - (devel) Can no longer build without boost.
-- (devel) Make UPX and strip optional.
+- (devel) Detect UPX and make strip optional.
 - (devel) Race and bash-ism issues with the Makefile.
+- (devel) Fix numerous compile warnings and harden NFORenum.
 
 v3.4.5 to v3.4.6 (r1795)
 - Data file updates:
