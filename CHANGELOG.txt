@@ -15,6 +15,7 @@ v3.4.6 to
   - Action 0 object properties 0B..10.
   - Action 0 railtype properties 08..16.
   - Action 0 airport tile properties 08, 09, 0E..11.
+  - Action 2 operators 14, 15, 16
   - Action 2 variables 12, 1D, 23, 24.
   - Action 2 vehicle variable 49, 4A.
   - Action 2 stations: fix parameter limits on station var 60.
@@ -59,6 +60,7 @@ v3.4.6 to
 - 0.dat can now specify that certain properties may exist multiple
   times in an action 0.
 - Check action 3s for cargos that are specified twice.
+- Add escapes for the new action 2 operations 0E and 0F.
 - Support random 2 type 84.
 - Support string codes 9A 06, 9A 07, 9A 08, 9A 0B, 9A 0C.
 - Support action 7/9 condition types 0D and 0E
