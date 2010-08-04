@@ -26,9 +26,7 @@ need to build OpenGFX.
 make %{?_smp_mflags} UPX= release bundle_src
 
 %install
-for file in grfcodec grfdiff grfmerge; do
-  install -sD -m0755 $file %{buildroot}%{_bindir}/$file
-done
+make install INSTALLPATH=%{buildroot}%{_bindir}
 
 %clean
 
@@ -37,6 +35,7 @@ done
 %doc Changelog COPYING grfcodec.txt grftut.txt grf.txt
 %{_bindir}/grfcodec
 %{_bindir}/grfdiff
+%{_bindir}/grfid
 %{_bindir}/grfmerge
 
 %changelog
