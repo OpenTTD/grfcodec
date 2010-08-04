@@ -347,6 +347,7 @@ include Makefile.bundle
 
 install: $(GRFCODEC) $(GRFMERGE) $(GRFDIFF) $(GRFID)
 	$(_E) [INSTALL]
+	mkdir -p $(INSTALLPATH)
 	$(_C)cp $(GRFCODEC) $(INSTALLPATH)
 	$(_C)cp $(GRFMERGE) $(INSTALLPATH)
 	$(_C)cp $(GRFDIFF) $(INSTALLPATH)
