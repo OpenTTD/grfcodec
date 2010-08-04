@@ -36,6 +36,7 @@ EXE = $(shell ( [ \( $(ISCYGWIN) -eq 1 \) -o \( "$(MACHINE)" = "mingw32" \) ] ) 
 GRFCODEC = grfcodec$(EXE)
 GRFDIFF  = grfdiff$(EXE)
 GRFMERGE = grfmerge$(EXE)
+GRFID    = grfid$(EXE)
 
 TYPESIZE = GCC32
 
@@ -163,6 +164,8 @@ GRFDIFFSRC=grfcomm.c error.c sprites.c getopt.c grfdiff.c path.c
 
 GRFMERGESRC=grfcomm.c error.c getopt.c grfmerge.c path.c
 
+GRFIDSRC=grfid.c
+
 ifndef NOREV
 NOREV = 0
 endif
@@ -186,7 +189,7 @@ endif
 PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 
 # deafult targets
-all: $(GRFCODEC) $(GRFDIFF) $(GRFMERGE)
+all: $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID)
 remake:
 	$(_E) [CLEAN]
 	$(_C)$(MAKE) ${_S} clean
@@ -210,9 +213,13 @@ $(GRFMERGE): $(GRFMERGESRC:%.c=%.o)
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(CFLAGS) $^ $(LDOPT)
 
+$(GRFID): $(GRFIDSRC:%.c=%.o)
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CFLAGS) $^ $(LDOPT)
+
 
 clean:
-	rm -rf *.o *.os *.bin $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) bundle bundles
+	rm -rf *.o *.os *.bin $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) bundle bundles
 
 mrproper: clean
 	rm -f *.d version.h grfmrg.c version.h.tmp
@@ -240,7 +247,7 @@ ifneq ($(UPX),)
 	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
 endif
 
-release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r
+release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r
 
 # make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
 grfmrgc.bin:	grfmerge.os $(GRFMERGESRC:%.c=%.os)
@@ -328,16 +335,19 @@ ifndef NO_MAKEFILE_DEP
 -include $(GRFCODECSRC:%.c=%.o.d)
 -include $(GRFMERGESRC:%.c=%.o.d)
 -include $(GRFDIFFSRC:%.c=%.o.d)
+-include $(GRFIDSRC:%.c=%.o.d)
 -include $(GRFMERGESRC:%.c=%.os.d)
 -include $(GRFCODECSRC:%.c=%.obj.d)
 -include $(GRFMERGESRC:%.c=%.obj.d)
 -include $(GRFDIFFSRC:%.c=%.obj.d)
+-include $(GRFIDSRC:%.c=%.obj.d)
 endif
 
 include Makefile.bundle
 
-install: $(GRFCODEC) $(GRFMERGE) $(GRFDIFF)
+install: $(GRFCODEC) $(GRFMERGE) $(GRFDIFF) $(GRFID)
 	$(_E) [INSTALL]
 	$(_C)cp $(GRFCODEC) $(INSTALLPATH)
 	$(_C)cp $(GRFMERGE) $(INSTALLPATH)
 	$(_C)cp $(GRFDIFF) $(INSTALLPATH)
+	$(_C)cp $(GRFID) $(INSTALLPATH)
