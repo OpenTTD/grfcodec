@@ -1,7 +1,8 @@
 Changes in
-- (devel) Make UPX optional, fix some race issues in the Makefile, disable
+- (devel) Detect UPX, fix some race issues in the Makefile, disable
   optimization if GCC 4.5.0 is detected (to work around an optimization bug),
   fix version.h generation if there is a version.h in /usr/include.
+- (devel) Fix a number of compiler warnings.
 - Clamp the arguments for -w and -h to 65535 as that is the maximum size of a
   PCX.
 - Silence progress-meter output when stdout is not a console.
