@@ -308,6 +308,9 @@ void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,u
 		dflt.max=2;
 		break;
 	case 0x11:	// ROR
+	case 0x14:	// SHL
+	case 0x15:	// SHR
+	case 0x16:	// SAR
 	default:
 		dflt.min=0;
 		dflt.max=rangemax[width];
