@@ -62,7 +62,7 @@ v3.4.6 to
 - 0.dat can now specify that certain properties may exist multiple
   times in an action 0.
 - Check action 3s for cargos that are specified twice.
-- Add escapes for the new action 2 operations 14, 15 and 16.
+- Add escapes for the new action 2 operations 12, 13, 14, 15 and 16.
 - Support bridge IDs 0B and 0C.
 - Support random 2 type 84.
 - Support string codes 9A 06, 9A 07, 9A 08, 9A 0B, 9A 0C.
