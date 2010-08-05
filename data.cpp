@@ -156,9 +156,9 @@ static const char _datTextIDs[]="\x04\x09"
 	2) one-byte bitmask of features for callback | 80h
 	3) 7Fh followed by word-sized bitmask
 */
-static const char _datcallbacks[]="\x05\x10"
+static const char _datcallbacks[]="\x05\x11"
 // Count:
-"\x55\x01"
+"\x57\x01"
 //v 00             x4              x8              xC
 "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
 "\x00\x83\x8F\x04\x04\x8F\x83\x07\x9F\x8F\x07\x07\x07\x00\x07\x07"
@@ -192,7 +192,7 @@ static const char _datcallbacks[]="\x05\x10"
 //v 140            x4              x8              xC
 "\x04\x04\x04\x07\x0C\x0B\x0E\x05\x07\x7F\x10\x80"
                                         "\x0A\x0A\x0A\x07\x07\x07"
-"\x11\x80\x11\x11\x11"
+"\x11\x80\x11\x11\x11\x0D\x0D"
 ;
 
 
