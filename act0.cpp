@@ -256,9 +256,9 @@ static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const ui
 		switch(GetFormat(format)){
 		case 0:		// default
 			if (GetWidth(format)==2 && IsSpecial(format)) {	// Check word against defined IDs.
-				uint k=0;
-				for (;k<=MaxFeature();k++)
-					if (Check2v::GetEffFeature(k,0x82)==feature) break;
+				uint k=UINT_MAX;
+				for (uint i=0;i<=MaxFeature();i++)
+					if (Check2v::GetEffFeature(i,0x82)==feature && (k==UINT_MAX||k==feature)) k=i;
 
 				static Expanding0Array<bool> warned;
 				if (k>MaxFeature()) {
