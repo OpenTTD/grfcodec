@@ -1,0 +1,71 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" Please adjust this date whenever revising the manpage.
+.Dd August 05, 2010
+.Dt GRFCodec 1
+.Sh NAME
+.Nm GRFCodec
+.Nd A tool to convert a GRF file into graphics files and meta data, and vice versa.
+.Sh SYNOPSIS
+.Nm grfcodec
+.Op Fl d | e
+.Op options
+.Ar GRF-file
+.Op Directory
+.Pp
+<GRF-File> denotes the .GRF file you want to work on, e.g. TRG1.GRF
+.Pp
+<Directory> is where the individual sprites should be saved. If omitted, they
+will default to a subdirectory called sprites/.
+.Sh OPTIONS
+Options for decoding:
+.Bl -tag
+.It Fl w Ar num
+Write PCX files with the given width (default 800, minimum 16)
+.It Fl h Ar num
+Split PCX files when they reach this height (default no limit, minimum 16)
+.It Fl b Ar num
+Organize sprites in boxes of this size (default 16)
+.It Fl p Ar pal
+Use this palette instead of the default.  See -p ? for a list.
+.It Fl t
+Disable decoding of plain text characters as strings.
+.It Fl x
+Disable production of unquoted escape sequences.
+.It Fl xx
+Disable production of both quoted and unquoted escape sequences.
+.Pp
+This has the side effect of producing a version 6 .nfo, instead
+of a version 7 .nfo.
+.It Fl X
+List sprite numbers in the PCX file in hex.
+.El
+.Pp
+Options for encoding:
+.Bl -tag
+.It Fl c
+Crop extraneous transparent blue from real sprites
+.It Fl u
+Save uncompressed data (probably not a good idea)
+.It Fl q
+Suppress warning messages
+.El
+.Pp
+Options for both encoding and decoding:
+.Bl -tag
+.It Fl m Ar num
+Apply colour translation to all sprites except character-glyphs.
+.It Fl M Ar num
+Apply colour translation to all sprites.
+.Pp
+If both of these are specified, only the last is obeyed.
+(-m ? or -M ? for a list of colour translations.)
+.El
+.Sh SEE ALSO
+The documentation in
+.Pa /usr/share/doc/grfcodec/
+.Sh AUTHOR
+GRFCodec was written by Josef Drexler.
+.Pp
+This manual page was written by Remko Bijker.
+.Sh COPYRIGHT
+GRFCodec is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>

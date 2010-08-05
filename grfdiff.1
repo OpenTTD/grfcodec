@@ -1,0 +1,53 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" Please adjust this date whenever revising the manpage.
+.Dd August 05, 2010
+.Dt GRFDiff 1
+.Sh NAME
+.Nm GRFDiff
+.Nd A tool to create a binary GRF diff from to GRFs.
+.Sh SYNOPSIS
+.Nm grfdiff
+.Op Fl hnxy
+.Op Fl l Ar numbers
+.Op Fl o Ar GRF-File
+.Ar Original-GRF-file
+.Ar New-GRF-file
+.Pp
+Compare the two GRF files and produce a GRD file containing only the
+sprites from the second file that are different from the first file.
+.Pp
+GRFDiff makes a .GRD file with the same basename as the new GRF file.
+.Sh OPTIONS
+.Bl -tag
+.It Fl h
+Display the help message.
+.It Fl l Ar numbers
+Save the sprites with these numbers in the .GRD instead of
+finding the modified sprites.  With this option, the first
+GRF file can be omitted.
+.Pp
+Format of the numbers: <from1>[-<to1>][,<from2>[-<to2>]]...
+e.g.  1-5,8,20-31 (must be increasing numbers).
+.It Fl n
+Only show a list of modified sprites, don't make a .GRF file.
+.It Fl x
+Make a self-extracting (.EXE) file instead of a .GRD.
+.It Fl y
+Answer 'y' to all questions.
+.El
+.Pp
+You can specify several sets of GRF files along with their
+.Fl l
+options by separating them with a double-dash `--'.
+The result will be written to a single .GRD file.  Only
+.Fl l
+is valid after the first set.
+.Sh SEE ALSO
+The documentation in
+.Pa /usr/share/doc/grfcodec/
+.Sh AUTHOR
+GRFDiff was written by Josef Drexler.
+.Pp
+This manual page was written by Remko Bijker.
+.Sh COPYRIGHT
+GRFDiff is Copyright (C) 2003 by Josef Drexler <jdrexler@uwo.ca>
