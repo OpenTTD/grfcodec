@@ -44,3 +44,8 @@
 # for profiling
 #CFLAGS += -pg
 #LDOPT += -pg
+
+# Installation directories
+#INSTALL_DOCS_DIR := "$(INSTALL_DIR)/usr/share/doc/nforenum"
+#INSTALL_BINARY_DIR := "$(INSTALL_DIR)/usr/bin"
+#INSTALL_MAN_DIR := "$(INSTALL_DIR)/usr/share/man/man1"
