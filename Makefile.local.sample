@@ -73,3 +73,8 @@
 # On Cygwin, uncomment to build Cygwin-dependent binaries
 # (Required to compile with Cygwin's gcc 4)
 #NOCYGWIN = 0
+
+# Installation directories
+#INSTALL_DOCS_DIR := "$(INSTALL_DIR)/usr/share/doc/grfcodec"
+#INSTALL_BINARY_DIR := "$(INSTALL_DIR)/usr/bin"
+#INSTALL_MAN_DIR := "$(INSTALL_DIR)/usr/share/man/man1"
