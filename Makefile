@@ -22,6 +22,11 @@ AWK = awk
 SRCZIP_FLAGS = -9
 SRCZIP = gzip
 
+# Default installation directories
+INSTALL_DOCS_DIR := "$(INSTALL_DIR)/usr/share/doc/grfcodec"
+INSTALL_BINARY_DIR := "$(INSTALL_DIR)/usr/bin"
+INSTALL_MAN_DIR := "$(INSTALL_DIR)/usr/share/man/man1"
+
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 MACHINE = $(shell $(CC) -dumpmachine || echo '??' )
@@ -39,11 +44,6 @@ GRFMERGE = grfmerge$(EXE)
 GRFID    = grfid$(EXE)
 
 TYPESIZE = GCC32
-
-INSTALLPATH_CYGWIN=/usr/local/bin
-INSTALLPATH_CYGWIN_MINGW=$(shell echo $$SYSTEMROOT | sed -e "s/\(.\):/\\/cygdrive\\/\\1/" -e s/\\\\/\\//g)
-INSTALLPATH_MSYS_MINGW=$(SYSTEMROOT)
-INSTALLPATH_LINUX=/usr/local/bin
 
 -include ${MAKEFILELOCAL}
 
@@ -344,11 +344,3 @@ ifndef NO_MAKEFILE_DEP
 endif
 
 include Makefile.bundle
-
-install: $(GRFCODEC) $(GRFMERGE) $(GRFDIFF) $(GRFID)
-	$(_E) [INSTALL]
-	mkdir -p $(INSTALLPATH)
-	$(_C)cp $(GRFCODEC) $(INSTALLPATH)
-	$(_C)cp $(GRFMERGE) $(INSTALLPATH)
-	$(_C)cp $(GRFDIFF) $(INSTALLPATH)
-	$(_C)cp $(GRFID) $(INSTALLPATH)
