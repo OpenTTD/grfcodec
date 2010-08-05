@@ -18,6 +18,11 @@ AWK = awk
 SRCZIP_FLAGS = -9
 SRCZIP = gzip
 
+# Default installation directories
+INSTALL_DOCS_DIR := "$(INSTALL_DIR)/usr/share/doc/nforenum"
+INSTALL_BINARY_DIR := "$(INSTALL_DIR)/usr/bin"
+INSTALL_MAN_DIR := "$(INSTALL_DIR)/usr/share/man/man1"
+
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 ISMINGW = $(shell [ `$(CC) -dumpmachine` != mingw32 ]; echo $$?)
