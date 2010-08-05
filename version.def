@@ -13,7 +13,4 @@ ifeq ($(REV),)
 REV := norev000
 endif
 
-VERSIONSTR = $(VER) ${REV}
-ifneq ($(NOREV),0)
-VERSIONSTR = $(VER)
-endif
+VERSIONSTR = ${REV}
