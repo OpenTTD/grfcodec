@@ -65,38 +65,19 @@ SRC_DIR=`pwd`
 # Determine if we are using a modified version
 # Assume the dir is not modified
 MODIFIED="0"
-if [ -d "$ROOT_DIR/.svn" ]; then
-	# We are an svn checkout
-	if [ -n "`svnversion \"$SRC_DIR\" | grep 'M'`" ]; then
-		MODIFIED="2"
-	fi
-	# Find the revision like: rXXXXM-branch
-	BRANCH=`LC_ALL=C svn info "$SRC_DIR" | "$AWK" '/^URL:.*branches/ { split($2, a, "/"); for(i in a) if (a[i]=="branches") { print a[i+1]; break } }'`
-	TAG=`LC_ALL=C svn info "$SRC_DIR" | "$AWK" '/^URL:.*tags/ { split($2, a, "/"); for(i in a) if (a[i]=="tags") { print a[i+1]; break } }'`
-	REV_NR=`LC_ALL=C svn info "$SRC_DIR" | "$AWK" '/^Last Changed Rev:/ { print $4 }'`
-	if [ -n "$TAG" ]; then
-		REV=$TAG
-	else
-		REV="r$REV_NR"
-	fi
-elif [ -d "$ROOT_DIR/.git" ]; then
-	# We are a git checkout
-	if [ -n "`git diff-index HEAD \"$SRC_DIR\"`" ]; then
-		MODIFIED="2"
-	fi
-	HASH=`LC_ALL=C git rev-parse --verify HEAD 2>/dev/null`
-	REV="g`echo $HASH | cut -c1-8`"
-	BRANCH=`git branch|grep '[*]' | sed 's@\* @@;s@^master$@@'`
-	REV_NR=`LC_ALL=C git log --pretty=format:%s "$SRC_DIR" | grep "^(svn r[0-9]*)" | head -n 1 | sed "s@.*(svn r\([0-9]*\)).*@\1@"`
-elif [ -d "$ROOT_DIR/.hg" ]; then
+if [ -d "$ROOT_DIR/.hg" ]; then
 	# We are a hg checkout
-	if [ -n "`hg status \"$SRC_DIR\" | grep -v '^?'`" ]; then
+	if [ -n "`hg status | grep -v '^?'`" ]; then
 		MODIFIED="2"
 	fi
-	HASH=`LC_ALL=C hg parents --template="{node}"`
-	REV="h`echo $HASH | cut -c1-8`"
-	BRANCH=`hg branch | sed 's@^default$@@'`
-	REV_NR=`LC_ALL=C hg log -r $HASH:0 -k "svn" -l 1 --template "{desc}\n" "$SRC_DIR" | grep "^(svn r[0-9]*)" | head -n 1 | sed "s@.*(svn r\([0-9]*\)).*@\1@"`
+	REV_NR=`LC_ALL=C hg id -n | cut -d+ -f1`
+	if [ -n "`hg id -t | grep -v tip`" ]; then
+		REV=`hg id -t | grep -v tip`
+		BRANCH=""
+	else
+		REV=$REV_NR
+		BRANCH=`hg branch | sed 's@^default$@@'`
+	fi
 else
 	# We don't know
 	MODIFIED="1"
@@ -106,7 +87,7 @@ else
 fi
 
 if [ "$MODIFIED" -eq "2" ]; then
-	REV="${REV}E"
+	REV="${REV}M"
 fi
 
 CLEAN_REV=${REV}
