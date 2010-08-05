@@ -277,15 +277,15 @@ static const char _datversions[]="\x00\x04"
 		0x04 = Ind. prod style
 		0xFF = No std 2 for this feature
 */
-static const char _datfeat[]="\x12\x02"
+static const char _datfeat[]="\x12\x03"
 // Max. feature:
 "\x11"
 // Feature bit-masks:
 // 00              04              08              0C
-"\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x00\x50\x0F\x0F\x0F"
+"\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x0F\x50\x0F\x0F\x0F"
 // Std action 2 formats:
 // 00              04              08              0C
-"\x00\x00\x00\x00\x01\x02\x02\x03\xFF\x03\x04\x02\xFF\xFF\x00\x03\x02\x03"
+"\x00\x00\x00\x00\x01\x02\x02\x03\xFF\x03\x04\x02\xFF\x02\x00\x03\x02\x03"
 ;
 
 
@@ -309,7 +309,7 @@ static const char _datfeat[]="\x12\x02"
 
 	See full description in act0.cpp.
 */
-static const char _dat0[]="\x0D\x05\x11"
+static const char _dat0[]="\x0D\x06\x11"
 // Feature 00:
 // x0              x4              x8              xC
 "\x2A\xFF\x01\x21\x21\x01\x01\x21\x01\x22\xFF\x22\xFF\x01\x04\xFF"
@@ -429,7 +429,18 @@ static const char _dat0[]="\x0D\x05\x11"
 
 // Feature 0D:
 // x0              x4              x8              xC
+"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x04\xFE\xFF\xFE\x01\x01\x01"
+"\x02"
 "\x00"
+// Subdata - prop 0A:
+"\x01\xFCr\xFE\x80\x00"
+	"\x01l\xFE\x01\xC1|\x01*\xFE\x02\\\x00\x80\x00"
+		"\x00"
+		"\x01\x01\xFE\xC0\x00"
+			"l\xFE\x0A|\x01\x00"
+				"\x00"
+// Subdata - prop 0C:
+"\x02\x02\x00"
 
 // Feature 0E:
 // x0              x4              x8              xC
