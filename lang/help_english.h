@@ -48,7 +48,7 @@ START_HELP_TEXT(RL_ENGLISH)
 "       Forces processing of files that do not look like NFO files.\n"
 "       The default is to treat such files as if they specified a too-high info\n"
 "       version.\n"
-"   --help -?\n"
+"   --help -h -?\n"
 "       Display this message.\n"
 "   --lock\n"
 "       Locks the current comment command state. Commands will continue to be\n"
