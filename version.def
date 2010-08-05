@@ -1,7 +1,5 @@
-# Version number
-VER = 3.4.6
 # Current year
-YEAR = 2009
+YEAR = 2010
 
 ifdef REVISION
 REV := $(REVISION)
@@ -15,7 +13,4 @@ ifeq ($(REV),)
 REV := norev000
 endif
 
-VERSIONSTR = $(VER) ${REV}
-ifneq ($(NOREV),0)
-VERSIONSTR = $(VER)
-endif
+VERSIONSTR = ${REV}
