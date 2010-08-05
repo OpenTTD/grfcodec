@@ -84,6 +84,7 @@ int __cdecl main(const int argc,char**argv){
 		{"no-replace",no_argument,&replace,0},
 		{"keep-old",no_argument,&replace,0},
 		{"help",no_argument,NULL,'?'},
+		{"help",no_argument,NULL,'h'},
 		{"auto-correct",no_argument,NULL,'a'},
 		{"beautify",required_argument,NULL,'b'},
 		{"diff",no_argument,NULL,'d'},
@@ -102,7 +103,7 @@ int __cdecl main(const int argc,char**argv){
 	ifstream fin;
 	ofstream fout;
 	while(argc>1){
-		if(opt!=EOF)opt=getopt_long(argc,argv,"D::k?c:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
+		if(opt!=EOF)opt=getopt_long(argc,argv,"D::k?hc:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
 		switch(opt){
 		case 0:continue;
 		case'D':
@@ -118,6 +119,7 @@ int __cdecl main(const int argc,char**argv){
 			}
 			continue;
 		case'?':
+		case'h':
 			ShowHelp();
 			return 0;
 		case'f':_force=1;continue;
