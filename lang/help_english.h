@@ -85,6 +85,7 @@ START_HELP_TEXT(RL_ENGLISH)
 "\n"
 "NFORenum is Copyright 2004-2009 by Dale McCoy (dalestan@gmail.com)\n"
 "Portions Copyright 2006 Dan Masek\n"
+"Portions Copyright 2010 Thijs Marinussen, Remko Bijker\n"
 "You may copy and redistribute it under the terms of the GNU General Public\n"
 "License, as stated in the file 'COPYING'.\n"
 "\n"

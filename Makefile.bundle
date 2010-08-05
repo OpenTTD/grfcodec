@@ -24,13 +24,33 @@ bundle: release
 	$(_E) '[BUNDLE] Constructing bundle'
 	$(_C)rm -rf   "$(BUNDLE_DIR)"
 	$(_C)mkdir -p "$(BUNDLE_DIR)"
+	$(_C)mkdir -p "$(BUNDLE_DIR)/docs"
+	$(_C)mkdir -p "$(BUNDLE_DIR)/man"
 	$(_C)cp $(NFORENUM)        "$(BUNDLE_DIR)/"
 	$(_C)cp COPYING.txt        "$(BUNDLE_DIR)/"
 	$(_C)cp CHANGELOG.txt      "$(BUNDLE_DIR)/"
-	$(_C)cp doc/*.txt          "$(BUNDLE_DIR)/"
+	$(_C)cp doc/*.txt          "$(BUNDLE_DIR)/docs/"
+	$(_C)cp doc/nforenum.1     "$(BUNDLE_DIR)/man/"
+	$(_C)gzip -9               "$(BUNDLE_DIR)/man/nforenum.1"
 ifeq ($(NFORENUM), nforenum.exe)
 	$(_C)unix2dos "$(BUNDLE_DIR)/"*.txt
+	$(_C)unix2dos "$(BUNDLE_DIR)/docs/"*.txt
 endif
+
+install: bundle
+	@echo '[INSTALL] Installing NFORenum'
+	$(_C)install -d "$(INSTALL_DOCS_DIR)"
+	$(_C)install -d "$(INSTALL_BINARY_DIR)"
+	$(_C)install -d "$(INSTALL_MAN_DIR)"
+ifeq ($(NFORENUM), nforenum.exe)
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(NFORENUM)" "$(INSTALL_BINARY_DIR)/$(NFORENUM)"
+else
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(NFORENUM)" "$(INSTALL_BINARY_DIR)/$(NFORENUM)"
+endif
+	$(_C)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(INSTALL_DOCS_DIR)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/"*.txt "$(INSTALL_DOCS_DIR)"
+	$(_C)install -d "$(INSTALL_MAN_DIR)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/man/nforenum.1.gz" "$(INSTALL_MAN_DIR)/nforenum.1.gz"
 
 ### Packing the current bundle into several compressed file formats ###
 #
