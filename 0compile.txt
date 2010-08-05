@@ -2,7 +2,7 @@ How to compile NFORenum
 -----------------------
 
 Compiling NFORenum is pretty straightforward. It can be done, with varying
-quantities of automation, with MSVC 2003 or basically any gcc.
+quantities of automation by basically any gcc.
 
 Compiling with make
 ===================
@@ -15,12 +15,6 @@ If it gets these wrong, modify Makefile.local appropriately, or set the above
 mentioned controlling variables.
 ISCYGWIN: 1 on cygwin and 0 on Linux.
 BOOST_INCLUDE is the directory where your boost headers can be found.
-
-You may also set the following varibles:
-NOREV: Set to 0 by default, set to 1 to remove the "rXXX" from the version
-    number
-SVNVERSION: Set to svnversion . by default. If you're using TortoiseSVN,
-    change Makefile.local to set it to SubWCRev.exe . instead.
 
 
 Targets
@@ -36,25 +30,3 @@ release		Compile NFORenum, then strip and upx it.
 
 clean		Delete all compiled files
 remake		Equivalent of "make clean all"
-
-
-
-Compiling with Visual Studio 2003
-=================================
-
-Visual Studio can build NFORenum, in any of 5 different configurations:
-Debug
-Debug-NoVer
-Release
-Release-NoRev
-Release-NoVer
-
-Debug, Release, and Release-NoRev configurations use cygwin's make (which
-they expect to find in C:\cygwin\bin) to make version.h and ttdpal.h, prior
-to building NFORenum with Visual Studio's build engine. NoRev builds without
-a revision number in the version string.
-In the NoVer configurations, you are responsible for creating and updating
-version.h. Instructions on how to do this live right next to the
-#include "version.h" directive.
-
-All Release targets expect to find upx in your PATH.

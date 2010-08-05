@@ -117,18 +117,6 @@ NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
   strings.cpp utf8.cpp getopt.cpp help.cpp message_mgr.cpp language_mgr.cpp \
   mapescapes.cpp pseudo_seq.cpp
 
-ifndef NOREV
-NOREV = 0
-endif
-
-ifndef NO_BOOST
-NO_BOOST = 0
-endif
-
-ifneq ($(NO_BOOST),0)
-BOOST_WARN = echo Warning: NO_BOOST is no longer obeyed.
-endif
-
 # targets
 all: $(NFORENUM)
 remake:
@@ -164,7 +152,6 @@ ifneq ($(UPX),)
 endif
 
 FORCE:
-	@$(BOOST_WARN)
 	@$(BOOST_ERROR)
 
 include version.def
