@@ -7,7 +7,7 @@ print "// Edit the grfmerge sources or grfmrgc.pl instead.\n\n";
 print qq{#include "typesize.h"\n#include "grfmrg.h"\n\n};
 print "const char grfmrg[] =";
 
-open IN, "grfmrgc.bin";
+open IN, "objs/grfmrgc.bin";
 binmode IN;
 
 local $/ = \30;
