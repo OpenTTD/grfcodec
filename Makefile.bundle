@@ -29,8 +29,8 @@ bundle: release
 	$(_C)cp $(NFORENUM)        "$(BUNDLE_DIR)/"
 	$(_C)cp COPYING            "$(BUNDLE_DIR)/"
 	$(_C)cp changelog.txt      "$(BUNDLE_DIR)/docs/"
-	$(_C)for i in doc/*.en.txt; do cp $$i "$(BUNDLE_DIR)/docs/"`echo $$i | sed 's@doc/@@;s/.en.txt/.txt/'`; done
-	$(_C)cp doc/nforenum.1     "$(BUNDLE_DIR)/man/"
+	$(_C)for i in docs/*.en.txt; do cp $$i "$(BUNDLE_DIR)/docs/"`echo $$i | sed 's@docs/@@;s/.en.txt/.txt/'`; done
+	$(_C)cp docs/nforenum.1     "$(BUNDLE_DIR)/man/"
 	$(_C)gzip -9               "$(BUNDLE_DIR)/man/nforenum.1"
 ifeq ($(NFORENUM), nforenum.exe)
 	$(_C)unix2dos "$(BUNDLE_DIR)/COPYING"
