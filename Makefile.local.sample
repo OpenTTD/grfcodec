@@ -5,12 +5,6 @@
 # Copy this file to Makefile.local (if make didn't do it for you)
 # and edit to modify the settings
 
-# A command to return the current SVN revision of the source tree; it should
-# it in the format [##:]##, where the second set of digits is the current
-# revision (used for adding the revision to the version string)
-# SVNVERSION = svnversion -c .	# standard SVN client (e.g. cygwin)
-# SVNVERSION = SubWCRev.exe .	# TortoiseSVN
-
 # Optional parts of GRFCodec are dependent on boost::date_time
 # If you do not have boost, make should detect this, and compile a version
 # of grfcodec that does not include the boost-dependent parts.
@@ -20,21 +14,6 @@
 # If boost can be found in your standard include search paths, setting this to
 # any non-empty value will cause make to assume that boost is present.
 #BOOST_INCLUDE =
-# If make is convinced that you do have boost installed when you do not,
-# uncomment the following line:
-#NO_BOOST = 1
-
-# The path for installation may be set directly, by:
-#INSTALLPATH =
-# Or, it may be intuited from the shell and (for Cygwin) compiler settings:
-#   Cygwin shell, Cygwin native compiler:
-#INSTALLPATH_CYGWIN = /usr/local/bin
-#   Cygwin shell, MinGW32 compiler:
-#INSTALLPATH_CYGWIN_MINGW = /cygdrive/c/windows
-#   MSYS shell, MinGW32 compiler:
-#INSTALLPATH_MSYS_MINGW = c:\windows
-#   Everything else:
-#INSTALLPATH_LINUX = /usr/local/bin
 
 # Gnu compiler settings
 #SHELL = /bin/sh

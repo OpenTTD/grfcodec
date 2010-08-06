@@ -59,24 +59,6 @@ endif
 endif
 
 
-ifndef INSTALLPATH
-
-# make an educated guess on the install path.
-ifeq ($(EXE),.exe)
-ifeq ($(ISCYGWIN),1)
-ifeq ($(NOCYGWIN),1)
-INSTALLPATH=$(INSTALLPATH_CYGWIN_MINGW)
-else
-INSTALLPATH=$(INSTALLPATH_CYGWIN)
-endif
-else
-INSTALLPATH=$(INSTALLPATH_MSYS_MINGW)
-endif
-else
-INSTALLPATH=$(INSTALLPATH_LINUX)
-endif
-endif
-
 CFLAGS  = -g -D$(TYPESIZE) -I. -idirafter$(BOOST_INCLUDE) -D_FORTIFY_SOURCE=2
 CFLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2 -Wredundant-decls
 CFLAGS += $(CFLAGOPT) $(CFLAGAPP)
