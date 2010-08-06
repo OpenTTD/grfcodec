@@ -35,7 +35,7 @@
 
 using namespace std;
 
-#include"renum.h"
+#include"nforenum.h"
 #include"getopt.h"
 #include"globals.h"
 #include"inlines.h"

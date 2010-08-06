@@ -33,7 +33,7 @@
 
 using namespace std;
 
-#include"renum.h"
+#include"nforenum.h"
 #include"inlines.h"
 #include"messages.h"
 #include"ExpandingArray.h"

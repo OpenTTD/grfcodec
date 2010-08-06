@@ -28,7 +28,7 @@
 
 using namespace std;
 
-#include"renum.h"
+#include"nforenum.h"
 #include"inlines.h"
 #include"messages.h"
 #include"sanity_defines.h"

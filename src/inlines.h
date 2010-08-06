@@ -30,7 +30,7 @@
 #include<climits>
 
 #include"globals.h"
-#include"renum.h"
+#include"nforenum.h"
 
 inline string safetostring(const char*ptr){return ptr?ptr:"";}
 

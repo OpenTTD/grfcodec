@@ -36,7 +36,7 @@ using namespace std;
 // where <revision> is the current revision of the nforenum source
 // Increment the 3.3.1 as necessary to agree with version.def
 #include"version.h"
-#include"renum.h"
+#include"nforenum.h"
 #include"inlines.h"
 #include"messages.h"
 #include"sanity_defines.h"
