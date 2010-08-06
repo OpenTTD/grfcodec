@@ -27,7 +27,7 @@ graphics.
 %build
 make %{?_smp_mflags}
 #remove the very outdated CZ docs:
-rm rm doc/*cz.txt
+rm doc/*cz.txt
 
 %install
 make install INSTALL_DIR=%{buildroot}
