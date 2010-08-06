@@ -5,7 +5,7 @@ Summary:        A format correcter and linter for the NFO language
 Group:          Development/Tools
 License:        GPLv2+
 URL:            http://dev.openttdcoop.org/projects/nforenum
-Source0:        nforenum-%{dz_version}.tar
+Source0:        %{name}-%{dz_version}.tar
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -25,17 +25,26 @@ graphics.
 %setup -qn %{name}
 
 %build
-make %{?_smp_mflags} UPX= release bundle_src
+make %{?_smp_mflags}
+#remove the very outdated CZ docs:
+rm rm doc/*cz.txt
 
 %install
-install -Ds -m0755 nforenum %{buildroot}%{_bindir}/nforenum
+make install INSTALL_DIR=%{buildroot}
 
 %clean
 
 %files
 %defattr(-,root,root,-)
-%doc CHANGELOG.txt COPYING.txt TODO.txt
-%doc doc/
 %{_bindir}/nforenum
+%dir %{_datadir}/doc/nforenum
+%doc %{_datadir}/doc/nforenum/CHANGELOG.txt
+%doc %{_datadir}/doc/nforenum/COPYING.txt
+%doc %{_datadir}/doc/nforenum/AUTO_CORRECT.en.txt
+%doc %{_datadir}/doc/nforenum/COMMANDS.en.txt
+%doc %{_datadir}/doc/nforenum/README.en.txt
+%doc %{_datadir}/doc/nforenum/README.RPN.en.txt
+%doc %{_datadir}/doc/nforenum/SANITY.en.txt
+%doc %{_mandir}/man1/nforenum.1.gz
 
 %changelog
