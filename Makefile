@@ -185,7 +185,7 @@ $(GRFID): $(GRFIDSRC:%.c=objs/%.o)
 
 
 clean:
-	rm -rf objs $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) bundle bundles
+	rm -rf objs $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) bundle bundles grfcodec-*
 
 mrproper: clean
 	rm -f *.d src/version.h src/grfmrg.c
