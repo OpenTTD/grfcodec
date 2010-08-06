@@ -23,19 +23,29 @@ need to build OpenGFX.
 %setup -qn %{name}
 
 %build
-make %{?_smp_mflags} UPX= release bundle_src
+#Targets release and bundle_src are needed for DevZone only
+make %{?_smp_mflags} release bundle_src
 
 %install
-make install INSTALLPATH=%{buildroot}%{_bindir}
+make install INSTALL_DIR=%{buildroot}
 
 %clean
 
 %files
 %defattr(-,root,root,-)
-%doc Changelog COPYING grfcodec.txt grftut.txt grf.txt
 %{_bindir}/grfcodec
 %{_bindir}/grfdiff
 %{_bindir}/grfid
 %{_bindir}/grfmerge
+%dir %{_datadir}/doc/grfcodec
+%doc %{_datadir}/doc/grfcodec/CHANGELOG.txt
+%doc %{_datadir}/doc/grfcodec/COPYING.txt
+%doc %{_datadir}/doc/grfcodec/grf.txt
+%doc %{_datadir}/doc/grfcodec/grfcodec.txt
+%doc %{_datadir}/doc/grfcodec/grftut.txt
+%doc %{_mandir}/man1/grfcodec.1.gz
+%doc %{_mandir}/man1/grfdiff.1.gz
+%doc %{_mandir}/man1/grfid.1.gz
+%doc %{_mandir}/man1/grfmerge.1.gz
 
 %changelog
