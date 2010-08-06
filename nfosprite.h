@@ -80,16 +80,7 @@ public:
 	static bool MayBeSprite(const string&);
 	enum width {_B_, _BX_, _W_, _D_};
 
-#ifdef NO_BOOST
-	uint ReadValue(istream& i, width w, size_t n);
-#else
-private:
-	static uint _ReadValue(istream&, width);
-public:
-	static inline uint ReadValue(istream& i, width w, size_t) {
-		return _ReadValue(i, w);
-	}
-#endif
+	static uint ReadValue(istream&, width);
 
 private:
 	string packed;

@@ -48,12 +48,6 @@
 #include "grfcomm.h"
 #include "info.h"
 #include "error.h"
-// The prefered method for generating version.h for Visual Studio is to
-// install Cygwin and use the command "make version.h".
-// If this is not an option, create a file with the single line
-// #define GRFCODECVER "0.9.8 r<revision>"
-// where <revision> is the current revision of the grfcodec source
-// Increment the 0.9.8 as necessary to agree with version.def
 #include "version.h"
 #include "conv.h"
 #include "nfosprite.h"
@@ -98,13 +92,6 @@ static void usage(void)
 		"    -M <num>  Apply colour translation to all sprites.\n"
 		"        If both of these are specified, only the last is obeyed.\n"
 		"        (-m ? or -M ? for a list of colour translations.)\n"
-		"\n"
-#ifdef NO_BOOST
-		"This GRFCodec was compiled without boost. The \\w<date> and \\d<date> escape\n"
-		"sequences have been disabled, but all other escapes work correctly.\n"
-#else
-		"This GRFCodec was compiled with boost. All features are enabled.\n"
-#endif
 		"\n"
 		"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>\n"
 		"You may copy and redistribute it under the terms of the GNU General Public\n"
