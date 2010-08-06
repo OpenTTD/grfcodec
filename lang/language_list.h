@@ -26,7 +26,7 @@
 // - <code string> A string used to select this language.
 START_LANGUAGES()
 RENUM_LANGUAGE(RL_ENGLISH,"en")
-RENUM_LANGUAGE(RL_CZECH,"cz")
+//RENUM_LANGUAGE(RL_CZECH,"cz")
 
 // ^
 // |
