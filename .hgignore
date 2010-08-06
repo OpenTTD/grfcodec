@@ -1,16 +1,11 @@
 # Use glob syntax:
 syntax: glob
 
-*.d
-*.o
-*.os
+objs
+nforenum-*
+bundle
 
 Makefile.local
 nforenum
-renum
-
 version.h
 
-nforenum-*
-
-bundle
