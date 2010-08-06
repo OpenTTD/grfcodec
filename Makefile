@@ -137,7 +137,7 @@ $(NFORENUM): $(NFORENUMSRC:%.cpp=objs/%.o)
 
 
 clean:
-	rm -rf objs nforenum.* nforenum bundle bundles
+	rm -rf objs nforenum.* nforenum nforenum-* bundle bundles
 	rm -f src/version.h
 
 release: FORCE
