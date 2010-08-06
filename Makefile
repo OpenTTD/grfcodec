@@ -87,13 +87,17 @@ CXXFLAGS = $(CFLAGS)
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
 BOOST_INCLUDE=$(shell \
-find /usr/include /usr/local/include -maxdepth 1 -name 'boost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
+find /usr/include /usr/local/include /opt/local/include -maxdepth 1 -name 'boost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
 ifeq ($(BOOST_INCLUDE),)
 BOOST_INCLUDE=$(shell \
 ( [ -d /usr/include/boost/date_time ] && echo /usr/include ) || \
 ( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) || \
 ( [ -d /opt/local/include/boost/date_time ] && echo /opt/local/include ) )
 endif
+endif
+
+ifeq ($(BOOST_INCLUDE),)
+BOOST_ERROR = echo Error: Boost not found. Compilation will fail.
 endif
 
 ifndef V
@@ -148,26 +152,6 @@ GRFMERGESRC=grfcomm.c error.c getopt.c grfmerge.c path.c
 
 GRFIDSRC=grfid.c
 
-ifndef NOREV
-NOREV = 0
-endif
-
-ifndef NO_BOOST
-NO_BOOST = 0
-endif
-
-ifeq ($(BOOST_INCLUDE),)
-BOOST_CMD=-DNO_BOOST
-BOOST_WARN = @echo "Warning: boost::date_time not found.  \\w<date> and \\d<date> will not be" ; echo "  supported.  If you have recently installed boost, try sudo updatedb."
-else
-BOOST_CMD=-I$(BOOST_INCLUDE)
-endif
-
-ifneq ($(NO_BOOST),0)
-BOOST_CMD=-DNO_BOOST
-BOOST_WARN = @echo "Warning: \\w<date> and \\d<date> support disabled by NO_BOOST setting."
-endif
-
 PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 
 # deafult targets
@@ -208,7 +192,7 @@ mrproper: clean
 	@touch -ct 9901010000 ttdpal.h	# don't delete it, so we don't confuse svn, but force it to be remade
 
 FORCE:
-	@$(BOOST_WARN)
+	@$(BOOST_ERROR)
 
 include version.def
 
