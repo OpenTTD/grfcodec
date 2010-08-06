@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#include"renum.h"
+#include"nforenum.h"
 #include"pseudo.h"
 #include"messages.h"
 #include"strings.h"

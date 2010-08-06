@@ -24,7 +24,7 @@
 
 #include <boost/preprocessor/cat.hpp>
 
-#include "renum.h"
+#include "nforenum.h"
 #include "pseudo.h"
 
 #define INCLUDING
