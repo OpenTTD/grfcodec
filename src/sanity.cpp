@@ -27,7 +27,7 @@
 #include<cstdlib>
 using namespace std;
 
-#include"renum.h"
+#include"nforenum.h"
 #include"globals.h"
 #include"inlines.h"
 #include"command.h"

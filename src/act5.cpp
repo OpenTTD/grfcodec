@@ -26,7 +26,7 @@
 
 using namespace std;
 
-#include"renum.h"
+#include"nforenum.h"
 #include"sanity.h"
 #include"inlines.h"
 #include"ExpandingArray.h"

@@ -10,7 +10,7 @@
 #include<cassert>
 #include<cstdlib>
 
-#include"renum.h"
+#include"nforenum.h"
 #include"pseudo.h"
 #include"utf8.h"
 #include"messages.h"

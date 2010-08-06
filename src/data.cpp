@@ -36,7 +36,7 @@
 
 using namespace std;
 
-#include"renum.h"
+#include"nforenum.h"
 #include"inlines.h"
 #include"globals.h"
 #include"data.h"

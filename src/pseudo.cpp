@@ -40,7 +40,7 @@ using namespace boost;
 #define foreach BOOST_FOREACH
 using namespace std;
 
-#include"renum.h"
+#include"nforenum.h"
 #include"pseudo.h"
 #include"globals.h"
 #include"messages.h"
@@ -714,7 +714,7 @@ ostream&PseudoSprite::output(ostream&out){
 		vector<vector<string> > sections;
 		foreach(const string &line, (Tokenize(buffer, '\n')))
 			sections.push_back(Tokenize(line, '\t'));
-		
+
 		// Count the columns
 		uint columns = (uint)max_element(sections.begin(),sections.end(), bind(&vector<string>::size,_1) < bind(&vector<string>::size,_2))->size();
 
