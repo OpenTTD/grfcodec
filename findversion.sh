@@ -75,7 +75,7 @@ if [ -d "$ROOT_DIR/.hg" ]; then
 		REV=`hg id -t | grep -v tip`
 		BRANCH=""
 	else
-		REV=$REV_NR
+		REV=r$REV_NR
 		BRANCH=`hg branch | sed 's@^default$@@'`
 	fi
 else
