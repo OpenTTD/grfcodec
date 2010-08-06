@@ -1,2 +1,2 @@
 R;/usr/src/packages/RPMS/%{ARCH}/*.%{ARCH}.rpm
-5;%{BUILD}/*.tar.gz
+5;/usr/src/packages/SRPMS/*.src.rpm
