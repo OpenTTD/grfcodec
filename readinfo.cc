@@ -1,7 +1,7 @@
 /*
- * readinfo.cc 
+ * readinfo.cc
  * Reads an NFO file into an array of parsed sprites.
- * 
+ *
  * Bastard child of NFORenum's renum.cpp, pseudo.cpp, and inlines.h
  *
  * Copyright 2004-2006 by Dale McCoy.
@@ -43,15 +43,10 @@ Version 7: Add backslash escapes
 
 using namespace std;
 
-#ifndef NO_BOOST
 // grfcodec requires boost::date_time for its processing of the \wYMD and
 // \wDMY formats. Get boost from www.boost.org
-// If you are not capable of downloading or installing boost,
-// #define NO_BOOST before compiling grfcodec.
 #include<boost/date_time/gregorian/gregorian_types.hpp>
 using namespace boost::gregorian;
-
-#endif//NO_BOOST
 
 #include"nfosprite.h"
 #include"allocarray.h"
@@ -242,7 +237,7 @@ Real::Real(size_t sprite,int infover,const string&data){
 		inf[1] = U8(sy);
 		inf[2] = U8(sx & 0xff);
 		inf[3] = U8(sx >> 8);
-		inf[4] = U8(rx & 0xff);	
+		inf[4] = U8(rx & 0xff);
 		inf[5] = U8(rx >> 8);
 		inf[6] = U8(ry & 0xff);
 		inf[7] = U8(ry >> 8);
@@ -329,7 +324,7 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 				switch(in.get()){
 				case'b':
 					if(in.peek()=='*'){// \b*
-						x = ReadValue(in.ignore(), _BX_, num);
+						x = ReadValue(in.ignore(), _BX_);
 						if(!in||x>0xFFFF)break;//invalid
 						if(x>0xFE){
 							out.put('\xFF');
@@ -338,18 +333,18 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 						}else out.put((char)x);
 						continue;
 					}
-					x = ReadValue(in, _B_, num);
+					x = ReadValue(in, _B_);
 					if(!in||x>0xFF)break;//invalid
 					out.put((char)x);
 					continue;
 				case'w':
-					x = ReadValue(in, _W_, num);
+					x = ReadValue(in, _W_);
 					if(!in||x>0xFFFF)break;//invalid
 					out.put(x);
 					out.put(x>>8);
 					continue;
 				case'd':
-					x = ReadValue(in, _D_, num);
+					x = ReadValue(in, _D_);
 					if(!in)break;
 					out.put(x);
 					out.put(x>>8);
@@ -400,11 +395,7 @@ bool Pseudo::MayBeSprite(const string&sprite){
 
 Include::Include(const string&data):name(data){}
 
-#ifdef NO_BOOST
-uint Pseudo::ReadValue(istream& in, width w, size_t num)
-#else
-uint Pseudo::_ReadValue(istream& in, width w)
-#endif
+uint Pseudo::ReadValue(istream& in, width w)
 {
 	if (in.peek() == 'x') {		// Read any hex value
 		uint ret;
@@ -429,9 +420,6 @@ uint Pseudo::_ReadValue(istream& in, width w)
 
 	// May have a date. Check, fiddle, and invoke date_time.
 	if (count == 5 && c1 == c2 && (c1 == '-' || c1 == '/')) {
-#ifdef NO_BOOST
-		throw unparseable("This GRFCodec was compiled without support for dates",num);
-#else
 		int extra = 0;
 
 		if (w == _W_) {
@@ -459,12 +447,9 @@ uint Pseudo::_ReadValue(istream& in, width w)
 		} catch (std::out_of_range) {
 			// Fall through to fail
 		}
-#endif
 	}
 
-#ifndef NO_BOOST
-fail:		// unreferenced ifdef NO_BOOST
-#endif
+fail:
 	// Nothing worked
 	in.clear(ios::badbit);
 	return (uint)-1;
