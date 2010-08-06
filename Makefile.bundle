@@ -31,15 +31,13 @@ bundle: release
 	$(_C)cp $(GRFDIFF)         "$(BUNDLE_DIR)/"
 	$(_C)cp $(GRFMERGE)        "$(BUNDLE_DIR)/"
 	$(_C)cp $(GRFID)           "$(BUNDLE_DIR)/"
-	$(_C)cp COPYING            "$(BUNDLE_DIR)/COPYING.txt"
-	$(_C)cp Changelog          "$(BUNDLE_DIR)/CHANGELOG.txt"
-	$(_C)cp grf.txt            "$(BUNDLE_DIR)/docs/"
-	$(_C)cp grftut.txt         "$(BUNDLE_DIR)/docs/"
-	$(_C)cp grfcodec.txt       "$(BUNDLE_DIR)/docs/"
-	$(_C)cp *.1                "$(BUNDLE_DIR)/man/"
+	$(_C)cp COPYING            "$(BUNDLE_DIR)/COPYING"
+	$(_C)cp changelog.txt      "$(BUNDLE_DIR)/docs/"
+	$(_C)cp docs/*.txt         "$(BUNDLE_DIR)/docs/"
+	$(_C)cp docs/*.1           "$(BUNDLE_DIR)/man/"
 	$(_C)gzip -9               "$(BUNDLE_DIR)/man/"*.1
 ifeq ($(GRFCODEC), grfcodec.exe)
-	$(_C)unix2dos "$(BUNDLE_DIR)/docs/"*.txt "$(BUNDLE_DIR)/COPYING.txt" "$(BUNDLE_DIR)/CHANGELOG.txt"
+	$(_C)unix2dos "$(BUNDLE_DIR)/docs/"*.txt "$(BUNDLE_DIR)/COPYING"
 endif
 
 install: bundle
@@ -52,7 +50,7 @@ install: bundle
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFDIFF)" "$(INSTALL_BINARY_DIR)/"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFID)" "$(INSTALL_BINARY_DIR)/"
 	$(_C)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(INSTALL_DOCS_DIR)"
-	$(_C)install -m 644 "$(BUNDLE_DIR)/"*.txt "$(INSTALL_DOCS_DIR)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/COPYING" "$(INSTALL_DOCS_DIR)"
 	$(_C)install -m 644 "$(BUNDLE_DIR)/man/"*.1.gz "$(INSTALL_MAN_DIR)/"
 
 ### Packing the current bundle into several compressed file formats ###
