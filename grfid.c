@@ -8,7 +8,31 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+
+#ifndef WIN32
 #include <sys/mman.h>
+#else
+#include <stdlib.h>
+#define PROT_READ 0
+#define MAP_PRIVATE 0
+/* Lets fake mmap for Windows, please! */
+void *mmap (void *ptr, long size, long prot, long type, long handle, long arg) {
+	char *mem = (char*)malloc(size + 1);
+	mem[size] = 0;
+	FILE *in = fdopen(handle, "rb");
+	if (fread(mem, size, 1, in) != 1) {
+		fclose(in);
+		free(mem);
+		return NULL;
+	}
+	fclose(in);
+	return mem;
+}
+long munmap (void *ptr, long size) {
+	free(ptr);
+	return 0;
+}
+#endif
 
 #include "version.h"
 
