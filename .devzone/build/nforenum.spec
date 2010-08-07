@@ -26,8 +26,6 @@ graphics.
 
 %build
 make %{?_smp_mflags}
-#remove the very outdated CZ docs:
-rm doc/*cz.txt
 
 %install
 make install INSTALL_DIR=%{buildroot}
@@ -38,13 +36,13 @@ make install INSTALL_DIR=%{buildroot}
 %defattr(-,root,root,-)
 %{_bindir}/nforenum
 %dir %{_datadir}/doc/nforenum
-%doc %{_datadir}/doc/nforenum/CHANGELOG.txt
-%doc %{_datadir}/doc/nforenum/COPYING.txt
-%doc %{_datadir}/doc/nforenum/AUTO_CORRECT.en.txt
-%doc %{_datadir}/doc/nforenum/COMMANDS.en.txt
-%doc %{_datadir}/doc/nforenum/README.en.txt
-%doc %{_datadir}/doc/nforenum/README.RPN.en.txt
-%doc %{_datadir}/doc/nforenum/SANITY.en.txt
+%doc %{_datadir}/doc/nforenum/COPYING
+%doc %{_datadir}/doc/nforenum/changelog.txt
+%doc %{_datadir}/doc/nforenum/auto_correct.txt
+%doc %{_datadir}/doc/nforenum/commands.txt
+%doc %{_datadir}/doc/nforenum/readme.txt
+%doc %{_datadir}/doc/nforenum/readme.rpn.txt
+%doc %{_datadir}/doc/nforenum/sanity.txt
 %doc %{_mandir}/man1/nforenum.1.gz
 
 %changelog
