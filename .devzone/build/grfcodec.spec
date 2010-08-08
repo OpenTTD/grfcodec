@@ -43,9 +43,9 @@ make install INSTALL_DIR=%{buildroot}
 %doc %{_datadir}/doc/grfcodec/grfcodec.txt
 %doc %{_datadir}/doc/grfcodec/grftut.txt
 %doc %{_datadir}/doc/grfcodec/todo.txt
-%doc %{_mandir}/man1/grfcodec.1.gz
-%doc %{_mandir}/man1/grfdiff.1.gz
-%doc %{_mandir}/man1/grfid.1.gz
-%doc %{_mandir}/man1/grfmerge.1.gz
+%doc %{_mandir}/man1/grfcodec.1*
+%doc %{_mandir}/man1/grfdiff.1*
+%doc %{_mandir}/man1/grfid.1*
+%doc %{_mandir}/man1/grfmerge.1*
 
 %changelog
