@@ -43,6 +43,6 @@ make install INSTALL_DIR=%{buildroot}
 %doc %{_datadir}/doc/nforenum/readme.txt
 %doc %{_datadir}/doc/nforenum/readme.rpn.txt
 %doc %{_datadir}/doc/nforenum/sanity.txt
-%doc %{_mandir}/man1/nforenum.1.gz
+%doc %{_mandir}/man1/nforenum.1*
 
 %changelog
