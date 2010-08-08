@@ -178,7 +178,7 @@ nebude vypsáno pro Akce D, které se netýkají zprávy prostředků.
 =>	Zkontrolujete, zda-li je každý řetězec ukončen, přidejte chybějící řetězce
     nebo upravte počet deklarovaných řetězců.
 
-80: "<ofs> Hodnota <xoff nebo yoff> nesmi presahnout 0Fh." (Varování 3)
+80: "<ofs> Hodnota <xoff nebo yoff> nesmi presahnout 10h." (Varování 3)
 ->	Offset spritu byl nastaven na příliš vysokou hodnotu.
 =>	Snižte offset.
 
