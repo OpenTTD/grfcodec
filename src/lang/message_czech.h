@@ -111,7 +111,7 @@ NFO_MESSAGE(VARIABLE_SIZE_MISMATCH,"%d je chybna <size> pro promennou %2x.\n",US
   MESSAGE_UNUSED(INVALID_LABEL)//,"Stitky musi mit nejvyssi 3 bity zapnute (E0-FF).\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_LITERAL,"%2x na miste, kde bych ocekaval %2x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INSUFFICIENT_STRINGS,"Pro tuto Akci 4 ocekavam dalsich %d retezcu.\n",USE_PREFIX)
-NFO_MESSAGE(TOO_LARGE,"Hodnota <%s> nesmi presahnout 0Fh.\n",USE_PREFIX)
+NFO_MESSAGE(TOO_LARGE,"Hodnota <%s> nesmi presahnout %2xh.\n",USE_PREFIX)
 NFO_MESSAGE(SPRITENUM_TOO_HIGH,"Nejvyssi ID spritu, ktere TTD definuje, je 4984 (1E 13).\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_COLOR_TRANS,"Prebarvovaci mod 3 neni definovan.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_COLOR_SPRITE,"Sprite %d neni sprite s tabulkou zmeny barev.\n",USE_PREFIX|HAS_OFFSET)
