@@ -50,6 +50,7 @@ v3.4.6 to
 - Fix the error message "A portion of sprite xx could not be processed."
   reported the sprite before the one with the error.
 - Fix a warning on newobject's buy menu sprite cargo type.
+- Fix warning message about exceeded limits of bounding boxes.
 - Remove warning 135 (first sprite cannot share bounding box with
   previous sprite) as it's no longer a valid warning since both openttd
   and ttdpatch support multiple ground sprites
