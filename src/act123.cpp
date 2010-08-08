@@ -342,9 +342,9 @@ CHANGED_FEATURE(std)
 							uint x=data.ExtractByte(off+8),y=data.ExtractByte(off+9);
 							data.ExtractByte(off+10);
 							off+=3;
-							if(xoff>15)IssueMessage(WARNING3,TOO_LARGE,off+2,XOFF,15);
+							if(xoff>16)IssueMessage(WARNING3,TOO_LARGE,off+2,XOFF,16);
 							else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,off+2,XOFF_EXT,16);
-							if(yoff>15)IssueMessage(WARNING3,TOO_LARGE,off+3,YOFF,15);
+							if(yoff>16)IssueMessage(WARNING3,TOO_LARGE,off+3,YOFF,16);
 							else if(yoff+y>16)IssueMessage(WARNING3,TOO_LARGE,off+3,YOFF_EXT,16);
 							//if(zoff+z>0x87)IssueMessage(WARNING1,TOO_LARGE,off+4,ZOFF_EXT,0x87);
 						}
@@ -380,9 +380,9 @@ CHANGED_FEATURE(std)
 						data.SetByteAt(1,feature=act1.feature);
 						goto stdChangedFeature;
 					}
-					if(xoff>15)IssueMessage(WARNING3,TOO_LARGE,12,XOFF,15);
+					if(xoff>16)IssueMessage(WARNING3,TOO_LARGE,12,XOFF,16);
 					else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,12,XOFF_EXT,16);
-					if(yoff>15)IssueMessage(WARNING3,TOO_LARGE,13,YOFF,15);
+					if(yoff>16)IssueMessage(WARNING3,TOO_LARGE,13,YOFF,16);
 					else if(yoff+y>16)IssueMessage(WARNING3,TOO_LARGE,13,YOFF_EXT,16);
 					//if(z>0x87)IssueMessage(WARNING1,TOO_LARGE,16,ZEXT,0x87);
 				}
