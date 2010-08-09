@@ -5,8 +5,8 @@
 *                                         *
 * TYPESIZE.H - Defines variable types     *
 *         with a known memory size        *
-*	  Also defines macros for dealing	  *
-*	  with C/C++ exports				  *
+*         Also defines macros for dealing *
+*         with C/C++ exports              *
 *                                         *
 * Copyright (C) 2000 by Josef Drexler     *
 *               <jdrexler@julian.uwo.ca>  *

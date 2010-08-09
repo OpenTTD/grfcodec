@@ -4,8 +4,8 @@
 * GRFDiff - A program to compare a .grf   *
 *           file and the decoded .pcx     *
 *           file(s) and produce a file    *
-*	    of the sprites that were		  *
-*	    modified						  *
+*           of the sprites that were      *
+*           modified                      *
 *                                         *
 *                                         *
 * Copyright (C) 2003 by Josef Drexler     *
@@ -102,7 +102,7 @@ static void usage(void)
 		"separating them with a double-dash `--'.  The result will be written to a\n"
 		"single .GRD file.  Only -l is valid after the first set.\n"
 		"\n"
-		"GRFDiff is Copyright (C) 2003 by Josef Drexler <jdrexler@uwo.ca>\n"
+		"GRFDiff is Copyright (C) 2003 by Josef Drexler\n"
 		"You may copy and redistribute it under the terms of the GNU General Public\n"
 		"License, as stated in the file 'COPYING'.\n"
 		);
