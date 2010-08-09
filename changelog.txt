@@ -43,6 +43,7 @@ v3.4.6 to 4.0.0
 - Fix complaints about both params of action D operator 80 being FF.
 - Fix assert when encountering end-of-line "comments" that begin with a
   single forward slash.
+- Fix assert when $HOME ends with a slash.
 - Fix comments not prefixed by whitespace could cause NFORenum to reject
   the preceding escape.
 - Fix color codes in action 8 are permitted.
