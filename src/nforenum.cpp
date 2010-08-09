@@ -103,9 +103,12 @@ int __cdecl main(const int argc,char**argv){
 	ifstream fin;
 	ofstream fout;
 	while(argc>1){
-		if(opt!=EOF)opt=getopt_long(argc,argv,"D::k?hc:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
+		if(opt!=EOF)opt=getopt_long(argc,argv,"D::kv?hc:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
 		switch(opt){
 		case 0:continue;
+		case 'v':
+			/* The version is already printed. */
+			return 0;
 		case'D':
 			if(optarg)datadir=optarg;
 			dosleep=false;
