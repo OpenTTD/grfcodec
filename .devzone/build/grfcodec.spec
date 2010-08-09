@@ -37,6 +37,7 @@ make install INSTALL_DIR=%{buildroot}
 %{_bindir}/grfid
 %{_bindir}/grfmerge
 %dir %{_datadir}/doc/grfcodec
+%doc %{_datadir}/doc/grfcodec/readme.txt
 %doc %{_datadir}/doc/grfcodec/changelog.txt
 %doc %{_datadir}/doc/grfcodec/COPYING
 %doc %{_datadir}/doc/grfcodec/grf.txt
