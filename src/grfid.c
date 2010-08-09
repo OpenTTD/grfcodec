@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 #ifndef WIN32
 #include <sys/mman.h>
@@ -142,7 +143,7 @@ const char *GetGrfID(const char *filename, uint32_t *grfid)
 
 int main(int argc, char **argv)
 {
-	if (argc < 2) {
+	if (argc < 2 || strcmp(argv[1], "-h") == 0) {
 		printf(
 			"GRFID version " GRFCODECVER "\n"
 			"\n"
@@ -153,6 +154,10 @@ int main(int argc, char **argv)
 			"You may copy and redistribute it under the terms of the GNU General Public\n"
 			"License, as stated in the file 'COPYING'.\n");
 		return 1;
+	}
+	if (strcmp(argv[1], "-v") == 0) {
+		printf("GRFID version " GRFCODECVER "\n");
+		return 0;
 	}
 
 	uint32_t grfid;
