@@ -39,6 +39,7 @@ v3.4.6 to
   - Action D variables A1..A4 were not readable.
 - Fix U+E0xx characters being output quoted.
 - Fix a hang when parsing non-UTF-8 quoted strings.
+- Fix parameter parsing of stringcode 9A 04.
 - Fix complaints about both params of action D operator 80 being FF.
 - Fix assert when encountering end-of-line "comments" that begin with a
   single forward slash.
