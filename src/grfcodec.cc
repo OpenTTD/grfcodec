@@ -673,8 +673,8 @@ gpl_error:
 			fprintf(stderr, "Error: %s is not a GIMP palette file.\n", filearg);
 			exit(1);
 		}
-		while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' );// Name: ...
-		while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' );// Columns: ...
+		while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' ) {}// Name: ...
+		while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' ) {}// Columns: ...
 		if (fgets(fmt, sizeof(fmt), f) == NULL) goto gpl_error; // #
 		uint r, g, b;
 		for (int i=0; i<256; i++) {
@@ -685,7 +685,7 @@ gpl_error:
 			pal[3*i] = (U8) r;
 			pal[3*i+1] = (U8) g;
 			pal[3*i+2] = (U8) b;
-			while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' );// color name
+			while (fgets(fmt, sizeof(fmt), f) != NULL && fmt[strlen(fmt)-1] != '\n' ) {}// color name
 		}
 		break;
 	}

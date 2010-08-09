@@ -619,7 +619,7 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int
 						printf("length diff %ld, ", result-imgsize-8);
 					else {
 						int i;
-						for (i=0; uncomp[i+8]==image[i]; i++);
+						for (i=0; uncomp[i+8]==image[i]; i++) {}
 						printf("data diff at %d of %ld bytes, ", i, imgsize);
 					}
 					if (docompress) {
