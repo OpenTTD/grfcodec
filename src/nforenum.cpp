@@ -344,10 +344,10 @@ int process_file(istream&in){
 					getline(eat_white(spritestream.ignore()),datapart);
 					flush_buffer();
 					if(isPatch) {
-                        check_sprite(INCLUDE);
-                    } else {
-                        IssueMessage(ERROR,UNEXPECTED,BIN_INCLUDE);
-                    }
+						check_sprite(INCLUDE);
+					} else {
+						IssueMessage(ERROR,UNEXPECTED,BIN_INCLUDE);
+					}
 					_spritenum++;
 					(*pNfo)<<setw(5)<<spritenum()<<" **\t "<<datapart<<'\n';
 				}else{
@@ -368,9 +368,9 @@ int process_file(istream&in){
 				getline(spritestream,datapart);
 				firstnotpseudo=datapart.find_first_not_of(VALID_PSEUDO);
 				if(!spritestream || firstnotpseudo==NPOS
-                    || datapart[firstnotpseudo]=='"'
-                    || (datapart[firstnotpseudo]=='\\'?TrySetVersion(7):false)
-                    || is_comment(datapart,firstnotpseudo)) {
+							|| datapart[firstnotpseudo]=='"'
+							|| (datapart[firstnotpseudo]=='\\'?TrySetVersion(7):false)
+							|| is_comment(datapart,firstnotpseudo)) {
 					if(PseudoSprite::MayBeSprite(buffer)) {
 						buffer+=sprite+'\n';
 					} else {
@@ -447,11 +447,11 @@ bool verify_real(string&data){
 	}
 	string name=data.substr(0,loc+4);
 	int var_list[7]={0,0,1,1,1,0,0},
-	    &xpos=var_list[0],
-	    &ypos=var_list[1],
-	    &comp=var_list[2],
-	    &ysize=var_list[3],
-	    &xsize=var_list[4],
+		&xpos=var_list[0],
+		&ypos=var_list[1],
+		&comp=var_list[2],
+		&ysize=var_list[3],
+		&xsize=var_list[4],
 		&xrel=var_list[5],
 		&yrel=var_list[6];
 	const char*const var_names[7]={"xpos","ypos","comp","ysize","xsize","xrel","yrel"};
