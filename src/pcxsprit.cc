@@ -332,8 +332,12 @@ void pcxread::readheader()
 
 	fseek(curfile, oldpos, SEEK_SET);
 
-	sx = header.window[2] + 1;
-	sy = header.window[3] + 1;
+	/* header.bpl is number of bytes per scanline.
+	 * header.window[2] - header.window[0] + 1 is number of bytes actually used.
+	 * The original ZSoft standard defines header.bpl to be always even, so there may be unused bytes.
+	 * However, more modern software (e.g. gimp) do not care about that and do not waste any bytes. */
+	sx = header.bpl;
+	sy = header.window[3] - header.window[1] + 1;
 	totaly = 0;
 
 	thisbandy = 0;

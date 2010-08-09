@@ -5,6 +5,8 @@ Changes in
 - (devel) Fix a number of compiler warnings.
 - Clamp the arguments for -w and -h to 65535 as that is the maximum size of a
   PCX.
+- Fix reading of PCX files with more bytes per scanline than pixels.
+  (This is the case for odd image widths when following the PCX standard closely.)
 - Silence progress-meter output when stdout is not a console.
 - Unify warnings and errors so they go to stderr and are prefixed by "Warning:"
   or "Error:".
