@@ -272,9 +272,9 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					break;
 				case 3:		// push WORD
 					stack = string(2,char(STACK_WORD)) + stack;
-					data.SetBE(++offs,2);
-					arg=data.ExtractWord(offs++);
-					if(!(arg&0xFF)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs-1);
+					arg=data.ExtractEscapeWord(++offs);
+					if(!(arg&0xFF)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
+					++offs;
 					if(!(arg>>8)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
 					break;
 				case 4:		// Delete BYTE characters
