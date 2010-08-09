@@ -673,7 +673,7 @@ bool finddir(string&dir){
 	if(dir=="")return false;
 	struct stat Stat;
 	if(dir[dir.length()-1]=='\\'||dir[dir.length()-1]=='/')
-		dir[dir.length()-1]='\0';
+		dir.resize(dir.length()-1);
 	if(stat((dir+"/.nforenum").c_str(),&Stat))return false;
 	else if(Stat.st_mode&S_IFREG)return false;
 	return true;
