@@ -77,7 +77,7 @@ public:
 		\return The composed message
 	*/
 	std::string Display(const std::string& prefix, std::va_list& ap) const;
-	
+
 	/*! Get the text of this message in the current language.
 		If the text is not available in the current language,
 		get text in the default language. If even that fails
