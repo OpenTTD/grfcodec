@@ -1,9 +1,21 @@
-NFORenum v3.4.6
-NFO file re-numberer and linter
+NFORenum README
+Last updated:    2010-08-09
+Release version: 4.0.0
+------------------------------------------------------------------------
 
 
-About
-=====
+Table of Contents:
+------------------
+1) About
+2) Contact
+3) Installation
+4) Running
+5) Known issues
+6) Compiling
+
+
+1) About:
+-- ------
 NFORenum is a tool checking NFO code for errors, and for beautifying that
 code -- inasmuch as NFO can be beautified :)
 
@@ -12,27 +24,28 @@ your option, any later version. For more information, see 'COPYING.txt'
 (GPL version 2), or later versions at <http://www.gnu.org/licenses/>.
 
 
-Compiling
-=========
+2) Contact:
+-- --------
+Contact can be made via the issue tracker / source repository at
+http://dev.openttdcoop.org/projects/nforenum or via IRC on the
+#openttdcoop.devzone channel on OFTC.
 
-Known to compile with g++ 3.4.4, g++ 4.0.2, and VS .NET, assuming Boost is
-installed. Get Boost from www.boost.org.
-For more information consult 0compile.txt in the source code.
 
+3) Installation:
+-- -------------
+Installing NFORenum is fairly straightforward. Just copy the executable into
+any directory. It is advised to put the executable in one of the directories
+in your path so it can be easily found. For example when compiling OpenGFX.
 
-Installation
-============
-
-To install, copy nforenum.exe into any directory, preferably one in your path.
 NFORenum will (if necessary) create a .nforenum directory. All its data files
 will be placed in that directory, and updated as needed.
 It is not necessary to remove the .nforenum directory before upgrading.
-To uninstall, delete nforenum.exe and any .nforenum directories.
+
+To uninstall, delete the executable and any .nforenum directories.
 
 
-Usage
-=====
-
+4) Usage:
+-- ------
 To renumber NFO files (for example MyGRF1.NFO and MyGRF2.NFO), use
 
  > nforenum [options] MyGRF1 MyGRF2
@@ -87,9 +100,8 @@ send a message to the console and immediately die.
 Codes 1 and 2 are reserved pending discussion; see http://tinyurl.com/acudt.
 
 
-Known Issues
-============
-
+5) Known issues:
+-- -------------
 - An Action 6 modifying any checked sprite can cause erroneous sanity messages.
   Status: Low priority, hard to do correctly.
   Workaround: use the @@USEID2 and @@USESET commands to supress incorrect
@@ -97,3 +109,8 @@ Known Issues
 - @@VERSIONCHECK does not put its second action 9 in the correct place.
   Workaround: Manually move that action 9 after the action 8.
 
+
+6) Compiling:
+-- ----------
+GCC/ICC:
+  Just use "make", or on non-GNU systems "gmake".
