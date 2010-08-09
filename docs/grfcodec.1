@@ -7,6 +7,7 @@
 .Nd A tool to convert a GRF file into graphics files and meta data, and vice versa.
 .Sh SYNOPSIS
 .Nm grfcodec
+.Op Fl v
 .Op Fl d | e
 .Op options
 .Ar GRF-file
@@ -17,6 +18,26 @@
 <Directory> is where the individual sprites should be saved. If omitted, they
 will default to a subdirectory called sprites/.
 .Sh OPTIONS
+.Bl -tag
+.It Fl ?
+Display the help message.
+.It Fl e
+Encode a GRF file. The
+.Ar GRF-file
+to pass is the file where to encode to. The source of the GRF-file, i.e. the .nfo, will be looked for in
+.Pa sprites/GRF-file.nfo .
+All PCX files will be searched for relative from the location of the GRF-file.
+.It Fl d
+Decode a GRF file. The
+.Ar GRF-file
+to pass is the file to deoce. The result will be in
+.Pa sprites/GRF-file.nfo
+and
+.Pa sprites/GRF-file.pcx .
+.It Fl v
+Display the version.
+.El
+
 Options for decoding:
 .Bl -tag
 .It Fl w Ar num

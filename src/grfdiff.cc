@@ -594,7 +594,7 @@ int main(int argc, char **argv)
 		// parse option arguments
 		while (optind < argc) {
 			// get options in original order (list of options starts with "-")
-			char opt = getopt(argc, argv, "-hl:no:xy");
+			char opt = getopt(argc, argv, "-hvl:no:xy");
 
 			if (opt == (char) EOF)
 				break;
@@ -603,6 +603,9 @@ int main(int argc, char **argv)
 				break;	// next set of files starting
 
 			switch (opt) {
+			case 'v':
+				/* The version is already printed. */
+				return 0;
 			case 'l':
 				difflist = optarg;
 				break;
