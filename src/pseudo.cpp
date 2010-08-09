@@ -244,7 +244,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 
 void PseudoSprite::LinkBytes(int count, size_t e){
 	int end = (int)e;
- 	for(int i=end-count,high=0; i<end; i++,high++)
+	for(int i=end-count,high=0; i<end; i++,high++)
 		linkage[i]=high<<8|count;
 }
 
