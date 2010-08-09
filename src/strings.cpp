@@ -336,9 +336,9 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 			ch=0;
 			offs++;
 		} else {
-            IssueMessage(WARNING1,NO_NULL_FOUND);
-        }
-    }
+			IssueMessage(WARNING1,NO_NULL_FOUND);
+		}
+	}
 	if(retInfo==RETURN_NULL)return ch;
 	if(retInfo==RETURN_STACK)return(perms&CTRL_NO_STACK_CHECK)?(unsigned)-1:ret;
 	INTERNAL_ERROR(retInfo,retInfo);
