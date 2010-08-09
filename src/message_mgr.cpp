@@ -55,7 +55,7 @@ const string& MessageData::GetText() const {
 		pos = textMap.find(RL_DEFAULT);
 		if(pos == textMap.end()) {
 			return MessageMgr::UNDEFINED_TEXT;
-		}	
+		}
 	}
 	return pos->second;
 }
@@ -106,7 +106,7 @@ const std::string& MessageMgr::GetExtraText(RenumExtraTextId i) const {
 		textPos = textMap.find(RL_DEFAULT);
 		if(textPos == textMap.end()) {
 			return UNDEFINED_TEXT;
-		}	
+		}
 	}
 	return textPos->second;
 }
