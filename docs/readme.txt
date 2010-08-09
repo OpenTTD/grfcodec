@@ -7,10 +7,9 @@ Release version: 1.0.0
 Table of Contents:
 ------------------
 1) About
-2) Contacting
-3) Installing
-4) Running
-5) Compiling
+2) Contact
+3) Installation
+4) Compiling
 
 
 1) About:
