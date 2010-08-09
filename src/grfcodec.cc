@@ -735,7 +735,8 @@ int main(int argc, char **argv)
 
 	_interactive = (isatty(fileno(stdout)) != 0);
 
-	if (_interactive) puts("GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler");
+	const char *version = "GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler";
+	if (_interactive) printf("%s\n", version);
 
 	checksizes();
 
@@ -745,7 +746,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dew:h:b:up:m:M:tfxqcX");
+		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:tfxqcX");
 
 		if (opt == (char) EOF)
 			break;
@@ -757,6 +758,10 @@ int main(int argc, char **argv)
 		case 'd':
 			action = 2;
 			break;
+		case 'v':
+			/* If we're in interactive mode the version is already printed. */
+			if (!_interactive) printf("%s\n", version);
+			return 0;
 		case 'w':
 			width = min(max(atoi(optarg), 0), 65535);
 			break;

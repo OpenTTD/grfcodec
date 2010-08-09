@@ -486,7 +486,7 @@ int main(int argc, char **argv)
 	checkisselfextr(argv[0]);
 
 	while (1) {
-		opt = getopt(argc, argv, "hly");
+		opt = getopt(argc, argv, "hlyv");
 
 		if (opt == (char) EOF)
 			break;
@@ -495,6 +495,9 @@ int main(int argc, char **argv)
 		case 'l':
 			onlyshow = 1;
 			break;
+		case 'v':
+			/* The version is already printed. */
+			return 0;
 		case 'y':
 			alwaysyes = 1;
 			break;
