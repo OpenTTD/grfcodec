@@ -9,12 +9,11 @@
 MAKEFILELOCAL=Makefile.local
 
 # Order of the palettes compiled in
-# (note, this must match the text in grfcodec.cc and grftut.txt)
+# (note, this must match the text in grfcodec.cpp and grftut.txt)
 PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars&ttw_pb_pal1&ttw_pb_pal2
 
 # Gnu compiler settings
 SHELL = /bin/sh
-CC = g++
 CXX = g++
 STRIP = strip
 UPX = $(shell [ `which upx 2>/dev/null` ] && echo "upx")
@@ -29,7 +28,7 @@ INSTALL_MAN_DIR := "$(INSTALL_DIR)/usr/share/man/man1"
 
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
-MACHINE = $(shell $(CC) -dumpmachine || echo '??' )
+MACHINE = $(shell $(CXX) -dumpmachine || echo '??' )
 
 # Cygwin builds default to -mno-cygwin.
 ifndef NOCYGWIN
@@ -45,44 +44,37 @@ GRFID    = grfid$(EXE)
 
 TYPESIZE = GCC32
 
--include ${MAKEFILELOCAL}
-
-# GCC 4.5.0 has an optimisation bug that influences GRFCodec.
-# As such we disable optimisation when GCC 4.5.0 is detected.
-# The issue has been fixed in GCC 4.5.1
-ifndef CFLAGOPT
-ifeq ($(shell $(CC) -v 2>&1 | grep "4\.5\.0" || true),)
-CFLAGOPT = -O2
-else
-CFLAGOPT = -O0
-endif
-endif
-
-
-CFLAGS  = -g -D$(TYPESIZE) -I. -idirafter$(BOOST_INCLUDE) -D_FORTIFY_SOURCE=2
-CFLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2 -Wredundant-decls
-CFLAGS += $(CFLAGOPT) $(CFLAGAPP)
+FLAGS  = -D$(TYPESIZE) -I. -idirafter$(BOOST_INCLUDE) -D_FORTIFY_SOURCE=2
+FLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2 -Wredundant-decls
 
 ifeq ($(DEBUG),1)
-CFLAGS += -DDEBUG
+FLAGS += -DDEBUG
 endif
 
 ifeq ($(MACHINE),mingw32)
-CFLAGS += -DMINGW
+FLAGS += -DMINGW
 endif
 
 ifeq ($(ISCYGWIN),1)
 ifeq ($(NOCYGWIN),1)
-CFLAGS += -DMINGW -mno-cygwin
+FLAGS += -DMINGW -mno-cygwin
 endif
 endif
 
 ifeq ($(shell uname),Darwin)
-CFLAGS += -isystem/opt/local/include
+FLAGS += -isystem/opt/local/include
 endif
 
-CXXFLAGS = $(CFLAGS)
+# GCC 4.5.0 has an optimisation bug that influences GRFCodec.
+# As such we disable optimisation when GCC 4.5.0 is detected.
+# The issue has been fixed in GCC 4.5.1
+ifneq ($(shell $(CXX) -v 2>&1 | grep "4\.5\.0" || true),)
+FLAGS += -O0
+endif
 
+-include ${MAKEFILELOCAL}
+
+CXXFLAGS := $(FLAGS) $(CXXFLAGS)
 
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
@@ -143,14 +135,14 @@ export _I
 # =======================================================================
 
 # sources to be compiled and linked
-GRFCODECSRC=grfcomm.c pcxfile.c sprites.c pcxsprit.c info.c \
-	error.c getopt.c path.c readinfo.c file.c grfcodec.c
+GRFCODECSRC=grfcomm.cpp pcxfile.cpp sprites.cpp pcxsprit.cpp info.cpp \
+	error.cpp getopt.cpp path.cpp readinfo.cpp file.cpp grfcodec.cpp
 
-GRFDIFFSRC=grfcomm.c error.c sprites.c getopt.c grfdiff.c path.c
+GRFDIFFSRC=grfcomm.cpp error.cpp sprites.cpp getopt.cpp grfdiff.cpp path.cpp
 
-GRFMERGESRC=grfcomm.c error.c getopt.c grfmerge.c path.c
+GRFMERGESRC=grfcomm.cpp error.cpp getopt.cpp grfmerge.cpp path.cpp
 
-GRFIDSRC=grfid.c
+GRFIDSRC=grfid.cpp
 
 PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 
@@ -167,21 +159,21 @@ ${MAKEFILELOCAL}:
 	echo ${MAKEFILELOCAL} did not exist, using defaults. Please edit it if compilation fails. && \
 	cp ${MAKEFILELOCAL}.sample $@"
 
-$(GRFCODEC): $(GRFCODECSRC:%.c=objs/%.o)
+$(GRFCODEC): $(GRFCODECSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 
-$(GRFDIFF):  $(GRFDIFFSRC:%.c=objs/%.o) objs/grfmrg.o
+$(GRFDIFF):  $(GRFDIFFSRC:%.cpp=objs/%.o) objs/grfmrg.o
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 
-$(GRFMERGE): $(GRFMERGESRC:%.c=objs/%.o)
+$(GRFMERGE): $(GRFMERGESRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 
-$(GRFID): $(GRFIDSRC:%.c=objs/%.o)
+$(GRFID): $(GRFIDSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 
 
 clean:
@@ -216,10 +208,10 @@ endif
 release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r
 
 # make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
-objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.c=objs/%.os)
+objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.cpp=objs/%.os)
 	$(_C)rm -f $@
 	$(_E) [LD] $@
-	$(_C)$(CC) -o $@ $(CFLAGS) -Os $^
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) -Os $^
 	$(_E) [STRIP] $@
 	$(_C)$(STRIP) $@
 ifneq ($(UPX),)
@@ -227,7 +219,7 @@ ifneq ($(UPX),)
 	$(_C)$(UPX) $(_Q) --best $@
 endif
 
-src/grfmrg.c: objs/grfmrgc.bin src/grfmrgc.pl
+src/grfmrg.cpp: objs/grfmrgc.bin src/grfmrgc.pl
 	$(_E) [PERL] $@
 	$(_C)perl -w src/grfmrgc.pl > $@
 
@@ -237,79 +229,42 @@ src/ttdpal.h: $(PAL_FILES:%=src/%) src/pal2c.pl
 
 # Gnu compiler rules
 
-objs/%.o : src/%.c
-	$(_E) [CC] $@
-	$(_C)$(CC) -c -o $@ -MMD -MF $@.d $(CFLAGS) $<
-
-objs/%.o : src/%.cc
+objs/%.o : src/%.cpp
 	$(_E) [CPP] $@
-	$(_C)$(CXX) -c -o $@ -MMD -MF $@.d $(CXXFLAGS) $(BOOST_CMD) $<
+	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -MMD -MF $@.d -MT $@ $<
 
 % : objs/%.o
 	$(_E) [LD] $@
-	$(_C)$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 	$(_C)$(CP_TO_EXE)
 
-objs/%.S : src/%.c
-	$(_E) [CC] $@
-	$(_C)$(CC) -S -o $@ $(CFLAGS) $<
-
-objs/%.S : src/%.cc
-	$(_E) [CPP] $@
-	$(_C)$(CC) -S -o $@ $(CXXFLAGS) $<
-
-
 # same as above but optimized for size not speed
-objs/%.os : src/%.c
-	$(_E) [CC] $@
-	$(_C)$(CC) -c -o $@ -MMD -MF $@.d $(CFLAGS) -Os $<
+objs/%.os : src/%.cpp
+	$(_E) [CPP] $@
+	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -Os -MMD -MF $@.d -MT $@ $<
 
 % :: objs/%.os
 	$(_E) [LD] $@
-	$(_C)$(CC) -o $@ $(CFLAGS) $^ $(LDOPT)
-
-# Borland compiler rules
-
-objs/%.obj : src/%.c
-	$(_E) [CC] $@
-	$(_C)$(BCC) $(COPTS) -c $< -o$@
-
-objs/%.obj : src/%.cc
-	$(_E) [CPP] $@
-	$(_C)$(BCC) -P $(CPPOPTS) -c $< -o$@
-
-%.exe : objs/%.obj
-	$(_E) [LD] $@
-	$(_C)$(BCC) $(LOPTS) $^ -e$@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 
 # On some installations a version.h exists in /usr/include. This one is then
 # found by the dependency tracker and thus the dependencies do not contain
 # a reference to version.h, so it isn't generated and compilation fails.
-objs/%.o.d: src/version.h
+objs/%.o.d: src/%.cpp src/version.h
 	$(_C)mkdir -p objs
 	$(_E) [CPP DEP] $@
-	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG src/$*.c* -MF $@
-
-objs/%.os.d: src/version.h
-	$(_C)mkdir -p objs
-	$(_E) [CPP DEP] $@
-	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG -MT ${subst .d,,$@} -MF $@ src/$*.c*
-
-objs/%.obj.d: $(wildcard src/%.c*) src/version.h
-	$(_C)mkdir -p objs
-	$(_E) [CPP DEP] $@
-	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG -MT ${subst .d,,$@} -MF $@ src/$*.c*
+	$(_C)$(CXX) $(CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp -MF $@
 
 ifndef NO_MAKEFILE_DEP
--include $(GRFCODECSRC:%.c=objs/%.o.d)
--include $(GRFMERGESRC:%.c=objs/%.o.d)
--include $(GRFDIFFSRC:%.c=objs/%.o.d)
--include $(GRFIDSRC:%.c=objs/%.o.d)
--include $(GRFMERGESRC:%.c=objs/%.os.d)
--include $(GRFCODECSRC:%.c=objs/%.obj.d)
--include $(GRFMERGESRC:%.c=objs/%.obj.d)
--include $(GRFDIFFSRC:%.c=objs/%.obj.d)
--include $(GRFIDSRC:%.c=objs/%.obj.d)
+-include $(GRFCODECSRC:%.cpp=objs/%.o.d)
+-include $(GRFMERGESRC:%.cpp=objs/%.o.d)
+-include $(GRFDIFFSRC:%.cpp=objs/%.o.d)
+-include $(GRFIDSRC:%.cpp=objs/%.o.d)
+-include $(GRFMERGESRC:%.cpp=objs/%.os.d)
+-include $(GRFCODECSRC:%.cpp=objs/%.obj.d)
+-include $(GRFMERGESRC:%.cpp=objs/%.obj.d)
+-include $(GRFDIFFSRC:%.cpp=objs/%.obj.d)
+-include $(GRFIDSRC:%.cpp=objs/%.obj.d)
 endif
 
 include Makefile.bundle
