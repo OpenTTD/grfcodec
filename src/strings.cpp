@@ -278,8 +278,8 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					if(!(arg>>8)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
 					break;
 				case 4:		// Delete BYTE characters
-					arg=data.SetQEscape(++offs).ExtractWord(offs);
-					if(!arg&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs-1);
+					arg=data.ExtractQEscapeByte(++offs);
+					if(!arg&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
 				case 6:		// print hex byte
 				case 7:		// ... word
 				case 8:		// ... dword
