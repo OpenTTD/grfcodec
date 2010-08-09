@@ -28,7 +28,7 @@ public:
 	//RangedUint();
 	explicit RangedUint(uint max);
 	RangedUint(uint val,uint max);
-	
+
 	operator uint()const;
 	const RangedUint&operator+=(uint);
 	const RangedUint&operator-=(uint);
@@ -52,7 +52,7 @@ public:
 	explicit RangedInt(int max);
 	RangedInt(int min,int max);
 	RangedInt(int val,int min,int max);
-	
+
 	operator int()const;
 	const RangedInt&operator+=(int);
 	const RangedInt&operator-=(int);
