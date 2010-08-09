@@ -117,20 +117,20 @@ void checksizes()
 		printf("Fatal: Incorrectly sized variables.\n");
 #define PRINT_SZ(t,s) printf("%s size = %d, expected = %d\n", #t, (int)sizeof(t), s)
 #ifdef HAVE_BYTES
-        PRINT_SZ(S8,1);
-        PRINT_SZ(U8,1);
+			PRINT_SZ(S8,1);
+			PRINT_SZ(U8,1);
 #endif
 #ifdef HAVE_SHORTS
-        PRINT_SZ(S16,2);
-        PRINT_SZ(U16,2);
+			PRINT_SZ(S16,2);
+			PRINT_SZ(U16,2);
 #endif
 #ifdef HAVE_LONGS
-        PRINT_SZ(S32,4);
-        PRINT_SZ(U32,4);
+			PRINT_SZ(S32,4);
+			PRINT_SZ(U32,4);
 #endif
 #ifdef HAVE_LONGLONGS
-        PRINT_SZ(S64,8);
-        PRINT_SZ(U64,8);
+			PRINT_SZ(S64,8);
+			PRINT_SZ(U64,8);
 #endif
 #undef PRINT_SZ
 		exit(254);
