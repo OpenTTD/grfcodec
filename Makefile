@@ -10,7 +10,6 @@ MAKEFILELOCAL=Makefile.local
 
 # Gnu compiler settings
 SHELL = /bin/sh
-CC = g++
 CXX = g++
 STRIP = strip
 UPX = $(shell [ `which upx 2>/dev/null` ] && echo "upx")
@@ -25,31 +24,30 @@ INSTALL_MAN_DIR := "$(INSTALL_DIR)/usr/share/man/man1"
 
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
-ISMINGW = $(shell [ `$(CC) -dumpmachine` != mingw32 ]; echo $$?)
+ISMINGW = $(shell [ `$(CXX) -dumpmachine` != mingw32 ]; echo $$?)
 
 # OS dependent variables
 NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) -o \( $(ISMINGW) -eq 1 \) ] && echo nforenum.exe || echo nforenum)
 
 # use 386 instructions but optimize for pentium II/III
 ifeq ($(ISCYGWIN),1)
-CFLAGS = -g -O1 -I $(BOOST_INCLUDE)
+FLAGS = -O1 -I $(BOOST_INCLUDE)
 else
-CFLAGS = -g -O1 -idirafter$(BOOST_INCLUDE)
+FLAGS = -O1 -idirafter$(BOOST_INCLUDE)
 endif
-CFLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2
-CFLAGS += -D_FORTIFY_SOURCE=2 $(CFLAGOPT) $(CFLAGAPP)
+FLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2
+FLAGS += -D_FORTIFY_SOURCE=2
 
 ifeq ($(shell uname),Darwin)
-CFLAGS += -isystem/opt/local/include
+FLAGS += -isystem/opt/local/include
 endif
 
-CXXFLAGS = $(CFLAGS)
+CXXFLAGS := $(FLAGS) $(CXXFLAGS)
 
 -include ${MAKEFILELOCAL}
 
 ifeq ($(DEBUG),1)
-CFLAGS += -DDEBUG
-CXXFLAGS += -DDEBUG
+CXXFLAGS += -g -DDEBUG
 endif
 
 # Somewhat automatic detection of the correct boost include folder
@@ -133,7 +131,7 @@ ${MAKEFILELOCAL}:
 
 $(NFORENUM): $(NFORENUMSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 
 
 clean:
@@ -165,10 +163,6 @@ src/version.h: FORCE
 
 # Gnu compiler rules
 
-objs/%.o : src/%.c
-	$(_E) [CC] $@
-	$(_C)$(CC) -c -o $@ $(CFLAGS) -MMD -MF $@.d -MT $@ $<
-
 objs/%.o : src/%.cpp
 	$(_E) [CPP] $@
 	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -MMD -MF $@.d -MT $@ $<
@@ -179,7 +173,7 @@ objs/%.o : src/%.cpp
 objs/%.o.d: src/version.h
 	$(_C)mkdir -p objs
 	$(_E) [CPP DEP] $@
-	$(_C)$(CC) $(CFLAGS) -DMAKEDEP -MM -MG src/$*.c* -MF $@
+	$(_C)$(CXX) $(CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp -MF $@
 
 ifndef NO_MAKEFILE_DEP
 -include $(NFORENUMSRC:%.cpp=objs/%.o.d)
