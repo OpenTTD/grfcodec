@@ -51,7 +51,7 @@ HEXGRFID ON|OFF (default OFF)
 When on, all GRFIDs will be output entirely in hex. When off, the first two
 bytes will be quoted if both are printable, and the second two will be in
 hex. The character FF is considered non-printable in GRFIDs, so FF FF FF FF
-will be output in hex, not as "ÿÿ" FF FF.
+will be output in hex.
 
 LEADINGSPACE <num-beaut1>[,<num-beaut2>[,<num-linelen>]]
   (range 1..32 for each, default 5,8,11)
@@ -87,7 +87,7 @@ sequence are controlled by the next option.
 QUOTEUTF8 ON|OFF (default ON)
 When off, UTF-8 sequences in strings will always be output in hex. When
 on, UTF-8 sequences will be quoted. High-ASCII bytes in strings that do not
-begin with an uppercase thorn (U+00DE, Þ) are controlled by the previous
+begin with an uppercase thorn (U+00DE, Ãž) are controlled by the previous
 option. Regardless of this setting, U+E0XX codes will be output according
 to USEESCAPES.
 
