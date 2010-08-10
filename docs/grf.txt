@@ -131,7 +131,7 @@ unsigned long offset = ( (code & 7) << 8 ) | lofs;
    And that's pretty much all you need to know about a GRF file!
    ______________________________________________________________________
 
-   Copyright © 1999-2003 by Josef Drexler.
+   Copyright Â© 1999-2003 by Josef Drexler.
 
 
 
