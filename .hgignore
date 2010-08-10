@@ -9,7 +9,7 @@ grfdiff
 grfmerge
 grfid
 
-grfmrg.c
+grfmrg.cpp
 version.h
 
 grfcodec-*
