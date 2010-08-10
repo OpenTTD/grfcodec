@@ -28,7 +28,7 @@ graphics.
 make %{?_smp_mflags}
 
 %install
-make install INSTALL_DIR=%{buildroot}
+make install DESTDIR=%{buildroot}
 
 %clean
 
