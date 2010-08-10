@@ -224,7 +224,7 @@ GRFMERGE
    bit redundant.
    ______________________________________________________________________
 
-   Copyright © 1999-2003 by Josef Drexler.
+   Copyright Â© 1999-2003 by Josef Drexler.
 
 
 
