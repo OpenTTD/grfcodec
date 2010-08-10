@@ -140,7 +140,7 @@ grfdiff -x -o yourmod.exe trg1.bak trg1.grf + trg1r.bak trg1r.grf
    Easy, wasn't it?
    ______________________________________________________________________
 
-   Copyright © 1999-2003 by Josef Drexler.
+   Copyright Â© 1999-2003 by Josef Drexler.
 
 
 
