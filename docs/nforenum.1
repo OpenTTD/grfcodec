@@ -52,13 +52,13 @@ See the README for detailed information on the auto-correcter.
 .It Fl v
 Display the version.
 .El
-
 The following options cause NFORenum to behave as if all files started with
 the associated command. The readme has full details on the comment commands.
 Options associated with comment commands that require additional information
-take that information as an argument. With the exception of -L/--let, the
-options to the command line versions are case insensitive.
-"ON" and "OFF" may be specified with "+" and "-", respectively.
+take that information as an argument. With the exception of
+.Fl L Ns / Ns Fl -let Ns
+, the options to the command line versions are case insensitive.
+"ON" and "OFF" may be specified with "+" and "\-", respectively.
 .Bl -tag -width 24n
 .It Fl -beautify | Fl b
 @@BEAUTIFY
@@ -78,9 +78,12 @@ options to the command line versions are case insensitive.
 @@WARNING DISABLE
 .It Fl -warning-enable | Fl W
 @@WARNING ENABLE
--w and -W (and their long counterparts) also accept a comma-separated
+.El
+.Fl w
+and
+.Fl W
+(and their long counterparts) also accept a comma-separated
 list of messages, all of which will be ENABLEd or DISABLEd.
-
 .Sh SEE ALSO
 The documentation in
 .Pa /usr/share/doc/nforenum/
