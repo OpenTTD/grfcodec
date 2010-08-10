@@ -10,10 +10,10 @@
 .Op Fl v
 .Op Fl d | e
 .Op options
-.Ar GRF-file
+.Ar GRF\(hyfile
 .Op Directory
 .Pp
-<GRF-File> denotes the .GRF file you want to work on, e.g. TRG1.GRF
+<GRF\(hyFile> denotes the .GRF file you want to work on, e.g. TRG1.GRF
 .Pp
 <Directory> is where the individual sprites should be saved. If omitted, they
 will default to a subdirectory called sprites/.
@@ -23,21 +23,20 @@ will default to a subdirectory called sprites/.
 Display the help message.
 .It Fl e
 Encode a GRF file. The
-.Ar GRF-file
-to pass is the file where to encode to. The source of the GRF-file, i.e. the .nfo, will be looked for in
-.Pa sprites/GRF-file.nfo .
-All PCX files will be searched for relative from the location of the GRF-file.
+.Ar GRF\(hyfile
+to pass is the file where to encode to. The source of the GRF\(hyfile, i.e. the .nfo, will be looked for in
+.Pa sprites/GRF\(hyfile.nfo .
+All PCX files will be searched for relative from the location of the GRF\(hyfile.
 .It Fl d
 Decode a GRF file. The
-.Ar GRF-file
+.Ar GRF\(hyfile
 to pass is the file to deoce. The result will be in
-.Pa sprites/GRF-file.nfo
+.Pa sprites/GRF\(hyfile.nfo
 and
-.Pa sprites/GRF-file.pcx .
+.Pa sprites/GRF\(hyfile.pcx .
 .It Fl v
 Display the version.
 .El
-
 Options for decoding:
 .Bl -tag
 .It Fl w Ar num
@@ -47,7 +46,9 @@ Split PCX files when they reach this height (default no limit, minimum 16)
 .It Fl b Ar num
 Organize sprites in boxes of this size (default 16)
 .It Fl p Ar pal
-Use this palette instead of the default.  See -p ? for a list.
+Use this palette instead of the default.  See
+.Fl p
+? for a list.
 .It Fl t
 Disable decoding of plain text characters as strings.
 .It Fl x
@@ -74,12 +75,15 @@ Suppress warning messages
 Options for both encoding and decoding:
 .Bl -tag
 .It Fl m Ar num
-Apply colour translation to all sprites except character-glyphs.
+Apply colour translation to all sprites except character\(hyglyphs.
 .It Fl M Ar num
 Apply colour translation to all sprites.
 .Pp
 If both of these are specified, only the last is obeyed.
-(-m ? or -M ? for a list of colour translations.)
+.Fl m
+? or
+.Fl M
+? for a list of colour translations.
 .El
 .Sh SEE ALSO
 The documentation in
@@ -89,4 +93,4 @@ GRFCodec was written by Josef Drexler.
 .Pp
 This manual page was written by Remko Bijker.
 .Sh COPYRIGHT
-GRFCodec is Copyright (C) 2000-2005 by Josef Drexler <josef@ttdpatch.net>
+GRFCodec is Copyright (C) 2000\(hy2005 by Josef Drexler <josef@ttdpatch.net>
