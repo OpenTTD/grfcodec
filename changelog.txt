@@ -17,7 +17,7 @@ v3.4.6 to 4.0.0
   - Action 0 railtype properties 08..16.
   - Action 0 airport tile properties 08, 09, 0E..11.
   - Action 2 operators 14, 15, 16
-  - Action 2 variables 12, 1D, 23, 24.
+  - Action 2 variables 12, 1D, 23, 24, 25.
   - Action 2 vehicle variable 49, 4A.
   - Action 2 stations: fix parameter limits on station var 60.
   - Action 2 house variable 47, 65, 66, 67.
