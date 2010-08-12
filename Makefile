@@ -163,17 +163,20 @@ src/version.h: FORCE
 
 # Gnu compiler rules
 
-objs/%.o : src/%.cpp
+objs/%.o : src/%.cpp Makefile
 	$(_E) [CPP] $@
 	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -MMD -MF $@.d -MT $@ $<
 
 # On some installations a version.h exists in /usr/include. This one is then
 # found by the dependency tracker and thus the dependencies do not contain
 # a reference to version.h, so it isn't generated and compilation fails.
-objs/%.o.d: src/%.cpp src/version.h
+objs/message_mgr.o: src/version.h
+objs/messages.o: src/version.h
+
+objs/%.o.d: src/%.cpp Makefile
 	$(_C)mkdir -p objs
 	$(_E) [CPP DEP] $@
-	$(_C)$(CXX) $(CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp -MF $@
+	$(_C)$(CXX) $(CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp  | sed 's@\(.*\): @objs/\1: @;s@ version.h@@' > $@
 
 ifndef NO_MAKEFILE_DEP
 -include $(NFORENUMSRC:%.cpp=objs/%.o.d)
