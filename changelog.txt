@@ -53,6 +53,8 @@ v3.4.6 to 4.0.0
   reported the sprite before the one with the error.
 - Fix a warning on newobject's buy menu sprite cargo type.
 - Fix warning message about exceeded limits of bounding boxes.
+- Fix bogus warnings when defining a range strings and then referring to
+  a string in the middle of that range.
 - Remove warning 135 (first sprite cannot share bounding box with
   previous sprite) as it's no longer a valid warning since both openttd
   and ttdpatch support multiple ground sprites
