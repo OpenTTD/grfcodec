@@ -229,28 +229,33 @@ src/ttdpal.h: $(PAL_FILES:%=src/%) src/pal2c.pl
 
 # Gnu compiler rules
 
-objs/%.o : src/%.cpp
+objs/%.o : src/%.cpp Makefile
 	$(_E) [CPP] $@
 	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -MMD -MF $@.d -MT $@ $<
 
-% : objs/%.o
+% : objs/%.o Makefile
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 	$(_C)$(CP_TO_EXE)
 
 # same as above but optimized for size not speed
-objs/%.os : src/%.cpp
+objs/%.os : src/%.cpp Makefile
 	$(_E) [CPP] $@
 	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -Os -MMD -MF $@.d -MT $@ $<
 
-% :: objs/%.os
+% :: objs/%.os Makefile
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 
 # On some installations a version.h exists in /usr/include. This one is then
 # found by the dependency tracker and thus the dependencies do not contain
 # a reference to version.h, so it isn't generated and compilation fails.
-objs/%.o.d: src/%.cpp src/version.h
+objs/grfcodec.o: src/version.h
+objs/grfmerge.o: src/version.h
+objs/grfdiff.o: src/version.h
+objs/grfidc.o: src/version.h
+
+objs/%.o.d: src/%.cpp Makefile
 	$(_C)mkdir -p objs
 	$(_E) [CPP DEP] $@
 	$(_C)$(CXX) $(CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp -MF $@
