@@ -252,6 +252,7 @@ objs/%.os : src/%.cpp Makefile
 # a reference to version.h, so it isn't generated and compilation fails.
 objs/grfcodec.o: src/version.h
 objs/grfmerge.o: src/version.h
+objs/grfmerge.os: src/version.h
 objs/grfdiff.o: src/version.h
 objs/grfidc.o: src/version.h
 
