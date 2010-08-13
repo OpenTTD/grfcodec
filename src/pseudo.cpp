@@ -792,6 +792,7 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 	// Read any other value
 	string str;
 	// can't use operator>> -- that will consume comments in cases like \w12000//comment
+	eat_white(in); // skip whitespace at front
 	while(in && !is_comment(in) && !isspace(in.peek()) && in.peek() != EOF)
 		str += (char)in.get();
 
