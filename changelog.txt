@@ -11,6 +11,8 @@ Changes in 1.0.0
 - Unify warnings and errors so they go to stderr and are prefixed by "Warning:"
   or "Error:".
 - Allow hex escapes that have bit 31 set.
+- Fix comments not prefixed by whitespace could cause grfcodec to reject
+  the preceding escape.
 - After cropping a sprite, compress and write the correct number of bytes.
 - Add -X to print PCX sprite numbers in hex
 - (devel) Many compilation issues with different compilers and architectures.
