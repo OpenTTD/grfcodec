@@ -2,7 +2,9 @@ How to compile NFORenum
 -----------------------
 
 Compiling NFORenum is pretty straightforward. It can be done, with varying
-quantities of automation by basically any gcc.
+quantities of automation, with Cygwin's gcc (using Makefile for a
+cygwin-dependant binary, any Linux gcc (using Makefile, for a Linux
+binary).
 
 Compiling with make
 ===================
@@ -24,9 +26,9 @@ The following are the most intersting targets. Other targets exist, but are
 less useful.
 
 all
-renum		Compile NFORenum.
+nforenum  Compile NFORenum
 
-release		Compile NFORenum, then strip and upx it.
+release   Compile NFORenum, then strip and upx it (if enabled)
 
-clean		Delete all compiled files
-remake		Equivalent of "make clean all"
+clean     Delete all compiled files
+remake    Equivalent of "make clean all"
