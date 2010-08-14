@@ -3,6 +3,9 @@ v3.4.6 to 4.0.0
 - Change rename "renum" to "nforenum" including ".renum" to ."nforenum"
   so the name is less generic and the same as in several downstreams.
   You might need to update your development environment / build scripts.
+- (devel) Complete rewrite of installation of binaries, so if you are
+  packaging this you will have to check whether custom installation and
+  such are still needed or that the Makefile does handle it correctly.
 - Data file updates:
   - Enable actions 1..3 for airports, newobjects, railtypes and airport tiles.
   - Action 0 train prop 1A (change to extended byte).
@@ -58,6 +61,7 @@ v3.4.6 to 4.0.0
 - Remove warning 135 (first sprite cannot share bounding box with
   previous sprite) as it's no longer a valid warning since both openttd
   and ttdpatch support multiple ground sprites
+- Add -v to get the version.
 - Make -w/-W <list> work the way it is supposed to.
 - Make NFO error/warning messages go to stderr.
 - Allow the beautifier to output escape sequences.
@@ -79,7 +83,7 @@ v3.4.6 to 4.0.0
 - (devel) Race and bash-ism issues with the Makefile.
 - (devel) Fix numerous compile warnings and harden NFORenum.
 
-v3.4.5 to v3.4.6 (r1795)
+v3.4.5 to v3.4.6 (svn r1795)
 - Data file updates:
   - Industry texts may have arbitrary text-stack data.
   - Action D patch variable 11.
@@ -112,7 +116,7 @@ v3.4.5 to v3.4.6 (r1795)
 - Support the extended action 5 format.
 - Add support for string codes 9A 01 through 9A 04.
 
-v3.4.4 to v3.4.5 (r1396)
+v3.4.4 to v3.4.5 (svn r1396)
 - Data file updates:
   - New signals.
   - Variable 20.
@@ -124,7 +128,7 @@ v3.4.4 to v3.4.5 (r1396)
 - Support Action 7/9's new GRFID/mask format.
 - (minime) Allow @@LET variables to be redefined.
 
-v3.4.3 to v3.4.4 (r1350)
+v3.4.3 to v3.4.4 (svn r1350)
 - Data file updates:
   - Variable 7D.
   - Industries do not use GRM.
@@ -148,7 +152,7 @@ v3.4.3 to v3.4.4 (r1350)
 - Check for duplicate IDs in an action 3.
 - Check that prop 08 has been set before the action 3, when necessary.
 
-v3.4.2 to v3.4.3 (r1244)
+v3.4.2 to v3.4.3 (svn r1244)
 - Permit Action 1/2/3 for bridges (Callback 33)
 - Data file updates:
   - Articulated RV callbacks and variables.
@@ -163,7 +167,7 @@ v3.4.2 to v3.4.3 (r1244)
 - Accept GRF version 7 lang-id bytes in action Bs that precede the action 8.
 - Allow Action 6 <param-size> entries with bit 7 set.
 
-v3.4.1 to v3.4.2 (r1057)
+v3.4.1 to v3.4.2 (svn r1057)
 - Data file updates:
   - Callback 144
   - Callback 145
@@ -176,7 +180,7 @@ v3.4.1 to v3.4.2 (r1057)
 - Add check for <and> B/W/Ds of 0 in varaction 2s.
 - Fix off-by-one error when checking block extents in Action 12.
 
-v3.4.0 to 3.4.1 (r820)
+v3.4.0 to 3.4.1 (svn r820)
 - Check that in GRF version 6, Action F declares names for all five standard
   languages.
 - (bugfix) Slight change to action F formating, for increased consistancy.
@@ -188,7 +192,7 @@ v3.4.0 to 3.4.1 (r820)
   - Callback 143
 - (bugfix) Correct reading of \7c, \7C, \D| and \D&.
 
-v3.3.1 to v3.4.0 (r688)
+v3.3.1 to v3.4.0 (svn r688)
 - (devel) Can now make the version without \w<date> with NO_BOOST=1.
 - (devel) By Patchman: non-release versions show last-committed revision, not
   repository revision.
@@ -213,7 +217,7 @@ v3.3.1 to v3.4.0 (r688)
   <offset> and <available-bits>, instead of having them swapped.
 - (bugfix) Fix parsing of quoted \##.
 
-v3.3.0 to v3.3.1 (r320)
+v3.3.0 to v3.3.1 (svn r320)
 - Recognize Info version 7.
 - Warn about generic action 4s that declare no texts.
 - More auto-corrector changes:
@@ -223,7 +227,7 @@ v3.3.0 to v3.3.1 (r320)
 - (bugfix) Action4s declaring texts for language FF could cause NFORenum to
   abort.
 
-v3.2.1 to v3.3.0 (r284)
+v3.2.1 to v3.3.0 (svn r284)
 - Add an auto corrector, which will attempt to correct some portions of some
   pseudo-sprites when enabled. (See README)
 - (bugfix) Specifying -f could potentially cause undefined behaviour.
@@ -242,7 +246,7 @@ v3.2.1 to v3.3.0 (r284)
 - Update langs.dat for the new languages.
 - (bugfix) Warn about action 4s that declare no texts, rather than dying.
 
-v3.2.0 to v3.2.1 (r187)
+v3.2.0 to v3.2.1 (svn r187)
 - @@USEOLDSPRITENUMS
 - @@DEFINEID2
 - @@LOCATEID2
@@ -263,7 +267,7 @@ v3.2.0 to v3.2.1 (r187)
 - New action 5 type 0D
 
 Changelog:
-v3.1.4 to v3.2.0 (r156)
+v3.1.4 to v3.2.0 (svn r156)
 - (hotfix) TextIDs F900..F904.
 - (hotfix) Callbacks 3C and 3D.
 - (hotfix) Industry variable 63, industry tile variable 61,
