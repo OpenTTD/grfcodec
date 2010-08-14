@@ -9,18 +9,14 @@ binary).
 Compiling with make
 ===================
 
-The Makefiles will attempt to auto-detect:
+The Makefile will attempt to auto-detect:
 - Whether you are building on Cygwin or Linux (ISCYGWIN)
-- The name of your mingw cross compiler (PREFIX)
 - The location of your boost includes (BOOST_INCLUDE)
 
-If it gets these wrong, modify Makefile.setup appropriately, or set the
-above mentioned controlling variables.
+If it gets these wrong, modify Makefile.local appropriately, or set the above
+mentioned controlling variables.
 ISCYGWIN: 1 on cygwin and 0 on Linux.
-PREFIX: the name of your g++ cross compiler, minus the "g++". (If your
-    compiler is i586-ming32msvc-g++, PREFIX should be i586-ming32msvc-)
-BOOST_INCLUDE is the directory where your boost headers can be found. If you
-    set BOOST_INCLUDE, is is not useful to also set BOOST_VERSION.
+BOOST_INCLUDE is the directory where your boost headers can be found.
 
 
 Targets
@@ -29,21 +25,16 @@ Targets
 The following are the most intersting targets. Other targets exist, but are
 less useful.
 
-all		Compile grfcodec, grfdiff, and grfmerge, using gcc
-allb		Compile grfcodec, grfdiff, and grfmerge, using BCC
+all       Compile grfcodec, grfdiff, grfid and grfmerge
 
 grfcodec
 grfdiff
-grfmerge	Compile the program in question, using gcc.
-		Append _r to any of these to also strip/upx the resultant
-		binary.
+grfid
+grfmerge  Compile the program in question, using gcc.
+          Append _r to any of these to also strip/upx the resultant
+          binary.
 
-grfcodec.exe
-grfdiff.exe
-grfmerge.exe	Compile the program in question, using BCC.
+release   Compile all programs, then strip and upx them (if enabled)
 
-release		Compile all three programs using gcc, then strip and upx
-		them.
-
-clean		Delete all compiled files
-remake		Equivalent of "make clean all"
+clean     Delete all compiled files
+remake    Equivalent of "make clean all"
