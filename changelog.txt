@@ -1,4 +1,7 @@
 Changes in 1.0.0
+- (devel) Complete rewrite of installation of binaries, so if you are
+  packaging this you will have to check whether custom installation and
+  such are still needed or that the Makefile does handle it correctly.
 - (devel) Detect UPX, fix some race issues in the Makefile, disable
   optimization if GCC 4.5.0 is detected (to work around an optimization bug),
   fix version.h generation if there is a version.h in /usr/include.
@@ -23,16 +26,17 @@ Changes in 1.0.0
 - Require two slashes before dismissing anything as a C++ style comment.
 - Fix reading of real sprites with Unixy absolute paths.
 - Check for pixels with palette index of 255 when encoding.
+- Add -v to get the version.
 - Add -q to silence warnings.
 - Add -c to automatically crop extraenous transparent blue pixels.
 - Add escapes for the new action 2 operations 0E, 0F, 10, 11, 12, 13, 14, 15, 16
 - Prevent quotes and escapes in sprite 0.
 - Add escapes for long-format intro dates.
 
-Changes in 0.9.10 (r819)
+Changes in 0.9.10 (svn r819)
 - (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
 
-Changes in 0.9.9 (r653)
+Changes in 0.9.9 (svn r653)
 - By Patchman:
   - Check for sprites that extend beyond the end of the PCX file.
   - Update versioning system to show last-comitted revision for non-release
@@ -50,7 +54,7 @@ Changes in 0.9.9 (r653)
   - (devel) Terse build mode; get the verbose mode with make V=1.
   - (devel) Touch version.h if and only if it changes.
 
-Changes in 0.9.8 (r197)
+Changes in 0.9.8 (svn r197)
 - By DaleStan:
   - (devel) grfcodec (but not grfdiff or grfmerge) can now be built in
     MS Visual Studio 2003.
