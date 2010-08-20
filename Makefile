@@ -145,8 +145,8 @@ release: FORCE
 	$(_E) [STRIP] $(NFORENUM)
 	$(_C)$(STRIP) $(NFORENUM)
 ifneq ($(UPX),)
-	$(_E) [UPX] $(@:%_r=%)
-	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
+	$(_E) [UPX] $(NFORENUM)
+	$(_C)$(UPX) $(_Q) --best  $(NFORENUM)
 endif
 
 FORCE:
