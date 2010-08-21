@@ -56,9 +56,12 @@
 #	include "path.h"
 #endif
 
+static const char *VERSION = "GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler";
+
 static void usage(void)
 {
 	printf(
+		"%s\n"
 		"Usage:\n"
 		"    GRFCODEC -d [<Options>] <GRF-File> [<Directory>]\n"
 		"        Decode all sprites in the GRF file and put them in the directory\n"
@@ -96,7 +99,8 @@ static void usage(void)
 		"\n"
 		"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler\n"
 		"You may copy and redistribute it under the terms of the GNU General Public\n"
-		"License, as stated in the file 'COPYING'.\n"
+		"License, as stated in the file 'COPYING'.\n",
+		VERSION
 		);
 
 	exit(1);
@@ -521,7 +525,7 @@ foundlast:
 
 	free(grfnew);
 
-	printf("\nDone!\n");
+	if (_interactive) printf("\nDone!\n");
 	return 0;
 }
 
@@ -736,9 +740,6 @@ int main(int argc, char **argv)
 
 	_interactive = (isatty(fileno(stdout)) != 0);
 
-	const char *version = "GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler";
-	if (_interactive) printf("%s\n", version);
-
 	checksizes();
 
 #ifdef WIN32
@@ -760,8 +761,7 @@ int main(int argc, char **argv)
 			action = 2;
 			break;
 		case 'v':
-			/* If we're in interactive mode the version is already printed. */
-			if (isatty(fileno(stdout)) == 0) printf("%s\n", version);
+			printf("%s\n", VERSION);
 			return 0;
 		case 'w':
 			width = min(max(atoi(optarg), 0), 65535);
@@ -786,6 +786,7 @@ int main(int argc, char **argv)
 				break;
 		case 'c':
 			#ifdef __BIG_ENDIAN__
+				printf("%s\n", VERSION);
 				printf("Cropping not supported on big endian architectures.\n");
 				exit(1);
 			#endif
@@ -797,12 +798,14 @@ int main(int argc, char **argv)
 			unsigned int mapnum;
 			mapnum = atoi(optarg);
 			if (*optarg == '?') {
+				printf("%s\n", VERSION);
 				showcolourmaps();
 				exit(1);
 			} else if (mapnum < sizeof(colourmaps)/sizeof(colourmaps[0]) ) {
 					colourmap = colourmaps[mapnum];
-				} else
+				} else {
 					usage();
+				}
 				break;
 		case 'u':
 			compress = 0;
