@@ -157,6 +157,9 @@ int __cdecl main(const int argc,char**argv){
 		case EOF:
 			if(optind==argc)doexit();
 			basename=argv[optind++];break;
+		case '!':
+			ShowHelp();
+			exit(1);
 		default:
 			if(!CLCommand(opt))
 				IssueMessage(0,BAD_CL_ARG,opt,optarg);
