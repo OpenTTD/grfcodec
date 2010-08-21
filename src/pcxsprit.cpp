@@ -257,8 +257,8 @@ void pcxread::startsubimage(int x, int y, int sx, int sy)
 	subx = x;
 
 	if (y + sy > pcxread::sy) {
-		printf("\nError: Sprite y extends beyond end of PCX file.\nFile has %d lines, sprite wants %d..%d\n.",
-			pcxread::sy, y, y + sy - 1);
+		printf("\n%s: Error: Sprite y extends beyond end of PCX file.\nFile has %d lines, sprite wants %d..%d\n.",
+			this->filename(), pcxread::sy, y, y + sy - 1);
 		exit(2);
 	}
 
@@ -300,11 +300,11 @@ void pcxread::readheader()
 	be_swapheader(header);
 
 	if (header.nplanes == 3) {
-		fprintf(stderr, "Cannot read truecolour PCX files!\n");
+		fprintf(stderr, "%s: Cannot read truecolour PCX files!\n", this->filename());
 		exit(2);
 	}
 	if ( (header.bpp != 8) || (header.nplanes != 1) ) {
-		fprintf(stderr, "PCX file is not a 256 colour file!\n");
+		fprintf(stderr, "%s: PCX file is not a 256 colour file!\n", this->filename());
 		exit(2);
 	}
 
@@ -312,7 +312,7 @@ void pcxread::readheader()
 	U8 palette[768];
 
 	if (fread(palette,1,768,curfile) != 768 ) {
-		fprintf(stderr, "Could not read palette from PCX file!\n");
+		fprintf(stderr, "%s: Could not read palette from PCX file!\n", this->filename());
 		exit(2);
 	}
 
@@ -322,10 +322,10 @@ void pcxread::readheader()
 
 	if ( i == NUM_PALS ) {
 		if ( _force ) {
-			if (!_quiet) fprintf(stderr, "Warning: Encoding despite unrecognized palette.\n");
+			if (!_quiet) fprintf(stderr, "%s: Warning: Encoding despite unrecognized palette.\n", this->filename());
 		} else {
-			fprintf(stderr, "Error: Unrecognized palette, aborting.\n"
-				"Specify -f on the command line to override this check.\n");
+			fprintf(stderr, "%s: Error: Unrecognized palette, aborting.\n"
+				"Specify -f on the command line to override this check.\n", this->filename());
 			exit(2);
 		}
 	}
