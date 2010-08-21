@@ -133,7 +133,7 @@ void pcxfile::alloclines(int newlines)
 
 	newband = new U8*[newlines];
 	if (!newband) {
-		printf("Error allocating band array\n");
+		printf("%s: Error allocating band array\n", this->filename());
 		exit(2);
 	}
 
@@ -144,7 +144,7 @@ void pcxfile::alloclines(int newlines)
 	for (i=bandlines; i<newlines; i++) {
 		newband[i] = new U8[sx];
 		if (!(newband[i])) {
-			printf("Error allocating new band lines\n");
+			printf("%s: Error allocating new band lines\n", this->filename());
 			exit(2);
 		}
 	}
@@ -172,7 +172,7 @@ void pcxfile::expirelines(int oldlines)
 void pcxfile::initline(int y)
 {
 	if (y >= bandlines) {
-		printf("y=%d larger than bandlines=%d\n", y, bandlines);
+		printf("%s: y=%d larger than bandlines=%d\n", this->filename(), y, bandlines);
 		exit(2);
 	}
 	setline(band[y]);
@@ -212,7 +212,7 @@ void pcxfile::streamputpixel(U8 colour)
 	int y = subofsy(cy, 1);
 
 	if (putcolourmap[colour] == -1) {
-		printf("Agh! Putting colour %d but it has no map!\n", colour);
+		printf("%s: Agh! Putting colour %d but it has no map!\n", this->filename(), colour);
 		exit(2);
 	}
 
@@ -263,7 +263,7 @@ void pcxfile::streamgetpixel(U8 *buffer, unsigned long datasize)
 void pcxfile::putpixel(int x, int y, U8 colour)
 {
 	if (putcolourmap[colour] == -1) {
-		printf("Agh! Putting colour %d but it has no map!\n", colour);
+		printf("%s: Agh! Putting colour %d but it has no map!\n", this->filename(), colour);
 		exit(2);
 	}
 
@@ -346,7 +346,7 @@ void pcxfile::encodebytes(U8 buffer[], int num)
 	U8 byte;
 
 	if (codecing != 1) {
-		printf("I'm not encoding, but got a byte?\n");
+		printf("%s: I'm not encoding, but got a byte?\n", this->filename());
 		exit(2);
 	}
 
@@ -372,7 +372,7 @@ void pcxfile::encodebytes(U8 byte, int num)
 	int thisrun;
 
 	if (codecing != 1) {
-		printf("I'm not encoding, but got a byte?\n");
+		printf("%s: I'm not encoding, but got a byte?\n", this->filename());
 		exit(2);
 	}
 
@@ -394,7 +394,7 @@ void pcxfile::decodebytes(U8 buffer[], int num)
 	int thisrun, used;
 
 	if (codecing != 2) {
-		printf("I'm not decoding, but am supposed to return a byte?\n");
+		printf("%s: I'm not decoding, but am supposed to return a byte?\n", this->filename());
 		exit(2);
 	}
 
@@ -445,7 +445,7 @@ int pcxfile::subofsx(int x, int checkbound)
 	int ofsx = subx + x + dx;
 	if (ofsx >= sx) {
 		if (checkbound) {
-			printf("\nofsx too large: is %d=%d+%d+%d, sx=%d\n", ofsx, subx, x, dx, sx);
+			printf("\n%s: ofsx too large: is %d=%d+%d+%d, sx=%d\n", this->filename(), ofsx, subx, x, dx, sx);
 			exit(2);
 		} else {
 			return -1;
@@ -459,7 +459,7 @@ int pcxfile::subofsy(int y, int checkbound)
 	int ofsy = y + dy;
 	if (ofsy >= bandlines) {
 		if (checkbound) {
-			printf("\nofsy too large\n");
+			printf("\n%s: ofsy too large\n", this->filename());
 			exit(2);
 		} else {
 			return -1;
