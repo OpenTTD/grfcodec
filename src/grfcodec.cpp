@@ -86,6 +86,7 @@ static void usage(void)
 		"    -c        Crop extraneous transparent blue from real sprites\n"
 		"    -u        Save uncompressed data (probably not a good idea)\n"
 		"    -q        Suppress warning messages\n"
+		"    -s        Suppress progress output\n"
 		"\n"
 		"Options for both encoding and decoding:\n"
 		"    -m <num>  Apply colour translation to all sprites except character-glyphs.\n"
@@ -179,7 +180,7 @@ static const defpal defpals[] =
 
 static int *colourmaps[] = { palmap0, palmap1 };
 
-static bool _interactive;
+bool _interactive;
 
 static int movetoreal(char *newfile, char *realfile)
 {
@@ -746,7 +747,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:tfxqcX");
+		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:tfxqcsX");
 
 		if (opt == (char) EOF)
 			break;
@@ -760,7 +761,7 @@ int main(int argc, char **argv)
 			break;
 		case 'v':
 			/* If we're in interactive mode the version is already printed. */
-			if (!_interactive) printf("%s\n", version);
+			if (isatty(fileno(stdout)) == 0) printf("%s\n", version);
 			return 0;
 		case 'w':
 			width = min(max(atoi(optarg), 0), 65535);
@@ -818,6 +819,8 @@ int main(int argc, char **argv)
 		case 'q':
 			_quiet++;
 			break;
+		case 's':
+			_interactive = false;
 		case 'X':
 			_hexspritenums=true;
 			break;

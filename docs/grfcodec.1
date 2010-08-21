@@ -7,7 +7,7 @@
 .Nd A tool to convert a GRF file into graphics files and meta data, and vice versa.
 .Sh SYNOPSIS
 .Nm grfcodec
-.Op Fl v
+.Op Fl sv
 .Op Fl d | e
 .Op options
 .Ar GRF\(hyfile
@@ -30,13 +30,16 @@ All PCX files will be searched for relative from the location of the GRF\(hyfile
 .It Fl d
 Decode a GRF file. The
 .Ar GRF\(hyfile
-to pass is the file to deoce. The result will be in
+to pass is the file to decode. The result will be in
 .Pa sprites/GRF\(hyfile.nfo
 and
 .Pa sprites/GRF\(hyfile.pcx .
+.It Fl s
+Silences the progress output in interactive mode
 .It Fl v
 Display the version.
 .El
+.Pp
 Options for decoding:
 .Bl -tag
 .It Fl w Ar num
