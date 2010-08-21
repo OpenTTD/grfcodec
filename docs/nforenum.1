@@ -30,10 +30,10 @@ then in the environment variable
 , if defined. If not found attempt to create in
 .Ev HOME Ns
 , then in .
-.It Fl -force | Fl -f
+.It Fl -force | Fl f
 Forces processing of files that do not look like NFO files.
 The default is to treat such files as if they specified a too-high info version.
-.It Fl -help | Fl -h | Fl -?
+.It Fl -help | Fl h | Fl ?
 Display the help message.
 .It Fl -lock
 Locks the current comment command state. Commands will continue to be
@@ -49,6 +49,8 @@ Perform some rudimentary automatic correction of incorrect pseudo
 sprites. This may be specified twice to enable the corrections that
 are more likely to be incorrect.
 See the README for detailed information on the auto-correcter.
+.It Fl -silent | Fl s
+Silence the progress output in interactive mode
 .It Fl v
 Display the version.
 .El
