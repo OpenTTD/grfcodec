@@ -33,6 +33,20 @@
 #include<cassert>
 #include<cstdlib>
 
+#ifdef MINGW
+	#include <io.h>
+	#define mkdir(a,b) mkdir(a)
+	#define isatty _isatty
+#elif defined(_MSC_VER)
+	#include <io.h>
+	#include <direct.h>
+	#define mkdir(a,b) mkdir(a)
+	#define F_OK 0
+	#define isatty _isatty
+#else
+	#include <unistd.h>
+#endif//_MSC_VER
+
 using namespace std;
 
 #include"nforenum.h"
@@ -67,6 +81,7 @@ bool verify_real(string&);
 
 static int _retval=EOK;
 static int _force=0;
+bool _interactive;
 
 void SetCode(int x){_retval=max(_retval,x);}
 void doexit(){exit(_retval);}
@@ -85,6 +100,7 @@ int __cdecl main(const int argc,char**argv){
 		{"keep-old",no_argument,&replace,0},
 		{"help",no_argument,NULL,'?'},
 		{"help",no_argument,NULL,'h'},
+		{"silent",no_argument,NULL,'s'},
 		{"auto-correct",no_argument,NULL,'a'},
 		{"beautify",required_argument,NULL,'b'},
 		{"diff",no_argument,NULL,'d'},
@@ -98,16 +114,20 @@ int __cdecl main(const int argc,char**argv){
 		{"warning-enable",required_argument,NULL,'W'},
 		{NULL,0,0,0}
 	};
+	_interactive = (isatty(fileno(stdout)) != 0);
+	bool seen_startup_message = false;
 	pOut=argc==1?&cerr:&cout;
-	IssueMessage(0,STARTUP);
 	ifstream fin;
 	ofstream fout;
 	while(argc>1){
-		if(opt!=EOF)opt=getopt_long(argc,argv,"D::kv?hc:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
+		if(opt!=EOF)opt=getopt_long(argc,argv,"D::kvs?hc:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
 		switch(opt){
 		case 0:continue;
+		case 's':
+			_interactive = false;
+			continue;
 		case 'v':
-			/* The version is already printed. */
+			IssueMessage(0,STARTUP);
 			return 0;
 		case'D':
 			if(optarg)datadir=optarg;
@@ -123,6 +143,7 @@ int __cdecl main(const int argc,char**argv){
 			continue;
 		case'?':
 		case'h':
+			IssueMessage(0,STARTUP);
 			ShowHelp();
 			return 0;
 		case'f':_force=1;continue;
@@ -140,6 +161,11 @@ int __cdecl main(const int argc,char**argv){
 			if(!CLCommand(opt))
 				IssueMessage(0,BAD_CL_ARG,opt,optarg);
 			continue;
+		}
+
+		if (!seen_startup_message && _interactive) {
+			seen_startup_message = true;
+			IssueMessage(0,STARTUP);
 		}
 		pNfo=&fout;
 		bakfilename=basename+bak_ext;
@@ -176,7 +202,7 @@ int __cdecl main(const int argc,char**argv){
 		reset_sanity();
 		reset_commands();
 		_grfver=0;
-		IssueMessage(0,PROCESSING_FILE,basename.c_str());
+		if (_interactive) IssueMessage(0,PROCESSING_FILE,basename.c_str());
 		result=process_file(fin);
 		fin.close();
 		fout.close();
@@ -207,7 +233,7 @@ int __cdecl main(const int argc,char**argv){
 				SetCode(EFILE);
 			}
 		}
-		IssueMessage(0,PROCESSING_COMPLETE);
+		if (_interactive) IssueMessage(0,PROCESSING_COMPLETE);
 	}
 	pNfo=&cout;
 	IssueMessage(0,PROCESSING);
