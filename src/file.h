@@ -31,7 +31,6 @@ class multifile {
 class singlefile : public multifile {
 	public:
 	singlefile(const char *filename, const char *mode, const char *dir);
-	singlefile(FILE *file, const char *dir);
 	virtual ~singlefile();
 
 	void setfile(FILE *file);
