@@ -86,6 +86,9 @@ GRFCODEC
                 Sprites with bit 6 of their compression byte set will never
                 be shrunk.
 
+        -s      Silences the progress output indicating which real sprite 
+                currently is being worked on.
+
    When doing either:
 
         -M <mapping>

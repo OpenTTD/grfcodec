@@ -13,15 +13,11 @@
 #include "escapes.h"
 #include "grfcomm.h"
 
-#if defined _MSC_VER || defined MINGW
-	#include <io.h>
-	#define isatty _isatty
-#endif
-
 #define infoline "%s %d %d %02X %d %d %d %d"
 //		<PCX-File> <X> <Y> <info[0..7]>
 //		extended if info[0]&8: info[1]*<%d %d> linelen linestart
 
+extern bool _interactive;
 
 int makeint(U8 low, S8 high)
 {
@@ -112,7 +108,7 @@ void inforeader::PrepareReal(const Real&sprite){
 
 		delete imgfile;
 
-		if (isatty(fileno(stdout))) {
+		if (_interactive) {
 			printf("Loading %s\n", sprite.GetName());
 		}
 
