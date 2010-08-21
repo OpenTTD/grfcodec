@@ -43,19 +43,6 @@ singlefile::singlefile(const char *filename, const char *mode, const char *dir)
 		directory = NULL;
 };
 
-singlefile::singlefile(FILE *file, const char *dir)
-{
-	if (!file) {
-		fperror("\nError opening file");
-		exit(1);
-	}
-	setfile(file);
-	if (dir)
-		directory = strdup(dir);
-	else
-		directory = NULL;
-};
-
 singlefile::~singlefile()
 {
 	if (autoclose && thefile)
