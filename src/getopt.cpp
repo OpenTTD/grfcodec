@@ -123,7 +123,7 @@ static enum
 {
   REQUIRE_ORDER, PERMUTE, RETURN_IN_ORDER
 } ordering;
-
+
 #ifdef	__GNU_LIBRARY__
 #include <string.h>
 #define	my_index	strchr
@@ -153,7 +153,7 @@ static void my_bcopy (char *from, char *to, int size)
     to[i] = from[i];
 }
 #endif				/* GNU C library.  */
-
+
 /* Handle permutation of arguments.  */
 
 /* Describe the part of ARGV that contains non-options that have
@@ -191,7 +191,7 @@ static void exchange (char **argv)
   first_nonopt += (optind - last_nonopt);
   last_nonopt = optind;
 }
-
+
 /* Scan elements of ARGV (whose length is ARGC) for option characters
    given in OPTSTRING.
 
@@ -212,8 +212,8 @@ static void exchange (char **argv)
 
    OPTSTRING is a string containing the legitimate option characters.
    If an option character is seen that is not listed in OPTSTRING,
-   return '?' after printing an error message.  If you set `opterr' to
-   zero, the error message is suppressed but we still return '?'.
+   return '!' after printing an error message.  If you set `opterr' to
+   zero, the error message is suppressed but we still return '!'.
 
    If a char in OPTSTRING is followed by a colon, that means it wants an arg,
    so the following text in the same ARGV-element, or the text of the following
@@ -412,7 +412,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 		     argv[0], argv[optind]);
 	  nextchar += strlen (nextchar);
 	  optind++;
-	  return '?';
+	  return '!';
 	}
 
       if (pfound != NULL)
@@ -441,7 +441,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 			     argv[0], argv[optind - 1][0], pfound->name);
 		    }
 		  nextchar += strlen (nextchar);
-		  return '?';
+		  return '!';
 		}
 	    }
 	  else if (pfound->has_arg == 1)
@@ -454,7 +454,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 		    fprintf (stderr, "%s: option `%s' requires an argument\n",
 			     argv[0], argv[optind - 1]);
 		  nextchar += strlen (nextchar);
-		  return '?';
+		  return '!';
 		}
 	    }
 	  nextchar += strlen (nextchar);
@@ -490,7 +490,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 	    }
 	  nextchar = (char *) "";
 	  optind++;
-	  return '?';
+	  return '!';
 	}
     }
 
@@ -514,7 +514,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 	    else
 	      fprintf (stderr, "%s: unrecognized option `-%c'\n", argv[0], c);
 	  }
-	return '?';
+	return '!';
       }
     if (temp[1] == ':')
       {
@@ -545,7 +545,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 		if (opterr)
 		  fprintf (stderr, "%s: option `-%c' requires an argument\n",
 			   argv[0], c);
-		c = '?';
+		c = '!';
 	      }
 	    else
 	      /* We already incremented `optind' once;
