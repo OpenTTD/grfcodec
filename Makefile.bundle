@@ -95,7 +95,7 @@ bundle_dmg: bundle
 
 bundle_src:
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.gz'
-	$(_C) hg archive -t tar $(BUNDLE_NAME).tar -X "\.hg*" -X "\.devzone*"
+	$(_C) hg archive -t tar $(BUNDLE_NAME).tar -X "\.hg*" -X "\.devzone*" -X "version.def"
 	$(_C) mkdir -p $(BUNDLE_NAME)
 	$(_C) echo REV = "$(REV)" >> $(BUNDLE_NAME)/version.def
 	$(_C) echo VERSIONSTR = "$(VERSIONSTR)" >> $(BUNDLE_NAME)/version.def
