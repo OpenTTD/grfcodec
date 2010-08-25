@@ -17,6 +17,7 @@
 
 #ifndef _GETOPT_H
 #define _GETOPT_H 1
+#define __GETOPT_H__
 
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,
