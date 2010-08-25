@@ -18,10 +18,6 @@
 #ifndef _GETOPT_H
 #define _GETOPT_H 1
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,
    the argument value is returned here.
@@ -78,7 +74,7 @@ struct option
   char *name;
 #endif
   /* has_arg can't be an enum because some compilers complain about
-     type mismatches in all the code that assumes it is an int.  */
+	 type mismatches in all the code that assumes it is an int.  */
   int has_arg;
   int *flag;
   int val;
@@ -96,16 +92,16 @@ enum _argtype
 #if __STDC__ || __BORLANDC__ || _MSC_VER
 extern int getopt (int argc, char *const *argv, const char *shortopts);
 extern int getopt_long (int argc, char *const *argv, const char *shortopts,
-		        const struct option *longopts, int *longind);
+				const struct option *longopts, int *longind);
 extern int getopt_long_only (int argc, char *const *argv,
-			     const char *shortopts,
-		             const struct option *longopts, int *longind);
+				 const char *shortopts,
+					 const struct option *longopts, int *longind);
 
 /* Internal only.  Users should not call this directly.  */
 extern int _getopt_internal (int argc, char *const *argv,
-			     const char *shortopts,
-		             const struct option *longopts, int *longind,
-			     int long_only);
+				 const char *shortopts,
+					 const struct option *longopts, int *longind,
+				 int long_only);
 #else /* not __STDC__ */
 extern int getopt ();
 extern int getopt_long ();
@@ -113,9 +109,5 @@ extern int getopt_long_only ();
 
 extern int _getopt_internal ();
 #endif /* not __STDC__ */
-
-#ifdef	__cplusplus
-}
-#endif
 
 #endif /* _GETOPT_H */

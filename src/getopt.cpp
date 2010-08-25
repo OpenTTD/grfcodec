@@ -19,37 +19,15 @@
    License along with this program; if not, write to the Free Software
    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.  */
 
-/* AIX requires this to be the first thing in the file. */
 
-#ifdef __GNUC__
-#ifndef alloca
-#define alloca __builtin_alloca
-#endif
-#else /* not __GNUC__ */
-#if defined(HAVE_ALLOCA_H) || (defined(sparc) && (defined(sun) || (!defined(USG) && !defined(SVR4) && !defined(__svr4__))))
-#include <alloca.h>
-#else
-#ifdef _AIX
- #pragma alloca
-#else
-char *alloca ();
-#endif
-#endif /* alloca.h */
-#endif /* not __GNUC__ */
+/* Portions of this file not necessary to NFORenum's purposes have been
+   removed by Dale McCoy, at various times between 2004 and 2009. */
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-/* This needs to come after some library #include
-   to get __GNU_LIBRARY__ defined.  */
-#ifdef	__GNU_LIBRARY__
-#undef	alloca
-#include <stdlib.h>
-#include <string.h>
-#elif !defined(__alloca)
-#define	__alloca	alloca
-#endif	/* GNU C library.  */
 
 #ifndef __STDC__
 #define const
@@ -74,7 +52,7 @@ char *alloca ();
    GNU application programs can use a third alternative mode in which
    they can distinguish the relative order of options and other arguments.  */
 
-#include <getopt.h>
+#include "getopt.h"
 
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,
@@ -155,9 +133,9 @@ static enum
 /* Avoid depending on library functions or files
    whose names are inconsistent.  */
 
-char *getenv ();
+/*char *getenv ();*/
 
-static const char *my_index (const char *string, int chr)
+static char *my_index (const char *string, int chr)
 {
   while (*string)
     {
@@ -234,8 +212,8 @@ static void exchange (char **argv)
 
    OPTSTRING is a string containing the legitimate option characters.
    If an option character is seen that is not listed in OPTSTRING,
-   return '?' after printing an error message.  If you set `opterr' to
-   zero, the error message is suppressed but we still return '?'.
+   return '!' after printing an error message.  If you set `opterr' to
+   zero, the error message is suppressed but we still return '!'.
 
    If a char in OPTSTRING is followed by a colon, that means it wants an arg,
    so the following text in the same ARGV-element, or the text of the following
@@ -434,7 +412,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 		     argv[0], argv[optind]);
 	  nextchar += strlen (nextchar);
 	  optind++;
-	  return '?';
+	  return '!';
 	}
 
       if (pfound != NULL)
@@ -463,7 +441,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 			     argv[0], argv[optind - 1][0], pfound->name);
 		    }
 		  nextchar += strlen (nextchar);
-		  return '?';
+		  return '!';
 		}
 	    }
 	  else if (pfound->has_arg == 1)
@@ -476,7 +454,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 		    fprintf (stderr, "%s: option `%s' requires an argument\n",
 			     argv[0], argv[optind - 1]);
 		  nextchar += strlen (nextchar);
-		  return '?';
+		  return '!';
 		}
 	    }
 	  nextchar += strlen (nextchar);
@@ -512,7 +490,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 	    }
 	  nextchar = (char *) "";
 	  optind++;
-	  return '?';
+	  return '!';
 	}
     }
 
@@ -536,7 +514,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 	    else
 	      fprintf (stderr, "%s: unrecognized option `-%c'\n", argv[0], c);
 	  }
-	return '?';
+	return '!';
       }
     if (temp[1] == ':')
       {
@@ -567,7 +545,7 @@ int _getopt_internal (int argc, char *const *argv, const char *optstring,
 		if (opterr)
 		  fprintf (stderr, "%s: option `-%c' requires an argument\n",
 			   argv[0], c);
-		c = '?';
+		c = '!';
 	      }
 	    else
 	      /* We already incremented `optind' once;
@@ -586,6 +564,13 @@ int getopt (int argc, char *const *argv, const char *optstring)
 			   (const struct option *) 0,
 			   (int *) 0,
 			   0);
+}
+
+int
+getopt_long (int argc, char *const *argv, const char *options,
+             const struct option *long_options, int *opt_index)
+{
+  return _getopt_internal (argc, argv, options, long_options, opt_index, 0);
 }
 
 #ifdef TEST
