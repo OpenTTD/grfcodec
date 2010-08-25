@@ -21,8 +21,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <getopt.h>
 #include <sys/stat.h>
+#include "getopt.h"
 
 #ifdef MINGW
 	#include <io.h>

@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <getopt.h>
 #include <sys/stat.h>
 #include <time.h>
 #include <ctype.h>
@@ -31,6 +30,7 @@
 
 #define DOCHECK
 
+#include "getopt.h"
 #include "error.h"
 #include "sprites.h"
 #include "grfcomm.h"
