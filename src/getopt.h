@@ -18,10 +18,6 @@
 #ifndef _GETOPT_H
 #define _GETOPT_H 1
 
-#ifdef	__cplusplus
-extern "C" {
-#endif
-
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,
    the argument value is returned here.
@@ -113,9 +109,5 @@ extern int getopt_long_only ();
 
 extern int _getopt_internal ();
 #endif /* not __STDC__ */
-
-#ifdef	__cplusplus
-}
-#endif
 
 #endif /* _GETOPT_H */
