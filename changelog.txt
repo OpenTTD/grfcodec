@@ -1,7 +1,14 @@
 Changelog:
 4.0.0 to
 - Data file updates
-  - Action 2 objects variable 5F.
+  - Action 0 objects properties 11..16.
+  - Action 2 objects variablse 42, 44..46, 5F, 60..64.
+  - Action 2 callbacks 157..15D.
+- Add command line option to silence all progress output.
+- Fix Cygwin compilation issues.
+- Fix putting version.def twice in the source bundle.
+- Fix returning a non-zero exit code upon an unrecognised command line option.
+- Fix UPX-ing of release binaries under some circumstances.
 
 Changelog:
 v3.4.6 to 4.0.0
