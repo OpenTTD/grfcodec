@@ -172,7 +172,7 @@ bool CheckD(PseudoSprite&data,uint length){
 	data.SetPositionalOpByte(2, 'D');
 	if(!Vars::Instance().canWriteD(target))IssueMessage(ERROR,INVALID_TARGET);
 	if((op&0x7F)>D::Instance().maxop)IssueMessage(ERROR,INVALID_OP,2,op);
-	if(!Vars::Instance().canReadD(src1))IssueMessage(ERROR,INVALID_SRC,1);
+	if((src1!=0xFE||src2!=0xFE)&&!Vars::Instance().canReadD(src1))IssueMessage(ERROR,INVALID_SRC,1);
 	if(op&&src2!=0xFE&&!Vars::Instance().canReadD(src2))IssueMessage(ERROR,INVALID_SRC,2);
 	if((op&0x7F)&&src1==0xFF&&src2==0xFF)IssueMessage(ERROR,ONLY_ONE_DATA);
 	if(src1==0xFF||src2==0xFF||src2==0xFE){
@@ -181,7 +181,7 @@ bool CheckD(PseudoSprite&data,uint length){
 			uint info=data.ExtractDword(5);
 			if((info&0xFF)!=0xFF){
 				if(op&0x7F)IssueMessage(ERROR,INVALID_OP,2,op);
-				if(src1&0x80)IssueMessage(ERROR,INVALID_SRC,1);
+				if(src1!=0xFE&&src1&0x80)IssueMessage(ERROR,INVALID_SRC,1);
 				data.SetGRFID(5);
 			}else if(info==0xFFFF){
 				if(op&0x7F)IssueMessage(ERROR,INVALID_OP,2,op);
