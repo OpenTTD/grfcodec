@@ -2,15 +2,20 @@ Changelog:
 4.0.0 to
 - Data file updates
   - Action 0 objects properties 11..16.
-  - Action 2 objects variablse 42, 44..46, 5F, 60..64.
+  - Action 2 objects variables 42, 44..46, 5F, 60..64.
   - Action 2 callbacks 157..15D.
 - Add command line option to silence all progress output.
 - Add support for reading the (Action 14) version of other NewGRFs via Action D
   parameter 7E.
 - Fix Cygwin compilation issues.
-- Fix putting version.def twice in the source bundle.
 - Fix returning a non-zero exit code upon an unrecognised command line option.
 - Fix UPX-ing of release binaries under some circumstances.
+- (devel) Fix putting version.def twice in the source bundle.
+- (devel) Use directories from the Make conventions for installation
+  directories and add a few "parameters" to disable installation of
+  certain bits of documentation.
+- (devel) Disable strip and UPX as default.
+- (devel) Add make distclean that removes Makefile.local as well.
 
 v3.4.6 to 4.0.0
 - Change rename "renum" to "nforenum" including ".renum" to ."nforenum"
