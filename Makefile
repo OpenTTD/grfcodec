@@ -8,6 +8,8 @@
 
 MAKEFILELOCAL=Makefile.local
 
+PACKAGE_NAME = grfcodec
+
 # Order of the palettes compiled in
 # (note, this must match the text in grfcodec.cpp and grftut.txt)
 PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars&ttw_pb_pal1&ttw_pb_pal2
@@ -15,8 +17,8 @@ PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars&ttw_pb_pal1&ttw
 # Gnu compiler settings
 SHELL = /bin/sh
 CXX = g++
-STRIP = strip
-UPX = $(shell [ `which upx 2>/dev/null` ] && echo "upx")
+STRIP =
+UPX =
 AWK = awk
 SRCZIP_FLAGS = -9
 SRCZIP = gzip
@@ -152,6 +154,7 @@ remake:
 	$(_E) [CLEAN]
 	$(_C)$(MAKE) ${_S} clean
 	$(_E) [REBUILD]
+	$(_C)$(MAKE) src/version.h
 	$(_C)$(MAKE) ${_S} all
 
 ${MAKEFILELOCAL}:
@@ -180,8 +183,11 @@ clean:
 	rm -rf objs $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) bundle bundles grfcodec-*
 
 mrproper: clean
-	rm -f *.d src/version.h src/grfmrg.c
+	rm -f src/version.h src/grfmrg.cpp
 	@touch -ct 9901010000 ttdpal.h	# don't delete it, so we don't confuse svn, but force it to be remade
+
+distclean: mrproper
+	rm -rf Makefile.local
 
 FORCE:
 	@$(BOOST_ERROR)
@@ -198,8 +204,10 @@ FORCE:
 	$(_E) [REBUILD] $(@:%_r=%)
 	$(_C)rm -f $(@:%_r=%)
 	$(_C)$(MAKE) ${_S} $(@:%_r=%)
+ifneq ($(STRIP),)
 	$(_E) [STRIP] $(@:%_r=%)
 	$(_C)$(STRIP)  $(@:%_r=%)
+endif
 ifneq ($(UPX),)
 	$(_E) [UPX] $(@:%_r=%)
 	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
@@ -212,8 +220,10 @@ objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.cpp=objs/%.os)
 	$(_C)rm -f $@
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(CXXFLAGS) -Os $^
+ifneq ($(STRIP),)
 	$(_E) [STRIP] $@
 	$(_C)$(STRIP) $@
+endif
 ifneq ($(UPX),)
 	$(_E) [UPX] $@
 	$(_C)$(UPX) $(_Q) --best $@

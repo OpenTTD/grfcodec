@@ -2,8 +2,13 @@ Changes in
 - Add filename to a number of PCX related error messages.
 - Add command line option to silence all progress output.
 - Fix Cygwin compilation issues.
-- Fix putting version.def twice in the source bundle.
 - Fix UPX-ing of release binaries under some circumstances.
+- (devel) Fix putting version.def twice in the source bundle.
+- (devel) Use directories from the Make conventions for installation
+  directories and add a few "parameters" to disable installation of
+  certain bits of documentation.
+- (devel) Disable strip and UPX as default.
+- (devel) Add make distclean that removes Makefile.local as well.
 
 Changes in 1.0.0
 - (devel) Complete rewrite of installation of binaries, so if you are
