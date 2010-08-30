@@ -8,19 +8,16 @@
 
 MAKEFILELOCAL=Makefile.local
 
+PACKAGE_NAME = nforenum
+
 # Gnu compiler settings
 SHELL = /bin/sh
 CXX = g++
-STRIP = strip
-UPX = $(shell [ `which upx 2>/dev/null` ] && echo "upx")
+STRIP =
+UPX =
 AWK = awk
 SRCZIP_FLAGS = -9
 SRCZIP = gzip
-
-# Default installation directories
-INSTALL_DOCS_DIR := "$(DESTDIR)/usr/share/doc/nforenum"
-INSTALL_BINARY_DIR := "$(DESTDIR)/usr/bin"
-INSTALL_MAN_DIR := "$(DESTDIR)/usr/share/man/man1"
 
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
@@ -138,12 +135,17 @@ clean:
 	rm -rf objs nforenum.* nforenum nforenum-* bundle bundles
 	rm -f src/version.h
 
+distclean: clean
+	rm -rf Makefile.local
+
 release: FORCE
 	$(_E)[REBUILD] $(NFORENUM)
 	$(_C)rm -f $(NFORENUM)
 	$(_C)$(MAKE) $(_S)
+ifneq ($(STRIP),)
 	$(_E) [STRIP] $(NFORENUM)
 	$(_C)$(STRIP) $(NFORENUM)
+endif
 ifneq ($(UPX),)
 	$(_E) [UPX] $(NFORENUM)
 	$(_C)$(UPX) $(_Q) --best  $(NFORENUM)

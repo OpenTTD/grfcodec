@@ -29,7 +29,8 @@
 #CXXFLAGS += -pg
 #LDOPT += -pg
 
-# Installation directories
-#INSTALL_DOCS_DIR := "$(DESTDIR)/usr/share/doc/nforenum"
-#INSTALL_BINARY_DIR := "$(DESTDIR)/usr/bin"
-#INSTALL_MAN_DIR := "$(DESTDIR)/usr/share/man/man1"
+# Several options to influence the installation of documentation
+#DO_NOT_INSTALL_DOCS = 1
+#DO_NOT_INSTALL_CHANGELOG = 1
+#DO_NOT_INSTALL_LICENSE = 1
+#DO_NOT_INSTALL_MAN = 1
