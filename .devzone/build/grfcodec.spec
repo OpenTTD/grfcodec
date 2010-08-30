@@ -38,6 +38,7 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
 %{_bindir}/grfmerge
 %dir %{_datadir}/doc/grfcodec
 %doc %{_datadir}/doc/grfcodec/*.txt
+%doc %{_datadir}/doc/grfcodec/COPYING
 %{_mandir}/man1/grfcodec.1*
 %{_mandir}/man1/grfdiff.1*
 %{_mandir}/man1/grfid.1*
