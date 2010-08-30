@@ -2,6 +2,21 @@
 # Creation of bundles
 #
 
+# Standard make convention variables/locations
+prefix         ?= /usr/local
+exec_prefix    ?= $(prefix)
+datarootdir    ?= $(prefix)/share
+datadir        ?= $(datarootdir)
+
+bindir         ?= $(exec_prefix)/bin
+mandir         ?= $(datarootdir)/man
+man1dir        ?= $(mandir)/man1
+docdir         ?= $(datarootdir)/doc/$(PACKAGE_NAME)
+
+openttddir     ?= $(datarootdir}/openttd
+openttdgmdir   ?= $(openttddir)/gm/$(PACKAGE_NAME)
+openttddatadir ?= $(openttddir)/data/$(PACKAGE_NAME)
+
 ifeq (${V},1)
 VERBOSE := 1
 endif
@@ -28,24 +43,35 @@ bundle: release
 	$(_C)mkdir -p "$(BUNDLE_DIR)/man"
 	$(_C)cp $(NFORENUM)        "$(BUNDLE_DIR)/"
 	$(_C)cp COPYING            "$(BUNDLE_DIR)/"
-	$(_C)cp changelog.txt      "$(BUNDLE_DIR)/docs/"
+	$(_C)cp changelog.txt      "$(BUNDLE_DIR)/"
 	$(_C)for i in docs/*.en.txt; do cp $$i "$(BUNDLE_DIR)/docs/"`echo $$i | sed 's@docs/@@;s/.en.txt/.txt/'`; done
 	$(_C)cp docs/nforenum.1     "$(BUNDLE_DIR)/man/"
 	$(_C)gzip -9               "$(BUNDLE_DIR)/man/nforenum.1"
 ifeq ($(NFORENUM), nforenum.exe)
-	$(_C)unix2dos "$(BUNDLE_DIR)/COPYING"
+	$(_C)unix2dos "$(BUNDLE_DIR)/COPYING" "$(BUNDLE_DIR)/changelog.txt"
 	$(_C)unix2dos "$(BUNDLE_DIR)/docs/"*.txt
 endif
 
 install: bundle
 	@echo '[INSTALL] Installing NFORenum'
-	$(_C)install -d "$(INSTALL_DOCS_DIR)"
-	$(_C)install -d "$(INSTALL_BINARY_DIR)"
-	$(_C)install -d "$(INSTALL_MAN_DIR)"
-	$(_C)install -m 755 "$(BUNDLE_DIR)/$(NFORENUM)" "$(INSTALL_BINARY_DIR)/$(NFORENUM)"
-	$(_C)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(INSTALL_DOCS_DIR)"
-	$(_C)install -m 644 "$(BUNDLE_DIR)/COPYING" "$(INSTALL_DOCS_DIR)"
-	$(_C)install -m 644 "$(BUNDLE_DIR)/man/nforenum.1.gz" "$(INSTALL_MAN_DIR)/nforenum.1.gz"
+	$(_C)install -d "$(DESTDIR)$(bindir)"
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(NFORENUM)" "$(DESTDIR)$(bindir)/$(NFORENUM)"
+ifndef DO_NOT_INSTALL_DOCS
+	$(_C)install -d "$(DESTDIR)$(docdir)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(DESTDIR)$(docdir)"
+endif
+ifndef DO_NOT_INSTALL_CHANGELOG
+	$(_C)install -d "$(DESTDIR)$(docdir)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/changelog.txt" "$(DESTDIR)$(docdir)"
+endif
+ifndef DO_NOT_INSTALL_LICENSE
+	$(_C)install -d "$(DESTDIR)$(docdir)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/COPYING" "$(DESTDIR)$(docdir)"
+endif
+ifndef DO_NOT_INSTALL_MAN
+	$(_C)install -d "$(DESTDIR)$(man1dir)"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/man/nforenum.1.gz" "$(DESTDIR)$(man1dir)/nforenum.1.gz"
+endif
 
 ### Packing the current bundle into several compressed file formats ###
 #
