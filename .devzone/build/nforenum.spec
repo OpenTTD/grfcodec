@@ -11,7 +11,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:  gcc-c++
 BuildRequires:  boost-devel
-#We need Mercurial for auto version detection:
+#We need Mercurial for auto version detection: (not needed with source tarball)
 BuildRequires:  mercurial
 
 %description
@@ -37,12 +37,7 @@ make install DESTDIR=%{buildroot}
 %{_bindir}/nforenum
 %dir %{_datadir}/doc/nforenum
 %doc %{_datadir}/doc/nforenum/COPYING
-%doc %{_datadir}/doc/nforenum/changelog.txt
-%doc %{_datadir}/doc/nforenum/auto_correct.txt
-%doc %{_datadir}/doc/nforenum/commands.txt
-%doc %{_datadir}/doc/nforenum/readme.txt
-%doc %{_datadir}/doc/nforenum/readme.rpn.txt
-%doc %{_datadir}/doc/nforenum/sanity.txt
-%doc %{_mandir}/man1/nforenum.1*
+%doc %{_datadir}/doc/nforenum/*.txt
+%{_mandir}/man1/nforenum.1*
 
 %changelog
