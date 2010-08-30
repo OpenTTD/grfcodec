@@ -11,7 +11,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:  gcc-c++
 BuildRequires:  boost-devel
-#We need Mercurial for auto version detection:
+#We need Mercurial for auto version detection: (not needed with source tarball)
 BuildRequires:  mercurial
 
 %description
@@ -37,16 +37,10 @@ make install DESTDIR=%{buildroot}
 %{_bindir}/grfid
 %{_bindir}/grfmerge
 %dir %{_datadir}/doc/grfcodec
-%doc %{_datadir}/doc/grfcodec/readme.txt
-%doc %{_datadir}/doc/grfcodec/changelog.txt
-%doc %{_datadir}/doc/grfcodec/COPYING
-%doc %{_datadir}/doc/grfcodec/grf.txt
-%doc %{_datadir}/doc/grfcodec/grfcodec.txt
-%doc %{_datadir}/doc/grfcodec/grftut.txt
-%doc %{_datadir}/doc/grfcodec/todo.txt
-%doc %{_mandir}/man1/grfcodec.1*
-%doc %{_mandir}/man1/grfdiff.1*
-%doc %{_mandir}/man1/grfid.1*
-%doc %{_mandir}/man1/grfmerge.1*
+%doc %{_datadir}/doc/grfcodec/*.txt
+%{_mandir}/man1/grfcodec.1*
+%{_mandir}/man1/grfdiff.1*
+%{_mandir}/man1/grfid.1*
+%{_mandir}/man1/grfmerge.1*
 
 %changelog
