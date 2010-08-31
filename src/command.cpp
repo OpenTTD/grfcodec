@@ -33,12 +33,12 @@
 #   include<map>
 #endif
 #include<cstdlib>
+#include<getopt.h>
 
 using namespace std;
 
 #include"globals.h"
 #include"nforenum.h"
-#include"getopt.h"
 #include"command.h"
 #include"inlines.h"
 #include"sanity.h"

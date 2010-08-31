@@ -109,7 +109,7 @@ export _I
 NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
   act79D.cpp actB.cpp actF.cpp act14.cpp command.cpp data.cpp globals.cpp \
   inject.cpp messages.cpp pseudo.cpp rangedint.cpp nforenum.cpp sanity.cpp \
-  strings.cpp utf8.cpp getopt.cpp help.cpp message_mgr.cpp language_mgr.cpp \
+  strings.cpp utf8.cpp help.cpp message_mgr.cpp language_mgr.cpp \
   mapescapes.cpp pseudo_seq.cpp
 
 # targets
