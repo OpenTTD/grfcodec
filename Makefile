@@ -23,19 +23,9 @@ AWK = awk
 SRCZIP_FLAGS = -9
 SRCZIP = gzip
 
-# Default installation directories
-INSTALL_DOCS_DIR := "$(DESTDIR)/usr/share/doc/grfcodec"
-INSTALL_BINARY_DIR := "$(DESTDIR)/usr/bin"
-INSTALL_MAN_DIR := "$(DESTDIR)/usr/share/man/man1"
-
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
 MACHINE = $(shell $(CXX) -dumpmachine || echo '??' )
-
-# Cygwin builds default to -mno-cygwin.
-ifndef NOCYGWIN
-NOCYGWIN = 1
-endif
 
 # OS dependent variables
 EXE = $(shell ( [ \( $(ISCYGWIN) -eq 1 \) -o \( "$(MACHINE)" = "mingw32" \) ] ) && echo .exe)
@@ -55,12 +45,6 @@ endif
 
 ifeq ($(MACHINE),mingw32)
 FLAGS += -DMINGW
-endif
-
-ifeq ($(ISCYGWIN),1)
-ifeq ($(NOCYGWIN),1)
-FLAGS += -DMINGW -mno-cygwin
-endif
 endif
 
 ifeq ($(shell uname),Darwin)
