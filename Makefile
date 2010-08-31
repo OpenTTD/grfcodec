@@ -138,11 +138,11 @@ export _I
 
 # sources to be compiled and linked
 GRFCODECSRC=grfcomm.cpp pcxfile.cpp sprites.cpp pcxsprit.cpp info.cpp \
-	error.cpp getopt.cpp path.cpp readinfo.cpp file.cpp grfcodec.cpp
+	error.cpp path.cpp readinfo.cpp file.cpp grfcodec.cpp
 
-GRFDIFFSRC=grfcomm.cpp error.cpp sprites.cpp getopt.cpp grfdiff.cpp path.cpp
+GRFDIFFSRC=grfcomm.cpp error.cpp sprites.cpp grfdiff.cpp path.cpp
 
-GRFMERGESRC=grfcomm.cpp error.cpp getopt.cpp grfmerge.cpp path.cpp
+GRFMERGESRC=grfcomm.cpp error.cpp grfmerge.cpp path.cpp
 
 GRFIDSRC=grfid.cpp
 
