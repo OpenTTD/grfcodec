@@ -47,7 +47,7 @@ START_HELP_TEXT(RL_CZECH)
 "       Nucene zpracovani souboru, ktere nevypadaji jako NFO.\n"
 "       Standardni chovani: NFORenum zpracuje tyto soubory jako by mely\n"
 "       specifikovanou prilis vysokou verzi NFO.\n"
-"   --help -?\n"
+"   --help -h\n"
 "       Zobrazi tuto napovedu.\n"
 "   --lock\n"
 "       Uzamkne stavajici stav komentarovych prikazu. Prikazy budou\n"
@@ -88,5 +88,5 @@ START_HELP_TEXT(RL_CZECH)
 "License obsazenych v souboru 'COPYING'.\n"
 "\n"
 "V pripade, ze jste nestihli precist celou zpravu, zkuste pouzit\n"
-"   nforenum -? | more\n"
+"   nforenum -h | more\n"
 END_HELP_TEXT()

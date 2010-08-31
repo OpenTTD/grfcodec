@@ -32,6 +32,7 @@
 #include<cerrno>
 #include<cassert>
 #include<cstdlib>
+#include<getopt.h>
 
 #ifdef MINGW
 	#include <io.h>
@@ -49,7 +50,6 @@
 
 using namespace std;
 
-#include"nforenum.h"
 #include"getopt.h"
 #include"globals.h"
 #include"inlines.h"
@@ -98,7 +98,6 @@ int __cdecl main(const int argc,char**argv){
 		{"lock",no_argument,NULL,256},
 		{"no-replace",no_argument,&replace,0},
 		{"keep-old",no_argument,&replace,0},
-		{"help",no_argument,NULL,'?'},
 		{"help",no_argument,NULL,'h'},
 		{"silent",no_argument,NULL,'s'},
 		{"auto-correct",no_argument,NULL,'a'},
@@ -120,7 +119,7 @@ int __cdecl main(const int argc,char**argv){
 	ifstream fin;
 	ofstream fout;
 	while(argc>1){
-		if(opt!=EOF)opt=getopt_long(argc,argv,"D::kvs?hc:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
+		if(opt!=EOF)opt=getopt_long(argc,argv,"D::kvshc:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
 		switch(opt){
 		case 0:continue;
 		case 's':
@@ -141,7 +140,6 @@ int __cdecl main(const int argc,char**argv){
 			case'/':COMMENT_PREFIX="//";
 			}
 			continue;
-		case'?':
 		case'h':
 			IssueMessage(0,STARTUP);
 			ShowHelp();
@@ -157,7 +155,7 @@ int __cdecl main(const int argc,char**argv){
 		case EOF:
 			if(optind==argc)doexit();
 			basename=argv[optind++];break;
-		case '!':
+		case '?':
 			ShowHelp();
 			exit(1);
 		default:
