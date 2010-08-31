@@ -28,9 +28,9 @@ NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) -o \( $(ISMINGW) -eq 1 \) ] && echo
 
 # use 386 instructions but optimize for pentium II/III
 ifeq ($(ISCYGWIN),1)
-FLAGS = -O1 -I $(BOOST_INCLUDE)
+FLAGS = -O2 -I $(BOOST_INCLUDE)
 else
-FLAGS = -O1 -idirafter$(BOOST_INCLUDE)
+FLAGS = -O2 -idirafter$(BOOST_INCLUDE)
 endif
 FLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2
 FLAGS += -D_FORTIFY_SOURCE=2
