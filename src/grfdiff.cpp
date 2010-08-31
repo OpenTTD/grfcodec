@@ -27,10 +27,10 @@
 #include <time.h>
 #include <ctype.h>
 #include <limits.h>
+#include <getopt.h>
 
 #define DOCHECK
 
-#include "getopt.h"
 #include "error.h"
 #include "sprites.h"
 #include "grfcomm.h"
