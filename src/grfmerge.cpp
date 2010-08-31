@@ -24,8 +24,8 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <getopt.h>
 
-#include "getopt.h"
 #include "typesize.h"
 #include "version.h"
 #include "grfcomm.h"
