@@ -46,7 +46,7 @@ GRFID    = grfid$(EXE)
 
 TYPESIZE = GCC32
 
-FLAGS  = -D$(TYPESIZE) -idirafter$(BOOST_INCLUDE) -D_FORTIFY_SOURCE=2
+FLAGS  = -O2 -D$(TYPESIZE) -idirafter$(BOOST_INCLUDE) -D_FORTIFY_SOURCE=2
 FLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2 -Wredundant-decls
 
 ifeq ($(DEBUG),1)
