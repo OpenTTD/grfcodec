@@ -280,10 +280,10 @@ static const char _datfeat[]="\x12\x03"
 // Max. feature:
 "\x11"
 // Feature bit-masks:
-// 00              04              08              0C
+// 00              04              08              0C              10
 "\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x0F\x50\x0F\x0F\x0F"
 // Std action 2 formats:
-// 00              04              08              0C
+// 00              04              08              0C              10
 "\x00\x00\x00\x00\x01\x02\x02\x03\xFF\x03\x04\x02\xFF\x02\x00\x03\x02\x03"
 ;
 
