@@ -137,7 +137,7 @@ void Check2(PseudoSprite&data){
 	data.SetAllHex();
 	act123::Act1&act1=act123::Instance().act1;
 	uint feature=data.ExtractByte(1),id=data.ExtractByte(2);
-	uint nument1=data.ExtractByte(3),nument2=data.ExtractByte(4),length=data.Length(),i,j;
+	uint nument1=data.ExtractByte(3),length=data.Length(),i,j;
 	Define2 defineID(feature,id);
 	if(!IsValid2Feature(feature)){
 		IssueMessage((nument1&0x80)?ERROR:FATAL,INVALID_FEATURE);
@@ -161,7 +161,7 @@ CHANGED_FEATURE(rand)
 			if(data.ExtractByte(4)&0x30)
 				IssueMessage(ERROR,BAD_RANDSUBTYPE);
 		}
-		nument2=data.ExtractByte(base-1);
+		uint nument2=data.ExtractByte(base-1);
 		if((nument2-1)&nument2/*tests for only one bit set*/||!nument2)IssueMessage(ERROR,RAND_2_NUMSETS);
 		else if(nument2==1)IssueMessage(WARNING3,ONLY_ONE_CHOICE);
 		rand2::Instance().CheckRand(feature,nument1,data.ExtractByte(base-3),data.ExtractByte(base-2),nument2);
@@ -227,7 +227,7 @@ CHANGED_FEATURE(var)
 				IssueMessage(ERROR,NO_PERS_REGS,off-1);
 			oldop = op;
 		}
-		nument2=data.ExtractByte(off);//off switches to byte-just-read.
+		uint nument2=data.ExtractByte(off);//off switches to byte-just-read.
 		if(isadv)data.SetEol(off-1,1);
 		else if(nument2>1)data.SetEol(off,1);
 		if(!isvar)IssueMessage(WARNING4,NOT_VARIATIONAL);
@@ -284,6 +284,7 @@ CHANGED_FEATURE(std)
 		case 1:
 		case 2:{ // Standard format
 			bool mismatch=false,no1=false;
+			uint nument2=data.ExtractByte(4);
 			if(CheckLength(length,2*(nument1+nument2)+5,BAD_LENGTH,VARS,NUMENT1,NUMENT2,VALS,nument1,nument2,
 						   2*(nument1+nument2)+5))
 				break;
