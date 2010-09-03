@@ -70,30 +70,73 @@ using namespace std;
 	changing _datfeat.
 */
 
+
+#define NDF_HEADER(format, version) format, version
+#define NDF_END 0
+
+
 // ---------------------------------------------------------------------------
 // ------------------------- Feature-independent data ------------------------
 // ---------------------------------------------------------------------------
 
-/*	Action 7/9/D variables
-	====================
+/*	Action 7/9/D variables */
+#define NOTHING 0x00   /* Only VarAction2 access */
+#define BITMASK 0x00   /* Bitmask variable, use instead of B, W or D */
+#define B 0x01         /* Byte access allowed */
+#define W 0x02         /* Word access allowed */
+#define D 0x04         /* DWord access allowed */
+#define WD 0x20        /* Action D Write access allowed */
+#define RD 0x40        /* Action D Read access allowed */
+#define R7 0x80        /* Action 7 Read access allowed */
+static const char _dat79Dv[]={
+NDF_HEADER(0x20, 5),
+/* Number of variables: */ 0x25,
 
-	Format: Bitmask
-	Bit(s)			Meaning
-	0,1,2			valid width(s) (B,W,D) (If all are clear, this is a bitmask-variable.)
-	5 (20h)			write in D
-	6 (40h)			read in D
-	7 (80h)			read in 7
-
-*/
-static const char _dat79Dv[]="\x20\x05"
-// Number of variables:
-"\x25"
-//       x0              x4              x8              xC
-/*8x*/"\x00\xC1\x00\xC1\xC5\x80\x80\x00\x84\x00\x00\xC6\x00\xC1\xE1\xE4"
-/*9x*/"\x00\x00\xC1\xE6\xE6\xE6\xE6\xE1\x00\x24\x87\x00\x00\xC4\xE4\x24"
-/*Ax*/"\x00\xC4\xC4\xC4\xC4"
-;
-
+/*80*/                           NOTHING,
+/*81*/ B |              RD | R7,
+/*82*/                           NOTHING,
+/*83*/ B |              RD | R7,
+/*84*/ B |     D |      RD | R7,
+/*85*/  BITMASK  |           R7,
+/*86*/  BITMASK  |           R7,
+/*87*/                           NOTHING,
+/*88*/         D |           R7,
+/*89*/                           NOTHING,
+/*8A*/                           NOTHING,
+/*8B*/     W | D |      RD | R7,
+/*8C*/                           NOTHING,
+/*8D*/ B |              RD | R7,
+/*8E*/ B |         WD | RD | R7,
+/*8F*/         D | WD | RD | R7,
+/*90*/                           NOTHING,
+/*91*/                           NOTHING,
+/*92*/ B |              RD | R7,
+/*93*/     W | D | WD | RD | R7,
+/*94*/     W | D | WD | RD | R7,
+/*95*/     W | D | WD | RD | R7,
+/*96*/     W | D | WD | RD | R7,
+/*97*/ B |         WD | RD | R7,
+/*98*/                           NOTHING,
+/*99*/         D | WD,
+/*9A*/ B | W | D |           R7,
+/*9B*/                           NOTHING,
+/*9C*/                           NOTHING,
+/*9D*/         D |      RD | R7,
+/*9E*/         D | WD | RD | R7,
+/*9F*/         D | WD,
+/*A0*/                           NOTHING,
+/*A1*/         D |      RD | R7,
+/*A2*/         D |      RD | R7,
+/*A3*/         D |      RD | R7,
+/*A4*/         D |      RD | R7,
+NDF_END
+};
+#undef B
+#undef W
+#undef D
+#undef WD
+#undef RD
+#undef R7
 
 /*	Action B
 	========
