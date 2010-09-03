@@ -350,38 +350,81 @@ static const char _datversions[]="\x00\x04"
 ;
 
 
-/*	Features
-	========
+/*	Features */
+#define ACT0 0x01
+#define ACT1 0x02
+#define ACT3 0x04
+#define ACT4 0x08
+#define EMPTY1 0x10
+#define OVERRIDE3 0x20
+#define GENERIC3 0x40
+#define ACT3_BEFORE_PROP08 0x80
 
-	Feature bit-mask:
-	OR of the appropriate bits from enum ActBit:
-		0x01 = ACT0
-		0x02 = ACT1
-		0x04 = ACT3
-		0x08 = ACT4
-		0x10 = EMPTY1,
-		0x20 = OVERRIDE3
-		0x40 = GENERIC3
-		0x80 = ACT3_BEFORE_PROP08
+#define ACT2_VEHICLE 0x00
+#define ACT2_STATION 0x01
+#define ACT2_CARGO 0x02
+#define ACT2_HOUSE 0x03
+#define ACT2_INDPROD 0x04
+#define ACT2_NONE 0xFF
+static const char _datfeat[]={
+NDF_HEADER(0x12, 3),
+/* Max. feature: */ 0x11,
 
-	Std action 2 format:
-		0x00 = Vehicle style
-		0x01 = Station style	(<num-ent1> may be 0)
-		0x02 = Cargo style		(<num-ent1> must be 1, <num-ent2> must be 0)
-		0x03 = House style
-		0x04 = Ind. prod style
-		0xFF = No std 2 for this feature
-*/
-static const char _datfeat[]="\x12\x03"
-// Max. feature:
-"\x11"
-// Feature bit-masks:
-// 00              04              08              0C              10
-"\xFF\xDF\xDF\xFF\x5F\x8F\xD9\x0F\x01\x0F\x0D\x8F\x01\x0F\x50\x0F\x0F\x0F"
-// Std action 2 formats:
-// 00              04              08              0C              10
-"\x00\x00\x00\x00\x01\x02\x02\x03\xFF\x03\x04\x02\xFF\x02\x00\x03\x02\x03"
-;
+/*00*/ ACT0 | ACT1 | ACT3 | ACT4 | EMPTY1 | OVERRIDE3 | GENERIC3 | ACT3_BEFORE_PROP08,
+/*01*/ ACT0 | ACT1 | ACT3 | ACT4 | EMPTY1 |             GENERIC3 | ACT3_BEFORE_PROP08,
+/*02*/ ACT0 | ACT1 | ACT3 | ACT4 | EMPTY1 |             GENERIC3 | ACT3_BEFORE_PROP08,
+/*03*/ ACT0 | ACT1 | ACT3 | ACT4 | EMPTY1 | OVERRIDE3 | GENERIC3 | ACT3_BEFORE_PROP08,
+/*04*/ ACT0 | ACT1 | ACT3 | ACT4 | EMPTY1 |             GENERIC3,
+/*05*/ ACT0 | ACT1 | ACT3 | ACT4 |                                 ACT3_BEFORE_PROP08,
+/*06*/ ACT0 |               ACT4 | EMPTY1 |             GENERIC3 | ACT3_BEFORE_PROP08,
+/*07*/ ACT0 | ACT1 | ACT3 | ACT4,
+/*08*/ ACT0,
+/*09*/ ACT0 | ACT1 | ACT3 | ACT4,
+/*0A*/ ACT0 |        ACT3 | ACT4,
+/*0B*/ ACT0 | ACT1 | ACT3 | ACT4 |                                 ACT3_BEFORE_PROP08,
+/*0C*/ ACT0,
+/*0D*/ ACT0 | ACT1 | ACT3 | ACT4,
+/*0E*/                             EMPTY1 |             GENERIC3,
+/*0F*/ ACT0 | ACT1 | ACT3 | ACT4,
+/*10*/ ACT0 | ACT1 | ACT3 | ACT4,
+/*11*/ ACT0 | ACT1 | ACT3 | ACT4,
+
+/*00*/ ACT2_VEHICLE,
+/*01*/ ACT2_VEHICLE,
+/*02*/ ACT2_VEHICLE,
+/*03*/ ACT2_VEHICLE,
+/*04*/ ACT2_STATION,
+/*05*/ ACT2_CARGO,
+/*06*/ ACT2_CARGO,
+/*07*/ ACT2_HOUSE,
+/*08*/ ACT2_NONE,
+/*09*/ ACT2_HOUSE,
+/*0A*/ ACT2_INDPROD,
+/*0B*/ ACT2_CARGO,
+/*0C*/ ACT2_NONE,
+/*0D*/ ACT2_CARGO,
+/*0E*/ ACT2_VEHICLE,
+/*0F*/ ACT2_HOUSE,
+/*10*/ ACT2_CARGO,
+/*11*/ ACT2_HOUSE,
+
+NDF_END
+};
+#undef ACT0
+#undef ACT1
+#undef ACT3
+#undef ACT4
+#undef EMPTY1
+#undef OVERRIDE3
+#undef GENERIC3
+#undef ACT3_BEFORE_PROP08
+
+#undef ACT2_VEHICLE
+#undef ACT2_STATION
+#undef ACT2_CARGO
+#undef ACT2_HOUSE
+#undef ACT2_INDPROD
+#undef ACT2_NONE
 
 
 // ---------------------------------------------------------------------------
