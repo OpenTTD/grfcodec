@@ -211,52 +211,85 @@ static const char _datTextIDs[]="\x04\x09"
 "\xC4\xC5\xC9"
 ;
 
-/*	Callbacks
-	=========
-
-	Count of CBs, then list of:
-	1) feature for callback
-	2) one-byte bitmask of features for callback | 80h
-	3) 7Fh followed by word-sized bitmask
-*/
-static const char _datcallbacks[]="\x05\x12"
-// Count:
-"\x5E\x01"
-//v 00             x4              x8              xC
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-"\x00\x83\x8F\x04\x04\x8F\x83\x07\x9F\x8F\x07\x07\x07\x00\x07\x07"
-//v 20             x4              x8              xC
-"\x07\x07\x0A\x8F\x04\x09\x09\x09\x0A\x0A\x07\x09\x09\x8F\x07\x09"
-"\x09\x8F\x8F\xCF\x8F\x0A\x8F\x0A\x0A\x0B\x0A\x0A\x09\x0A\x80\x80"
-//v 40             x4              x8              xC
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v 60             x4              x8              xC
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v 80             x4              x8              xC
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v A0             x4              x8              xC
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v C0             x4              x8              xC
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v E0             x4              x8              xC
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v 100            x4              x8              xC
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v 120            x4              x8              xC
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-"\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80\x80"
-//v 140            x4              x8              xC
-"\x04\x04\x04\x07\x0C\x0B\x0E\x05\x07\x04\x0A\x0A\x0A\x07\x07\x07"
-"\x11\x80\x11\x11\x11\x0D\x0D\x0F\x0F\x0F\x0F\x0F\x0F\x0F"
-;
-
+/*	Callbacks */
+#define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
+#define TRAIN 0x0
+#define ROADVEH 0x1
+#define SHIP 0x2
+#define AIRCRAFT 0x3
+#define STATION 0x4
+#define CANAL 0x5
+#define BRIDGE 0x6
+#define HOUSE 0x7
+#define GLOBAL 0x8
+#define INDTILE 0x9
+#define INDUSTRY 0xA
+#define CARGO 0xB
+#define SOUND 0xC
+#define AIRPORT 0xD
+#define SIGNAL 0xE
+#define OBJECT 0xF
+#define RAILTYPE 0x10
+#define AIRTILE 0x11
+#define MASK(f) 0x80 | (1 << f)
+#define NONE 0x80
+#define GROUNDVEHICLE MASK(TRAIN) | MASK(ROADVEH)
+#define VEHICLE MASK(TRAIN) | MASK(ROADVEH) | MASK(SHIP) | MASK(AIRCRAFT)
+static const char _datcallbacks[]={
+NDF_HEADER(0x05, 18),
+/* Count: */ W(0x15E),
+/* 00*/ TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN, TRAIN,
+/* 10*/ TRAIN, GROUNDVEHICLE, VEHICLE, STATION, STATION, VEHICLE, GROUNDVEHICLE, HOUSE,
+/* 18*/ MASK(STATION) | VEHICLE, VEHICLE, HOUSE, HOUSE, HOUSE, TRAIN, HOUSE, HOUSE,
+/* 20*/ HOUSE, HOUSE, INDUSTRY, VEHICLE, STATION, INDTILE, INDTILE, INDTILE,
+/* 28*/ INDUSTRY, INDUSTRY, HOUSE, INDTILE, INDTILE, VEHICLE, HOUSE, INDTILE,
+/* 30*/ INDTILE, VEHICLE, VEHICLE, MASK(BRIDGE) | VEHICLE, VEHICLE, INDUSTRY, VEHICLE, INDUSTRY,
+/* 38*/ INDUSTRY, CARGO, INDUSTRY, INDUSTRY, INDTILE, INDUSTRY, NONE,  NONE,
+/* 40*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* 50*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* 60*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* 70*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* 80*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* 90*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* A0*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* B0*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* C0*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* D0*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* E0*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/* F0*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/*100*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/*110*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/*120*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/*130*/ NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,  NONE,
+/*140*/ STATION, STATION, STATION, HOUSE, SOUND, CARGO, SIGNAL, CANAL,
+/*148*/ HOUSE, STATION, INDUSTRY, INDUSTRY, INDUSTRY, HOUSE, HOUSE, HOUSE,
+/*150*/ AIRTILE, NONE, AIRTILE, AIRTILE, AIRTILE, AIRPORT, AIRPORT, OBJECT,
+/*158*/ OBJECT, OBJECT, OBJECT, OBJECT, OBJECT, OBJECT,
+NDF_END
+};
+#undef W
+#undef TRAIN
+#undef ROADVEH
+#undef SHIP
+#undef AIRCRAFT
+#undef STATION
+#undef CANAL
+#undef BRIDGE
+#undef HOUSE
+#undef GLOBAL
+#undef INDTILE
+#undef INDUSTRY
+#undef CARGO
+#undef SOUND
+#undef AIRPORT
+#undef SIGNAL
+#undef OBJECT
+#undef RAILTYPE
+#undef AIRTILE
+#undef MASK
+#undef NONE
+#undef GROUNDVEHICLE
+#undef VEHICLE
 
 /*	Languages
 	=========
