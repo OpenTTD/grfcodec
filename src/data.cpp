@@ -152,26 +152,46 @@ static const char _datB[]="\x01\x02"
 
 
 /*	Action 5
-	========
-
-   vv Flags -- 01: recolor, 02: mixed, 04: word, 08: allow 80+x, 80: is flag byte
-       vv Info count: TN: N sprite-count options for each of T types follow
-           vv... Length(s): repeat N options for each of T types
-*/
-static const char _dat5[]="\x04\x09"
-	"\x13\x30\x70\xF0"			//4
-	"\x11\x30"					//5
-	"\x12\x4A\x5A"				//6
-	"\x31\x5D\x41\x06"			//7..9
-"\x85\x11\x00\x01"				//A
-	"\x21\x71\x85"				//B..C
-	"\x12\x10\x12"				//D
-"\x82\x11\x00"					//E
-	"\x51\x0C\x0F\x08\x08\x37"	//F..13
-"\x88\x31\x24\xA0\x09"				//14..15
-"\x00"
-;
-
+ * Historical remark:
+ *   The higher nibble in the OPTIONS byte can be used to define the type and alternatives for multiple entries.
+ *   We do not use that anymore, as we want one line per entry.
+ */
+#define OPTIONS(num) 0x10 | num      /* Number of alternatives wrt. total sprite count */
+#define RECOLOUR 0x81                /* Only allow recolour sprites */
+#define MIXED 0x82                   /* Allow both recolour and real sprites */
+#define WORD 0x84                    /* Spritecount is larger than a byte and is defined using W() */
+#define OFFSET 0x88                  /* Allow replacing sprite ranges with offsets */
+#define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
+static const char _dat5[]={
+NDF_HEADER(0x04, 10),
+/*04*/                  OPTIONS(3), 0x30, 0x70, 0xF0,
+/*05*/                  OPTIONS(1), 0x30,
+/*06*/                  OPTIONS(2), 0x4A, 0x5A,
+/*07*/                  OPTIONS(1), 0x5D,
+/*08*/                  OPTIONS(1), 0x41,
+/*09*/                  OPTIONS(1), 0x06,
+/*0A*/ RECOLOUR | WORD, OPTIONS(1), W(0x100),
+/*0B*/                  OPTIONS(1), 0x71,
+/*0C*/                  OPTIONS(1), 0x85,
+/*0D*/                  OPTIONS(2), 0x10, 0x12,
+/*0E*/ MIXED,           OPTIONS(1), 0x00,
+/*0F*/                  OPTIONS(1), 0x0C,
+/*10*/                  OPTIONS(1), 0x0F,
+/*11*/                  OPTIONS(1), 0x08,
+/*12*/                  OPTIONS(1), 0x08,
+/*13*/                  OPTIONS(1), 0x37,
+/*14*/ OFFSET,          OPTIONS(1), 0x24,
+/*15*/ OFFSET,          OPTIONS(1), 0xA0,
+/*16*/ OFFSET,          OPTIONS(1), 0x09,
+00,
+NDF_END
+};
+#undef OPTIONS
+#undef RECOLOUR
+#undef MIXED
+#undef WORD
+#undef OFFSET
+#undef W
 
 /*	Text IDs
 	========
