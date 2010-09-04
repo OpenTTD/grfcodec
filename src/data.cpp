@@ -43,6 +43,7 @@ using namespace std;
 #include"messages.h"
 #include"win32.h"
 #include"sanity_defines.h"
+#include"strings.h"
 
 //Let's dump the data files into the source code. That sounds like fun, right?
 
@@ -741,25 +742,50 @@ static const char _datIDs[]="\x77\x04\x11"
 "\xFF\x00\xFF\x00"
 ;
 
-/*	Action 4 strings
-	================
-
-	Flags:
-		0x01 = CTRL_FONT_LARGE
-		0x02 = CTRL_FONT_SMALL
-		0x04 = CTRL_SPACE
-		0x08 = CTRL_NEWLINE
-		0x10 = CTRL_COLOR
-		0x20 = CTRL_NO_STACK_CHECK
-*/
-static const char _dat4[]="\x03\x05\x11"
+/*	Action 4 strings */
+static const char _dat4[]={
+NDF_HEADER(0x03, 5),
+/*Maximum feature:*/ 0x11,
 // Rules for one-byte IDs:
-// 00              04              08              0C
-"\x04\x04\x04\x04\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10"
+/*00*/CTRL_SPACE,
+/*01*/CTRL_SPACE,
+/*02*/CTRL_SPACE,
+/*03*/CTRL_SPACE,
+/*04*/0,
+/*05*/0,
+/*06*/0,
+/*07*/0,
+/*08*/0,
+/*09*/0,
+/*0A*/0,
+/*0B*/0,
+/*0C*/0,
+/*0D*/0,
+/*0E*/0,
+/*0F*/0,
+/*10*/0,
+/*11*/                            CTRL_COLOR,
 // Rules for two-byte IDs:
-// 00              04              08              0C
-"\x1C\x1C\x1C\x1C\x04\x04\x00\x04\x00\x1C\x3D\x06\x00\x00\x00\x00\x04\x1C"
-;
+/*00*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR,
+/*01*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR,
+/*02*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR,
+/*03*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR,
+/*04*/CTRL_SPACE,
+/*05*/CTRL_SPACE,
+/*06*/0,
+/*07*/CTRL_SPACE,
+/*08*/0,
+/*09*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR,
+/*0A*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR | CTRL_FONT_LARGE |                   CTRL_NO_STACK_CHECK,
+/*0B*/CTRL_SPACE |                                               CTRL_FONT_SMALL,
+/*0C*/0,
+/*0D*/0,
+/*0E*/0,
+/*0F*/0,
+/*10*/CTRL_SPACE,
+/*11*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR,
+NDF_END
+};
 
 
 /*	Randomized action 2 */
