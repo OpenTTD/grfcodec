@@ -68,6 +68,8 @@ START_HELP_TEXT(RL_ENGLISH)
 "       Suppress progress messages.\n"
 "   --version -v\n"
 "       Display version information and exit.\n"
+"   --write-data\n"
+"       Refresh all data files, unless they are newer.\n"
 "\n"
 "The following options cause NFORenum to behave as if all files started with\n"
 "the associated command. The readme has full details on the comment commands.\n"
