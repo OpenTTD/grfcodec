@@ -762,19 +762,32 @@ static const char _dat4[]="\x03\x05\x11"
 ;
 
 
-/*	Randomized action 2
-	===================
-
-	Byte triples: num 80 bits/num 83 bits/num triggers
-*/
-static const char _dat2r[]="\x02\x06\x11"
-"\x08\x08\x05"	"\x08\x08\x05"	"\x08\x08\x05"	"\x08\x08\x05"
-"\x14\x00\x06"	"\x08\x00\x00"	"\x00\x00\x00"	"\x08\x00\x02"
-"\x00\x00\x00"	"\x08\x10\x03"	"\x10\x00\x00"	"\x00\x00\x00"
-"\x00\x00\x00"	"\x00\x00\x00"	"\x00\x00\x00"	"\x08\x00\x00"
-"\x02\x00\x00"	"\x04\x10\x00"
-;
-
+/*	Randomized action 2 */
+#define ACT2RANDOM(self_bits, related_bits, num_triggers) self_bits, related_bits, num_triggers
+static const char _dat2r[]={
+NDF_HEADER(0x02, 6),
+/*Maximum feature:*/ 0x11,
+/*00*/ACT2RANDOM( 8,  8, 5),
+/*01*/ACT2RANDOM( 8,  8, 5),
+/*02*/ACT2RANDOM( 8,  8, 5),
+/*03*/ACT2RANDOM( 8,  8, 5),
+/*04*/ACT2RANDOM(20,  0, 6),
+/*05*/ACT2RANDOM( 8,  0, 0),
+/*06*/ACT2RANDOM( 0,  0, 0),
+/*07*/ACT2RANDOM( 8,  0, 2),
+/*08*/ACT2RANDOM( 0,  0, 0),
+/*09*/ACT2RANDOM( 8, 16, 3),
+/*0A*/ACT2RANDOM(16,  0, 0),
+/*0B*/ACT2RANDOM( 0,  0, 0),
+/*0C*/ACT2RANDOM( 0,  0, 0),
+/*0D*/ACT2RANDOM( 0,  0, 0),
+/*0E*/ACT2RANDOM( 0,  0, 0),
+/*0F*/ACT2RANDOM( 8,  0, 0),
+/*10*/ACT2RANDOM( 2,  0, 0),
+/*11*/ACT2RANDOM( 4, 16, 0),
+NDF_END
+};
+#undef ACT2RANDOM
 
 // ---------------------------------------------------------------------------
 
