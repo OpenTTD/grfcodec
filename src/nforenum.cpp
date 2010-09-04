@@ -64,6 +64,7 @@ using namespace std;
 #endif
 
 #include "mapescapes.h"
+#include "data.h"
 
 nfe_map nfo_escapes;
 
@@ -103,6 +104,7 @@ int __cdecl main(const int argc,char**argv){
 		{"no-replace",no_argument,&replace,0},
 		{"silent",no_argument,NULL,'s'},
 		{"version",no_argument,NULL,'v'},
+		{"write-data",no_argument,NULL,257},
 
 		/* Switches also available via @@ in the .nfo */
 		{"beautify",required_argument,NULL,'b'},
@@ -126,6 +128,12 @@ int __cdecl main(const int argc,char**argv){
 		if(opt!=EOF)opt=getopt_long(argc,argv,"ac:D::fhksv" "b:de:L:l:pr:o:w:W:",optlist,&longind);
 		switch(opt){
 		case 0:continue;
+		case 257: /* --write-data */
+			for (int i = 0; i < FILES_MAX; i++) {
+				FILE *pFile = _myfopen((files)i);
+				fclose(pFile);
+			}
+			continue;
 		case 's':
 			_interactive = false;
 			continue;

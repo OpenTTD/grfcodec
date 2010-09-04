@@ -31,7 +31,7 @@
 #define DATA_FILE(name) dat##name,
 #endif
 #ifndef END_DATA
-#define END_DATA() };
+#define END_DATA() FILES_MAX };
 #endif
 
 DATA()

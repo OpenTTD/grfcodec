@@ -7,6 +7,7 @@ Changelog:
   - Action 5 type 15.
   - Action D patch variables 12, 13.
 - Add command line option to silence all progress output.
+- Add command line option to refresh all data files.
 - Add support for reading the (Action 14) version of other NewGRFs via Action D
   parameter 7E.
 - Fix bogus warning when using \d<num> in an action 2 for features 7/9/F.
