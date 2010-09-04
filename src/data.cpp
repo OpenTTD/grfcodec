@@ -608,119 +608,137 @@ static const char _dat0[]="\x0D\x07\x11"
 "\x00"
 ;
 
-/*	Variational action 2
-	====================
-*/
-static const char _dat2v[]="\x0D\x15\x11"
-// Maximum operator ID for advanced VA2:
-"\x16"
+/*	Variational action 2 */
+#define VAR(var, size) var, 0x80 | size
+#define VAR6x(var, size, max) VAR(var, size), max
+#define BYTE(var) VAR(var, 1)
+#define WORD(var) VAR(var, 2)
+#define DWORD(var) VAR(var, 4)
+#define BYTE6x(var, max) VAR6x(var, 1, max)
+#define WORD6x(var, max) VAR6x(var, 2, max)
+#define DWORD6x(var, max) VAR6x(var, 4, max)
+#define LASTVAR80(var) (var == 0xFF ? 0xFF : var + 1), (var == 0xFF ? 0xF0 : 0x80)
+#define NOVAR80 LASTVAR80(0x7F)
+static const char _dat2v[]={
+NDF_HEADER(0x0D, 21),
+/*Maximum feature:*/ 0x11,
+/*Maximum operator:*/ 0x16,
 // Global variables:
-"\x00\x82"		"\x01\x81"		"\x02\x81"		"\x03\x81"
-"\x09\x82"		"\x0A\x82"		"\x0C\x82"		"\x10\x84"
-"\x12\x81"		"\x18\x84"		"\x1A\xC4"		"\x1B\x81"
-"\x1C\x84"		"\x1D\x81"		"\x20\x81"		"\x23\x84"
-"\x24\x84"		"\x7D\x84\xFF"	"\x7E\xC2\xFF"	"\x7F\x84\x7F"
+WORD(0x00), BYTE(0x01), BYTE(0x02), BYTE(0x03), WORD(0x09), WORD(0x0A), WORD(0x0C),
+DWORD(0x10), BYTE(0x12), DWORD(0x18), 0x1A, 0xC4, BYTE(0x1B), DWORD(0x1C), BYTE(0x1D),
+BYTE(0x20), DWORD(0x23), DWORD(0x24),
+DWORD6x(0x7D, 0xFF), 0x7E, 0xC2, 0xFF, DWORD6x(0x7F, 0x7F),
 // Things like 25, 5F and 7C as feature specific, so there are put with features
-"\xFF\xF0"
+LASTVAR80(0xFF),
 // Feature 00:
-"\x00"
-"\x25\x84"
-"\x40\x83"		"\x41\x83"		"\x42\x84"		"\x43\x84"
-"\x45\x83"		"\x46\x84"		"\x47\x84"		"\x48\x81"
-"\x49\x84"		"\x4A\x84"		"\x5F\x81"		"\x60\x81\x73"
-"\xFF\xF0"
+/*Related:*/ 0x00,
+DWORD(0x25),
+VAR(0x40, 3), VAR(0x41, 3), DWORD(0x42), DWORD(0x43), VAR(0x45, 3), DWORD(0x46), DWORD(0x47),
+BYTE(0x48), DWORD(0x49), DWORD(0x4A),
+BYTE(0x5F),
+BYTE6x(0x60, 0x73),
+LASTVAR80(0xFF),
 // Feature 01:
-"\x01"
-"\x40\x83"		"\x41\x83"		"\x42\x83"		"\x43\x84"
-"\x45\x83"		"\x46\x84"		"\x47\x84"		"\x48\x81"
-"\x49\x84"		"\x5F\x81"
-"\xFF\xF0"
+/*Related:*/ 0x01,
+VAR(0x40, 3), VAR(0x41, 3), VAR(0x42, 3), DWORD(0x43), VAR(0x45, 3), DWORD(0x46), DWORD(0x47),
+BYTE(0x48), DWORD(0x49),
+BYTE(0x5F),
+LASTVAR80(0xFF),
 // Feature 02:
-"\x02"
-"\x42\x81"		"\x43\x84"		"\x46\x84"		"\x47\x84"
-"\x48\x81"		"\x49\x84"		"\x5F\x81"
-"\xFF\xF0"
+/*Related:*/ 0x02,
+BYTE(0x42), DWORD(0x43), DWORD(0x46), DWORD(0x47), BYTE(0x48), DWORD(0x49),
+BYTE(0x5F),
+LASTVAR80(0xFF),
 // Feature 03:
-"\x03"
-"\x40\x83"		"\x42\x81"		"\x43\x84"		"\x46\x84"
-"\x48\x81"		"\x44\x82"		"\x47\x84"		"\x49\x84"
-"\x5F\x81"
-"\xFF\xF0"
+/*Related:*/ 0x03,
+VAR(0x40, 3), BYTE(0x42), DWORD(0x43), DWORD(0x46), BYTE(0x48),
+WORD(0x44), DWORD(0x47), DWORD(0x49),
+BYTE(0x5F),
+LASTVAR80(0xFF),
 // Feature 04:
-"\x08"
-"\x11\x81"		"\x40\x84"		"\x41\x84"		"\x42\x82"
-"\x43\x83"		"\x44\x81"		"\x45\x82"		"\x46\x84"
-"\x47\x84"		"\x48\x85"		"\x49\x84"		"\x4A\x81"
-"\x5F\x83"		"\x60\x82\xFF"	"\x61\x81\xFF"	"\x62\x84\xFF"
-"\x63\x81\xFF"	"\x64\x82\xFF"	"\x65\x81\xFF"	"\x66\x84\xFF"
-"\x67\x82\xFF"	"\x68\x82\xFF"	"\x69\x81\xFF"
-"\xFF\xF0"
+/*Related:*/ 0x08,
+BYTE(0x11),
+DWORD(0x40), DWORD(0x41), WORD(0x42), VAR(0x43, 3), BYTE(0x44), WORD(0x45), DWORD(0x46), DWORD(0x47),
+0x48, 0x85, DWORD(0x49), BYTE(0x4A),
+VAR(0x5F, 3),
+WORD6x(0x60, 0xFF), BYTE6x(0x61, 0xFF), DWORD6x(0x62, 0xFF), BYTE6x(0x63, 0xFF), WORD6x(0x64, 0xFF),
+BYTE6x(0x65, 0xFF), DWORD6x(0x66, 0xFF), WORD6x(0x67, 0xFF), WORD6x(0x68, 0xFF), BYTE6x(0x69, 0xFF),
+LASTVAR80(0xFF),
 // Feature 05:
-"\x05"
-"\x84\x80"
+/*Related:*/ 0x05,
+LASTVAR80(0x83),
 // Feature 06:
-"\x00"
-"\x40\x83"		"\x41\x83"		"\x42\x84"		"\x43\x84"
-"\x45\x83"		"\x46\x84"		"\x47\x84"		"\x48\x81"
-"\x5F\x81"		"\x60\x81\x73"
-"\xFF\xF0"
+/*Related:*/ 0x00,
+VAR(0x40, 3), VAR(0x41, 3), DWORD(0x42), DWORD(0x43), VAR(0x45, 3), DWORD(0x46), DWORD(0x47), BYTE(0x48),
+BYTE(0x5F),
+BYTE6x(0x60, 0x73),
+LASTVAR80(0xFF),
 // Feature 07:
-"\x08"
-"\x40\x81"		"\x41\x81"		"\x42\x81"		"\x43\x81"
-"\x44\x84"		"\x45\x81"		"\x46\x81"		"\x47\x82"
-"\x5F\x81"
-"\x60\x82\x6B"	"\x61\x82\xFF"	"\x62\x84\xFF"	"\x63\x81\xFF"
-"\x64\x81\xFF"	"\x65\x81\xFF"  "\x66\x84\xFF"  "\x67\x84\xFF"
-"\x80\x80"
+/*Related:*/ 0x08,
+BYTE(0x40), BYTE(0x41), BYTE(0x42), BYTE(0x43), DWORD(0x44), BYTE(0x45), BYTE(0x46), WORD(0x47),
+BYTE(0x5F),
+WORD6x(0x60, 0x6B), WORD6x(0x61, 0xFF), DWORD6x(0x62,0xFF), BYTE6x(0x63, 0xFF),
+BYTE6x(0x64, 0xFF), BYTE6x(0x65, 0xFF), DWORD6x(0x66, 0xFF), DWORD6x(0x67, 0xFF),
+NOVAR80,
 // Town variables ("Feature 08" *cough*cough*)
-"\x08"
-"\x40\x81"		"\x41\x81"
-"\xDE\x80"
+/*Related:*/ 0x08,
+BYTE(0x40), BYTE(0x41),
+LASTVAR80(0xDD),
 // Feature 09:
-"\x0A"
-"\x40\x81"		"\x41\x81"		"\x42\x81"		"\x43\x83"
-"\x44\x81"		"\x5F\x81"		"\x60\x84\xFF"	"\x61\x84\xFF"
-"\x62\x82\xFF"
-"\x80\x80"
+/*Related:*/ 0x0A,
+BYTE(0x40), BYTE(0x41), BYTE(0x42), VAR(0x43, 3), BYTE(0x44),
+BYTE(0x5F),
+DWORD6x(0x60, 0xFF), DWORD6x(0x61, 0xFF), WORD6x(0x62, 0xFF),
+NOVAR80,
 // Feature 0A:
-"\x08"
-"\x40\x82"		"\x41\x82"		"\x42\x82"		"\x43\x82"
-"\x44\x81"		"\x45\x84"		"\x46\x84"		"\x60\x82\xFF"
-"\x61\x81\xFF"	"\x62\x84\xFF"	"\x63\x84\xFF"	"\x64\x84\xFF"
-"\x65\x83\xFF"	"\x66\x83\xFF"	"\x67\x84\xFF"	"\x68\x84\xFF"
-"\x7C\x84\x0F"
-"\xB6\x80"
+/*Related:*/ 0x08,
+WORD(0x40), WORD(0x41), WORD(0x42), WORD(0x43), BYTE(0x44), DWORD(0x45), DWORD(0x46),
+WORD6x(0x60, 0xFF), BYTE6x(0x61, 0xFF), DWORD6x(0x62, 0xFF), DWORD6x(0x63, 0xFF),
+DWORD6x(0x64, 0xFF), VAR6x(0x65, 3, 0xFF), VAR6x(0x66, 3, 0xFF), DWORD6x(0x67, 0xFF),
+DWORD6x(0x68, 0xFF),
+DWORD6x(0x7C, 0x0F),
+LASTVAR80(0xB5),
 // Feature 0B:
-"\x0B"
-"\x80\x80"
+/*Related:*/ 0x0B,
+NOVAR80,
 // Feature 0C:
-"\x0C"
-"\x80\x80"
+/*Related:*/ 0x0C,
+NOVAR80,
 // Feature 0D:
-"\x0D"
-"\x80\x80"
+/*Related:*/ 0x0D,
+NOVAR80,
 // Feature 0E:
-"\x0E"
-"\x60\x84\xFF"
-"\x80\x80"
+/*Related:*/ 0x0E,
+DWORD6x(0x60, 0xFF),
+NOVAR80,
 // Feature 0F:
-"\x08"
-"\x40\x83"		"\x41\x82"		"\x42\x84"		"\x43\x82"
-"\x44\x81"		"\x45\x84"		"\x46\x84"
-"\x5F\x82"
-"\x60\x82\xFF"	"\x61\x81\xFF"	"\x62\x84\xFF"	"\x63\x82\xFF"
-"\x64\x84\xFF"
-"\x80\x80"
+/*Related:*/ 0x08,
+VAR(0x40, 3), WORD(0x41), DWORD(0x42), WORD(0x43), BYTE(0x44), DWORD(0x45), DWORD(0x46),
+WORD(0x5F),
+WORD6x(0x60, 0xFF), BYTE6x(0x61, 0xFF), DWORD6x(0x62, 0xFF), WORD6x(0x63, 0xFF),
+DWORD6x(0x64, 0xFF),
+NOVAR80,
 // Feature 10:
-"\x10"
-"\x40\x81"		"\x41\x81"		"\x42\x81"		"\x43\x84"
-"\x80\x80"
+/*Related:*/ 0x10,
+BYTE(0x40), BYTE(0x41), BYTE(0x42), DWORD(0x43),
+NOVAR80,
 // Feature 11:
-"\x0D"
-"\x41\x81"		"\x42\x81"		"\x43\x83"		"\x44\x81"
-"\x60\x84\xFF"	"\x61\x84\xFF"	"\x62\x82\xFF"
-"\x80\x80"
-;
+/*Related:*/ 0x0D,
+BYTE(0x41), BYTE(0x42), VAR(0x43, 3), BYTE(0x44),
+DWORD6x(0x60, 0xFF), DWORD6x(0x61, 0xFF), WORD6x(0x62, 0xFF),
+NOVAR80,
+NDF_END
+};
+#undef VAR
+#undef VAR6x
+#undef BYTE
+#undef WORD
+#undef DWORD
+#undef BYTE6x
+#undef WORD6x
+#undef DWORD6x
+#undef LASTVAR80
+#undef NOVAR80
 
 #define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
 static const char _datD[]={
