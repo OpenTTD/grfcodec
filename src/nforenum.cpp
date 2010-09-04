@@ -92,18 +92,22 @@ int __cdecl main(const int argc,char**argv){
 	string infilename,outfilename,bakfilename,basename;
 	int result,longind,opt=0,replace=1;
 	static const option optlist[]={
-		{"data",optional_argument,NULL,'D'},
+		/* Command-line only options */
+		{"auto-correct",no_argument,NULL,'a'},
 		{"comments",required_argument,NULL,'c'},
+		{"data",optional_argument,NULL,'D'},
 		{"force",no_argument,&_force,1},
+		{"help",no_argument,NULL,'h'},
+		{"keep-old",no_argument,&replace,0},
 		{"lock",no_argument,NULL,256},
 		{"no-replace",no_argument,&replace,0},
-		{"keep-old",no_argument,&replace,0},
-		{"help",no_argument,NULL,'h'},
 		{"silent",no_argument,NULL,'s'},
-		{"auto-correct",no_argument,NULL,'a'},
+		{"version",no_argument,NULL,'v'},
+
+		/* Switches also available via @@ in the .nfo */
 		{"beautify",required_argument,NULL,'b'},
 		{"diff",no_argument,NULL,'d'},
-		{"extentions",required_argument,NULL,'e'},
+		{"extentions",required_argument,NULL,'e'}, // used to enable non-official nfo features. currently none.
 		{"let",required_argument,NULL,'L'},
 		{"lint",optional_argument,NULL,'l'},
 		{"preserve-messages",no_argument,NULL,'P'},
@@ -119,7 +123,7 @@ int __cdecl main(const int argc,char**argv){
 	ifstream fin;
 	ofstream fout;
 	while(argc>1){
-		if(opt!=EOF)opt=getopt_long(argc,argv,"D::kvshc:fa" "dL:l:pw:W:r:b:e:",optlist,&longind);
+		if(opt!=EOF)opt=getopt_long(argc,argv,"ac:D::fhksv" "b:de:L:l:pr:o:w:W:",optlist,&longind);
 		switch(opt){
 		case 0:continue;
 		case 's':
