@@ -1,5 +1,5 @@
 Name:           %{dz_repo}
-Version:        4.0.%{dz_version}
+Version:        4.0.0.%{dz_version}
 Release:        %{_vendor}%{?suse_version}
 Summary:        A format correcter and linter for the NFO language
 Group:          Development/Tools
