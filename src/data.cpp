@@ -609,6 +609,7 @@ static const char _dat0[]="\x0D\x07\x11"
 ;
 
 /*	Variational action 2 */
+#define ALLOW0MASK 0x40 /* Allow masking all bits */
 #define VAR(var, size) var, 0x80 | size
 #define VAR6x(var, size, max) VAR(var, size), max
 #define BYTE(var) VAR(var, 1)
@@ -625,9 +626,9 @@ NDF_HEADER(0x0D, 21),
 /*Maximum operator:*/ 0x16,
 // Global variables:
 WORD(0x00), BYTE(0x01), BYTE(0x02), BYTE(0x03), WORD(0x09), WORD(0x0A), WORD(0x0C),
-DWORD(0x10), BYTE(0x12), DWORD(0x18), 0x1A, 0xC4, BYTE(0x1B), DWORD(0x1C), BYTE(0x1D),
+DWORD(0x10), BYTE(0x12), DWORD(0x18), VAR(0x1A, 4 | ALLOW0MASK), BYTE(0x1B), DWORD(0x1C), BYTE(0x1D),
 BYTE(0x20), DWORD(0x23), DWORD(0x24),
-DWORD6x(0x7D, 0xFF), 0x7E, 0xC2, 0xFF, DWORD6x(0x7F, 0x7F),
+DWORD6x(0x7D, 0xFF), VAR6x(0x7E, 2 | ALLOW0MASK, 0xFF), DWORD6x(0x7F, 0x7F),
 // Things like 25, 5F and 7C as feature specific, so there are put with features
 LASTVAR80(0xFF),
 // Feature 00:
@@ -729,6 +730,7 @@ DWORD6x(0x60, 0xFF), DWORD6x(0x61, 0xFF), WORD6x(0x62, 0xFF),
 NOVAR80,
 NDF_END
 };
+#undef ALLOW0MASK
 #undef VAR
 #undef VAR6x
 #undef BYTE
