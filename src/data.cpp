@@ -724,9 +724,9 @@ static const char _dat2v[]="\x0D\x15\x11"
 
 #define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
 static const char _datD[]={
-NDF_HEADER(0x14, 4),
+NDF_HEADER(0x14, 5),
 /*Maximum feature:*/ 0x11,
-/*Max patch variable:*/ 0x11,
+/*Max patch variable:*/ 0x13,
 /*Max operator:*/ 0x0C,
 // GRM count:
 /*00*/W(0x74),
