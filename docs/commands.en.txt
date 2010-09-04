@@ -6,7 +6,7 @@ All of them must be commented out and prefixed with "@@". Commands take
 effect immediately, but do not affect previous lines. To place a command in
 the middle of a pseudo-sprite is an error, and will comment the trailing
 portion of the sprite.
-Some commands may be specified on the command line; the output of renum -?
+Some commands may be specified on the command line; the output of renum -h
 has details on which command-line option(s) match up which commands.
 
 On the command line, the single characters + and - may be used in place of ON

@@ -50,7 +50,7 @@ To renumber NFO files (for example MyGRF1.NFO and MyGRF2.NFO), use
 
  > nforenum [options] MyGRF1 MyGRF2
 
-(Run nforenum -? or nforenum --help for a list of command line options.)
+(Run nforenum -h or nforenum --help for a list of command line options.)
 
 This will correct sprite numbers, sprite sizes, and sprite 0, and do a
 partial lint of the NFO. If a NFO header is not detected, one will be added.

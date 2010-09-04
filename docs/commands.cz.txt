@@ -6,7 +6,7 @@ analyzovaného NFO souboru. Všechny tyto příkazy musí obsahovat prefix "@@".
 Příkazy jsou efektivní ihned, ale nemají vliv na řádky, které jim předchází.
 Příkazy nelze vkládat doprostřed pseudo-spritů. V případě, že takto učiníte,
 NFORenum umístí zbytek pseudo-spritu do komentáře.
-Některé příkazy lze také zadat na příkazové řádce. Výstup příkazu "renum -?"
+Některé příkazy lze také zadat na příkazové řádce. Výstup příkazu "renum -h"
 obsahuje více informací o tom, který parametr odpovídá kterému příkazu.
 
 Na příkazové řádce lze použít znaky + a - jako alternativu pro ON a OFF. Takto
