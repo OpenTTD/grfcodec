@@ -30,7 +30,7 @@ Užití
 =====
 
 Kompletní seznam s popisem všech možností programu získáte spuštěním příkazu
-nforenum -? nebo nforenum --help.
+nforenum -h nebo nforenum --help.
 
 Pro přečíslování NFO souborů (např. MujGRF1.NFO a MujGRF2.NFO) použijte
 
