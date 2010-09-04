@@ -876,10 +876,12 @@ struct dat{
 #undef _RENUM_DATA_H_INCLUDED_
 #undef DATA
 #undef DATA_FILE
+#undef END_DATA
 #define DATA() static const dat data[]={
 #define DATA_FILE(name)\
 	{(char*)_dat##name,"/.nforenum/" #name ".dat",sizeof(_dat##name)-1},\
 
+#define END_DATA() };
 #define NFORENUM_DIR_LEN (11)
 
 #include "data.h"
