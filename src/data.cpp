@@ -722,25 +722,58 @@ static const char _dat2v[]="\x0D\x15\x11"
 "\x80\x80"
 ;
 
-static const char _datD[]="\x14\x04\x11"
-"\x11\x0C"
+#define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
+static const char _datD[]={
+NDF_HEADER(0x14, 4),
+/*Maximum feature:*/ 0x11,
+/*Max patch variable:*/ 0x11,
+/*Max operator:*/ 0x0C,
 // GRM count:
-//--00--          --02--          --04--           --06--
-"\x74\x00\x58\x00\x0B\x00\x29\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-//--08--          --0A--          --0C--           --0E--
-"\x1E\x13\x00\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00"
-//--10--          --12--          --14--           --16--
-"\x00\x00\x00\x00"
-;
+/*00*/W(0x74),
+/*01*/W(0x58),
+/*02*/W(0x0B),
+/*03*/W(0x29),
+/*04*/W(0),
+/*05*/W(0),
+/*06*/W(0),
+/*07*/W(0),
+/*08*/W(0x131E),
+/*09*/W(0),
+/*0A*/W(0),
+/*0B*/W(0x40),
+/*0C*/W(0),
+/*0D*/W(0),
+/*0E*/W(0),
+/*0F*/W(0),
+/*10*/W(0),
+/*11*/W(0),
+NDF_END
+};
 
-static const char _datIDs[]="\x77\x04\x11"
-//--00--          --02--          --04--           --06--
-"\x73\x00\x57\x00\x0A\x00\x28\x00\xFF\x00\x07\x00\x0C\x00\xFF\x00"
-//--08--          --0A--          --0C--           --0E--
-"\x00\x00\xFF\x00\x24\x00\x1F\x00\xFF\xFF\x00\x00\x00\x00\xFF\x00"
-//--10--          --12--          --14--           --16--
-"\xFF\x00\xFF\x00"
-;
+static const char _datIDs[]={
+NDF_HEADER(0x77, 4),
+/*Maximum feature:*/ 0x11,
+/*00*/W(0x73),
+/*01*/W(0x57),
+/*02*/W(0x0A),
+/*03*/W(0x28),
+/*04*/W(0xFF),
+/*05*/W(0x07),
+/*06*/W(0x0C),
+/*07*/W(0xFF),
+/*08*/W(0x00),
+/*09*/W(0xFF),
+/*0A*/W(0x24),
+/*0B*/W(0x1F),
+/*0C*/W(0xFFFF),
+/*0D*/W(0x00),
+/*0E*/W(0x00),
+/*0F*/W(0xFF),
+/*10*/W(0xFF),
+/*11*/W(0xFF),
+NDF_END
+};
+#undef W
 
 /*	Action 4 strings */
 static const char _dat4[]={
