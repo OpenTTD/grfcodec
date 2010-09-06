@@ -56,7 +56,7 @@ ifeq ($(GRFCODEC), grfcodec.exe)
 endif
 
 install: bundle
-	@echo '[INSTALL] Installing NFORenum'
+	@echo '[INSTALL] Installing GRFCodec'
 	$(_C)install -d "$(DESTDIR)$(bindir)"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFCODEC)" "$(DESTDIR)$(bindir)/"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFMERGE)" "$(DESTDIR)$(bindir)/"
