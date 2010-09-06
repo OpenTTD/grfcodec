@@ -38,6 +38,11 @@
 # (Required to compile with Cygwin's gcc 4)
 #NOCYGWIN = 0
 
+# Use one of the following to force big endian or little endian.
+# You might need to clean before it takes effect.
+#ENDIAN_PARAMS = BE
+#ENDIAN_PARAMS = LE
+
 # Several options to influence the installation of documentation
 #DO_NOT_INSTALL_DOCS = 1
 #DO_NOT_INSTALL_CHANGELOG = 1

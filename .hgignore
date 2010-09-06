@@ -11,6 +11,7 @@ grfid
 
 grfmrg.cpp
 version.h
+endian.h
 
 grfcodec-*
 
