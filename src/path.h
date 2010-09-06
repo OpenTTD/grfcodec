@@ -17,13 +17,9 @@
 #define MAXFILE   1024
 #define MAXEXT    32
 
-BEGINC
-
 void fnmerge(register char *pathP, const char *driveP,
 	const char *dirP, const char *nameP, const char *extP);
 int fnsplit(const char *pathP, char *driveP, char *dirP,
 		char *nameP, char *extP);
-
-ENDC
 
 #endif /* _PATH_H */
