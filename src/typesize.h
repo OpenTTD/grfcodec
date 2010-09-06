@@ -1,6 +1,8 @@
 #ifndef _TYPESIZE_H
 #define _TYPESIZE_H
 
+#include "endian.h"
+
 /*****************************************\
 *                                         *
 * TYPESIZE.H - Defines variable types     *
@@ -148,16 +150,18 @@ union multitype {
 	S8  s8[4];
 };
 
-#ifdef __BIG_ENDIAN__
+#ifdef GRFCODEC_BIG_ENDIAN
 #	define BE_SWAP16(b) (*((U8*)(&b))+(*(((U8*)(&b))+1)<<8))
 #	define BE_SWAP32(b) (*((U8*)(&b))+(*(((U8*)(&b))+1)<<8)+(*(((U8*)(&b))+2)<<16)+(*(((U8*)(&b))+3)<<24))
 #	define BYTE_OFSL 1
 #	define BYTE_OFSH 0
-#else
+#elif defined(GRFCODEC_LITTLE_ENDIAN)
 #	define BE_SWAP16(b) (b)
 #	define BE_SWAP32(b) (b)
 #	define BYTE_OFSL 0
 #	define BYTE_OFSH 1
+#else
+# error "Endianness not defined!"
 #endif
 
 #ifdef __cplusplus
