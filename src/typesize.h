@@ -164,13 +164,4 @@ union multitype {
 # error "Endianness not defined!"
 #endif
 
-#ifdef __cplusplus
-#define BEGINC extern "C" {
-#define ENDC }
-#else
-#define BEGINC
-#define ENDC
-#endif
-
-
 #endif /* _TYPESIZE_H */
