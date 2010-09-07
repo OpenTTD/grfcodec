@@ -11,6 +11,11 @@
 .Op file [file2 [file3 [...]]]
 .Sh OPTIONS
 .Bl -tag
+.It Fl -auto-correct | Fl a
+Perform some rudimentary automatic correction of incorrect pseudo
+sprites. This may be specified twice to enable the corrections that
+are more likely to be incorrect.
+See the README for detailed information on the auto-correcter.
 .It Fl -comments Ns = Ns Ar type | Fl c Ar type
 <type> is one character, either /, ;, or #, and specifies the comment
 style that NFORenum will use. This will not change the header, because
@@ -33,7 +38,7 @@ then in the environment variable
 .It Fl -force | Fl f
 Forces processing of files that do not look like NFO files.
 The default is to treat such files as if they specified a too-high info version.
-.It Fl -help | Fl h | Fl ?
+.It Fl -help | Fl h
 Display the help message.
 .It Fl -lock
 Locks the current comment command state. Commands will continue to be
@@ -44,15 +49,12 @@ will not be honored.
 Do not replace the old NFO file; write new file to file.new.nfo.
 Default: Use file[.nfo].new as temporary, rename it to file[.nfo]
 when done.
-.It Fl -auto-correct | Fl a
-Perform some rudimentary automatic correction of incorrect pseudo
-sprites. This may be specified twice to enable the corrections that
-are more likely to be incorrect.
-See the README for detailed information on the auto-correcter.
 .It Fl -silent | Fl s
-Silence the progress output in interactive mode
-.It Fl v
+Silence the progress output in interactive mode.
+.It Fl -version | Fl v
 Display the version.
+.It Fl -write-data
+Refresh all data files, unless they are newer.
 .El
 The following options cause NFORenum to behave as if all files started with
 the associated command. The readme has full details on the comment commands.
@@ -91,6 +93,6 @@ The documentation in
 .Pa /usr/share/doc/nforenum/
 .Sh AUTHOR
 nforenum was written by Dale McCoy, with portions by Dan Masek, Thijs
-Marinussen and Remko Bijker.
+Marinussen, Remko Bijker and Christoph Elsenhans.
 .Pp
 This manual page was written by Remko Bijker.
