@@ -188,7 +188,7 @@ src/version.h: FORCE
 objs/$(ENDIAN_CHECK): src/endian_check.cpp
 	$(_C) mkdir -p objs
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) src/endian_check.cpp $(LDOPT)
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) src/endian_check.cpp
 
 src/endian.h: objs/$(ENDIAN_CHECK)
 	$(_E) [ENDIAN] Determining endianness
