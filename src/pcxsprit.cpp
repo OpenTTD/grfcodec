@@ -208,7 +208,7 @@ void pcxwrite::writeheader()
 	header.window[3] = totaly - 1;
 	header.screen[1] = totaly - 1;
 
-	#ifdef __BIG_ENDIAN__
+	#ifdef GRFCODEC_BIG_ENDIAN
 		pcxheader le_header = header;
 		be_swapheader(le_header);
 	#else
