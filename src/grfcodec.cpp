@@ -785,7 +785,7 @@ int main(int argc, char **argv)
 					palette = readpal(optarg);
 				break;
 		case 'c':
-			#ifdef __BIG_ENDIAN__
+			#ifdef GRFCODEC_BIG_ENDIAN
 				printf("%s\n", VERSION);
 				printf("Cropping not supported on big endian architectures.\n");
 				exit(1);
