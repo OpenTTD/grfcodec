@@ -25,15 +25,6 @@
 #include "pcxfile.h"
 #include "typesize.h"
 
-#ifdef _SPRITES_C
-#	define SPRITES_EXTERN
-#	define SPRITES_INIT = 0
-#else
-#	define SPRITES_EXTERN extern
-#	define SPRITES_INIT
-#endif
-
-
 // Define some of the bits in info[0]
 #define DONOTCROP(info) (info[0] & 64)
 #define HASTRANSPARENCY(info) (info[0] & 8)
@@ -65,7 +56,7 @@ class spritestorage {
 };
 
 
-SPRITES_EXTERN int maxx SPRITES_INIT, maxy SPRITES_INIT, maxs SPRITES_INIT;
+extern int maxx, maxy, maxs;
 
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);
 
