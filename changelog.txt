@@ -3,6 +3,7 @@ Changes in
 - Add command line option to silence all progress output.
 - Fix Cygwin compilation issues.
 - Fix UPX-ing of release binaries under some circumstances.
+- Fix cropping did not work on big endian architectures.
 - (devel) Fix putting version.def twice in the source bundle.
 - (devel) Use directories from the Make conventions for installation
   directories and add a few "parameters" to disable installation of
