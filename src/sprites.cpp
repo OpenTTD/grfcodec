@@ -19,10 +19,10 @@
 #include <stdlib.h>
 #include "error.h"
 
-#define _SPRITES_C
 #include "sprites.h"
 #include "grfcomm.h"
 
+int maxx = 0, maxy = 0, maxs = 0;
 
 static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store)
 {
