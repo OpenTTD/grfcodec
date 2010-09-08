@@ -478,7 +478,7 @@ void pcxfile::installwritemap(int *map)
 	putcolourmap = map;
 }
 
-#ifdef __BIG_ENDIAN__
+#ifdef GRFCODEC_BIG_ENDIAN
 void pcxfile::be_swapheader(pcxheader& header)
 {
 	header.window[0] = BE_SWAP16(header.window[0]);
