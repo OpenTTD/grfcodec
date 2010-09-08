@@ -127,8 +127,8 @@ void inforeader::PrepareReal(const Real&sprite){
 
 	inf = sprite.inf;
 
-	sx = (inf[3] << 8) | inf[2];
-	sy = inf[1];
+	sx = inf.xdim;
+	sy = inf.ydim;
 
 	imgfile->startsubimage(sprite.x(), sprite.y(), sx, sy);
 
@@ -200,10 +200,9 @@ void infowriter::newband(pcxfile *pcx)
 
 			fprintf(info, infoline, pcx->filename(), s->x,
 				pcx->subimagey(),
-				s->info[0], s->info[1],
-				makeint(s->info[2], s->info[3]),
-				makeint(s->info[4], s->info[5]),
-				makeint(s->info[6], s->info[7]));
+				s->info.info,
+				s->info.ydim, s->info.xdim,
+				s->info.xrel, s->info.yrel);
 			fputs("\n", info);
 			break;  }
 
@@ -325,14 +324,14 @@ void infowriter::resize(int newmaxboxes)
 	boxes = newboxes;
 }
 
-void infowriter::addsprite(int x, U8 info[8])
+void infowriter::addsprite(int x, SpriteInfo info)
 {
 	if (boxnum >= maxboxes)
 		resize(maxboxes*2);
 
 	boxes[boxnum].type = issprite;
 	boxes[boxnum].h.sprite.x = x;
-	memcpy(boxes[boxnum].h.sprite.info, info, 8*sizeof(U8));
+	boxes[boxnum].h.sprite.info = info;
 
 	boxnum++;
 }

@@ -81,7 +81,7 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 	memcpy(out, in, 8);
 
 	testsize = &datasize;
-	if (SIZEISCOMPRESSED(in))	// size is the compressed size
+	if (SIZEISCOMPRESSED(in[0]))	// size is the compressed size
 		testsize = &compsize;
 
 	compsize = 8;		// initially we only have the info data
@@ -146,12 +146,22 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 	return datasize;
 }
 
+/** Do an (big) endian swap if needed. */
+void SpriteInfo::be_swap()
+{
+#ifdef GRFCODEC_BIG_ENDIAN
+	this->xdim = BE_SWAP16(this->xdim);
+	this->xrel = BE_SWAP16(this->xrel);
+	this->yrel = BE_SWAP16(this->yrel);
+#endif
+}
+
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 {
 	static const char *action = "decoding sprite";
 	unsigned long size, orgsize, datasize, inbufsize, outbufsize, startpos;
 	U16 wsize;
-	U8 info[8];
+	SpriteInfo info;
 	U8 *inbuffer, *outbuffer;
 	int sx, sy;
 
@@ -170,9 +180,10 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 		return 0;
 
 	startpos = ftell(grf);
-	cfread(action, info, 1, 1, grf);
+	U8 inf;
+	cfread(action, &inf, 1, 1, grf);
 
-	if (info[0] == 0xff) {
+	if (inf == 0xff) {
 		store->setsize(1, 0);
 		outbuffer = (U8*) malloc(size);
 		//outbuffer[0] = 0xff;
@@ -182,17 +193,18 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 		return 1;
 	}
 
-	cfread(action, info+1, 1, 7, grf);
+	fseek(grf, startpos, SEEK_SET);
+	cfread(action, &info, 1, sizeof(info), grf);
+	info.be_swap();
 
 	orgsize = size;
 
-	// output buffer: y * x_low + x_high<<8 + 8 bytes info
-	sx = info[2] + (info[3] << 8);
-	sy = info[1];
+	sx = info.xdim;
+	sy = info.ydim;
 	outbufsize = 0L + sx * sy + 8;
 	store->setsize(sx, sy);
 
-	if (SIZEISCOMPRESSED(info)) {	// compressed size stated
+	if (SIZEISCOMPRESSED(info.info)) {	// compressed size stated
 		inbufsize = size;
 		// assume uncompressed is max. twice the compressed
 		outbufsize <<= 1;
@@ -201,8 +213,8 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 		inbufsize = size + (size >> 3);
 	}
 
-	if (HASTRANSPARENCY(info)) {
-		outbufsize += 0L + info[1] * 4;
+	if (HASTRANSPARENCY(info.info)) {
+		outbufsize += 0L + info.ydim * 4;
 	}
 
 	inbuffer = (U8*) malloc(inbufsize);
@@ -235,7 +247,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 
 	writer->addsprite(store->curspritex(), info);
 
-	if (HASTRANSPARENCY(info))	// it's a tile
+	if (HASTRANSPARENCY(info.info))	// it's a tile
 		result = decodetile(outbuffer, sx, sy, store);
 	else
 		result = decoderegular(outbuffer, sx, sy, store);
@@ -477,7 +489,7 @@ U16 getlasttilesize()
 	return lasttilesize;
 }
 
-U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, const U8 inf[8], int docompress, int spriteno)
+U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, SpriteInfo inf, int docompress, int spriteno)
 {
 	long tilesize = imgsize + 16L * sy;
 
@@ -571,7 +583,7 @@ U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, 
 	}
 }
 
-U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int docompress)
+U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress)
 {
 	long compsize = imgsize + 24 + 8, uncompsize = compsize + 8;
 	unsigned int size;
@@ -584,16 +596,17 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int
 		exit(2);
 	}
 
+	inf.be_swap();
 	long result;
 	U16 realcompsize = 0;
 	while (1) {
-		memcpy(compr, inf, 8);
+		memcpy(compr, &inf, 8);
 		if (docompress)
 			result = realcompress(image, imgsize, compr+8, compsize-8, &realcompsize);
 		else
 			result = fakecompress(image, imgsize, compr+8, compsize-8, &realcompsize);
 
-		if (SIZEISCOMPRESSED(inf))	// write compressed size
+		if (SIZEISCOMPRESSED(inf.info))	// write compressed size
 			size = realcompsize + 8;
 		else
 			size = imgsize + 8;

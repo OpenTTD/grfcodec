@@ -27,6 +27,7 @@
 #include <istream>
 
 #include"typesize.h"
+#include"sprites.h"
 
 using namespace std;
 
@@ -56,7 +57,7 @@ public:
 	int x()const{return xpos;}
 	int y()const{return ypos;}
 	bool reopen()const{return forcereopen;}
-	U8 inf[8];
+	SpriteInfo inf;
 private:
 	ostream&output(ostream&)const;
 	string name;

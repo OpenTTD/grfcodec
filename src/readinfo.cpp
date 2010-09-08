@@ -218,8 +218,12 @@ Real::Real(size_t sprite,int infover,const string&data){
 		for(int i=0;i<8;i++){
 			if(intinf[i]>0xFF)
 				throw Sprite::unparseable("\"Byte\" "+itoa(i)+" isn't.",sprite);
-			inf[i]=U8(intinf[i]);
 		}
+		inf.info = U8(intinf[0]);
+		inf.ydim = U8(intinf[1]);
+		inf.xdim = U16(intinf[2] | intinf[3] >> 8);
+		inf.xrel = S16(intinf[4] | intinf[5] >> 8);
+		inf.yrel = S16(intinf[6] | intinf[7] >> 8);
 	}else{
 		int sx,sy,rx,ry,comp;
 		if(sscanf(meta,"%d %d %2x %d %d %d %d",&xpos,&ypos,&comp,&sy,&sx,&rx,&ry)!=7){
@@ -233,14 +237,11 @@ Real::Real(size_t sprite,int infover,const string&data){
 		if(rx>32767)throw Sprite::unparseable("xrel is too large",sprite);
 		if(ry<-32768)throw Sprite::unparseable("yrel is too small",sprite);
 		if(ry>32767)throw Sprite::unparseable("yrel is too large",sprite);
-		inf[0] = U8(comp);
-		inf[1] = U8(sy);
-		inf[2] = U8(sx & 0xff);
-		inf[3] = U8(sx >> 8);
-		inf[4] = U8(rx & 0xff);
-		inf[5] = U8(rx >> 8);
-		inf[6] = U8(ry & 0xff);
-		inf[7] = U8(ry >> 8);
+		inf.info = U8(comp);
+		inf.ydim = U8(sy);
+		inf.xdim = U16(sx);
+		inf.xrel = S16(rx);
+		inf.yrel = S16(ry);
 	}
 	if (infover < 4)
 		ypos++;	// bug, had an extra line at the top

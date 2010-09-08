@@ -20,7 +20,7 @@ class inforeader {
 
 	long imgsize;
 	int sx, sy;
-	const U8 *inf;
+	SpriteInfo inf;
 	void PrepareReal(const Real&);
 	int getsprite(U8 *sprite);
 
@@ -40,7 +40,7 @@ class infowriter :  public spriteinfowriter {
 	infowriter(FILE *info, int maxboxes, int useplaintext);
 
 	virtual void newband(pcxfile *pcx);
-	virtual void addsprite(int x, U8 info[8]);
+	virtual void addsprite(int x, SpriteInfo info);
 	virtual void adddata(U16 size, U8 *data);
 
 	void done(int count);
@@ -57,7 +57,7 @@ class infowriter :  public spriteinfowriter {
 		union foo {
 			struct boxsprite {
 				int x;
-				U8 info[8];
+				SpriteInfo info;
 			} sprite;
 
 			struct boxdata {
@@ -69,7 +69,5 @@ class infowriter :  public spriteinfowriter {
 	int spriteno, maxboxes, boxnum;
 	int useplaintext;
 };
-
-int makeint(U8 low, S8 high);
 
 #endif /* _INFO_H */
