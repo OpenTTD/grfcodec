@@ -25,10 +25,10 @@
 #include "pcxfile.h"
 #include "typesize.h"
 
-// Define some of the bits in info[0]
-#define DONOTCROP(info) (info[0] & 64)
-#define HASTRANSPARENCY(info) (info[0] & 8)
-#define SIZEISCOMPRESSED(info) (info[0] & 2)
+// Define some of the bits in SpriteInfo::info
+#define DONOTCROP(info) (info & 64)
+#define HASTRANSPARENCY(info) (info & 8)
+#define SIZEISCOMPRESSED(info) (info & 2)
 
 
 // minimum and maximum overlap to search for in the compression routines
@@ -36,10 +36,20 @@
 #define MAXOVERLAP 15	// must be <= 15 b/o how it's encoded
 
 
+/** Information about a single sprite. */
+struct SpriteInfo {
+	U8 info;  ///< Info byte; bit 1: size is compressed size, bit 3: tile transparancy, value 0xFF: special sprite.
+	U8 ydim;  ///< Number of lines in the sprite.
+	U16 xdim; ///< Number of columns in the sprite.
+	S16 xrel; ///< Horizontal offset
+	S16 yrel; ///< Vertical offset
+
+	void be_swap();
+};
 
 class spriteinfowriter : public bandnotify {
 	public:
-	virtual void addsprite(int /*x*/, U8 /*info*/[8]) { };
+	virtual void addsprite(int /*x*/, SpriteInfo /*info*/) { };
 	virtual void adddata(U16 /*size*/, U8 * /*data*/) { };
 };
 
@@ -61,7 +71,7 @@ extern int maxx, maxy, maxs;
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);
 
 U16 getlasttilesize();
-U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, const U8 inf[8], int docompress, int spriteno);
-U16 encoderegular(FILE *grf, const U8 *image, long imgsize, const U8 inf[8], int docompress);
+U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, SpriteInfo inf, int docompress, int spriteno);
+U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress);
 
 #endif /* _SPRITES_H */
