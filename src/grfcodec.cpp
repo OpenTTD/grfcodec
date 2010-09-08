@@ -435,7 +435,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 				fprintf(stderr, "%s:%d: Warning: %d of %ld pixels (%ld%%) are pure white\n",
 					file, i, k, info.imgsize, k*100/info.imgsize);
 
-			if(_crop && !DONOTCROP(info.inf)){
+			if(_crop && !DONOTCROP(info.inf.info)){
 				int i=0,j=0;
 				for(i=info.imgsize-1;i>=0;i--)if(image[i])break; // Find last non-blue pixel
 				if(i<0)// We've got an all-blue sprite
@@ -451,7 +451,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 					i-=i%info.sx;// Move to beginning of line
 
 					info.sy-=i/info.sx;
-					*((S16*)(info.inf+6))/*rely*/+=i/info.sx;
+					info.inf.yrel+=i/info.sx;
 					if(i)memmove(image,image+i,info.imgsize-i);
 					for(i=0;i<info.sx;i++){
 						for(j=0;j<info.sy;j++){
@@ -462,7 +462,7 @@ foundfirst:
 					if(i){
 						for(j=0;j<info.sy;j++)
 							memmove(image+j*(info.sx-i),image+j*info.sx+i,info.sx-i);
-						*((S16*)(info.inf+4))/*relx*/+=i;
+						info.inf.xrel+=i;
 						info.sx-=i;
 					}
 
@@ -480,13 +480,13 @@ foundlast:
 					}
 
 				}
-				*((S16*)(info.inf+2))=info.sx;
-				*((S8*)(info.inf+1))=info.sy;
+				info.inf.xdim = info.sx;
+				info.inf.ydim = info.sy;
 				info.imgsize = info.sx * info.sy;
 			}
 
 			U16 compsize;
-			if (HASTRANSPARENCY(info.inf)) {
+			if (HASTRANSPARENCY(info.inf.info)) {
 				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, spriteno);
 				totaltransp += getlasttilesize();	// how much after transparency removed
 				totaluntransp += info.imgsize;		// how much with transparency
