@@ -433,84 +433,105 @@ NDF_END
 // ---------------------------------------------------------------------------
 
 
-/*	Action 0 properties
-	===================
+/*	Action 0 properties */
 
-	Property definitions:
-	*	Lower nibble = data type
-		x1 - BYTE, x2 - WORD, x3 - EXT.BYTE, x4 - DWORD
-	*	Third quad = formatting
-		0x - default, 1x - quote, 2x - decimal, 3x - B-E hex
-	*	Special values
-		FE - variable length (details in subdata)
-		FF - property does not exist
-		00 - list terminator
+/* Invalid property */
+#define INVALID 0xFF
 
-	See full description in act0.cpp.
-*/
-static const char _dat0[]="\x0D\x07\x11"
+/* End of current block */
+#define END 00
+
+/* Zeros need escaping to distinguish from END */
+#define ZERO '\\', 0
+
+/* Data size */
+#define BYTE 0x01
+#define WORD 0x02
+#define EXTBYTE 0x03
+#define DWORD 0x04
+
+/* Formatting */
+#define QUOTED 0x10
+#define DECIMAL 0x20
+
+/* Is replaced by the data following after the next END. Mulitple SUBDATA are resolved in a LIFO style. */
+#define SUBDATA 0xFE
+
+/* Raw byte to appear in the nfo */
+#define RAW(b) 'l', b
+
+static const char _dat0[]={
+NDF_HEADER(0x0D, 7),
+/*Maximum feature:*/ 0x11,
 // Feature 00:
-// x0              x4              x8              xC
-"\x2A\xFF\x01\x21\x21\x01\x01\x21\x01\x22\xFF\x22\xFF\x01\x04\xFF"
-"\xFF\xFF\x01\x01\x21\x01\x01\x01\x01\x01\x03\x22\x01\x34\x01\x01"
-"\x01\x01\x01\x21\x01\x01\x21\x01\x32\x32\x2C"
-"\x00"
+/*00*/ 0x2A, INVALID, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, BYTE, BYTE, BYTE | DECIMAL,
+/*08*/ BYTE, WORD | DECIMAL, INVALID, WORD | DECIMAL, INVALID, BYTE, DWORD, INVALID,
+/*10*/ INVALID, INVALID, BYTE, BYTE, BYTE | DECIMAL, BYTE, BYTE, BYTE,
+/*18*/ BYTE, BYTE, EXTBYTE, WORD | DECIMAL, BYTE, 0x34, BYTE, BYTE,
+/*20*/ BYTE, BYTE, BYTE, BYTE | DECIMAL, BYTE, BYTE, BYTE | DECIMAL, BYTE,
+/*28*/ 0x32, 0x32, 0x2C,
+END,
 
 // Feature 01:
-// x0              x4              x8              xC
-"\x2A\xFF\x01\x21\x21\xFF\x01\x21\x21\x01\x04\xFF\xFF\xFF\x01\x21"
-"\x01\x01\x01\x21\x21\x21\x34\x01\x01\x01\x01\x21\x01\x32\x32\x2C"
-"\x03"
-"\x00"
+/*00*/ 0x2A, INVALID, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, INVALID, BYTE, BYTE | DECIMAL,
+/*08*/ BYTE | DECIMAL, BYTE, DWORD, INVALID, INVALID, INVALID, BYTE, BYTE | DECIMAL,
+/*10*/ BYTE, BYTE, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, 0x34, BYTE,
+/*18*/ BYTE, BYTE, BYTE, BYTE | DECIMAL, BYTE, 0x32, 0x32, 0x2C,
+/*20*/ EXTBYTE,
+END,
 
 // Feature 02:
-// x0              x4              x8              xC
-"\x2A\xFF\x01\x21\x21\xFF\x01\x21\x01\x01\x01\x21\x01\x22\xFF\x01"
-"\x01\x34\x01\x01\x01\x01\x21\x01\x32\x32\x2C\x03"
-"\x00"
+/*00*/ 0x2A, INVALID, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, INVALID, BYTE, BYTE | DECIMAL,
+/*08*/ BYTE, BYTE, BYTE, BYTE | DECIMAL, BYTE, WORD | DECIMAL, INVALID, BYTE,
+/*10*/ BYTE, 0x34, BYTE, BYTE, BYTE, BYTE, BYTE | DECIMAL, BYTE,
+/*18*/ 0x32, 0x32, 0x2C, EXTBYTE,
+END,
 
 // Feature 03:
-// x0              x4              x8              xC
-"\x2A\xFF\x01\x21\x21\xFF\x01\x21\x01\x01\x01\x01\x21\x01\x01\x22"
-"\xFF\x21\x01\x34\x01\x01\x21\x01\x32\x32\x2C\x03"
-"\x00"
+/*00*/ 0x2A, INVALID, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, INVALID, BYTE, BYTE | DECIMAL,
+/*08*/ BYTE, BYTE, BYTE, BYTE, BYTE | DECIMAL, BYTE, BYTE, WORD | DECIMAL,
+/*10*/ INVALID, BYTE | DECIMAL, BYTE, 0x34, BYTE, BYTE, BYTE | DECIMAL, BYTE,
+/*18*/ 0x32, 0x32, 0x2C, EXTBYTE,
+END,
 
 // Feature 04:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\xFE\x01\x01\x01\x01\xFE\x01"
-"\x22\x01\x34\x01\x01\x01\x32\x21\x02"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ 0x14, SUBDATA, BYTE, BYTE, BYTE, BYTE, SUBDATA, BYTE,
+/*10*/ WORD | DECIMAL, BYTE, 0x34, BYTE, BYTE, BYTE, 0x32, BYTE | DECIMAL,
+/*18*/ WORD,
+END,
 // Subdata - prop 09:
-"\x03r\xFE\x80\x00"
-	"l\\\x00l\\\x00l\\\x00l\\\x00|\x34*\xFE\x01\x80\x00"
-		"\x01\x01\x01\x01\x01\x01\x34\x00"
+EXTBYTE, 'r', SUBDATA, 0x80, END,
+	RAW(ZERO), RAW(ZERO), RAW(ZERO), RAW(ZERO), '|', 0x34, '*', SUBDATA, BYTE, 0x80, END,
+		BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, 0x34, END,
 // Subdata - prop 0E:
-"*\xFE\x02\\\x00\\\x00\x00"
-	"\x01\x01r\x01x\x80\x81\xC0\x00"
+'*', SUBDATA, WORD, ZERO, ZERO, END,
+	BYTE, BYTE, 'r', BYTE, 'x', 0x80, 0x81, 0xC0, END,
 
 // Feature 05:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE, BYTE,
+END,
 
 // Feature 06:
-// x0              x4              x8              xC
-"\x01\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x29\x21\x21\x01\x22\xFE\x01\x24"
-"\x3A\x3A\x3A\x22"
-"\x00"
+/*00*/ BYTE, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ 0x29, BYTE | DECIMAL, BYTE | DECIMAL, BYTE, WORD | DECIMAL, SUBDATA, BYTE, 0x24,
+/*10*/ 0x3A, 0x3A, 0x3A, WORD | DECIMAL,
+END,
 // Subdata - prop 0D:
-"\x01\x01r\x34x\x81\x20\xC0\x00"
+BYTE, BYTE, 'r', 0x34, 'x', 0x81, 0x20, 0xC0, END,
 
 // Feature 07:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\xFE\x01\x01\x01\x01\x01"
-"\x22\x01\x3A\x02\x01\x81\x01\x04\x01\x01\x01\x01\x01\x01\x04\x01"
-"\xFE\x22\x22"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE, BYTE, SUBDATA, BYTE, BYTE, BYTE, BYTE, BYTE,
+/*10*/ WORD | DECIMAL, BYTE, 0x3A, WORD, BYTE, 0x81, BYTE, DWORD,
+/*18*/ BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, DWORD, BYTE,
+/*20*/ SUBDATA, WORD | DECIMAL, WORD | DECIMAL,
+END,
 // Subdata - prop 0A:
-"\x29\x29\x00"
+0x29, 0x29, END,
 // Subdata - prop 20:
-"\x01r\x01\x80\x00"
+BYTE, 'r', BYTE, 0x80, END,
 
 // Feature 08:
 // Different format this feature only
@@ -518,95 +539,108 @@ static const char _dat0[]="\x0D\x07\x11"
 //		The max value for the action 0's <ID> entity
 //		The max ID that can be set
 // (0f8.dat was merged into here to prevent it from getting out of sync.)
-
-// 00              04              --- 08 ---              --- 0A ---              --- 0C ---              --- 0E ---
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x41\x41\x14\x00\xFC\x3A\x12\x12\x24\x12\x12\x12\x12\x12\x14\x12\x12\x14\x12\x12\x22\x12\x12"
-// --- 10 ---
-"\xFE\x00\x00\xFE\x00\xFF\x14\x00\xFC"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE, 0x41, 0x41, DWORD | QUOTED, 0x00, 0xFC, 0x3A, 0x12, 0x12, DWORD | DECIMAL, 0x12, 0x12,
+/*0C*/ WORD | QUOTED, 0x12, 0x12, DWORD | QUOTED, 0x12, 0x12, DWORD | QUOTED, 0x12, 0x12, WORD | DECIMAL, 0x12, 0x12,
+/*10*/ SUBDATA, 0x00, 0x00, SUBDATA, 0x00, 0xFF, DWORD | QUOTED, 0x00, 0xFC,
+END,
 // Subdata - prop 10:
-"r\xFE\x0B\xFE\x00"
-	"r\x01\x20\xC0\x00"
-	"r\x01\x20\x00"
+'r', SUBDATA, 0x0B, SUBDATA, END,
+	'r', BYTE, 0x20, 0xC0, END,
+	'r', BYTE, 0x20, END,
 // Subdata - prop 11:
-"\x14\x14\x00"
+DWORD | QUOTED, DWORD | QUOTED, END,
 
 // Feature 09:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x81\x02\x02\x02\x01\x01\x02"
-"\x01\x01\x01"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE, 0x81, WORD, WORD, WORD, BYTE, BYTE, WORD,
+/*10*/ BYTE, BYTE, BYTE,
+END,
 
 // Feature 0A:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\xFE\x01\x3A\x3A\x3A\x01"
-"\x02\x04\x01\x01\x01\xFE\xFE\x01\x01\x01\x04\x3A\x04\x04\x04\x3A"
-"\x04\x01\x01\x24\x3A"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE, BYTE, SUBDATA, BYTE, 0x3A, 0x3A, 0x3A, BYTE,
+/*10*/ WORD, DWORD, BYTE, BYTE, BYTE, SUBDATA, SUBDATA, BYTE,
+/*18*/ BYTE, BYTE, DWORD, 0x3A, DWORD, DWORD, DWORD, 0x3A,
+/*20*/ DWORD, BYTE, BYTE, DWORD | DECIMAL, 0x3A,
+END,
 // Subdata - prop 0A:
-"\x01\xFCr\xFE\x80\x00"
-	"l\xFE\x01\xC1|*\xFE\x02\\\x00\x80\x00"
-		"\x00"
-		"\x01\x01\xFE\xC0\x00"
-			"l\xFE\x0A|\x01\x00"
-				"\x00"
+BYTE, 0xFC, 'r', SUBDATA, 0x80, END,
+	RAW(0xFE), BYTE, 0xC1, '|', '*', SUBDATA, WORD, ZERO, 0x80, END,
+		END, // bogus end for RAW(0xFE)
+		BYTE, BYTE, SUBDATA, 0xC0, END,
+			RAW(0xFE), 0x0A, '|', BYTE, END,
+				END, // bogus end for RAW(0xFE)
 // Subdata - prop 15:
-"\x01r\x01\x80\x00"
+BYTE, 'r', BYTE, 0x80, END,
 // Subdata - prop 16:
-"r\x01\x03\x00"
+'r', BYTE, EXTBYTE, END, 
 
 // Feature 0B:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x21\x3A\x3A\x3A\x3A\x3A\x32\x01"
-"\x01\x01\x34\x01\x01\x01\x32\x14\x01\x32\x01"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE | DECIMAL, 0x3A, 0x3A, 0x3A, 0x3A, 0x3A, 0x32, BYTE,
+/*10*/ BYTE, BYTE, 0x34, BYTE, BYTE, BYTE, 0x32, DWORD | QUOTED,
+/*18*/ BYTE, 0x32, BYTE,
+END,
 
 // Feature 0C:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x01\x01"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE, BYTE, BYTE,
+END,
 
 // Feature 0D:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x04\xFE\xFF\xFE\x01\x01\x01"
-"\x02"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE, DWORD, SUBDATA, INVALID, SUBDATA, BYTE, BYTE, BYTE,
+/*10*/ WORD,
+END,
 // Subdata - prop 0A:
-"\x01\xFCr\xFE\x80\x00"
-	"\x01l\xFE\x01\xC1|\x01*\xFE\x02\\\x00\x80\x00"
-		"\x00"
-		"\x01\x01\xFE\xC0\x00"
-			"l\xFE\x0A|\x01\x00"
-				"\x00"
+BYTE, 0xFC, 'r', SUBDATA, 0x80, END,
+	BYTE, RAW(0xFE), BYTE, 0xC1, '|', BYTE, '*', SUBDATA, WORD, ZERO, 0x80, END,
+		END, // bogus end for RAW(0xFE)
+		BYTE, BYTE, SUBDATA, 0xC0, END,
+			RAW(0xFE), 0x0A, '|', BYTE, END,
+				END, // bogus end for RAW(0xFE)
 // Subdata - prop 0C:
-"\x02\x02\x00"
+WORD, WORD, END,
 
 // Feature 0E:
-// x0              x4              x8              xC
-"\x00"
+END,
 
 // Feature 0F:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\x02\x02\x01\x01\x01\x2C\x2C"
-"\x32\x32\x21\x02\x01\x32\x01"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ DWORD | QUOTED, WORD, WORD, BYTE, BYTE, BYTE, 0x2C, 0x2C,
+/*10*/ 0x32, 0x32, BYTE | DECIMAL, WORD, BYTE, 0x32, BYTE,
+END,
 
 // Feature 10:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x14\x02\x02\x02\x02\x02\xFE\xFE"
-"\x01\x01\x01\x02\x02\x01\x01"
-"\x00"
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ DWORD | QUOTED, WORD, WORD, WORD, WORD, WORD, SUBDATA, SUBDATA,
+/*10*/ BYTE, BYTE, BYTE, WORD, WORD, BYTE, BYTE,
+END,
 // Subdata - prop 0E:
-"\x01r\x14\x80\x00"
+BYTE, 'r', DWORD | QUOTED, 0x80, END,
 // Subdata - prop 0F:
-"\x01r\x14\x80\x00"
+BYTE, 'r', DWORD | QUOTED, 0x80, END,
 
 // Feature 11:
-// x0              x4              x8              xC
-"\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x01\x81\xFF\xFF\xFF\xFF\x01\x02"
-"\x01\x01"
-"\x00"
-;
+/*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
+/*08*/ BYTE, 0x81, INVALID, INVALID, INVALID, INVALID, BYTE, WORD,
+/*10*/ BYTE, BYTE,
+END,
+
+NDF_END
+};
+#undef BYTE
+#undef WORD
+#undef EXTBYTE
+#undef DWORD
+#undef QUOTED
+#undef DECIMAL
+#undef SUBDATA
+#undef RAW
+#undef ZERO
+#undef INVALID
+#undef END
 
 /*	Variational action 2 */
 #define ALLOW0MASK 0x40 /* Allow masking all bits */
