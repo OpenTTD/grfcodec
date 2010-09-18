@@ -466,6 +466,16 @@ NDF_END
 /* Raw byte to appear in the nfo */
 #define RAW(b) 'l', b
 
+/* Repeat 'data' 'times' times, where 'times' is known before reading the data.
+ * 'times' may be a fixed number, or a reference to an earlier BYTE/EXTBYTE/WORD/DWORD within the current SUBDATA.
+ * You can also multiple multiple values using MUL() */
+#define REPEAT_N(data, times) 'r', data, times
+#define MUL(a, b) 'x', a, b
+#define DATAFROM(offset) offset | 0x80           /* Uses the value read with the token at position 'offset' within the current SUBDATA */
+
+/* Repeat 'data' until a certain terminator with length 'length' is encountered */
+#define REPEAT_UNTIL(data, length, ...) '*', data, length, __VA_ARGS__
+
 static const char _dat0[]={
 NDF_HEADER(0x0D, 7),
 /*Maximum feature:*/ 0x11,
@@ -507,12 +517,12 @@ END,
 /*18*/ WORD,
 END,
 // Subdata - prop 09:
-EXTBYTE, 'r', SUBDATA, 0x80, END,
-	RAW(ZERO), RAW(ZERO), RAW(ZERO), RAW(ZERO), '|', DWORD | HEX, '*', SUBDATA, BYTE, 0x80, END,
+EXTBYTE, REPEAT_N(SUBDATA, DATAFROM(0)), END,
+	RAW(ZERO), RAW(ZERO), RAW(ZERO), RAW(ZERO), '|', DWORD | HEX, REPEAT_UNTIL(SUBDATA, 1, 0x80), END,
 		BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, DWORD | HEX, END,
 // Subdata - prop 0E:
-'*', SUBDATA, WORD, ZERO, ZERO, END,
-	BYTE, BYTE, 'r', BYTE, 'x', 0x80, 0x81, 0xC0, END,
+REPEAT_UNTIL(SUBDATA, 2, ZERO, ZERO), END,
+	BYTE, BYTE, REPEAT_N(BYTE, MUL(DATAFROM(0), DATAFROM(1))), 0xC0, END,
 
 // Feature 05:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
@@ -525,7 +535,7 @@ END,
 /*10*/ TEXTID, TEXTID, TEXTID, WORD | DECIMAL,
 END,
 // Subdata - prop 0D:
-BYTE, BYTE, 'r', DWORD | HEX, 'x', 0x81, 0x20, 0xC0, END,
+BYTE, BYTE, REPEAT_N(DWORD | HEX, MUL(DATAFROM(1), 32)), 0xC0, END,
 
 // Feature 07:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
@@ -537,7 +547,7 @@ END,
 // Subdata - prop 0A:
 BYTE | DATE, BYTE | DATE, END,
 // Subdata - prop 20:
-BYTE, 'r', BYTE, 0x80, END,
+BYTE, REPEAT_N(BYTE, DATAFROM(0)), END,
 
 // Feature 08:
 // Different format this feature only
@@ -551,9 +561,9 @@ BYTE, 'r', BYTE, 0x80, END,
 /*10*/ SUBDATA, 0x00, 0x00, SUBDATA, 0x00, 0xFF, DWORD | QUOTED, 0x00, 0xFC,
 END,
 // Subdata - prop 10:
-'r', SUBDATA, 0x0B, SUBDATA, END,
-	'r', BYTE, 0x20, 0xC0, END,
-	'r', BYTE, 0x20, END,
+REPEAT_N(SUBDATA, 11), SUBDATA, END,
+	REPEAT_N(BYTE, 32), 0xC0, END,
+	REPEAT_N(BYTE, 32), END,
 // Subdata - prop 11:
 DWORD | QUOTED, DWORD | QUOTED, END,
 
@@ -571,16 +581,16 @@ END,
 /*20*/ DWORD, BYTE, BYTE, DWORD | DECIMAL, TEXTID,
 END,
 // Subdata - prop 0A:
-BYTE, 0xFC, 'r', SUBDATA, 0x80, END,
-	RAW(0xFE), BYTE, 0xC1, '|', '*', SUBDATA, WORD, ZERO, 0x80, END,
+BYTE, 0xFC, REPEAT_N(SUBDATA, DATAFROM(0)), END,
+	RAW(0xFE), BYTE, 0xC1, '|', REPEAT_UNTIL(SUBDATA, 2, ZERO, 0x80), END,
 		END, // bogus end for RAW(0xFE)
 		BYTE, BYTE, SUBDATA, 0xC0, END,
 			RAW(0xFE), TILEID, '|', BYTE, END,
 				END, // bogus end for RAW(0xFE)
 // Subdata - prop 15:
-BYTE, 'r', BYTE, 0x80, END,
+BYTE, REPEAT_N(BYTE, DATAFROM(0)), END,
 // Subdata - prop 16:
-'r', BYTE, 0x03, END, 
+REPEAT_N(BYTE, 3), END, 
 
 // Feature 0B:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
@@ -600,8 +610,8 @@ END,
 /*10*/ WORD,
 END,
 // Subdata - prop 0A:
-BYTE, 0xFC, 'r', SUBDATA, 0x80, END,
-	BYTE, RAW(0xFE), BYTE, 0xC1, '|', BYTE, '*', SUBDATA, WORD, ZERO, 0x80, END,
+BYTE, 0xFC, REPEAT_N(SUBDATA, DATAFROM(0)), END,
+	BYTE, RAW(0xFE), BYTE, 0xC1, '|', BYTE, REPEAT_UNTIL(SUBDATA, 2, ZERO, 0x80), END,
 		END, // bogus end for RAW(0xFE)
 		BYTE, BYTE, SUBDATA, 0xC0, END,
 			RAW(0xFE), TILEID, '|', BYTE, END,
@@ -624,9 +634,9 @@ END,
 /*10*/ BYTE, BYTE, BYTE, WORD, WORD, BYTE, BYTE,
 END,
 // Subdata - prop 0E:
-BYTE, 'r', DWORD | QUOTED, 0x80, END,
+BYTE, REPEAT_N(DWORD | QUOTED, DATAFROM(0)), END,
 // Subdata - prop 0F:
-BYTE, 'r', DWORD | QUOTED, 0x80, END,
+BYTE, REPEAT_N(DWORD | QUOTED, DATAFROM(0)), END,
 
 // Feature 11:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
