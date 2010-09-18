@@ -459,6 +459,14 @@ NDF_END
 #define DATE DECIMAL | MAGIC       /* Date, that is days since 1920 if WORD, or since 0 if DWORD. For BYTE it means years since 1920. */
 #define TEXTID WORD | HEX | MAGIC  /* Check for valid Text/String ID */
 #define TILEID WORD | MAGIC        /* Check for valid tile ID, e.g. industrytile in industrylayout */
+#define REMAININGSIZE DWORD | HEX | MAGIC /* Value is number of bytes for the property after this length information */
+
+/* Allow multiple assignments to a property. (Only valid outside of SUBDATA) */
+#define REASSIGNABLE 0x80
+
+/* Insert linebreak. (Only valid within SUBDATA)
+ * May be specified alone, or combined with any of the BYTE/EXTBYTE/WORD/DWORD datas */
+#define LINEBREAK 0xC0             
 
 /* Is replaced by the data following after the next END. Mulitple SUBDATA are resolved in a LIFO style. */
 #define SUBDATA 0xFE
@@ -522,7 +530,7 @@ EXTBYTE, REPEAT_N(SUBDATA, DATAFROM(0)), END,
 		BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, DWORD | HEX, END,
 // Subdata - prop 0E:
 REPEAT_UNTIL(SUBDATA, 2, ZERO, ZERO), END,
-	BYTE, BYTE, REPEAT_N(BYTE, MUL(DATAFROM(0), DATAFROM(1))), 0xC0, END,
+	BYTE, BYTE, REPEAT_N(BYTE, MUL(DATAFROM(0), DATAFROM(1))), LINEBREAK, END,
 
 // Feature 05:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
@@ -535,12 +543,12 @@ END,
 /*10*/ TEXTID, TEXTID, TEXTID, WORD | DECIMAL,
 END,
 // Subdata - prop 0D:
-BYTE, BYTE, REPEAT_N(DWORD | HEX, MUL(DATAFROM(1), 32)), 0xC0, END,
+BYTE, BYTE, REPEAT_N(DWORD | HEX, MUL(DATAFROM(1), 32)), LINEBREAK, END,
 
 // Feature 07:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
 /*08*/ BYTE, BYTE, SUBDATA, BYTE, BYTE, BYTE, BYTE, BYTE,
-/*10*/ WORD | DECIMAL, BYTE, TEXTID, WORD, BYTE, 0x81, BYTE, DWORD,
+/*10*/ WORD | DECIMAL, BYTE, TEXTID, WORD, BYTE, BYTE | REASSIGNABLE, BYTE, DWORD,
 /*18*/ BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, DWORD, BYTE,
 /*20*/ SUBDATA, WORD | DECIMAL, WORD | DECIMAL,
 END,
@@ -550,8 +558,8 @@ BYTE | DATE, BYTE | DATE, END,
 BYTE, REPEAT_N(BYTE, DATAFROM(0)), END,
 
 // Feature 08:
-// Different format this feature only
-// For non-FF properties only, each prop is followed by two bytes:
+// Different format this feature only:
+// Non-INVALID properties are followed by two bytes:
 //		The max value for the action 0's <ID> entity
 //		The max ID that can be set
 // (0f8.dat was merged into here to prevent it from getting out of sync.)
@@ -562,14 +570,14 @@ BYTE, REPEAT_N(BYTE, DATAFROM(0)), END,
 END,
 // Subdata - prop 10:
 REPEAT_N(SUBDATA, 11), SUBDATA, END,
-	REPEAT_N(BYTE, 32), 0xC0, END,
+	REPEAT_N(BYTE, 32), LINEBREAK, END,
 	REPEAT_N(BYTE, 32), END,
 // Subdata - prop 11:
 DWORD | QUOTED, DWORD | QUOTED, END,
 
 // Feature 09:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
-/*08*/ BYTE, 0x81, WORD, WORD, WORD, BYTE, BYTE, WORD,
+/*08*/ BYTE, BYTE | REASSIGNABLE, WORD, WORD, WORD, BYTE, BYTE, WORD,
 /*10*/ BYTE, BYTE, BYTE,
 END,
 
@@ -581,10 +589,10 @@ END,
 /*20*/ DWORD, BYTE, BYTE, DWORD | DECIMAL, TEXTID,
 END,
 // Subdata - prop 0A:
-BYTE, 0xFC, REPEAT_N(SUBDATA, DATAFROM(0)), END,
-	RAW(0xFE), BYTE, 0xC1, '|', REPEAT_UNTIL(SUBDATA, 2, ZERO, 0x80), END,
+BYTE, REMAININGSIZE | LINEBREAK, REPEAT_N(SUBDATA, DATAFROM(0)), END,
+	RAW(0xFE), BYTE, BYTE | LINEBREAK, '|', REPEAT_UNTIL(SUBDATA, 2, ZERO, 0x80), END,
 		END, // bogus end for RAW(0xFE)
-		BYTE, BYTE, SUBDATA, 0xC0, END,
+		BYTE, BYTE, SUBDATA, LINEBREAK, END,
 			RAW(0xFE), TILEID, '|', BYTE, END,
 				END, // bogus end for RAW(0xFE)
 // Subdata - prop 15:
@@ -610,10 +618,10 @@ END,
 /*10*/ WORD,
 END,
 // Subdata - prop 0A:
-BYTE, 0xFC, REPEAT_N(SUBDATA, DATAFROM(0)), END,
-	BYTE, RAW(0xFE), BYTE, 0xC1, '|', BYTE, REPEAT_UNTIL(SUBDATA, 2, ZERO, 0x80), END,
+BYTE, REMAININGSIZE | LINEBREAK, REPEAT_N(SUBDATA, DATAFROM(0)), END,
+	BYTE, RAW(0xFE), BYTE, BYTE | LINEBREAK, '|', BYTE, REPEAT_UNTIL(SUBDATA, 2, ZERO, 0x80), END,
 		END, // bogus end for RAW(0xFE)
-		BYTE, BYTE, SUBDATA, 0xC0, END,
+		BYTE, BYTE, SUBDATA, LINEBREAK, END,
 			RAW(0xFE), TILEID, '|', BYTE, END,
 				END, // bogus end for RAW(0xFE)
 // Subdata - prop 0C:
@@ -640,12 +648,15 @@ BYTE, REPEAT_N(DWORD | QUOTED, DATAFROM(0)), END,
 
 // Feature 11:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
-/*08*/ BYTE, 0x81, INVALID, INVALID, INVALID, INVALID, BYTE, WORD,
+/*08*/ BYTE, BYTE | REASSIGNABLE, INVALID, INVALID, INVALID, INVALID, BYTE, WORD,
 /*10*/ BYTE, BYTE,
 END,
 
 NDF_END
 };
+#undef INVALID
+#undef END
+#undef ZERO
 #undef BYTE
 #undef WORD
 #undef EXTBYTE
@@ -657,11 +668,15 @@ NDF_END
 #undef DATE
 #undef TEXTID
 #undef TILEID
+#undef REMAININGSIZE
+#undef REASSIGNABLE
+#undef LINEBREAK
 #undef SUBDATA
 #undef RAW
-#undef ZERO
-#undef INVALID
-#undef END
+#undef REPEAT_N
+#undef MUL
+#undef DATAFROM
+#undef REPEAT
 
 /*	Variational action 2 */
 #define ALLOW0MASK 0x40 /* Allow masking all bits */
