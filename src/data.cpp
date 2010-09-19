@@ -1002,9 +1002,8 @@ string getdir(){
 		homedrpath=safetostring(getenv("HOMEDRIVE"))+safetostring(getenv("HOMEPATH"));
 		free(pcwd);
 		if(finddir(cwd))pret=&cwd;
-		else if(finddir(home))pret=&home;
+		else if(finddir(home)||(!home.empty()&&makedir(home)))pret=&home;
 		else if(finddir(homedrpath)||makedir(homedrpath))pret=&homedrpath;
-		else if(makedir(home))pret=&home;
 		else{
 			verify(makedir(cwd,true));
 			pret=&cwd;
