@@ -1,0 +1,16 @@
+1) Add new language definition into language_list.h
+
+2) Copy help_english.h, extra_english.h and message_english.h into new files
+   named help_<lang>.h, extra_<lang>.h and message_<lang>.h, where <lang> is
+   the english name of your language.
+
+3) In the files created in step 2, change the language they are meant for
+   and translate all the text that needs to be translated. Refer to SANITY.txt
+   as necessary.
+
+4) Add include statements for help_<lang>.h, extra_<lang>.h and message_<lang>.h
+   into all_help.h, all_extra.h and all_messages.h respectively. The order of
+   include statements in those files is irrelevant, however for clarity try
+   to keep it identical to the order in language_list.h.
+
+5) Compile.

@@ -583,7 +583,7 @@ int moreargs(int argc, char **argv)
 int main(int argc, char **argv)
 {
 
-	puts("GRFDiff version " GRFCODECVER " - Copyright (C) 1999-2003 by Josef Drexler");
+	puts("GRFDiff " VERSION " - Copyright (C) 1999-2003 by Josef Drexler");
 
 	// loop over all sets of comparisons
 	for (int grfset=0; optind<argc; grfset++) {

@@ -56,7 +56,7 @@
 #	include "path.h"
 #endif
 
-static const char *VERSION = "GRFCodec version " GRFCODECVER " - Copyright (C) 2000-2005 by Josef Drexler";
+static const char *version = "GRFCodec " VERSION " - Copyright (C) 2000-2005 by Josef Drexler";
 
 static void usage(void)
 {
@@ -100,7 +100,7 @@ static void usage(void)
 		"GRFCODEC is Copyright (C) 2000-2005 by Josef Drexler\n"
 		"You may copy and redistribute it under the terms of the GNU General Public\n"
 		"License, as stated in the file 'COPYING'.\n",
-		VERSION
+		version
 		);
 
 	exit(1);
@@ -761,7 +761,7 @@ int main(int argc, char **argv)
 			action = 2;
 			break;
 		case 'v':
-			printf("%s\n", VERSION);
+			printf("%s\n", version);
 			return 0;
 		case 'w':
 			width = min(max(atoi(optarg), 0), 65535);
@@ -793,7 +793,7 @@ int main(int argc, char **argv)
 			unsigned int mapnum;
 			mapnum = atoi(optarg);
 			if (*optarg == '?') {
-				printf("%s\n", VERSION);
+				printf("%s\n", version);
 				showcolourmaps();
 				exit(1);
 			} else if (mapnum < sizeof(colourmaps)/sizeof(colourmaps[0]) ) {

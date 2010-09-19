@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 {
 	if (argc < 2 || strcmp(argv[1], "-h") == 0) {
 		printf(
-			"GRFID version " GRFCODECVER "\n"
+			"GRFID " VERSION " - Copyright (C) 2009 by Peter Nelson\n"
 			"\n"
 			"Usage:\n"
 			"    GRFID <NewGRF-File>\n"
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	if (strcmp(argv[1], "-v") == 0) {
-		printf("GRFID version " GRFCODECVER "\n");
+		printf("GRFID " VERSION " - Copyright (C) 2009 by Peter Nelson\n");
 		return 0;
 	}
 

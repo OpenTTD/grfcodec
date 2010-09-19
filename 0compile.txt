@@ -1,10 +1,10 @@
-How to compile GRFCodec
+How to compile the GRF development tools
 -----------------------
 
-Compiling GRFCodec is pretty straightforward. It can be done, with varying
-quantities of automation, with Cygwin's gcc (using Makefile for a
-cygwin-dependant binary, any Linux gcc (using Makefile, for a Linux
-binary).
+Compiling the GRF development tools is pretty straightforward. It can be
+done, with varying quantities of automation, with Cygwin's gcc (using
+Makefile for a cygwin-dependant binary, any Linux gcc (using Makefile,
+for a Linux binary).
 
 Compiling with make
 ===================
@@ -25,14 +25,13 @@ Targets
 The following are the most intersting targets. Other targets exist, but are
 less useful.
 
-all       Compile grfcodec, grfdiff, grfid and grfmerge
+all       Compile grfcodec, grfdiff, grfid, grfmerge and nforenum
 
 grfcodec
 grfdiff
 grfid
-grfmerge  Compile the program in question, using gcc.
-          Append _r to any of these to also strip/upx the resultant
-          binary.
+grfmerge
+nforenum  Compile the program in question, using gcc.
 
 release   Compile all programs, then strip and upx them (if enabled)
 

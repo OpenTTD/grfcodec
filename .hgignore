@@ -2,12 +2,14 @@
 syntax: glob
 
 objs
+
 Makefile.local
 
 grfcodec
 grfdiff
 grfmerge
 grfid
+nforenum
 
 grfmrg.cpp
 version.h

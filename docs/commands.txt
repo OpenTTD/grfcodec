@@ -1,0 +1,257 @@
+NFORenum -- Comment Commands
+============================
+
+NFORenum can be controlled by adding the following commands to the NFO file.
+All of them must be commented out and prefixed with "@@". Commands take
+effect immediately, but do not affect previous lines. To place a command in
+the middle of a pseudo-sprite is an error, and will comment the trailing
+portion of the sprite.
+Some commands may be specified on the command line; the output of renum -h
+has details on which command-line option(s) match up which commands.
+
+On the command line, the single characters + and - may be used in place of ON
+and OFF, respectively. This allows, for example, -l- to turn the linter off,
+or -b+ to turn the beautifier on.
+
+The equals sign (=) may be used in place of whitespace anywhere in a comment
+command; this is to make it easier to specify their command-line equivalent.
+(eg -b setcookie=686031766)
+
+As of 2.8.6, comment commands are no longer case sensitive, but the all-caps
+version remains canon.
+
+Unless marked othewise, NOPRESERVE may be appended any comment command. If
+appended, the command will be removed from the NFO, otherwise it will be
+written back.
+
+
+@@PRESERVEMESSAGES
+@@REMOVEMESSAGES
+
+These will preserve/remove messages that exist in the NFO. The default is to
+remove messages.
+
+
+@@BEAUTIFY [option [value]]
+
+This collection of commands controls the beautifier. The settings, their
+ranges, and their default values are listed below.
+
+ON|OFF
+Turns the beautifier on or off. OFF is default, but ON is implied when
+setting any other option (including GETCOOKIE)
+
+CONVERTONLY ON|OFF (default OFF)
+When on, NFORenum will do its best to preserve the format of the input
+sprites while changing them according to HEXGRFID, QUOTEUTF8, and
+QUOTEHIGHASCII. When CONVERTONLY is ON, LEADINGSPACE, LINEBREAKS, and MAXLEN
+are ignored.
+
+HEXGRFID ON|OFF (default OFF)
+When on, all GRFIDs will be output entirely in hex. When off, the first two
+bytes will be quoted if both are printable, and the second two will be in
+hex. The character FF is considered non-printable in GRFIDs, so FF FF FF FF
+will be output in hex.
+
+LEADINGSPACE <num-beaut1>[,<num-beaut2>[,<num-linelen>]]
+  (range 1..32 for each, default 5,8,11)
+This specifies the number of spaces to be added after line breaks.
+<num-beaut1> is for what is normally the shorter space (after 00s in
+action 4s, for example), <num-beaut2> for what is normally the longer space
+(after 0Ds in strings, for example), and <num-linelen> for line breaks added
+because the line got too long.
+Specifying 0 for any <num-*> is equivalent to specifying its old setting.
+Failing to specify a <num-*> is equivalent to specifying a number three larger
+than the previous one, or three larger than the old setting of the previous
+one if the previous number is 0. (So LEADINGSPACE 1 and LEADINGSPACE 1,4,7 are
+equivalent.)
+Specifying a value greater than 32 for any number is an error.
+
+LINEBREAKS <num> (0..3, default 2)
+This sets the frequency of beautifier-controlled linebreaks. 0 is the lowest,
+meaning only break lines when MAXLEN says to do so. 3 is the highest,
+breaking lines well-nigh everywhere.
+
+MAXLEN <num> (0..255, default 78)
+The maximum line length, in characters. The sprite leader (0 * 0 ...) is
+taken to be sixteen characters long. Specifying 0 means that sprites will not
+be broken except by the beautifier.
+
+QUOTEHIGHASCII ON|OFF (default ON)
+When off, high-ASCII bytes (80..FF) will always be outputted in hex. When on,
+high-ASCII bytes in strings will be quoted. Regardless of the setting of this
+option, the bytes 00..1F, 7B..A0, AA, AC, AD, AF, and B4..B8 will never be
+quoted, unless in a UTF-8 sequence. High-ASCII bytes that are part of a UTF-8
+sequence are controlled by the next option.
+
+QUOTEUTF8 ON|OFF (default ON)
+When off, UTF-8 sequences in strings will always be output in hex. When
+on, UTF-8 sequences will be quoted. High-ASCII bytes in strings that do not
+begin with an uppercase thorn (U+00DE, Þ) are controlled by the previous
+option. Regardless of this setting, U+E0XX codes will be output according
+to USEESCAPES.
+
+USEESCAPES ON|OFF
+When on, and when writing Info version 7 or greater, NFORenum will generate
+escape sequences instead of hex bytes for special and control characters in
+strings (including all U+E0XX and characters consumed by codes 01, 1F, 81,
+and 9A), and for condition and operation bytes in actions 2, 7, 9, and D.
+In the future, this may also generate escapes for vehicle property 00,
+properties that set TextIDs, and other related entities.
+
+GETCOOKIE
+This is replaced with @@BEAUTIFY SETCOOKIE <cookie>, where <cookie> is the
+current magic cookie. Specifying -b getcookie or its equivalents on the
+command-line causes the SETCOOKIE command to be sent to standard output.
+
+SETCOOKIE <cookie>
+This restores all the above options to the state they were in when GETCOOKIE
+returned <cookie>. <cookie> has no other useful purpose.
+
+
+@@CLEARACTION2
+
+Causes the action 1/2/3 parser to behave as if an end-of-file has been hit.
+Any unused sprite sets from the preceding action 1 are warned about, and
+the end-of-file unused-cargoID checks are run, after which all cargo IDs
+are marked as undefined.
+
+
+@@CLEARACTIONF
+
+As CLEARACTION2, but for the action F parser and town name IDs instead.
+
+
+@@DEFINEID2 <feature> <id>
+
+Marks <id> as defined for <feature>. Tests for unused previous definition
+are not run.
+<feature> and <id> must both be two hex characters.
+
+
+@@DIFF
+
+This will cause the NFO to be formatted in an attempt to help produce useful
+diffs. It implies @@REMOVEMESSAGES and @@SANITY OFF. Every sprite in the NFO
+will be numbered -1 and given a length of 0, sprite 0 will report 0 sprites,
+and no further messages will be written to the NFO.
+
+This command will never be written back to the NFO.
+
+
+@@LET <var> [=] <calculation>
+
+This is useful for variable assignment to be used in real-sprite calculations.
+The calculations in real sprites have the same format as the calculations in
+@@LET.
+<var> is any valid C identifier (first character must be A..Z, a..z or _, all
+others must be A..Z, a..z, 0..9 or _).
+<calculation> is one of:
+1) an RPN expression, enclosed in parentheses. (See readme.rpn.txt)
+2) a signed integer value.
+
+
+@@LINT {OFF|NONE|FATAL|ERROR|WARNING(1-4)}
+
+This controls the linter. OFF will turn it off for the remainder of the file.
+NONE supresses all messages, but checking continues. The remaining options
+suppress all messages below that urgency. Failures occur when the linter
+cannot or will not continue with that sprite, errors occur when it can
+continue, but TTDPatch will not accept the sprite, and warnings when TTDPatch
+will accept the sprite, but it is probably wrong anyway. The default level is
+WARNING3.
+This does not effect parse error messages, which alert you to things GRFCodec
+will not accept.
+
+
+@@LOCATEID2 [<feature>] <id>
+
+Issues a message of the form //!!LOCATEID2 <feature> <id>: <spritenum>, where
+<spritenum> is the most recent definition of <id>, and <feature> is <id>'s
+associated feature.
+If the most recent definition of <id> was made by a @@DEFINEID2, <spritenum>
+is undefined.
+<feature> (if present) and <id> must both be two hex characters.
+<feature> is not required. If present, and a valid feature, it will be
+removed.
+
+
+@@REALSPRITES {RPNON|RPNOFF|COMMENTON|COMMENTOFF}
+
+This controls the real-sprite checker.
+RPNON/RPNOFF turns the RPN expression evaluator on or off. RPNOFF also sets
+COMMENTOFF. This may be overridden by following @@REALSPRITES RPNOFF with
+@@REALSPRITES COMMENTON. If the metadata apparently contains an RPN
+expression and both RPNOFF and COMMENTOFF are set, no unparsable-metadata
+warning message will be issued.
+COMMENTON/COMMENTOFF turns the comment-on-unparsable-metadata feature on or
+off. Realsprites that are apparently missing filenames will always get
+commented; parsing them as real sprites risks losing data if they are
+instead continuations of pseudosprites with an invalid character.
+
+
+@@TESTID2 [<feature>] <id>
+
+Test to see if <id> is defined but does not mark it as used.
+<feature> (if present) and <id> must both be two hex characters.
+<feature> is not required. If present, and a valid feature, it will be
+removed.
+
+
+@@USEID2 [<feature>] <id>
+
+Mark <id> as used, if defined.
+<feature> (if present) and <id> must both be two hex characters.
+<feature> is not required. If present, and a valid feature, it will be
+removed.
+
+
+@@USEOLDSPRITENUMS {ON|OFF}
+
+Turning this on instructs NFORenum not to fix the sprite numbers in the NFO,
+but to instead output the original sprite numbers. @@DIFF will override this.
+
+
+@@USESET <set>
+
+This is a work-around for NFORenum's inability to correctly parse action 6s;
+it will supress "Unused sprite set" messages for that set, until the next
+action 1. <set> must be two characters long, and written in hex. NFORenum's
+behaviour is undefined otherwise.
+
+
+@@VERSIONCHECK <ver> <name>
+
+This will insert a TTDPatch version check.
+<ver> can be in one of three different formats:
+ 1) The dotted-decimal version number, eg 2.0.10.640 for 2.0.1 alpha 64.
+ 2) The 8-character version code, best acquired by copying from switches.xml.
+ 3a) The coloquial version number, either dotted or undotted (201a<num>,
+    2.0.1a<num>, 25b<num>, or 2.5b<num>), eg 201a66 for 2.0.1 alpha 66.
+ 3b) The coloquial version number, either dotted or undotted (2<minor>r<rev>
+    or 2.<minor>r<num>), for TTDPatch revisions r418 and later.
+Note that 3a cannot be used to specify a version that is not in the 2.0.1
+alpha or 2.5 beta series, nor a non-official version. For 2.5 beta 6 and
+later, NFORenum keeps the correct revision in versions.dat. If this file has
+not been updated since the release of the 2.5 beta you want to test for, you
+will have to use form 3b instead.
+<name> is the human-readable name of that version, either as a series of hex
+characters or as a quoted string. A 00 will be appended by NFORenum.
+For example, to check for at least alpha 63, all of these are valid:
+//@@VERSIONCHECK 020A0276 "2.0.1 alpha 63"
+//@@VERSIONCHECK 2.0.10.630 32 2e 30 2e 31 20 61 6c 70 68 61 20 36 33
+//@@VERSIONCHECK 201a63 "2.0.1 alpha 63"
+//@@VERSIONCHECK 2.0.1a63 "2.0.1 alpha 63"
+
+This command will never be written back to the NFO.
+
+
+@@WARNING {ENABLE|DEFAULT|DISABLE} <num>
+
+This provides finer control over which warnings and errors are issued than
+@@SANITY does. ENABLE causes this warning/error to be issued regardless of
+the warning level. DISABLE suppresses this warning/error regardless of the
+warning level.  DEFAULT reverts to the most recent @@SANITY setting. <num>
+is read from the message: "Warning (<num>):" or "Error (<num>):" It is not
+possible to DISABLE fatal messages. They can be ENABLEd. The corresponding
+message for a given value of <num> may change from version to verson.

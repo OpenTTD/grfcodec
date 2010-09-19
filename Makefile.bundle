@@ -22,7 +22,7 @@ VERBOSE := 1
 endif
 
 ifndef BUNDLE_NAME
-BUNDLE_NAME = grfcodec-$(REV)
+BUNDLE_NAME = $(PACKAGE_NAME)-$(REV)
 endif
 
 ROOT_DIR = $(shell pwd)
@@ -39,13 +39,13 @@ bundle: release
 	$(_E) '[BUNDLE] Constructing bundle'
 	$(_C)rm -rf   "$(BUNDLE_DIR)"
 	$(_C)mkdir -p "$(BUNDLE_DIR)"
-	$(_C)mkdir -p "$(BUNDLE_DIR)"
 	$(_C)mkdir -p "$(BUNDLE_DIR)/docs"
 	$(_C)mkdir -p "$(BUNDLE_DIR)/man"
 	$(_C)cp $(GRFCODEC)        "$(BUNDLE_DIR)/"
 	$(_C)cp $(GRFDIFF)         "$(BUNDLE_DIR)/"
-	$(_C)cp $(GRFMERGE)        "$(BUNDLE_DIR)/"
 	$(_C)cp $(GRFID)           "$(BUNDLE_DIR)/"
+	$(_C)cp $(GRFMERGE)        "$(BUNDLE_DIR)/"
+	$(_C)cp $(NFORENUM)        "$(BUNDLE_DIR)/"
 	$(_C)cp COPYING            "$(BUNDLE_DIR)/COPYING"
 	$(_C)cp changelog.txt      "$(BUNDLE_DIR)/"
 	$(_C)cp docs/*.txt         "$(BUNDLE_DIR)/docs/"
@@ -56,12 +56,13 @@ ifeq ($(GRFCODEC), grfcodec.exe)
 endif
 
 install: bundle
-	@echo '[INSTALL] Installing GRFCodec'
+	@echo '[INSTALL] Installing'
 	$(_C)install -d "$(DESTDIR)$(bindir)"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFCODEC)" "$(DESTDIR)$(bindir)/"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFMERGE)" "$(DESTDIR)$(bindir)/"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFDIFF)" "$(DESTDIR)$(bindir)/"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFID)" "$(DESTDIR)$(bindir)/"
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(NFORENUM)" "$(DESTDIR)$(bindir)/"
 ifndef DO_NOT_INSTALL_DOCS
 	$(_C)install -d "$(DESTDIR)$(docdir)"
 	$(_C)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(DESTDIR)$(docdir)"
@@ -114,15 +115,16 @@ bundle_lha: bundle
 
 bundle_dmg: bundle
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).dmg'
-	$(_C)mkdir -p "$(BUNDLES_DIR)/GRFCodec $(REV)"
-	$(_C)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/GRFCodec $(REV)"
-	$(_C)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/GRFCodec $(REV)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
-	$(_C)rm -fr "$(BUNDLES_DIR)/GRFCodec $(REV)"
+	$(_C)mkdir -p "$(BUNDLES_DIR)/GRF Development Tools $(REV)"
+	$(_C)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/GRF Development Tools $(REV)"
+	$(_C)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/GRF Development Tools $(REV)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
+	$(_C)rm -fr "$(BUNDLES_DIR)/GRF Development Tools $(REV)"
 
 bundle_src:
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.gz'
 	$(_C) hg archive -t tar $(BUNDLE_NAME).tar -X "\.hg*" -X "\.devzone*" -X "version.def"
 	$(_C) mkdir -p $(BUNDLE_NAME)
+	$(_C) echo YEAR = "$(YEAR)" >> $(BUNDLE_NAME)/version.def
 	$(_C) echo REV = "$(REV)" >> $(BUNDLE_NAME)/version.def
 	$(_C) echo VERSIONSTR = "$(VERSIONSTR)" >> $(BUNDLE_NAME)/version.def
 	$(_C) tar -uf $(BUNDLE_NAME).tar $(BUNDLE_NAME)/version.def

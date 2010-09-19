@@ -477,7 +477,7 @@ int main(int argc, char **argv)
 {
 	char opt;
 
-	printf("GRFMerge version " GRFCODECVER " - Copyright (C) 2003 by Josef Drexler\n");
+	printf("GRFMerge " VERSION " - Copyright (C) 2003 by Josef Drexler\n");
 
 #ifdef WIN32
 	//  debugint();

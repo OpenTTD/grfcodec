@@ -1,6 +1,25 @@
-- make GRFMerge aware of DOS/Win difference: trg1 vs. trg1r
-- build DOS/Win maps in GRFMerge
-- make .nfo pseudo-sprite format more versatile:
+- Make GRFMerge aware of DOS/Win difference: trg1 vs. trg1r
+- Build DOS/Win maps in GRFMerge
+- Make .nfo pseudo-sprite format more versatile:
   * no lengths, instead line-continuation with backslash-cr or backslash-lf
   * allow hex, dec, oct postfixes like assembly (40, 24d...), default hex
   * allow byte, word, dword and string values (W:4, D:60d, "Hello there")
+- Finish linter:
+  - Varaction2s (variable ranges) (?)
+  - Value validation in action 0s.
+  - Multi-pass linting
+  - TextID usage
+- Split/combine action 0s and 4s.
+- Split(?)/combine action As and 12s.
+- Provide better interface for translation. (?)
+- Command line arguments to install/uninstall context menu support.
+- Beautifier options:
+  - Convert action Cs to comments (?)
+  - Eat all comments, not just messages (?)
+- Config file (!)
+- Auto-correction:
+  - Action 7/9 num-sprites if it jumps to or past EOF.
+- Multiple backups
+- gcc-style output (file:line)
+- NFO version 8
+- Word sized vehicle IDs (A3, A4, more?)

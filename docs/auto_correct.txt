@@ -1,0 +1,65 @@
+NFORenum - Automatic Sprite Correction
+======================================
+
+NFORenum is capable of performing some automated correction of your
+pseudo-sprites.
+The following items can be corrected, with the following limitations:
+
+Action 0 <num-props>: Changed to the number of valid property bytes with the
+  sufficient following data for <new-info>. This can fail in very interesting
+  ways if <num-info> is not correct. ([*] when corrected value is 00, 01, or
+  more than 2 below the old value.)
+Action 0 <num-info>: Corrected after <num-props>, and only if <num-props> is
+  01 and the property being set is not variably lengthed. For these purposes,
+  "variably lengthed" means anything that is not a byte, extended byte, word,
+  or doubleword.
+House/industry tile action 2 <num-sprites>: Changed to the number of valid
+  sprite blocks (<sprite> followed by 3 or 6 bytes of meta-deta), but not if
+  either the original or new values are 00.
+Standard action 2 <feature>: Corrected to the feature of the preceding action
+  1 if it requires sprites from an action 1, or if the feature is not valid.
+  ([*] when changing from an invalid feature, or between the standard
+  (features 00..05,0B) and house/industry tile (features 07/09) formats.)
+  The sprite will then be completely rechecked.
+Variational/random action 2 <feature>: Corrected to the feature of the
+  referenced action 2s, if all referenced action 2s are defined with the same
+  feature. The sprite will then be completely rechecked.
+Variational action 2 <nvar>: Only corrected if a corrected value exists that
+  makes the sprite length agree with nvar.
+Random action 2 <nrand>: Only corrected if a corrected value exists that
+  makes the sprite length agree with nrand, and the corrected value has
+  exactly one bit set.
+Action 3 <feature>: (See var/random action 2 feature.)
+Action 3 <num-cid>: Only corrected if a corrected value exists that makes the
+  sprite length agree with num-cid. This can fail in very interesting ways if
+  <num-ids> is not correct. [*]
+Action 4 <num-ent>: Count of strings found in the action 4.
+Action 6: A trailing FF will be added if doing so will make the sprite valid.
+Action 7/9 <varsize>: Only corrected if the sprite length, variable, and
+  condition all agree on the correct value. For bit-tests, this value is
+  corrected to 01.
+Action A <num-sets>: Only corrected if a corrected value exists that makes
+  the sprite length agree with num-sets.
+Action E <num>: Only corrected if a corrected value exists that makes the
+  sprite length agree with num.
+Action 12 <num-def>: Only corrected if a corrected value exists that makes
+  the sprite length agree with num-def.
+All actions containing strings (4, 8, B, F): A trailing 00 will be added if
+  end-of-sprite is encountered while parsing a string.
+
+[*] These can be unsafe, and are not enabled unless -a/--autocorrect is
+    specified twice.
+
+In all cases, the parsing logic changes; in some cases substantially. If the
+resultant error/warning messages are illogical, try again without -a, and you
+may get better messages.
+The beautifier must be on for auto-correction to work. If the beautifier is
+off when -a/--auto-correct is seen, NFORenum will behave as if the option
+"--beautify convertonly=on" immediately followed it on the command line. You
+are free to turn the beautifier back off, which is useful for doing dry runs
+of the auto-corrector. If you want to do this, -aab- is one of the many
+command line arguments that can be used. (NOTE: -ab- -a should not be used.
+The second -a will turn the beautifier back on again, which is almost
+certainly not what you wanted.) Add a --lock if you want to be sure that no
+@@BEAUTIFY commands from the NFO will cause the autocorrecter to make
+corrections.

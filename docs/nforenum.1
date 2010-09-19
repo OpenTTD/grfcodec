@@ -1,0 +1,98 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" Please adjust this date whenever revising the manpage.
+.Dd August 05, 2010
+.Dt NFORENUM 1
+.Sh NAME
+.Nm NFORenum
+.Nd A tool for checking NFO code for errors, and for beautifying that code
+.Sh SYNOPSIS
+.Nm nforenum
+.Op options
+.Op file [file2 [file3 [...]]]
+.Sh OPTIONS
+.Bl -tag
+.It Fl -auto-correct | Fl a
+Perform some rudimentary automatic correction of incorrect pseudo
+sprites. This may be specified twice to enable the corrections that
+are more likely to be incorrect.
+See the README for detailed information on the auto-correcter.
+.It Fl -comments Ns = Ns Ar type | Fl c Ar type
+<type> is one character, either /, ;, or #, and specifies the comment
+style that NFORenum will use. This will not change the header, because
+grfcodec requires that the header be commented in C++-style.
+.It Fl -data Ns [= Ns Ar dir ] | Fl D Ns [ Ar dir ]
+If <dir> is specified, look for the .nforenum directory in <dir>, and
+create it if not found.
+.Pp
+If <dir> is not specified, report the location of the .nforenum directory.
+In either case, eliminate the 5-second wait used to ensure that those
+not running NFORenum from a command line can see the directory-created
+message.
+.Pp
+Default: Look for  the .nforenum directory in the current directory, and
+then in the environment variable
+.Ev HOME Ns
+, if defined. If not found attempt to create in
+.Ev HOME Ns
+, then in .
+.It Fl -force | Fl f
+Forces processing of files that do not look like NFO files.
+The default is to treat such files as if they specified a too-high info version.
+.It Fl -help | Fl h
+Display the help message.
+.It Fl -lock
+Locks the current comment command state. Commands will continue to be
+parsed as normal (so NOPRESERVE will be honored, @@DIFF will be
+removed, &c.) but their changes (such as turning on the diff-assister)
+will not be honored.
+.It Fl -no-replace | Fl -keep-old | Fl k
+Do not replace the old NFO file; write new file to file.new.nfo.
+Default: Use file[.nfo].new as temporary, rename it to file[.nfo]
+when done.
+.It Fl -silent | Fl s
+Silence the progress output in interactive mode.
+.It Fl -version | Fl v
+Display the version.
+.It Fl -write-data
+Refresh all data files, unless they are newer.
+.El
+The following options cause NFORenum to behave as if all files started with
+the associated command. The readme has full details on the comment commands.
+Options associated with comment commands that require additional information
+take that information as an argument. With the exception of
+.Fl L Ns / Ns Fl -let Ns
+, the options to the command line versions are case insensitive.
+"ON" and "OFF" may be specified with "+" and "\-", respectively.
+.Bl -tag -width 24n
+.It Fl -beautify | Fl b
+@@BEAUTIFY
+.It Fl -diff | Fl d
+@@DIFF
+.It Fl -let | Fl L
+@@LET
+.It Fl -lint | Fl l
+@@LINT
+.It Fl -preserve-messages | Fl p
+@@PRESERVEMESSAGES
+.It Fl -real-sprites | Fl r
+@@REALSPRITES
+.It Fl -use-old-nums | Fl o
+@@USEOLDSPRITENUMS
+.It Fl -warning-disable | Fl w
+@@WARNING DISABLE
+.It Fl -warning-enable | Fl W
+@@WARNING ENABLE
+.El
+.Fl w
+and
+.Fl W
+(and their long counterparts) also accept a comma-separated
+list of messages, all of which will be ENABLEd or DISABLEd.
+.Sh SEE ALSO
+The documentation in
+.Pa /usr/share/doc/nforenum/
+.Sh AUTHOR
+nforenum was written by Dale McCoy, with portions by Dan Masek, Thijs
+Marinussen, Remko Bijker and Christoph Elsenhans.
+.Pp
+This manual page was written by Remko Bijker.

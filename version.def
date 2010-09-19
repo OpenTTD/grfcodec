@@ -1,5 +1,5 @@
-# Version number
-VER = 0.9.10
+# Current year
+YEAR = 2010
 
 ifdef REVISION
 REV := $(REVISION)
