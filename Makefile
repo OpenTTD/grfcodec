@@ -153,11 +153,6 @@ remake:
 	$(_C)$(MAKE) src/version.h src/endian.h
 	$(_C)$(MAKE) ${_S} all
 
-${MAKEFILELOCAL}:
-	@/bin/sh -c "export PATH=\"/bin\" && \
-	echo ${MAKEFILELOCAL} did not exist, using defaults. Please edit it if compilation fails. && \
-	cp ${MAKEFILELOCAL}.sample $@"
-
 $(GRFCODEC): $(GRFCODECSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
