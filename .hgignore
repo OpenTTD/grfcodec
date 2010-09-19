@@ -2,10 +2,19 @@
 syntax: glob
 
 objs
-nforenum-*
-bundle
 
 Makefile.local
-nforenum
-version.h
 
+grfcodec
+grfdiff
+grfmerge
+grfid
+nforenum
+
+grfmrg.cpp
+version.h
+endian.h
+
+grfcodec-*
+
+bundle

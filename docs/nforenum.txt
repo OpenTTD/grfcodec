@@ -1,51 +1,5 @@
-NFORenum README
-Last updated:    2010-08-09
-Release version: 4.0.0
-------------------------------------------------------------------------
+Usage of NFORenum
 
-
-Table of Contents:
-------------------
-1) About
-2) Contact
-3) Installation
-4) Running
-5) Known issues
-6) Compiling
-
-
-1) About:
--- ------
-NFORenum is a tool checking NFO code for errors, and for beautifying that
-code -- inasmuch as NFO can be beautified :)
-
-NFORenum is licensed under the GNU General Public License version 2, or at
-your option, any later version. For more information, see 'COPYING.txt'
-(GPL version 2), or later versions at <http://www.gnu.org/licenses/>.
-
-
-2) Contact:
--- --------
-Contact can be made via the issue tracker / source repository at
-http://dev.openttdcoop.org/projects/nforenum or via IRC on the
-#openttdcoop.devzone channel on OFTC.
-
-
-3) Installation:
--- -------------
-Installing NFORenum is fairly straightforward. Just copy the executable into
-any directory. It is advised to put the executable in one of the directories
-in your path so it can be easily found. For example when compiling OpenGFX.
-
-NFORenum will (if necessary) create a .nforenum directory. All its data files
-will be placed in that directory, and updated as needed.
-It is not necessary to remove the .nforenum directory before upgrading.
-
-To uninstall, delete the executable and any .nforenum directories.
-
-
-4) Usage:
--- ------
 To renumber NFO files (for example MyGRF1.NFO and MyGRF2.NFO), use
 
  > nforenum [options] MyGRF1 MyGRF2
@@ -63,7 +17,7 @@ digit, but are optional in all other cases.
 
 Messages will be output to the console and to the NFO file.
 For a detailed explanation of the sanity checker's messages,
-see SANITY.en.txt.
+see sanity.txt.
 
 Sprites that for some reason cannot be processed will be commented out, and
 processing will continue.
@@ -100,17 +54,10 @@ send a message to the console and immediately die.
 Codes 1 and 2 are reserved pending discussion; see http://tinyurl.com/acudt.
 
 
-5) Known issues:
--- -------------
+Known issues:
 - An Action 6 modifying any checked sprite can cause erroneous sanity messages.
   Status: Low priority, hard to do correctly.
   Workaround: use the @@USEID2 and @@USESET commands to supress incorrect
     messages.
 - @@VERSIONCHECK does not put its second action 9 in the correct place.
   Workaround: Manually move that action 9 after the action 8.
-
-
-6) Compiling:
--- ----------
-GCC/ICC:
-  Just use "make", or on non-GNU systems "gmake".

@@ -1,0 +1,152 @@
+
+                             GRFCodec - A tutorial
+
+   by [1]Josef Drexler.
+
+   This tutorial is a list of the steps you need to take to edit a GRF
+   file, and if you like, send your modifications to others.
+
+   Since all GRFCodec programs are command line utilities (no graphical
+   interface available), you have to make yourself familiar with the DOS
+   or Windows command prompt. However, that's beyond the scope of this
+   tutorial.
+
+   These are the basic steps to modifiy a GRF file:
+    1. Decode the GRF file
+    2. Edit the PCX file
+    3. Encode the GRF file
+
+   Optional steps to distribute your changes:
+    4. Make a GRD or self-extracting file
+
+1. Decode the GRF file
+
+   After installing the GRFCodec programs into your TTD folder, simply
+   run GRFCodec. At the command prompt, type
+grfcodec -d trg1.grf
+
+   This will decode trg1.grf, and put an editable PCX file in the SPRITES
+   folder.
+
+   Note that the image will be quite huge, and if you instead want to
+   split it into smaller files, use
+grfcodec -d trg1.grf -w 800 -h 600
+
+1a. Choosing a palette
+
+   Skip this step unless you find that the colours are wrong. In that
+   case, you need an extra option on the GRFCodec command line: the -p
+   option. It tells GRFCodec to choose a different palette.
+
+   After the -p option, you specify a number indicating which palette you
+   want. You have the following choice:
+
+   Number Meaning
+   1      DOS TTD
+   2      Windows TTD
+   3      DOS TTD, Candyland
+   4      Windows TTD, Candyland
+   5      TT Original
+   6      TT Original, Mars landscape
+
+   So, for example, use "-p 2" when you're decoding a file from the
+   Windows version of TTD, like so:
+grfcodec -d trg1r.grf -p 2
+
+2. Edit the PCX file
+
+   For this, you open your favourite graphics editor, like Paintshop Pro,
+   Adobe Photoshop, or any other graphics editor that can deal with PCX
+   files. (Just about all of them can.)
+
+   You should then load trg1.pcx in the SPRITES folder. Or, if you used
+   the second command above to split it into smaller files, open
+   trg10000.pcx, which is the first part. The following parts simply have
+   higher numbers.
+
+   If at this point you find that the colours are wrong, you need to
+   decode the GRF again, using a different colour palette. In that case
+   please follow the instructions in step 1a).
+
+   If however everything looks fine, you can then start changing the
+   sprites. Note that it is fairly difficult to actually change their
+   size, but changing the look is easy enough.
+
+   Once you've changed all you need, save the PCX file again.
+
+3. Encode the GRF file
+
+   This step is the reverse of step 1), it takes the PCX file(s) and
+   makes a GRF file out of them. At the command prompt enter
+grfcodec -e trg1.grf
+
+   This will take a bit longer than decoding, but shouldn't take too
+   long. Once it's done, you can start TTD and see the fruits of your
+   labour!
+
+4. Make a GRD or self-extracting file
+
+   So now that you have successfully changed a GRF file, you'll of course
+   want to give your awesome modifications to other people. You can
+   simply send them the new trg1.grf file, but that has a few
+   disadvantages. First, the GRF files are fairly large, so downloading
+   them is going to take a fairly long time. Also, this means that your
+   friend will lose all changes he made to his own trg1.grf file.
+
+   If only there was a way to send only the changed sprites...
+
+   ...and luckily, there is! It's called GRFDiff, and you use it like
+   this:
+grfdiff trg1.bak trg1.grf
+
+   Here, trg1.bak is a backup copy of the original GRF file. GRFCodec
+   should have made it during step 3. Once it exists, GRFCodec won't
+   touch it again, so it'll always remain the original copy.
+
+   Now what this command does, is take all the sprites that are new and
+   put them in a file called trg1.grd. This file should be fairly small,
+   so that you can easily send it to your friend. What your friend then
+   has to do is run GRFMerge like this:
+grfmerge trg1.grd
+
+   That will integrate your changes into his trg1.grf, and everyone will
+   be happy.
+
+   Unless he doesn't have GRFMerge...
+
+   ...in that case, you can instead tell GRFDiff to make a
+   self-extracting file. That means it turns the GRD file into a program,
+   which you can run instead of GRFMerge. To do that, run
+grfdiff -x trg1.bak trg1.grf -o yourmod.exe
+
+   That will make yourmod.exe, or any other name you give it. Be
+   creative, and make the name relevant to what you actually changed.
+
+   Then simply send out yourmod.exe, and tell people to copy it to their
+   TTD folders and run it. Tadaa! They've got your modified sprites.
+
+   If you want to make your .exe file compatible with both the DOS and
+   the Windows version of the game, you of course need to edit both
+   trg1.grf and trg1r.grf. Then you combine the changes from both files
+   into one executable like this:
+
+grfdiff -x -o yourmod.exe trg1.bak trg1.grf + trg1r.bak trg1r.grf
+
+   When run, yourmod.exe will patch either both of the files if they are
+   installed, or otherwise it will just skip those that it can't find.
+   That way, it'll work no matter whether the DOS or the Windows version
+   is installed, or even if both are present.
+
+   Easy, wasn't it?
+   ______________________________________________________________________
+
+   Copyright © 1999-2003 by Josef Drexler.
+
+
+
+    Last changed on May 17 2003 15:45 EDT by [2]Josef Drexler
+
+References
+
+   1. http://www.ttdpatch.net/email.php?GRFCodec%2CTutorial
+   2. http://www.ttdpatch.net/email.php?TTDPatch%2CGRFCodec

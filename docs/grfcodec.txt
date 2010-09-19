@@ -1,0 +1,239 @@
+
+                            GRFCodec Documentation
+
+   GRFCODEC: A suite of programs to decode and encode Transport Tycoon
+   Deluxe's GRF files. Copyright (C) 2000-2006 by [1]Josef Drexler.
+
+   These programs are distributed according to the terms of the GNU
+   General Public License, Version 2. For more information read the file
+   "COPYING".
+
+   The following three programs are part of GRFCODEC:
+    1. GRFCodec: Convert a GRF into an editable PCX file and vice versa
+    2. GRFDiff: Compare two GRF files for differences, and write only the
+       differences to a GRD file
+    3. GRFMerge: Take a GRD file and merge it back into the GRF file
+
+GRFCODEC
+
+     * Copy it into your TTD directory
+     * to decode a GRF file:
+
+     grfcodec -d <grf-file>
+       This will put a pcx file in a subdirectory called "sprites". It
+       will also make a .NFO file that is needed to reconstruct the GRF
+       file.
+     * to encode a GRF file:
+
+     grfcodec -e <grf-file>
+       It will look in the sprites directory for both the PCX and the NFO
+       file and make a GRF file out of this.
+
+  Options
+
+   When decoding:
+
+        -w <width>
+                To set the width of the PCX file
+
+        -h <height>
+                To set the maximum height of a PCX file. With this
+                option, each GRF will be split into several PCX files.
+
+                Note that both width and height should be large enough to
+                accomodate the largest sprite in your GRF file, or you
+                will get strange results.
+
+        -b <boxsize>
+                GRFCodec organizes the sprites in boxes in the PCX file.
+                Use this option to choose the minimum size of these
+                boxes.
+
+        -p <palfile>
+                Choose a differenct colour palette for the PCX file, for
+                example when decoding TT Original or TT+World Builder
+                graphics. See -p ? for a list of possible values.
+
+        -x
+        -xx
+                Disable part or all of the Info version 7 format, reverting
+                to the Info version 6 format.
+
+        -X
+                Print the sprite numbers in the PCX (but NOT the NFO) in hex
+
+          Examples:
+
+     grfcodec -d trg1.grf
+     grfcodec -d -w 800 -h 600 trg1.grf
+     grfcodec -d -p 6 mars.grf
+
+   When encoding:
+
+        -u
+                To disable redundancy compression. This speeds up the
+                encoding process, but it also greatly increases the size
+                of the resulting .GRF file, and may reduce performance in
+                TTD because it can only cache fewer sprites.
+
+        -c
+                Enable sprite-shrinking optimizations. Note that these are
+                not necessarily safe. In particular, sprites that will share
+                their bounding box (as for some station sprites) must not
+                have their upper-right hand corner moved, and the sprite
+                defining the bounding box must not be shrunk smaller than any
+                that will share with it.
+                Sprites with bit 6 of their compression byte set will never
+                be shrunk.
+
+        -s      Silences the progress output indicating which real sprite 
+                currently is being worked on.
+
+   When doing either:
+
+        -M <mapping>
+                Map the colour palette from one type to another, for example
+                to convert DOS GRF files to the Windows version or vice
+                versa. See -m ? for a list of possible values.
+        -m <mapping>
+                As above, but do not map the colors of sprites that appear to
+                be character glyphs. Such sprites use only the first three
+                entries in the palette, regardless of what colors they may
+                actually represent.
+
+          Examples:
+
+     grfcodec -e trg1.grf
+     grfcodec -u -e trg1.grf
+     grfcodec -m 1 trg1.grf
+
+  What you can edit
+
+   You can change all the sprites in the PCX file. Note that the colour 0
+   (black) is the transparent colour. Any changes to the white background
+   around the sprites will be ignored.
+
+   It is possible to change the size of a sprite, but it is non-trivial.
+   You have to edit the .NFO file -- even though it says "do not edit".
+   For every sprite there's a line in the following format:
+
+     <pcx filename> <x> <y> <type> <y-size> <x-size> <x-ofs> <y-ofs>
+
+   In case you change anything, there are two things you must must MUST
+   make sure, which is that:
+     * The sprites remain in the correct order
+       Do not delete lines or rearrange them, in particular do not delete
+       or modify the strange block with a "*" as filename. These are
+       special data that aren't sprites but go in the GRF file
+       nonetheless.
+
+   The sizes are given in regular decimal notation. You need to change
+   these. Of course, you also have to make room for them in the PCX file.
+   Therefore, the best way to enlarge a sprite is to:
+    1. Decode the GRF file
+    2. Edit the NFO file, change the size
+    3. Encode the GRF file, even though you haven't edited anything in
+       the PCX file
+    4. Decode it again
+    5. Edit the PCX file
+    6. Encode it again
+
+   Steps 3 and 4 are there to ensure proper spacing in the PCX file.
+
+GRFDIFF
+
+   Usage: grfdiff [options] Old-GRF-File New-GRF-File
+
+   GRFCodec makes a backup of your GRF file the first time it is changed,
+   so normally you would run GRFDiff like this:
+
+     grfdiff trg1.bak trg1.grf
+
+   This will generate the file trg1.grd, which contains only the sprites
+   which are new in trg1.grf.
+
+  Options
+
+   -l <numbers>
+          Instead of searching for the sprites which are new, you can
+          specify the numbers here, using a format like
+          -l 1-10,50,100-120
+          Note that the numbers must be in increasing order. If -l is
+          specified, you can omit the Old-GRF-File name.
+
+   -n
+          Instead of making the GRD file, only show which sprites are
+          new.
+
+   -o <filename>
+          Instead of making a GRD file of the same name, write to this
+          file.
+
+   -x
+          Make a self-extracting .exe file. Simply running that file will
+          automatically integrate the changes into the right .GRF file.
+          This self-extracting file is actually a copy of GRFMerge.
+
+   -y
+          Answer 'Y' to all questions.
+
+   You can also combine the differences between several sets of GRF files
+   into one GRD file (or one self-extracting .EXE) by adding more files
+   on the command line, separated by a plus. Example:
+
+     grfdiff file1.bak file1.grf + file2.bak file2.grf + file3.bak
+     file3.grf
+
+   This compares the three sets of GRF files and writes the differences
+   of all sets into file1.grd. When giving several sets of files like
+   this, only option -l can be specified multiple times, all other
+   options must be given for the first set:
+
+     grfdiff -x -o many.exe file1.bak file1.grf + -l 10-15 file2.grf +
+     -l 23 file3.grf
+
+   This can be useful when making diffs that should work for the DOS or
+   the Window version, because GRFMerge will just skip the files it can't
+   find. For example,
+
+     grfdiff -x -o bothver.exe trg1.bak trg1.grf + trg1r.bak trg1r.grf
+
+   will add the differences in both the DOS and Windows versions of the
+   main TTD sprite file to bothver.exe. When run, bothver.exe will patch
+   both files if they are present, or otherwise just patch the one that
+   exists.
+
+GRFMERGE
+
+   Usage: grfmerge GRD-File [GRF-File]
+
+   This takes the GRD file and integrates the new sprites into the GRF
+   file. If no GRF file is specified, it uses the one which the GRD file
+   was made from.
+
+  Options
+
+   -l
+          Do not integrate the sprites, only show which ones are
+          contained in the GRD file
+
+   -y
+          Answer 'Y' to all questions.
+
+   If called as a self-extracting file (made by GRFDiff -x), the GRD file
+   cannot be specified, it is always built into the .exe file. The GRF
+   and all options can still be specified though. You can also specify a
+   self-extracting file instead of the GRD-File, though that is perhaps a
+   bit redundant.
+   ______________________________________________________________________
+
+   Copyright © 1999-2003 by Josef Drexler.
+
+
+
+    Last changed on May 17 2003 15:37 EDT by [2]Josef Drexler
+
+References
+
+   1. http://www.ttdpatch.net/email.php?GRFCodec%2CDocs
+   2. http://www.ttdpatch.net/email.php?TTDPatch%2CGRFCodec

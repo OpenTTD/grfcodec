@@ -1,18 +1,8 @@
-Changelog:
-4.0.0 to
-- Data file updates
-  - Action 0 objects properties 11..16.
-  - Action 2 objects variables 42, 44..46, 5F, 60..64.
-  - Action 2 callbacks 157..15D.
-  - Action 5 type 15.
-  - Action D patch variables 12, 13.
+Changes in 5.0.0
+- Merge the source packages of GRFCodec and NFORenum.
 - Add command line option to silence all progress output.
 - Add command line option to refresh all data files.
-- Add support for reading the (Action 14) version of other NewGRFs via Action D
-  parameter 7E.
-- Fix bogus warning when using \d<num> in an action 2 for features 7/9/F.
 - Fix Cygwin compilation issues.
-- Fix returning a non-zero exit code upon an unrecognised command line option.
 - Fix UPX-ing of release binaries under some circumstances.
 - (devel) Fix putting version.def twice in the source bundle.
 - (devel) Use directories from the Make conventions for installation
@@ -20,6 +10,174 @@ Changelog:
   certain bits of documentation.
 - (devel) Disable strip and UPX as default.
 - (devel) Add make distclean that removes Makefile.local as well.
+- NFORenum specific changes
+  - Data file updates
+    - Action 0 objects properties 11..16.
+    - Action 2 objects variables 42, 44..46, 5F, 60..64.
+    - Action 2 callbacks 157..15D.
+    - Action 5 type 15.
+    - Action D patch variables 12, 13.
+  - Add support for reading the (Action 14) version of other NewGRFs via Action D
+    parameter 7E.
+  - Fix bogus warning when using \d<num> in an action 2 for features 7/9/F.
+  - Fix returning a non-zero exit code upon an unrecognised command line option.
+- GRFCodec specific changes
+  - Add filename to a number of PCX related error messages.
+  - Fix cropping did not work on big endian architectures.
+
+
+===== GRFCodec before the merge =====
+
+Changes in 1.0.0
+- (devel) Complete rewrite of installation of binaries, so if you are
+  packaging this you will have to check whether custom installation and
+  such are still needed or that the Makefile does handle it correctly.
+- (devel) Detect UPX, fix some race issues in the Makefile, disable
+  optimization if GCC 4.5.0 is detected (to work around an optimization bug),
+  fix version.h generation if there is a version.h in /usr/include.
+- (devel) Fix a number of compiler warnings.
+- Clamp the arguments for -w and -h to 65535 as that is the maximum size of a
+  PCX.
+- Fix reading of PCX files with more bytes per scanline than pixels.
+  (This is the case for odd image widths when following the PCX standard closely.)
+- Silence progress-meter output when stdout is not a console.
+- Unify warnings and errors so they go to stderr and are prefixed by "Warning:"
+  or "Error:".
+- Allow hex escapes that have bit 31 set.
+- Fix comments not prefixed by whitespace could cause grfcodec to reject
+  the preceding escape.
+- After cropping a sprite, compress and write the correct number of bytes.
+- Add -X to print PCX sprite numbers in hex
+- (devel) Many compilation issues with different compilers and architectures.
+- Fix bug in UTF-8 generation for escapes \U800..\U7FFF.
+- Fix U+E0xx characters being output quoted.
+- (devel) By Tron: code cleanup, make C functions and variables static where
+  possible, remove dead and debugging code.
+- Require two slashes before dismissing anything as a C++ style comment.
+- Fix reading of real sprites with Unixy absolute paths.
+- Check for pixels with palette index of 255 when encoding.
+- Add -v to get the version.
+- Add -q to silence warnings.
+- Add -c to automatically crop extraenous transparent blue pixels.
+- Add escapes for the new action 2 operations 0E, 0F, 10, 11, 12, 13, 14, 15, 16
+- Prevent quotes and escapes in sprite 0.
+- Add escapes for long-format intro dates.
+
+Changes in 0.9.10 (svn r819)
+- (bugfix) Correct reading of \7c, \7C, \D| and \D&. (DaleStan)
+
+Changes in 0.9.9 (svn r653)
+- By Patchman:
+  - Check for sprites that extend beyond the end of the PCX file.
+  - Update versioning system to show last-comitted revision for non-release
+    builds.
+- By DaleStan:
+  - (devel) Add release targets to the Makefiles
+  - Check the palette of the PCX file before encoding from it.
+    (Override a failed check with -f)
+  - Introduce several backslash escape sequences; see the wiki for further
+    information.
+    (disable with -x or -xx)
+  - Do not apply colormap to sprites that like character glyphs.
+    (Apply colormap to all sprites with -M instead of -m)
+  - Enable reading of GIMP palette files with -p.
+  - (devel) Terse build mode; get the verbose mode with make V=1.
+  - (devel) Touch version.h if and only if it changes.
+
+Changes in 0.9.8 (svn r197)
+- By DaleStan:
+  - (devel) grfcodec (but not grfdiff or grfmerge) can now be built in
+    MS Visual Studio 2003.
+  - Slightly change the plaintext quoting algorithm.
+  - (devel) Change several memcpy()s to pointer assignments.
+  - (devel) Plug several memory leaks
+  - (devel) Source code and Makefile changes to grfdiff and grfmerge build
+    with both Makefiles, on both Cygwin and Linux.
+  - Make code gcc 4 -Wall clean.
+  - Use NFORenum's NFO reading engine:
+    - Sprite numbers are now optional, and need not be correct if present.
+    - Sprite lengths need not be correct. Set to 0 to supress the incorrect
+      length warnings.
+    - Real sprites are checked for format compliance.
+  - Make 0-byte pseudo sprites an error.
+  - (bugfix) Prevent binary includes from including directories on OSes that
+    would othewise allow it.
+  - (bugfix) It is now possible for a real sprite to start above the
+    preceeding sprite (the infamous decreasing ypos bug)
+  - grfcodec now exits with 0 on success.
+
+Changes in 0.9.7
+- support including binary files using "  4 ** data/dingdong.wav" syntax
+- by Oskar: support // and # comments within pseudo-sprites
+- fixed incorrect error message while encoding if .nfo file could not be read
+  (now it reports "Cannot read %s" instead of Creating sprites/: File exists")
+- made code -Wall clean
+- remove myalloc stuff
+
+Changes in 0.9.6
+- by pasky:
+  * made it possible to compile grfcodec on Linux
+  * made compatible with gcc 3.x
+  * when decoding, text strings are written in plain text (disable with -t)
+  * supports plain text in .nfo files
+  * fixed bug when first encoding a grf file wouldn't rename .new to .grf
+
+Changes in 0.9.5
+- self-extracting executables now work on Win2K etc., which doesn't pass
+  the full path to the C library
+- GRFMerge will just skip .grf files it can't find
+- making sprites larger doesn't work if they're at the right edge; complains
+  that ofsx too large; instead just use background colour
+- GRFDiff doesn't like grfdiff -l 1254 ... (single value in -l), complains
+  that there were no differences and makes no output
+- allow GRFMerge to read GRFDiff's .exe files, both for -l and other options
+
+Changes in 0.9.4
+- fixed yet another crash while compressing
+- sprites no longer need correct numbers in the .NFO file; just use "-1" for
+  each number and it will be assumed to be correct
+
+Changes in 0.9.3
+- fixed crash due to buffer overrun while compressing
+- slightly improved compression efficiency and speed
+- GRFCodec now handles spaces in file/directory names properly
+- GRFCodec now supports comments in .NFO files (from //, ; or # to end of line)
+- speed up PCX processing
+
+Changes in 0.9.2
+- fixed crash if pcx file not found
+- fixed crash if nfo file has no version info header
+
+Changes in 0.9.1
+- bug fix by Marcin: wrong order of test in encode function
+
+Changes in release April 20 2002
+- -p now actually uses the parameter you give it
+
+Changes in release Dec 03 2001
+- made -p option a valid option
+- improve compression speed even more using assembly optimizations
+- compression is now on by default, disable with -c-
+- fixed bug where encoding would fail if the grf file didn't exist already
+- fixed bug where decoding would fail creating the sprites directory
+- corrected some mistakes in grf.txt (checksum, and initial offsets for tiles)
+
+Changes in release March 26 2001
+- fix bug that didn't flush last row if it only contained a single sprite
+- fix bug with no height given (would make PCX have height -1)
+- show percentage done while decoding
+- fix compression algorithm
+- improve compression performance
+- try without compression if data is inconsistent after decompressing our
+  compressed data (this shouldn't happen anymore anyway, report it as a
+  bug if it does)
+- -p to choose palette
+
+Changes before release March 26 2001
+- I don't remember anymore
+
+
+===== NFORenum before the merge =====
 
 v3.4.6 to 4.0.0
 - Change rename "renum" to "nforenum" including ".renum" to ."nforenum"

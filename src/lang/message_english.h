@@ -67,7 +67,7 @@ MESSAGE_EX(UNEXP_EOF_STD2,"Unexpected EOF: Expected additional standard Action 2
 MESSAGE_EX(UNEXP_EOF_CARGOID,"Unexpected EOF: Unused CargoIDs detected for feature %x.\n",0,ERROR,UNUSED_ID)
 MESSAGE_EX(UNEXP_EOF_TOWNNAMES,"Unexpected EOF: Unused town name IDs detected.\n",0,ERROR,UNUSED_ID)
 MESSAGE_EX(UNEXP_EOF_LONGJUMP,"Unexpected EOF: Action 7/9 jumps past EOF.\n",0,ERROR,LONG_JUMPLEAD)
-OUT_MESSAGE(STARTUP,"NFORenum " VERSION " - Copyright " YEARS " Dale McCoy.\n",0)
+OUT_MESSAGE(STARTUP,"NFORenum " VERSION " - Copyright (C) " YEARS " by Dale McCoy\n",0)
 
 NFO_MESSAGE(BAD_RPN,"Invalid RPN expression while reading character %c.\n",0)
 NFO_MESSAGE(BAD_RPN_EOF,"No close parenthesis found.\n",0)

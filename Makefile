@@ -1,14 +1,14 @@
 # =========================================================
-# Makefile for NFORenum
+# Makefile for the GRF development tools
 #
-#	Don't put any local configuration in here
-#	Change Makefile.local instead, it'll be
-#	preserved when updating the sources
+#       Don't put any local configuration in here
+#       Change Makefile.local instead, it'll be
+#       preserved when updating the sources
 # =========================================================
 
 MAKEFILELOCAL=Makefile.local
 
-PACKAGE_NAME = nforenum
+PACKAGE_NAME = grfcodec
 
 # Gnu compiler settings
 SHELL = /bin/sh
@@ -21,31 +21,19 @@ SRCZIP = gzip
 
 # OS detection: Cygwin vs Linux
 ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
-ISMINGW = $(shell [ `$(CXX) -dumpmachine` != mingw32 ]; echo $$?)
+MACHINE = $(shell $(CXX) -dumpmachine || echo '??' )
 
 # OS dependent variables
-NFORENUM = $(shell [ \( $(ISCYGWIN) -eq 1 \) -o \( $(ISMINGW) -eq 1 \) ] && echo nforenum.exe || echo nforenum)
+EXE = $(shell ( [ \( $(ISCYGWIN) -eq 1 \) -o \( "$(MACHINE)" = "mingw32" \) ] ) && echo .exe)
+GRFCODEC = grfcodec$(EXE)
+GRFDIFF  = grfdiff$(EXE)
+GRFMERGE = grfmerge$(EXE)
+GRFID    = grfid$(EXE)
+NFORENUM = nforenum$(EXE)
 
-# use 386 instructions but optimize for pentium II/III
-ifeq ($(ISCYGWIN),1)
-FLAGS = -O2 -I $(BOOST_INCLUDE)
-else
-FLAGS = -O2 -idirafter$(BOOST_INCLUDE)
-endif
-FLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2
-FLAGS += -D_FORTIFY_SOURCE=2
+ENDIAN_CHECK = endian_check$(EXE)
 
-ifeq ($(shell uname),Darwin)
-FLAGS += -isystem/opt/local/include
-endif
-
-CXXFLAGS := $(FLAGS) $(CXXFLAGS)
-
--include ${MAKEFILELOCAL}
-
-ifeq ($(DEBUG),1)
-CXXFLAGS += -g -DDEBUG
-endif
+TYPESIZE = GCC32
 
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
@@ -66,6 +54,37 @@ endif
 ifndef V
 V=0 # verbose build default off
 endif
+
+ifeq ($(ISCYGWIN),1)
+FLAGS = -O2 -I $(BOOST_INCLUDE)
+else
+FLAGS = -O2 -idirafter$(BOOST_INCLUDE)
+endif
+FLAGS += -D$(TYPESIZE) -D_FORTIFY_SOURCE=2
+FLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2
+
+ifeq ($(DEBUG),1)
+FLAGS += -DDEBUG
+endif
+
+ifeq ($(MACHINE),mingw32)
+FLAGS += -DMINGW
+endif
+
+ifeq ($(shell uname),Darwin)
+FLAGS += -isystem/opt/local/include
+endif
+
+# GCC 4.5.0 has an optimisation bug that influences GRFCodec.
+# As such we disable optimisation when GCC 4.5.0 is detected.
+# The issue has been fixed in GCC 4.5.1
+ifneq ($(shell $(CXX) -v 2>&1 | grep "4\.5\.0" || true),)
+FLAGS += -O0
+endif
+
+CXXFLAGS := $(FLAGS) $(CXXFLAGS)
+
+-include ${MAKEFILELOCAL}
 
 # =======================================================================
 #           setup verbose/non-verbose make process
@@ -106,25 +125,54 @@ export _I
 # =======================================================================
 
 # sources to be compiled and linked
+GRFCODECSRC=grfcomm.cpp pcxfile.cpp sprites.cpp pcxsprit.cpp info.cpp \
+	error.cpp path.cpp readinfo.cpp file.cpp grfcodec.cpp
+
+GRFDIFFSRC=grfcomm.cpp error.cpp sprites.cpp grfdiff.cpp path.cpp
+
+GRFMERGESRC=grfcomm.cpp error.cpp grfmerge.cpp path.cpp
+
+GRFIDSRC=grfid.cpp
+
 NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
   act79D.cpp actB.cpp actF.cpp act14.cpp command.cpp data.cpp globals.cpp \
   inject.cpp messages.cpp pseudo.cpp rangedint.cpp nforenum.cpp sanity.cpp \
   strings.cpp utf8.cpp help.cpp message_mgr.cpp language_mgr.cpp \
   mapescapes.cpp pseudo_seq.cpp
 
-# targets
-all: $(NFORENUM)
+PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars&ttw_pb_pal1&ttw_pb_pal2
+PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
+
+# deafult targets
+all: $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) $(NFORENUM)
+
 remake:
 	$(_E) [CLEAN]
 	$(_C)$(MAKE) ${_S} clean
 	$(_E) [REBUILD]
+	$(_C)$(MAKE) src/version.h src/endian.h
 	$(_C)$(MAKE) ${_S} all
-
 
 ${MAKEFILELOCAL}:
 	@/bin/sh -c "export PATH=\"/bin\" && \
-        echo ${MAKEFILELOCAL} did not exist, using defaults. Please edit it if compilation fails. && \
-        cp ${MAKEFILELOCAL}.sample $@"
+	echo ${MAKEFILELOCAL} did not exist, using defaults. Please edit it if compilation fails. && \
+	cp ${MAKEFILELOCAL}.sample $@"
+
+$(GRFCODEC): $(GRFCODECSRC:%.cpp=objs/%.o)
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+
+$(GRFDIFF):  $(GRFDIFFSRC:%.cpp=objs/%.o) objs/grfmrg.o
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+
+$(GRFMERGE): $(GRFMERGESRC:%.cpp=objs/%.o)
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+
+$(GRFID): $(GRFIDSRC:%.cpp=objs/%.o)
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
 
 $(NFORENUM): $(NFORENUMSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
@@ -132,24 +180,14 @@ $(NFORENUM): $(NFORENUMSRC:%.cpp=objs/%.o)
 
 
 clean:
-	rm -rf objs nforenum.* nforenum nforenum-* bundle bundles
-	rm -f src/version.h
+	$(_C)rm -rf objs $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) $(NFORENUM) bundle bundles grfcodec-* src/endian.h
 
-distclean: clean
-	rm -rf Makefile.local
+mrproper: clean
+	$(_C)rm -f src/version.h src/grfmrg.cpp
+	$(_C)touch -ct 9901010000 ttdpal.h # don't delete it, so we don't confuse svn, but force it to be remade
 
-release: FORCE
-	$(_E)[REBUILD] $(NFORENUM)
-	$(_C)rm -f $(NFORENUM)
-	$(_C)$(MAKE) $(_S)
-ifneq ($(STRIP),)
-	$(_E) [STRIP] $(NFORENUM)
-	$(_C)$(STRIP) $(NFORENUM)
-endif
-ifneq ($(UPX),)
-	$(_E) [UPX] $(NFORENUM)
-	$(_C)$(UPX) $(_Q) --best  $(NFORENUM)
-endif
+distclean: mrproper
+	$(_C)rm -rf Makefile.local
 
 FORCE:
 	@$(BOOST_ERROR)
@@ -162,6 +200,53 @@ src/version.h: FORCE
 	@echo "#define YEARS \"2004-$(YEAR)\"" >> $@.tmp
 	@(diff $@.tmp $@ > /dev/null 2>&1 && rm -f $@.tmp) || (rm -f $@ ; mv $@.tmp $@)
 
+objs/$(ENDIAN_CHECK): src/endian_check.cpp
+	$(_C) mkdir -p objs
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) src/endian_check.cpp
+
+src/endian.h: objs/$(ENDIAN_CHECK)
+	$(_E) [ENDIAN] Determining endianness
+	$(_C)objs/$(ENDIAN_CHECK) $(ENDIAN_PARAMS) > src/endian.h || rm src/endian.h
+
+FORCE:
+%_r: FORCE
+	$(_E) [REBUILD] $(@:%_r=%)
+	$(_C)rm -f $(@:%_r=%)
+	$(_C)$(MAKE) ${_S} $(@:%_r=%)
+ifneq ($(STRIP),)
+	$(_E) [STRIP] $(@:%_r=%)
+	$(_C)$(STRIP)  $(@:%_r=%)
+endif
+ifneq ($(UPX),)
+	$(_E) [UPX] $(@:%_r=%)
+	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
+endif
+
+release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r $(NFORENUM)_r
+
+# make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
+objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.cpp=objs/%.os)
+	$(_C)rm -f $@
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) -Os $^
+ifneq ($(STRIP),)
+	$(_E) [STRIP] $@
+	$(_C)$(STRIP) $@
+endif
+ifneq ($(UPX),)
+	$(_E) [UPX] $@
+	$(_C)$(UPX) $(_Q) --best $@
+endif
+
+src/grfmrg.cpp: objs/grfmrgc.bin src/grfmrgc.pl
+	$(_E) [PERL] $@
+	$(_C)perl -w src/grfmrgc.pl > $@
+
+src/ttdpal.h: $(PAL_FILES:%=src/%) src/pal2c.pl
+	$(_E) [PERL] $@
+	$(_C)perl src/pal2c.pl $(PAL_FILES:%=src/%) > $@
+
 
 # Gnu compiler rules
 
@@ -169,18 +254,41 @@ objs/%.o : src/%.cpp Makefile
 	$(_E) [CPP] $@
 	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -MMD -MF $@.d -MT $@ $<
 
+% : objs/%.o Makefile
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CP_TO_EXE)
+
+# same as above but optimized for size not speed
+objs/%.os : src/%.cpp Makefile
+	$(_E) [CPP] $@
+	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -Os -MMD -MF $@.d -MT $@ $<
+
+% :: objs/%.os Makefile
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+
 # On some installations a version.h exists in /usr/include. This one is then
 # found by the dependency tracker and thus the dependencies do not contain
 # a reference to version.h, so it isn't generated and compilation fails.
+objs/grfcodec.o: src/version.h
+objs/grfmerge.o: src/version.h
+objs/grfmerge.os: src/version.h
+objs/grfdiff.o: src/version.h
+objs/grfidc.o: src/version.h
 objs/message_mgr.o: src/version.h
 objs/messages.o: src/version.h
 
-objs/%.o.d: src/%.cpp Makefile
-	$(_C)mkdir -p objs
+objs/%.o.d: src/%.cpp Makefile src/endian.h
 	$(_E) [CPP DEP] $@
-	$(_C)$(CXX) $(CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp  | sed 's@\(.*\): @objs/\1: @;s@ version.h@@' > $@
+	$(_C)$(CXX) $(CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp -MF $@
 
 ifndef NO_MAKEFILE_DEP
+-include $(GRFCODECSRC:%.cpp=objs/%.o.d)
+-include $(GRFMERGESRC:%.cpp=objs/%.o.d)
+-include $(GRFDIFFSRC:%.cpp=objs/%.o.d)
+-include $(GRFIDSRC:%.cpp=objs/%.o.d)
+-include $(GRFMERGESRC:%.cpp=objs/%.os.d)
 -include $(NFORENUMSRC:%.cpp=objs/%.o.d)
 endif
 

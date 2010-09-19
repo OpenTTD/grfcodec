@@ -1,0 +1,30 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" Please adjust this date whenever revising the manpage.
+.Dd August 05, 2010
+.Dt GRFID 1
+.Sh NAME
+.Nm GRFID
+.Nd A tool to extract the (New)GRF ID from a (New)GRF
+.Sh SYNOPSIS
+.Op Fl hv
+.Nm grfid Ar file
+.Sh DESCRIPTION
+GRFID tries to find the (New)GRF identifier of that (New)GRF.
+Upon failure an error message is given, otherwise the NewGRF
+identifier is printed hexadecimally to stdout.
+.Sh OPTIONS
+.Bl -tag
+.It Fl h
+Display the help message.
+.It Fl v
+Display the version.
+.El
+.Sh SEE ALSO
+The documentation in
+.Pa /usr/share/doc/grfcodec/
+.Sh AUTHOR
+GRFID was written by Peter Nelson.
+.Pp
+This manual page was written by Remko Bijker.
+.Sh COPYRIGHT
+GRFID is Copyright (C) 2009 by Peter Nelson.
