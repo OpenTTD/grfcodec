@@ -11,6 +11,10 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:  gcc-c++
 BuildRequires:  boost-devel
+
+Provides:       nforenum = %{version}
+Obsoletes:      nforenum < 5.0
+
 #We need Mercurial for auto version detection: (not needed with source tarball)
 BuildRequires:  mercurial
 
