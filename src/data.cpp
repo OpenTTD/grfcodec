@@ -466,7 +466,7 @@ NDF_END
 
 /* Insert linebreak. (Only valid within SUBDATA)
  * May be specified alone, or combined with any of the BYTE/EXTBYTE/WORD/DWORD datas */
-#define LINEBREAK 0xC0             
+#define LINEBREAK 0xC0
 
 /* Is replaced by the data following after the next END. Mulitple SUBDATA are resolved in a LIFO style. */
 #define SUBDATA 0xFE
@@ -598,7 +598,7 @@ BYTE, REMAININGSIZE | LINEBREAK, REPEAT_N(SUBDATA, DATAFROM(0)), END,
 // Subdata - prop 15:
 BYTE, REPEAT_N(BYTE, DATAFROM(0)), END,
 // Subdata - prop 16:
-REPEAT_N(BYTE, 3), END, 
+REPEAT_N(BYTE, 3), END,
 
 // Feature 0B:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
