@@ -147,7 +147,7 @@ The calculations in real sprites have the same format as the calculations in
 <var> is any valid C identifier (first character must be A..Z, a..z or _, all
 others must be A..Z, a..z, 0..9 or _).
 <calculation> is one of:
-1) an RPN expression, enclosed in parentheses. (See README.RPN.en.txt)
+1) an RPN expression, enclosed in parentheses. (See readme.rpn.txt)
 2) a signed integer value.
 
 

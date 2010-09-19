@@ -22,7 +22,7 @@ VERBOSE := 1
 endif
 
 ifndef BUNDLE_NAME
-BUNDLE_NAME = nforenum-$(REV)
+BUNDLE_NAME = $(PACKAGE_NAME)-$(REV)
 endif
 
 ROOT_DIR = $(shell pwd)
@@ -41,21 +41,28 @@ bundle: release
 	$(_C)mkdir -p "$(BUNDLE_DIR)"
 	$(_C)mkdir -p "$(BUNDLE_DIR)/docs"
 	$(_C)mkdir -p "$(BUNDLE_DIR)/man"
+	$(_C)cp $(GRFCODEC)        "$(BUNDLE_DIR)/"
+	$(_C)cp $(GRFDIFF)         "$(BUNDLE_DIR)/"
+	$(_C)cp $(GRFID)           "$(BUNDLE_DIR)/"
+	$(_C)cp $(GRFMERGE)        "$(BUNDLE_DIR)/"
 	$(_C)cp $(NFORENUM)        "$(BUNDLE_DIR)/"
-	$(_C)cp COPYING            "$(BUNDLE_DIR)/"
+	$(_C)cp COPYING            "$(BUNDLE_DIR)/COPYING"
 	$(_C)cp changelog.txt      "$(BUNDLE_DIR)/"
-	$(_C)for i in docs/*.en.txt; do cp $$i "$(BUNDLE_DIR)/docs/"`echo $$i | sed 's@docs/@@;s/.en.txt/.txt/'`; done
-	$(_C)cp docs/nforenum.1     "$(BUNDLE_DIR)/man/"
-	$(_C)gzip -9               "$(BUNDLE_DIR)/man/nforenum.1"
-ifeq ($(NFORENUM), nforenum.exe)
-	$(_C)unix2dos "$(BUNDLE_DIR)/COPYING" "$(BUNDLE_DIR)/changelog.txt"
-	$(_C)unix2dos "$(BUNDLE_DIR)/docs/"*.txt
+	$(_C)cp docs/*.txt         "$(BUNDLE_DIR)/docs/"
+	$(_C)cp docs/*.1           "$(BUNDLE_DIR)/man/"
+	$(_C)gzip -9               "$(BUNDLE_DIR)/man/"*.1
+ifeq ($(GRFCODEC), grfcodec.exe)
+	$(_C)unix2dos "$(BUNDLE_DIR)/docs/"*.txt "$(BUNDLE_DIR)/COPYING" "$(BUNDLE_DIR)/changelog.txt"
 endif
 
 install: bundle
-	@echo '[INSTALL] Installing NFORenum'
+	@echo '[INSTALL] Installing'
 	$(_C)install -d "$(DESTDIR)$(bindir)"
-	$(_C)install -m 755 "$(BUNDLE_DIR)/$(NFORENUM)" "$(DESTDIR)$(bindir)/$(NFORENUM)"
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFCODEC)" "$(DESTDIR)$(bindir)/"
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFMERGE)" "$(DESTDIR)$(bindir)/"
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFDIFF)" "$(DESTDIR)$(bindir)/"
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFID)" "$(DESTDIR)$(bindir)/"
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(NFORENUM)" "$(DESTDIR)$(bindir)/"
 ifndef DO_NOT_INSTALL_DOCS
 	$(_C)install -d "$(DESTDIR)$(docdir)"
 	$(_C)install -m 644 "$(BUNDLE_DIR)/docs/"* "$(DESTDIR)$(docdir)"
@@ -70,7 +77,7 @@ ifndef DO_NOT_INSTALL_LICENSE
 endif
 ifndef DO_NOT_INSTALL_MAN
 	$(_C)install -d "$(DESTDIR)$(man1dir)"
-	$(_C)install -m 644 "$(BUNDLE_DIR)/man/nforenum.1.gz" "$(DESTDIR)$(man1dir)/nforenum.1.gz"
+	$(_C)install -m 644 "$(BUNDLE_DIR)/man/"*.1.gz "$(DESTDIR)$(man1dir)/"
 endif
 
 ### Packing the current bundle into several compressed file formats ###
@@ -108,10 +115,10 @@ bundle_lha: bundle
 
 bundle_dmg: bundle
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).dmg'
-	$(_C)mkdir -p "$(BUNDLES_DIR)/NFORenum $(REV)"
-	$(_C)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/NFORenum $(REV)"
-	$(_C)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/NFORenum $(REV)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
-	$(_C)rm -fr "$(BUNDLES_DIR)/NFORenum $(REV)"
+	$(_C)mkdir -p "$(BUNDLES_DIR)/GRF Development Tools $(REV)"
+	$(_C)cp -R "$(BUNDLE_DIR)/" "$(BUNDLES_DIR)/GRF Development Tools $(REV)"
+	$(_C)hdiutil create -ov -format UDZO -srcfolder "$(BUNDLES_DIR)/GRF Development Tools $(REV)" "$(BUNDLES_DIR)/$(BUNDLE_NAME).dmg"
+	$(_C)rm -fr "$(BUNDLES_DIR)/GRF Development Tools $(REV)"
 
 bundle_src:
 	$(_E) '[BUNDLE] Creating $(BUNDLE_NAME).tar.gz'

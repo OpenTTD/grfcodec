@@ -1,10 +1,10 @@
-How to compile NFORenum
+How to compile the GRF development tools
 -----------------------
 
-Compiling NFORenum is pretty straightforward. It can be done, with varying
-quantities of automation, with Cygwin's gcc (using Makefile for a
-cygwin-dependant binary, any Linux gcc (using Makefile, for a Linux
-binary).
+Compiling the GRF development tools is pretty straightforward. It can be
+done, with varying quantities of automation, with Cygwin's gcc (using
+Makefile for a cygwin-dependant binary, any Linux gcc (using Makefile,
+for a Linux binary).
 
 Compiling with make
 ===================
@@ -25,10 +25,15 @@ Targets
 The following are the most intersting targets. Other targets exist, but are
 less useful.
 
-all
-nforenum  Compile NFORenum
+all       Compile grfcodec, grfdiff, grfid, grfmerge and nforenum
 
-release   Compile NFORenum, then strip and upx it (if enabled)
+grfcodec
+grfdiff
+grfid
+grfmerge
+nforenum  Compile the program in question, using gcc.
+
+release   Compile all programs, then strip and upx them (if enabled)
 
 clean     Delete all compiled files
 remake    Equivalent of "make clean all"
