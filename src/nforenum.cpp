@@ -36,12 +36,10 @@
 
 #ifdef MINGW
 	#include <io.h>
-	#define mkdir(a,b) mkdir(a)
 	#define isatty _isatty
 #elif defined(_MSC_VER)
 	#include <io.h>
 	#include <direct.h>
-	#define mkdir(a,b) mkdir(a)
 	#define F_OK 0
 	#define isatty _isatty
 #else
