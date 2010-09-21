@@ -159,7 +159,7 @@ void SpriteInfo::be_swap()
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 {
 	static const char *action = "decoding sprite";
-	unsigned long size, orgsize, datasize, inbufsize, outbufsize, startpos;
+	unsigned long size, datasize, inbufsize, outbufsize, startpos;
 	U16 wsize;
 	SpriteInfo info;
 	U8 *inbuffer, *outbuffer;
@@ -196,8 +196,6 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 	fseek(grf, startpos, SEEK_SET);
 	cfread(action, &info, 1, sizeof(info), grf);
 	info.be_swap();
-
-	orgsize = size;
 
 	sx = info.xdim;
 	sy = info.ydim;
