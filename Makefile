@@ -6,34 +6,33 @@
 #       preserved when updating the sources
 # =========================================================
 
-MAKEFILELOCAL=Makefile.local
-
 PACKAGE_NAME = grfcodec
 
+-include Makefile.local
+
 # Gnu compiler settings
-SHELL = /bin/sh
-CXX = g++
-STRIP =
-UPX =
-AWK = awk
-SRCZIP_FLAGS = -9
-SRCZIP = gzip
+SHELL        ?= /bin/sh
+CXX          ?= g++
+STRIP        ?=
+UPX          ?=
+AWK          ?= awk
+SRCZIP_FLAGS ?= -9
+SRCZIP       ?= gzip
 
 # OS detection: Cygwin vs Linux
-ISCYGWIN = $(shell [ ! -d /cygdrive/ ]; echo $$?)
-MACHINE = $(shell $(CXX) -dumpmachine || echo '??' )
+ISCYGWIN     ?= $(shell [ ! -d /cygdrive/ ]; echo $$?)
+MACHINE      ?= $(shell $(CXX) -dumpmachine || echo '??' )
 
 # OS dependent variables
-EXE = $(shell ( [ \( $(ISCYGWIN) -eq 1 \) -o \( "$(MACHINE)" = "mingw32" \) ] ) && echo .exe)
-GRFCODEC = grfcodec$(EXE)
-GRFDIFF  = grfdiff$(EXE)
-GRFMERGE = grfmerge$(EXE)
-GRFID    = grfid$(EXE)
-NFORENUM = nforenum$(EXE)
+EXE          ?= $(shell ( [ \( $(ISCYGWIN) -eq 1 \) -o \( "$(MACHINE)" = "mingw32" \) ] ) && echo .exe)
+GRFCODEC     ?= grfcodec$(EXE)
+GRFDIFF      ?= grfdiff$(EXE)
+GRFMERGE     ?= grfmerge$(EXE)
+GRFID        ?= grfid$(EXE)
+NFORENUM     ?= nforenum$(EXE)
+ENDIAN_CHECK ?= endian_check$(EXE)
 
-ENDIAN_CHECK = endian_check$(EXE)
-
-TYPESIZE = GCC32
+TYPESIZE     ?= GCC32
 
 # Somewhat automatic detection of the correct boost include folder
 ifndef BOOST_INCLUDE
@@ -55,6 +54,7 @@ ifndef V
 V=0 # verbose build default off
 endif
 
+ifndef FLAGS
 ifeq ($(ISCYGWIN),1)
 FLAGS = -O2 -I $(BOOST_INCLUDE)
 else
@@ -81,10 +81,9 @@ endif
 ifneq ($(shell $(CXX) -v 2>&1 | grep "4\.5\.0" || true),)
 FLAGS += -O0
 endif
+endif
 
-CXXFLAGS := $(FLAGS) $(CXXFLAGS)
-
--include ${MAKEFILELOCAL}
+MY_CXXFLAGS ?= $(FLAGS) $(CXXFLAGS)
 
 # =======================================================================
 #           setup verbose/non-verbose make process
@@ -155,23 +154,23 @@ remake:
 
 $(GRFCODEC): $(GRFCODECSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 
 $(GRFDIFF):  $(GRFDIFFSRC:%.cpp=objs/%.o) objs/grfmrg.o
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 
 $(GRFMERGE): $(GRFMERGESRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 
 $(GRFID): $(GRFIDSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 
 $(NFORENUM): $(NFORENUMSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 
 
 clean:
@@ -198,7 +197,7 @@ src/version.h: FORCE
 objs/$(ENDIAN_CHECK): src/endian_check.cpp
 	$(_C) mkdir -p objs
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) src/endian_check.cpp
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) src/endian_check.cpp
 
 src/endian.h: objs/$(ENDIAN_CHECK)
 	$(_E) [ENDIAN] Determining endianness
@@ -224,7 +223,7 @@ release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r $(NFORENUM)_r
 objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.cpp=objs/%.os)
 	$(_C)rm -f $@
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) -Os $^
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) -Os $^
 ifneq ($(STRIP),)
 	$(_E) [STRIP] $@
 	$(_C)$(STRIP) $@
@@ -247,21 +246,21 @@ src/ttdpal.h: $(PAL_FILES:%=src/%) src/pal2c.pl
 
 objs/%.o : src/%.cpp Makefile
 	$(_E) [CPP] $@
-	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -MMD -MF $@.d -MT $@ $<
+	$(_C)$(CXX) -c -o $@ $(MY_CXXFLAGS) -MMD -MF $@.d -MT $@ $<
 
 % : objs/%.o Makefile
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 	$(_C)$(CP_TO_EXE)
 
 # same as above but optimized for size not speed
 objs/%.os : src/%.cpp Makefile
 	$(_E) [CPP] $@
-	$(_C)$(CXX) -c -o $@ $(CXXFLAGS) -Os -MMD -MF $@.d -MT $@ $<
+	$(_C)$(CXX) -c -o $@ $(MY_CXXFLAGS) -Os -MMD -MF $@.d -MT $@ $<
 
 % :: objs/%.os Makefile
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 
 # On some installations a version.h exists in /usr/include. This one is then
 # found by the dependency tracker and thus the dependencies do not contain
@@ -276,7 +275,7 @@ objs/messages.o: src/version.h
 
 objs/%.o.d: src/%.cpp Makefile src/endian.h
 	$(_E) [CPP DEP] $@
-	$(_C)$(CXX) $(CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp -MF $@
+	$(_C)$(CXX) $(MY_CXXFLAGS) -DMAKEDEP -MM -MG src/$*.cpp -MF $@
 
 ifndef NO_MAKEFILE_DEP
 -include $(GRFCODECSRC:%.cpp=objs/%.o.d)
