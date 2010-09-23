@@ -56,9 +56,9 @@ endif
 
 ifndef FLAGS
 ifeq ($(ISCYGWIN),1)
-FLAGS = -O2 -I $(BOOST_INCLUDE)
+FLAGS = -I $(BOOST_INCLUDE) -O2
 else
-FLAGS = -O2 -idirafter$(BOOST_INCLUDE)
+FLAGS = -idirafter$(BOOST_INCLUDE) -O2
 endif
 FLAGS += -D$(TYPESIZE) -D_FORTIFY_SOURCE=2
 FLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2
