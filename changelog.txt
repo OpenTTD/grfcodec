@@ -13,6 +13,7 @@ Changes in 5.0.0
 - NFORenum specific changes
   - Data file updates
     - Action 0 objects properties 11..16.
+    - Action 2 variable 5F had wrong length for most features.
     - Action 2 objects variables 42, 44..46, 5F, 60..64.
     - Action 2 callbacks 157..15D.
     - Action 5 type 15.
