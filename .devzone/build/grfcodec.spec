@@ -10,7 +10,7 @@ Source0:        %{name}-%{dz_version}.tar
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:  gcc-c++
-BuildRequires:  boost-devel
+BuildRequires:  boost-devel > 1.36
 
 Provides:       nforenum = %{version}
 Obsoletes:      nforenum < 5.0
