@@ -1,9 +1,11 @@
-Changes in 5.0.0
-- Merge the source packages of GRFCodec and NFORenum.
+Changes in 5.0.0 (2010-10-17)
+- Merge the source packages of GRFCodec (1.0.0) and NFORenum (4.0.0).
+  This means that this package now requires Boost 1.36 or higher.
 - Add command line option to silence all progress output.
 - Add command line option to refresh all data files.
 - Fix Cygwin compilation issues.
 - Fix UPX-ing of release binaries under some circumstances.
+- Fix difference between GRFCodec and NFORenum escapes format.
 - (devel) Fix putting version.def twice in the source bundle.
 - (devel) Use directories from the Make conventions for installation
   directories and add a few "parameters" to disable installation of
@@ -29,7 +31,7 @@ Changes in 5.0.0
 
 ===== GRFCodec before the merge =====
 
-Changes in 1.0.0
+Changes in 1.0.0 (2010-08-14)
 - (devel) Complete rewrite of installation of binaries, so if you are
   packaging this you will have to check whether custom installation and
   such are still needed or that the Makefile does handle it correctly.
@@ -180,7 +182,7 @@ Changes before release March 26 2001
 
 ===== NFORenum before the merge =====
 
-v3.4.6 to 4.0.0
+v3.4.6 to 4.0.0 (2010-08-14)
 - Change rename "renum" to "nforenum" including ".renum" to ."nforenum"
   so the name is less generic and the same as in several downstreams.
   You might need to update your development environment / build scripts.

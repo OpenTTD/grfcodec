@@ -6,6 +6,11 @@ done, with varying quantities of automation, with Cygwin's gcc (using
 Makefile for a cygwin-dependant binary, any Linux gcc (using Makefile,
 for a Linux binary).
 
+GRFCodec and NFORenum require Boost 1.36 or higher. The make system does
+not check the Boost version, so compiling with a lower version of Boost
+will result in compile failures.
+
+
 Compiling with make
 ===================
 
