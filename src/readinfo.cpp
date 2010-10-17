@@ -50,62 +50,9 @@ using namespace boost::gregorian;
 
 #include"nfosprite.h"
 #include"allocarray.h"
+#include"inlines.h"
 
 extern int _quiet;
-
-istream&eat_white(istream&in){
-	while(isspace(in.peek()))in.ignore();
-	return in;
-}
-
-int ctoi(char ch){
-	if(ch>='0'&&ch<='9')return ch-'0';
-	if(ch>='A'&&ch<='F')return ch-'A'+10;
-	if(ch>='a'&&ch<='f')return ch-'a'+10;
-	return 0;
-}
-
-string UCase(string str){
-	size_t len=str.length();
-	for(size_t i=0;i<len;i++)
-		str[i]=(char)toupper(str[i]);
-	return str;
-}
-
-string itoa(uint x){
-	if(!x)return"0";
-	string ret;
-	while(x){
-		ret="0123456789"[x%10]+ret;
-		x/=10;
-	}
-	return ret;
-}
-
-uint ReadHex(istream&in,uint digits){
-	uint ret;
-	char ch;
-	eat_white(in).get(ch);
-	if((ret=ctoi(ch))==0&&ch!='0'){
-		in.unget().clear(ios::badbit);
-		return ret;
-	}
-	for(;--digits;){
-		in.get(ch);
-		if(ctoi(ch)==0&&ch!='0'){
-			in.unget();
-			return ret;
-		}
-		ret<<=4;
-		ret|=ctoi(ch);
-	}
-	return ret;
-}
-
-const char*const VALID_PSEUDO="0123456789ABCDEFabcdef \t\v\r\n",
-	*const COMMENT="/#;";
-
-#define NPOS (string::npos)
 
 #define checkspriteno()\
 	if(spriteno!=-1&&spriteno!=(int)sprites.size() && !_quiet){\
@@ -123,21 +70,6 @@ const char*const VALID_PSEUDO="0123456789ABCDEFabcdef \t\v\r\n",
 		spriteno=temp;\
 	}else\
 		(void(0))
-
-bool is_comment(istream&in){
-	if(strchr("#;",in.peek()))return true;
-	if(in.peek()!='/')return false;
-	in.ignore();
-	if(in.peek()=='/')return true;
-	in.putback('/');
-	return false;
-}
-
-bool is_comment(const string&str,int off){
-	if(strchr("#;",str[off]))return true;
-	if(str[off]!='/'||str[off+1]!='/') return false;
-	return true;
-}
 
 void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 	string sprite,datapart,buffer;
@@ -384,7 +316,7 @@ bool Pseudo::MayBeSprite(const string&sprite){
 	char ch;
 	while(in.get(ch)){
 		if(ch=='"')return true;
-		if(strchr(COMMENT,ch)){
+		if(COMMENT.find(ch)!=NPOS){
 			in.ignore(INT_MAX,'\n');
 			continue;
 		}
