@@ -268,7 +268,7 @@ string GetUtf8Encode(uint ch){
 
 #undef CHAR
 
-int findescape(string);
+int FindEscape(string);
 
 Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 	istringstream in(sprite);
@@ -356,7 +356,7 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 					in.unget();
 					string esc;
 					in>>esc;
-					int byte = findescape(esc);
+					int byte = FindEscape(esc);
 					if(byte == -1) break;
 					out.put(byte);
 					continue;

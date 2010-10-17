@@ -2,10 +2,10 @@
 // The data required for writing the various not-quoted escape sequences.
 //
 // This file is shared between GRFCodec and NFORenum.
-// NFORenum defines NFORENUM. GRFCodec does not.
+// GRFCodec defines GRFCODEC. NFORenum does not.
 
 
-#ifdef NFORENUM
+#ifndef GRFCODEC
 
 #define START_ESCAPES()\
 	const struct esc{\
@@ -27,7 +27,7 @@
 #define ESCAPE_OVR(byte,str,action,ovr)\
 	{(char)0x##byte,(char*)("\\" str),(char)0x##action,0},
 
-#else	//!NFORENUM
+#else	/* GRFCODEC */
 
 #define START_ESCAPES()\
 	const struct esc{\
@@ -56,12 +56,12 @@
 #define CALLBACK_OVR(name)\
 	bool __ESC_OVR__##name(const U8*data,uint pos)
 
-#endif	//NFORENUM
+#endif /* GRFCODEC */
 
 #define END_ESCAPES() };\
 	static const unsigned int num_esc=sizeof(escapes)/sizeof(escapes[0]);
 
-#ifndef NFORENUM
+#ifdef GRFCODEC
 
 // ***********************************************************************
 // Define callback functions for ESCAPE_* here
@@ -93,7 +93,7 @@ CALLBACK_OVR(Is2Op){
 	}
 }
 
-#endif
+#endif /* GRFCODEC */
 
 START_ESCAPES()
 
