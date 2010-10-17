@@ -30,8 +30,7 @@ using namespace boost::bimaps;
 
 #define foreach BOOST_FOREACH
 
-typedef char U8;
-#define NFORENUM
+typedef unsigned char U8;
 #include "escapes.h"
 
 typedef bimap<string, multiset_of<int> > nfe_map;

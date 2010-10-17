@@ -125,7 +125,7 @@ export _I
 
 # sources to be compiled and linked
 GRFCODECSRC=grfcomm.cpp pcxfile.cpp sprites.cpp pcxsprit.cpp info.cpp \
-	error.cpp path.cpp readinfo.cpp file.cpp grfcodec.cpp
+	mapescapes.cpp error.cpp path.cpp readinfo.cpp file.cpp grfcodec.cpp
 
 GRFDIFFSRC=grfcomm.cpp error.cpp sprites.cpp grfdiff.cpp path.cpp
 
