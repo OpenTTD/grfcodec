@@ -1,20 +1,30 @@
 # Use glob syntax:
 syntax: glob
 
+# The local object files
 objs
 
+# Local "overrides" for the Makefile
 Makefile.local
 
+# Ignore the binaries
 grfcodec
+grfcodec.exe
 grfdiff
+grfdiff.exe
 grfmerge
+grfmerge.exe
 grfid
+grfid.exe
 nforenum
+nforenum.exe
 
+# Automatically generated source files
 grfmrg.cpp
 version.h
 endian.h
 
+# Bundle/tarbal names
 grfcodec-*
 
 bundle
