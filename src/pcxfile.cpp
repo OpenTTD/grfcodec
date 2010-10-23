@@ -165,7 +165,10 @@ void pcxfile::expirelines(int oldlines)
 		U8 *old = band[0];
 		memmove( &(band[0]), &(band[1]), (bandlines-1)*sizeof(band[0]));
 		band[bandlines-1] = old;
-		initline(bandlines-1);
+
+		// Attempt to prevent reading past the end of file
+		if (i + totaly + bandlines < pcxfile::sy)
+			initline(bandlines - 1);
 	}
 }
 
