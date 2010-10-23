@@ -43,11 +43,15 @@ Display the version.
 Options for decoding:
 .Bl -tag
 .It Fl w Ar num
-Write PCX files with the given width (default 800, minimum 16)
+Write spritesheets files with the given width (default 800, minimum 16)
 .It Fl h Ar num
-Split PCX files when they reach this height (default no limit, minimum 16)
+Split spritesheets when they reach this height (default no limit, minimum 16)
 .It Fl b Ar num
 Organize sprites in boxes of this size (default 16)
+.It Fl o Ar ssf
+Sets the format of generated spritesheets.  See
+.Fl o
+? for a list.
 .It Fl p Ar pal
 Use this palette instead of the default.  See
 .Fl p

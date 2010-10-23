@@ -269,7 +269,7 @@ void pcxread::startsubimage(int x, int y, int sx, int sy)
 	subx = x;
 
 	if (y + sy > pcxread::sy) {
-		printf("\n%s: Error: Sprite y extends beyond end of PCX file.\nFile has %d lines, sprite wants %d..%d\n.",
+		printf("\n%s: Error: Sprite y extends beyond end of the spritesheet.\nSpritesheet has %d lines, sprite wants %d..%d\n.",
 			this->filename(), pcxread::sy, y, y + sy - 1);
 		exit(2);
 	}
