@@ -73,10 +73,11 @@ static void usage(void)
 		"\twill default to a subdirectory called sprites/.\n"
 		"\n"
 		"Options for decoding:\n"
-		"    -w <num>  Write PCX files with the given width (default 800, minimum 16)\n"
-		"    -h <num>  Split PCX files when they reach this height (default no limit,\n"
+		"    -w <num>  Write spritesheets with the given width (default 800, minimum 16)\n"
+		"    -h <num>  Split spritesheets when they reach this height (default no limit,\n"
 		"              minimum 16)\n"
 		"    -b <num>  Organize sprites in boxes of this size (default 16)\n"
+		"    -o <ssf>  Sets the format of generated spritesheets.  See -o ? for a list.\n"
 		"    -p <pal>  Use this palette instead of the default.  See -p ? for a list.\n"
 		"    -t        Disable decoding of plain text characters as strings.\n"
 		"    -x        Disable production of unquoted escape sequences.\n"
@@ -143,6 +144,16 @@ static void showcolourmaps()
 		"\n"
 		"	0  Convert a TTD-DOS file to TTD-Windows\n"
 		"	1  Convert a TTD-Windows file to TTD-DOS\n"
+		"\n"
+		);
+}
+
+static void showimageformats()
+{
+	printf(
+		"Options for the -o paramter:\n"
+		"\n"
+		"	pcx (default)\n"
 		"\n"
 		);
 }
@@ -232,6 +243,19 @@ static int movetoreal(char *newfile, char *realfile)
 	return 1;
 }
 
+enum SpriteSheetFormat {
+	SSF_PCX,
+} _outputformat = SSF_PCX;
+
+const char * getoutputext()
+{
+	switch (_outputformat) {
+		case SSF_PCX:
+		default:
+			return ".pcx";
+	}
+}
+
 class spritefiles : public multifile {
 public:
 	spritefiles() { init(); }
@@ -266,7 +290,7 @@ FILE *spritefiles::nextfile()
 	FILE *oldfile = thecurfile;
 	char *oldname = thecurfilename;
 
-	thecurfilename = strdup(spritefilename(basename, directory, ".PCX", filenum++, "wb", 1));
+	thecurfilename = strdup(spritefilename(basename, directory, getoutputext(), filenum++, "wb", 1));
 	thecurfile = fopen(thecurfilename, "wb");
 
 	if (thecurfile) {	// new open succeeded, close old one
@@ -567,12 +591,23 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	fsize = ftell(grf);
 	fseek(grf, 0, SEEK_SET);
 
+	// We do the 'file' and 'writer' seperate to make
+	//   this a little bit less messy
+	multifile *imgname;
 	pcxwrite *pcx;
 
 	if (height == -1)
-		pcx = new pcxwrite(new singlefile(spritefilename(file, dir, ".pcx", -2, "wb", 1),"wb", dir));
+		imgname = new singlefile(spritefilename(file, dir, getoutputext(), -2, "wb", 1),"wb", dir);
 	else
-		pcx = new pcxwrite(new spritefiles(file, dir));
+		imgname = new spritefiles(file, dir);
+
+	// Select the appropriate writer
+	switch (_outputformat) {
+		case SSF_PCX:
+		default:
+			pcx = new pcxwrite(imgname);
+			break;
+	}
 
 	if (!pcx) {
 		fprintf(stderr, "%s: Error opening PCX file\n", file);
@@ -699,6 +734,14 @@ gpl_error:
 	return pal;
 }
 
+static SpriteSheetFormat setoutputformat(const char *formatarg)
+{
+	if (!strnicmp(formatarg, "pcx", 3))
+		return SSF_PCX;
+
+	return SSF_PCX;
+}
+
 // find default palette
 static U8* findpal(char *grffile)
 {
@@ -748,7 +791,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:tfxqcsX");
+		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:o:tfxqcsX");
 
 		if (opt == (char) EOF)
 			break;
@@ -821,6 +864,13 @@ int main(int argc, char **argv)
 			_interactive = false;
 		case 'X':
 			_hexspritenums=true;
+			break;
+		case 'o':
+			if (*optarg == '?') {
+				showimageformats();
+				exit(1);
+			}
+			_outputformat = setoutputformat(optarg);
 			break;
 		default:
 			usage();
