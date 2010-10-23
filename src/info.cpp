@@ -128,10 +128,14 @@ void inforeader::PrepareReal(const Real&sprite){
 }
 
 pcxread* inforeader::MakeReader()const{
-	//if(toupper(name[strlen(name)-1])=='X')//pcx
-		return new pcxread(new singlefile(imgname, "rb", NULL));
-	//else //png
-	//	return new pngread(new singlefile(name, "rb", NULL));
+#ifdef WITH_PNG
+	if(toupper(imgname[strlen(imgname)-1])=='X')//pcx
+ 		return new pcxread(new singlefile(imgname, "rb", NULL));
+	else //png
+		return new pngread(new singlefile(imgname, "rb", NULL));
+#else
+	return new pcxread(new singlefile(imgname, "rb", NULL));
+#endif
 }
 
 int inforeader::getsprite(U8 *sprite)

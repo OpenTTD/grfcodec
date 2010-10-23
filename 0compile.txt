@@ -10,6 +10,9 @@ GRFCodec and NFORenum require Boost 1.36 or higher. The make system does
 not check the Boost version, so compiling with a lower version of Boost
 will result in compile failures.
 
+GRFCodec and NFORenum can optionally be compiled with PNG support.
+This requires libpng and zlib to be available.
+
 
 Compiling with make
 ===================

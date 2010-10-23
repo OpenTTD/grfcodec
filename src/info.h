@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "pcxsprit.h"
+#include "pngsprit.h"
 #include "sprites.h"
 #include "nfosprite.h"
 #include "allocarray.h"

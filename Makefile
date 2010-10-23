@@ -18,6 +18,7 @@ UPX          ?=
 AWK          ?= awk
 SRCZIP_FLAGS ?= -9
 SRCZIP       ?= gzip
+LIBPNG_CONFIG?= libpng-config
 
 # OS detection: Cygwin vs Linux
 ISCYGWIN     ?= $(shell [ ! -d /cygdrive/ ]; echo $$?)
@@ -81,6 +82,12 @@ endif
 ifneq ($(shell $(CXX) -v 2>&1 | grep "4\.5\.0" || true),)
 FLAGS += -O0
 endif
+
+# Complication of png support in grfcodec
+ifneq ($(shell $(LIBPNG_CONFIG) --version 2>/dev/null),)
+WITH_PNG = 0
+FLAGS += -DWITH_PNG $(shell $(LIBPNG_CONFIG) --cflags)
+endif
 endif
 
 MY_CXXFLAGS ?= $(FLAGS) $(CXXFLAGS)
@@ -124,9 +131,9 @@ export _I
 # =======================================================================
 
 # sources to be compiled and linked
-GRFCODECSRC=grfcomm.cpp pcxfile.cpp sprites.cpp pcxsprit.cpp info.cpp \
-	globals.cpp mapescapes.cpp error.cpp path.cpp readinfo.cpp file.cpp \
-	grfcodec.cpp
+GRFCODECSRC=grfcomm.cpp pcxfile.cpp sprites.cpp pcxsprit.cpp pngsprit.cpp \
+	info.cpp globals.cpp mapescapes.cpp error.cpp path.cpp readinfo.cpp \
+	file.cpp grfcodec.cpp
 
 GRFDIFFSRC=grfcomm.cpp error.cpp sprites.cpp grfdiff.cpp path.cpp
 
@@ -155,7 +162,11 @@ remake:
 
 $(GRFCODEC): $(GRFCODECSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
+ifdef WITH_PNG
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT) $(shell $(LIBPNG_CONFIG) --ldflags)
+else
+ 	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
+endif
 
 $(GRFDIFF):  $(GRFDIFFSRC:%.cpp=objs/%.o) objs/grfmrg.o
 	$(_E) [LD] $@
