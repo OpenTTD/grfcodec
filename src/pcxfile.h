@@ -55,7 +55,8 @@ class pcxfile {
 	virtual FILE *getnextfile() { return mfile->nextfile(); };
 	virtual FILE *getcurfile() { return mfile->curfile(); };
 	virtual void filedone(int /*final*/) { };
-	virtual void filestart() { };
+	virtual void filestart()
+		{ fseek(curfile, sizeof(header), SEEK_SET); };
 
 	void setfile(multifile *mfile);
 
@@ -99,8 +100,8 @@ public:
 
 	void startdecoding();
 	void startencoding();
-	void encodebytes(U8 byte, int num);
-	void encodebytes(U8 buffer[], int num);
+	virtual void encodebytes(U8 byte, int num);
+	virtual void encodebytes(U8 buffer[], int num);
 	void decodebytes(U8 buffer[], int num);
 	void endencoding();
 

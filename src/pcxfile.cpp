@@ -87,7 +87,6 @@ void pcxfile::newfile(int sx)
 	}
 
 	filestart();
-	fseek(curfile, sizeof(header), SEEK_SET);
 }
 
 void pcxfile::newheader(int sx)
