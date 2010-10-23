@@ -44,6 +44,7 @@
 #include "pcxfile.h"
 #include "sprites.h"
 #include "pcxsprit.h"
+#include "pngsprit.h"
 #include "ttdpal.h"
 #include "grfcomm.h"
 #include "info.h"
@@ -154,6 +155,9 @@ static void showimageformats()
 		"Options for the -o paramter:\n"
 		"\n"
 		"	pcx (default)\n"
+#ifdef WITH_PNG
+		"	png\n"
+#endif
 		"\n"
 		);
 }
@@ -245,11 +249,18 @@ static int movetoreal(char *newfile, char *realfile)
 
 enum SpriteSheetFormat {
 	SSF_PCX,
+#ifdef WITH_PNG
+	SSF_PNG,
+#endif
 } _outputformat = SSF_PCX;
 
 const char * getoutputext()
 {
 	switch (_outputformat) {
+#ifdef WITH_PNG
+		case SSF_PNG:
+			return ".png";
+#endif
 		case SSF_PCX:
 		default:
 			return ".pcx";
@@ -603,6 +614,11 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 
 	// Select the appropriate writer
 	switch (_outputformat) {
+#ifdef WITH_PNG
+		case SSF_PNG:
+			pcx = new pngwrite(imgname);
+			break;
+#endif
 		case SSF_PCX:
 		default:
 			pcx = new pcxwrite(imgname);
@@ -738,6 +754,11 @@ static SpriteSheetFormat setoutputformat(const char *formatarg)
 {
 	if (!strnicmp(formatarg, "pcx", 3))
 		return SSF_PCX;
+
+#ifdef WITH_PNG
+	if (!strnicmp(formatarg, "png", 3))
+		return SSF_PNG;
+#endif
 
 	return SSF_PCX;
 }
