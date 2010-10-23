@@ -11,6 +11,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:  gcc-c++
 BuildRequires:  boost-devel > 1.36
+BuildRequires:  libpng-devel
 
 Provides:       nforenum = %{version}
 Obsoletes:      nforenum < 5.0
@@ -24,7 +25,7 @@ Contains GRFCodec for encoding and decoding the actual GRF files,
 GRFDiff and GRFMerge for making and applying patches for GRF files,
 GRFID for extracting the (unique) NewGRF identifier and NFORenum,
 a format correcter and linter for the NFO language. NFO and PCX
-files are encoded to form GRF files.
+or PNG files are encoded to form GRF files.
 
 %prep
 %setup -qn %{name}
