@@ -131,6 +131,10 @@ Real::Real(size_t sprite,int infover,const string&data){
 	string udata=UCase(data);
 	while(true){
 		loc=udata.find(".PCX",loc+1);
+#ifdef WITH_PNG
+		if(loc==NPOS)
+			loc = udata.find(".PNG",loc+1);
+#endif
 		if(loc==NPOS)
 			throw Sprite::unparseable("Could not find filename",sprite);
 		if(isspace(data[loc+4]))break;
