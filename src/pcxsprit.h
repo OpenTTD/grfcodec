@@ -10,7 +10,7 @@ class pcxwrite : public pcxfile, public spritestorage {
 	pcxwrite(multifile *mfile);
 
 	virtual void filedone(int final);
-	virtual void filestart() { writeheader(); };
+	virtual void filestart();
 
 	virtual void newsprite() {spriteno++; };
 	virtual void startsubimage(int x, int y, int sx, int sy);
@@ -33,11 +33,10 @@ class pcxwrite : public pcxfile, public spritestorage {
 	//void setpalette(FILE *palfile);
 
 	protected:
+	const U8 *palette;
 
 	private:
 	void showspriteno();
-
-	const U8 *palette;
 
 	int borderskip, spriteno, lastdigitx;
 	U8 background;
@@ -51,7 +50,7 @@ class pcxread : public pcxfile {
 	public:
 	pcxread(singlefile *mfile);
 
-	virtual void filestart() { readheader(); };
+	virtual void filestart();
 
 	virtual void startsubimage(int x, int y, int sx, int sy);
 	virtual void setline(U8 *band);
