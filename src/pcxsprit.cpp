@@ -87,6 +87,12 @@ void pcxwrite::setcolours(U8 bg, U8 bord, int skip)
 	borderskip = skip;
 }
 
+void pcxwrite::filestart()
+{
+	writeheader();
+	fseek(curfile, sizeof(header), SEEK_SET);
+}
+
 void pcxwrite::startsubimage(int /*x*/, int /*y*/, int sx, int sy)
 {
 #define BORDERSIZE 4
@@ -251,6 +257,12 @@ pcxread::pcxread(singlefile *mfile)
 {
 	setfile(mfile);
 };
+
+void pcxread::filestart()
+{
+	readheader();
+	fseek(curfile, sizeof(header), SEEK_SET);
+}
 
 void pcxread::startsubimage(int x, int y, int sx, int sy)
 {
