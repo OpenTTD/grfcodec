@@ -6,6 +6,88 @@
 
 /***********************\
 *                       *
+* class pngwrite        *
+*                       *
+\***********************/
+
+pngwrite::pngwrite(multifile *mfile): pcxwrite(mfile), png(NULL), info(NULL)
+{
+	// Hopefully 8MiB should suffice
+	cache.reserve(8*1024*1024);
+}
+pngwrite::~pngwrite()
+{
+	// Make sure we clean up if grfcodec terminates prematurely 
+	if (png)
+		png_destroy_write_struct(&png, &info);
+}
+
+void pngwrite::filestart()
+{
+	// Create the libpng structs
+	png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	info = png_create_info_struct(png);
+	if (!png || !info) {
+		printf("%s: Agh! Unable to initalize libpng!\n", this->filename());
+		exit (254);
+	}
+
+	// Set the error out point
+	if (setjmp(png_jmpbuf(png))) {
+		exit (252);
+	}
+}
+
+void pngwrite::filedone(int final)
+{
+	// Do not save the png until the grf file has been processed
+	if (final && png && cache.size() > 0)
+	{
+		// Store the final image's size
+		png_set_IHDR(png, info, sx, totaly, 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
+			PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+		// Set the palette data
+		png_set_PLTE(png, info, (png_color*)pcxwrite::palette, 256);
+
+		// Initial libpng io
+		png_init_io(png, curfile);
+
+		// Write the the png header
+		png_write_info(png, info);
+
+		// Flush the header and every so many lines
+		png_write_flush(png);
+		png_set_flush(png, 64);
+
+		// Write the image data
+		for (unsigned int i = 0, j = cache.size(); i < j; i += sx)
+			png_write_row(png, (png_byte*)&cache[i]);
+
+		// Cleanup incase we are writing multiple files
+		png_destroy_write_struct(&png, &info);
+		cache.clear();
+		png = NULL;
+		info = NULL;
+	}
+}
+
+// Hooks the writing of lines out to file,
+//   which we will be buffering internally
+void pngwrite::encodebytes(U8 byte, int num)
+{
+	for (int i = 0; i < num; i++)
+		cache.push_back(byte);
+}
+
+void pngwrite::encodebytes(U8 buffer[], int num)
+{
+	for (int i = 0; i < num; i++)
+		cache.push_back(buffer[i]);
+}
+
+/***********************\
+*                       *
 * class pngread         *
 *                       *
 \***********************/

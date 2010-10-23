@@ -4,6 +4,29 @@
 
 #include "pcxsprit.h"
 #include <png.h>
+#include <vector>
+
+class pngwrite: public pcxwrite {
+	public:
+	pngwrite(multifile *mfile);
+	~pngwrite();
+
+	void filestart();
+	void filedone(int final);
+	
+	protected:
+	void encodebytes(U8 byte, int num);
+	void encodebytes(U8 buffer[], int num);
+
+	private:
+	pngwrite(const pngwrite&);
+	void operator=(const pngwrite&);
+
+	private:	
+	png_struct *png;
+	png_info *info;
+	std::vector<U8> cache;
+};
 
 class pngread: public pcxread {
 	public:
