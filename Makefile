@@ -165,7 +165,7 @@ $(GRFCODEC): $(GRFCODECSRC:%.cpp=objs/%.o)
 ifdef WITH_PNG
 	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT) $(shell $(LIBPNG_CONFIG) --ldflags)
 else
- 	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 endif
 
 $(GRFDIFF):  $(GRFDIFFSRC:%.cpp=objs/%.o) objs/grfmrg.o
