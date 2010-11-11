@@ -115,7 +115,7 @@ int Check5(PseudoSprite&data,sanstate&state){
 			IssueMessage(WARNING1, ACTION_5_LIMIT, sprites, pastend-1, expSprites[1]);
 	}
 countok:
-	if(off<data.Length())IssueMessage(WARNING2,EXTRA_DATA,off);
+	if(off<data.Length())IssueMessage(WARNING2,EXTRA_DATA,data.Length(),off);
 	if(expSprites[0]&1)state=FIND_RECOLOR;
 	else if(!(expSprites[0]&2))state=FIND_REAL;
 	return sprites;

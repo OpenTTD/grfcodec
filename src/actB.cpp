@@ -88,5 +88,5 @@ void CheckB(PseudoSprite&data){
 			IssueMessage(ERROR,INVALID_PARAM,offset,data.ExtractByte(offset));
 		offset++;
 	}
-	if(offset!=data.Length())IssueMessage(WARNING2,EXTRA_DATA,offset);
+	if(offset!=data.Length())IssueMessage(WARNING2,EXTRA_DATA,data.Length(),offset);
 }

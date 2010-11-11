@@ -366,7 +366,7 @@ CHANGED_FEATURE(std)
 						}
 					}
 				}
-				if(++off!=length)IssueMessage(WARNING2,EXTRA_DATA,off);
+				if(++off!=length)IssueMessage(WARNING2,EXTRA_DATA,length,off);
 				if(!hasGround)IssueMessage(WARNING2,NO_GROUNDSPRITE,NONTRANS);
 			}else{//Basic format
 				if(!ground)IssueMessage(ERROR,NO_GROUNDSPRITE,GROUND);
