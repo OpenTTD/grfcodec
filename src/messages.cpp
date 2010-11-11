@@ -177,7 +177,6 @@ string myvsprintf(const char*fmt,va_list&arg_ptr){
 				ret+=mysprintf(GetLangName(langID).c_str(),langID);
 				break;
 			}case'K':
-				assert(false);
 				ret+=STACK[va_arg(arg_ptr,int)];//_msgArrays[STACK].array[va_arg(arg_ptr,int)];
 				break;
 			/*case'Y':{
