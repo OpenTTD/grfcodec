@@ -147,7 +147,7 @@ MESSAGE_EX(UNUSED2IDLEAD,"For feature %x the following cargoIDs have not been us
 MESSAGE_EX(UNUSEDIDFINAL,"%2x (last defined at sprite %d)\n",MAKE_COMMENT,NFO,UNUSED_ID)
 NFO_MESSAGE(UNUSED_SET,"Set %2x defined by the previous Action 1 (sprite %d) has not been used.\n",USE_PREFIX)
 NFO_MESSAGE(UNREACHABLE_VAR,"Variation %d cannot be reached.\n",USE_PREFIX)
-NFO_MESSAGE(EXTRA_DATA,"No more data was expected.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(EXTRA_DATA,"No more data was expected. Found %d bytes, expected %d bytes.\n",USE_PREFIX)
 NFO_MESSAGE(REUSED_DEFAULT,"Default ID appears earlier in sprite.\n",USE_PREFIX)
 NFO_MESSAGE(RESERVED_GRFID,"GRFIDs with a first byte of FF are reserved.\n",USE_PREFIX)
   MESSAGE_UNUSED(DOES_NOT_FOLLOW)

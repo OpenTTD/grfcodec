@@ -156,7 +156,7 @@ void CheckF(PseudoSprite&data){
 		while(total_prob>>=1)minbits++;
 		if(numbits<minbits)IssueMessage(WARNING1,INSUFFICIENT_BITS,fb_offs+1,minbits,numbits);
 	}
-	if(++offset!=data.Length())IssueMessage(WARNING2,EXTRA_DATA,offset);
+	if(++offset!=data.Length())IssueMessage(WARNING2,EXTRA_DATA,data.Length(), offset);
 }
 
 void finalF(){

@@ -317,7 +317,7 @@ void check_sprite(PseudoSprite&data){
 			IssueMessage(WARNING1,NO_NULL_FOUND);
 		}
 		CheckString(data,offs,CTRL_COLOR|CTRL_NEWLINE);
-		if(offs<length)IssueMessage(WARNING2,EXTRA_DATA,offs);
+		if(offs<length)IssueMessage(WARNING2,EXTRA_DATA,length,offs);
 		break;
 	}case 0xA:
 		data.SetAllHex();

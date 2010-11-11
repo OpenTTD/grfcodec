@@ -47,7 +47,7 @@ uint Check6(PseudoSprite&data){
 		if(ofs==2)
 			IssueMessage(WARNING1,NO_MODIFICATIONS);
 		if(ofs!=data.Length())
-			IssueMessage(WARNING2,EXTRA_DATA,ofs);
+			IssueMessage(WARNING2,EXTRA_DATA,data.Length(),ofs);
 	}catch(...){
 		if(_autocorrect&&canCorrect){
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);

@@ -113,7 +113,7 @@ void Check4(PseudoSprite&data){
 		}else
 			IssueMessage(ERROR,INSUFFICIENT_STRINGS,nument);
 	}
-	if(i<data.Length())IssueMessage(WARNING2,EXTRA_DATA,i);
+	if(i<data.Length())IssueMessage(WARNING2,EXTRA_DATA,data.Length(),i);
 }
 
 void Check13(PseudoSprite&data){
@@ -156,7 +156,7 @@ void Check13(PseudoSprite&data){
 		}else
 			IssueMessage(ERROR,INSUFFICIENT_STRINGS,nument);
 	}
-	if(offs<data.Length())IssueMessage(WARNING2,EXTRA_DATA,offs);
+	if(offs<data.Length())IssueMessage(WARNING2,EXTRA_DATA,data.Length(),offs);
 }
 
 #define STACK_CHECK(type,width)\
