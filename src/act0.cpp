@@ -406,7 +406,7 @@ void Check0::Check(PseudoSprite&str){
 					}
 				}
 				if(i<str.Length())
-					IssueMessage(WARNING2,EXTRA_DATA,i);
+					IssueMessage(WARNING2,EXTRA_DATA,str.Length(),i);
 			}
 			if(!GetState(LINEBREAKS))return;
 			bool linebreaks=(IDs>1||GetState(LINEBREAKS)==3)&&str.ExtractByte(2)>1;
