@@ -267,26 +267,27 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				uint arg;
 				ch=data.ExtractQEscapeByte(++offs);
 				switch(ch){
-				case 0:		// print qword currency
+				case 0x00:		// print qword currency
 					if(!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
-				case 1:		// print qword currency
-				case 2:		// ignore color code
+				case 0x01:		// print qword currency
+				case 0x02:		// ignore color code
 					break;
-				case 3:		// push WORD
+				case 0x03:		// push WORD
 					stack = string(2,char(STACK_WORD)) + stack;
 					arg=data.ExtractEscapeWord(++offs);
 					if(!(arg&0xFF)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
 					++offs;
 					if(!(arg>>8)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
 					break;
-				case 4:		// Delete BYTE characters
+				case 0x04:		// Delete BYTE characters
 					arg=data.ExtractQEscapeByte(++offs);
 					if(!arg&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
-				case 6:		// print hex byte
-				case 7:		// ... word
-				case 8:		// ... dword
-				case 11:		// ... qword
-				case 12:		// print name of station
+				case 0x06:		// print hex byte
+				case 0x07:		// ... word
+				case 0x08:		// ... dword
+				case 0x0B:		// ... qword
+				case 0x0C:		// print name of station
+				case 0x0D:		// print word in weight
 					break;
 				default:
 					IssueMessage(ERROR,INVALID_EXT_CODE,offs,ch);
