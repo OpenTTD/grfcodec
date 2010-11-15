@@ -1,3 +1,12 @@
+Changes in 5.1.0 (unreleased)
+- Add support for PNG formatted sprite sheets with both encoding and decoding (requires libpng).
+- NFORenum specific changes:
+  - Add support for string code 9A 0D.
+  - Change format of some warning messages to provide more information.
+  - Fix stack validator triggering a (wrong) assert
+- GRFCodec specific changes:
+  - Prevent pcxfile::expirelines from reading more lines than the spritesheet has.
+
 Changes in 5.0.0 (2010-10-17)
 - Merge the source packages of GRFCodec (1.0.0) and NFORenum (4.0.0).
   This means that this package now requires Boost 1.36 or higher.
