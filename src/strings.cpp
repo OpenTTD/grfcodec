@@ -184,6 +184,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 	const uint length=data.Length();
 	if(offs>=length)return -1;
 	uint stackoffs=0,ret=0,ch;
+	uint choice_list=0;
 	bool utf8=false,valid=true;
 	try{
 		utf8=data.ExtractWord(offs)==0x9EC3;
@@ -290,11 +291,37 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				case 0x0D:		// print word in weight
 					break;
 
+				case 0x10:		// choice list value
+					if (choice_list == 0) IssueMessage(ERROR,NOT_IN_CHOICE_LIST,offs);
+					/* FALL THROUGH */
 				case 0x0E:		// set gender
 				case 0x0F:		// set case
 					if (_grfver < 7) IssueMessage(WARNING1, NEED_VERSION_7, _grfver);
 					arg = data.ExtractQEscapeByte(++offs);
 					if (!arg) IssueMessage(ERROR,EMBEDDED_00, offs);
+					break;
+
+				case 0x11:		// choice list default
+					if (_grfver < 7) IssueMessage(WARNING1, NEED_VERSION_7, _grfver);
+					if (choice_list == 0) IssueMessage(ERROR, NOT_IN_CHOICE_LIST, offs);
+					choice_list = 2;
+					break;
+
+				case 0x12:		// end choice list
+					if (_grfver < 7) IssueMessage(WARNING1, NEED_VERSION_7, _grfver);
+					if (choice_list == 0) IssueMessage(ERROR, NOT_IN_CHOICE_LIST, offs);
+					if (choice_list == 1) IssueMessage(ERROR, NO_DEFAULT_IN_CHOICE_LIST, offs);
+					choice_list = 0;
+					break;
+
+				case 0x13:		// begin gender choice list
+					arg = data.ExtractQEscapeByte(++offs);
+					if (!arg) IssueMessage(ERROR, EMBEDDED_00, offs);
+					/* FALL THROUGH */
+				case 0x14:		// begin case choice list
+					if (_grfver < 7) IssueMessage(WARNING1, NEED_VERSION_7, _grfver);
+					if (choice_list != 0) IssueMessage(ERROR, NESTED_CHOICE_LIST, offs);
+					choice_list = 1;
 					break;
 
 				default:
@@ -317,7 +344,8 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				//Extended format codes (9A XX)
 				case 0x00:case 0x01:case 0x0B:
 					STACK_CHECK(STACK_QWORD,8)
-				case 0x02:case 0x03:case 0x04:case 0x0E:case 0x0F:
+				case 0x02:case 0x03:case 0x04:case 0x0E:case 0x0F:case 0x10:case 0x11:case 0x12:
+				case 0x13:case 0x14:
 					--ret;	// These do not read from the stack.
 					break;
 				DEFAULT(ch)
@@ -338,6 +366,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 		}
 		if(++offs>=length)break;
 	}
+	if (choice_list != 0) IssueMessage(ERROR, CHOICE_LIST_NOT_TERMINATED, offs);
 	if(ch) {
 		if(_autocorrect) {
 			IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);

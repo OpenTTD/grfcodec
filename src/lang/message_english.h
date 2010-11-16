@@ -267,6 +267,10 @@ NFO_MESSAGE(BEFORE_8,"Action %x must precede action 8.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_VERSION_ACT14,"Action 14 requires version number 7 or higher, found %x.\n",USE_PREFIX)
 NFO_MESSAGE(UNKNOWN_ACT14_TYPE,"Unrecognized type %2x, ignoring rest.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NEED_VERSION_7,"NFO version 7 or higher is needed, found %x.\n",USE_PREFIX)
+NFO_MESSAGE(NESTED_CHOICE_LIST,"Choice lists can't be nested.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NOT_IN_CHOICE_LIST,"Choice list string code outside of choice list.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NO_DEFAULT_IN_CHOICE_LIST,"No default choice in choice list.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(CHOICE_LIST_NOT_TERMINATED,"The choice list is not terminated.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
