@@ -3,7 +3,7 @@ Changes in 5.1.0 (unreleased)
 - NFORenum specific changes:
   - Data file updates
     - Action 0 general variable properties 13, 14.
-  - Add support for string code 9A 0D.
+  - Add support for string code 9A 0D..9A 0F.
   - Change format of some warning messages to provide more information.
   - Fix stack validator triggering a (wrong) assert
 - GRFCodec specific changes:
