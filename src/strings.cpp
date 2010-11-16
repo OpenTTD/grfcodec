@@ -315,6 +315,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					break;
 
 				case 0x13:		// begin gender choice list
+				case 0x15:		// begin plural choice list
 					arg = data.ExtractQEscapeByte(++offs);
 					if (!arg) IssueMessage(ERROR, EMBEDDED_00, offs);
 					/* FALL THROUGH */
@@ -345,7 +346,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				case 0x00:case 0x01:case 0x0B:
 					STACK_CHECK(STACK_QWORD,8)
 				case 0x02:case 0x03:case 0x04:case 0x0E:case 0x0F:case 0x10:case 0x11:case 0x12:
-				case 0x13:case 0x14:
+				case 0x13:case 0x14:case 0x15:
 					--ret;	// These do not read from the stack.
 					break;
 				DEFAULT(ch)
