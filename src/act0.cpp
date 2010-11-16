@@ -271,7 +271,13 @@ static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const ui
 					IssueMessage(ERROR,ACT3_PRECEDES_PROP08,ofs,str.ExtractWord(ofs));
 			}
 			break;
-		case 1:str.SetText(ofs,GetWidth(format));break;
+		case 1:
+			if(IsSpecial(format)) {
+				str.SetText(ofs);
+			} else {
+				str.SetText(ofs,GetWidth(format));
+			}
+			break;
 		case 2:		// Decimal (or date)
 			if (IsSpecial(format))
 				str.SetDate(ofs,GetWidth(format));
