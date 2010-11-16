@@ -289,6 +289,14 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				case 0x0C:		// print name of station
 				case 0x0D:		// print word in weight
 					break;
+
+				case 0x0E:		// set gender
+				case 0x0F:		// set case
+					if (_grfver < 7) IssueMessage(WARNING1, NEED_VERSION_7, _grfver);
+					arg = data.ExtractQEscapeByte(++offs);
+					if (!arg) IssueMessage(ERROR,EMBEDDED_00, offs);
+					break;
+
 				default:
 					IssueMessage(ERROR,INVALID_EXT_CODE,offs,ch);
 					perms|=CTRL_NO_STACK_CHECK;
@@ -309,7 +317,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				//Extended format codes (9A XX)
 				case 0x00:case 0x01:case 0x0B:
 					STACK_CHECK(STACK_QWORD,8)
-				case 0x02:case 0x03:case 0x04:
+				case 0x02:case 0x03:case 0x04:case 0x0E:case 0x0F:
 					--ret;	// These do not read from the stack.
 					break;
 				DEFAULT(ch)
