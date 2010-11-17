@@ -192,8 +192,8 @@ void pcxfile::endimage()
 	if (band) {
 		int i;
 		for (i=0; i<bandlines; i++)
-			delete(band[i]);
-		delete(band);
+			delete[](band[i]);
+		delete[](band);
 		band = NULL;
 	}
 

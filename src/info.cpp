@@ -299,7 +299,7 @@ void infowriter::newband(pcxfile *pcx)
 				if (instr) fputs("\"", info);
 				fputs("\n", info);
 			}
-			delete(d->data);
+			free(d->data);
 			break;	}
 
 		default:
@@ -324,7 +324,7 @@ void infowriter::resize(int newmaxboxes)
 		newboxes[i] = boxes[i];
 	for (; i<newmaxboxes; i++)
 		newboxes[i].type = isinvalid;
-	delete(boxes);
+	delete[](boxes);
 	boxes = newboxes;
 }
 
