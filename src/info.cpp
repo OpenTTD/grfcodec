@@ -191,6 +191,11 @@ infowriter::infowriter(FILE *info, int maxboxes, int useplaintext)
 		boxes[i].type = isinvalid;
 }
 
+infowriter::~infowriter()
+{
+	delete[] boxes;
+}
+
 void infowriter::newband(pcxfile *pcx)
 {
 	int i;

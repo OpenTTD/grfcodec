@@ -13,7 +13,7 @@
 class inforeader {
 	public:
 	inforeader(char *nf);
-        ~inforeader();
+	~inforeader();
 	const Sprite&operator[](int x)const{return *(nfofile[x]);}
 	int size()const{return nfofile.size();}
 
@@ -39,6 +39,7 @@ private:
 class infowriter :  public spriteinfowriter {
 	public:
 	infowriter(FILE *info, int maxboxes, int useplaintext);
+	virtual ~infowriter();
 
 	virtual void newband(pcxfile *pcx);
 	virtual void addsprite(int x, SpriteInfo info);
