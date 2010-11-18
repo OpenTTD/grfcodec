@@ -2,6 +2,8 @@ Changes in 5.1.0 (unreleased)
 - Add support for PNG formatted sprite sheets with both encoding and decoding (requires libpng).
 - NFORenum specific changes:
   - Data file updates
+    - Action 0 road vehicle property 21.
+    - Action 0 ship property 1C.
     - Action 0 cargo properties 1B, 1C.
     - Action 0 general variable properties 13..15.
     - Callback 10 works for road vehicles and ships as well.
