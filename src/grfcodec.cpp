@@ -775,6 +775,7 @@ static U8* findpal(char *grffile)
 	if (!bs) bs = grffile;
 
 	strncpy(base, grffile, sizeof(base)-1);
+	base[sizeof(base) - 1] = '\0';
 
 	bs = strchr(base, '.');
 	if (bs) *bs = 0;
