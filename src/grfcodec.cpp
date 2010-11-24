@@ -52,10 +52,7 @@
 #include "version.h"
 #include "conv.h"
 #include "nfosprite.h"
-
-#ifdef WIN32
-#	include "path.h"
-#endif
+#include "path.h"
 
 static const char *version = "GRFCodec " VERSION " - Copyright (C) 2000-2005 by Josef Drexler";
 
@@ -758,7 +755,7 @@ static SpriteSheetFormat setoutputformat(const char *formatarg)
 // find default palette
 static U8* findpal(char *grffile)
 {
-	char base[12];
+	char base[MAXFILE];
 	char *bs;
 	unsigned int i;
 
@@ -766,8 +763,7 @@ static U8* findpal(char *grffile)
 	if (!bs) bs = strrchr(grffile, '/');
 	if (!bs) bs = grffile;
 
-	strncpy(base, grffile, sizeof(base)-1);
-	base[sizeof(base) - 1] = '\0';
+	safestrncpy(base, grffile, MAXFILE);
 
 	bs = strchr(base, '.');
 	if (bs) *bs = 0;
@@ -787,7 +783,7 @@ int _useexts=2;
 
 int main(int argc, char **argv)
 {
-	char directory[128];
+	char directory[MAXDIR];
 	char *grffile = NULL;
 	int action = 0;
 	int width = 800, height = -1, box = 16, compress = 1;
@@ -895,13 +891,12 @@ int main(int argc, char **argv)
 	if (optind < argc)
 		grffile = argv[optind++];
 
-	if (optind < argc)
-		strcpy(directory, argv[optind++]);
-	else
-		strcpy(directory, "sprites");
+	safestrncpy(directory, optind < argc ? argv[optind++] : "sprites", MAXDIR);
 
-	if (directory[strlen(directory) - 1] != '/')
-		strcat(directory, "/");
+	int offset = strlen(directory);
+	if (directory[offset - 1] != '/' ) {
+		safestrncpy(directory + offset, "/", MAXDIR - offset);
+	}
 
 	if (!action || !grffile || (width < 16) ||
 		( (height < 16) && (height != -1) ) ||
