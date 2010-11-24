@@ -71,9 +71,10 @@ static int checkisselfextr(const char *exe)
 	f = fopen(exe, "rb");
 	if (!f && errno == ENOENT) {
 		// try appending .exe for Win2k
-		char *altexe = (char*) malloc(strlen(exe)+5);
-		strcpy(altexe, exe);
-		strcat(altexe, ".exe");
+		/* Length of string + length of ".exe" + '\0' */
+		char *altexe = (char*) malloc(strlen(exe) + 4 + 1);
+		strcpy(altexe, exe); // Safe use due to already checked buffer size
+		strcat(altexe, ".exe"); // Safe use due to already checked buffer size
 		f = fopen(altexe, "rb");
 		free(altexe);
 	}
@@ -272,10 +273,13 @@ static int mergeset(FILE *grd, const char *grffile)
 	cfread(action, &numsprites, 2, 1, grd);
 	cfread(action, &grflen, 1, 1, grd);
 
-	grfname = (char*) malloc(grflen + 4);		// +4 for .bak extension (safety margin)
+	/* Maximum length of string + 4 for ".bak" extension + '\0' */
+	grfname = (char*) malloc(grflen + 4 + 1);
 	if (!grfname) die("Out of memory.\n");
 
 	cfread(action, grfname, 1, grflen, grd);
+	/* Make sure the string is properly terminated. */
+	grfname[(int)grflen] = '\0';
 
 	if (onlyshow) {
 		printf("Generated from: %s.grf\nSprites in file: ", grfname);
@@ -305,7 +309,7 @@ static int mergeset(FILE *grd, const char *grffile)
 				};
 			}
 		} else {
-			strcat(grfname, ".grf");
+			strcat(grfname, ".grf"); // Safe use due to already checked buffer size
 			grffile = grfname;
 		}
 
