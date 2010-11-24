@@ -193,3 +193,23 @@ void cfwrite(const char *action, const void *ptr, size_t size, size_t n, FILE *s
 		exit(2);
 	}
 }
+
+/**
+ * Get the "backup" version of this filename,
+ * i.e. with .bak at the end.
+ * @param filename The filename to get the backup version of.
+ * @return An allocated string. You have to free it!
+ */
+char *getbakfilename(const char *filename)
+{
+	/* Length of filename + length of ".bak" + '\0' */
+	int len = strlen(filename) + 4 + 1;
+	char *bakfile = (char*) malloc(len);
+
+	strcpy(bakfile, filename); // Safe use due to already checked buffer size
+	char *c = strrchr(bakfile, '.');
+	if (!c) c = bakfile + strlen(bakfile);
+	strcpy(c, ".bak"); // Safe use due to already checked buffer size
+
+	return bakfile;
+}

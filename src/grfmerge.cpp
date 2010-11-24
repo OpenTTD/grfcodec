@@ -386,21 +386,15 @@ static int mergeset(FILE *grd, const char *grffile)
 	if (grf) fclose(grf);
 
 	if (!skipped) {
-		char* c;
-
 		printf("\nDone\n");
 
 		// rename grf to bak if bak doesn't exist
-		strcpy(block, grffile);
-		c = strrchr(block, '.');
-		if (!c) c = block + strlen(block);
-		strcpy(c, ".bak");
-
-		tmp = fopen(block, "rb");
+		char *bakfile = getbakfilename(grffile);
+		tmp = fopen(bakfile, "rb");
 
 		if (!tmp && (errno == ENOENT)) {
 			// .bak doesn't exist, rename .grf to .bak
-			printf("Renaming %s to %s\n", grffile, block);
+			printf("Renaming %s to %s\n", grffile, bakfile);
 			if (rename(grffile, block)) {
 				printf("Error while renaming: %s\n", strerror(errno));
 				printf("Shall I delete it instead?");
@@ -412,6 +406,8 @@ static int mergeset(FILE *grd, const char *grffile)
 				errno = ENOENT;		// don't try to delete it
 			}
 		}
+		free(bakfile);
+
 		if (tmp || (errno != ENOENT)) {
 			printf("Deleting %s\n", grffile);
 			if (remove(grffile))
