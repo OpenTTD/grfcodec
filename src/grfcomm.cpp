@@ -37,33 +37,28 @@ const char *e_openfile = "Error opening %.228s";
 
 static int getspritefilename(char *filename, const char *basefilename, char *subdirectory, const char *ext, long spriteno)
 {
-	char *fullpath = strdup(basefilename);//_fullpath(NULL, basefilename, 0);
-
-	char bdrive[5], bdirectory[128], bname[20], bext[6];
-	char sdrive[5], sdirectory[128];
+	char bdrive[MAXDRIVE], bdirectory[MAXDIR], bname[MAXFILE], bext[MAXEXT];
+	char sdrive[MAXDRIVE], sdirectory[MAXDIR];
 
 	fnsplit(subdirectory, sdrive, sdirectory, NULL, NULL);
-	fnsplit(fullpath,     bdrive, bdirectory, bname, bext);
+	fnsplit(basefilename, bdrive, bdirectory, bname, bext);
 
 	if (strlen(sdrive)) {		// drive given, go relative
-		char *sfullpath = strdup(subdirectory);//_fullpath(NULL, subdirectory, 0);
+		char sfullpath[MAXPATH];
+		strncpy(sfullpath, subdirectory, MAXPATH);
 		fnsplit(sfullpath, sdrive, sdirectory, NULL, NULL);
-		free(sfullpath);
 
-		strcpy(bdrive, sdrive);
+		strncpy(bdrive, sdrive, MAXDRIVE);
 	}
 
 	if (strlen(sdirectory)) {
-		if (sdirectory[0] == '\\' || sdirectory[0] == '/')	// absolute path
-			strcpy(bdirectory, sdirectory);
-		else
-			strcat(bdirectory, sdirectory);
+		int offset = (sdirectory[0] == '\\' || sdirectory[0] == '/') ? 0 : strlen(bdirectory);
+		strncpy(bdirectory + offset, sdirectory, MAXDIR - offset);
 	}
 
-	free(fullpath);
-
 	if (spriteno >= 0) {
-		sprintf(bname + strlen(bname), "%02ld", spriteno);
+		int offset = strlen(bname);
+		snprintf(bname + offset, MAXFILE - offset, "%02ld", spriteno);
 		/*	int baselen = 8 - strlen(bname);
 		char *numpart = bname + (8 - baselen);
 
@@ -101,7 +96,7 @@ static int getspritefilename(char *filename, const char *basefilename, char *sub
 		*/
 	}
 
-	strcpy(bext, ext);
+	strncpy(bext, ext, MAXEXT);
 
 	fnmerge(filename, bdrive, bdirectory, bname, bext);
 	fnmerge(subdirectory, bdrive, bdirectory, NULL, NULL);
@@ -111,11 +106,11 @@ static int getspritefilename(char *filename, const char *basefilename, char *sub
 
 char *spritefilename(const char *basefilename, const char *reldirectory, const char *ext, int spriteno, const char *mode, int mustexist)
 {
-	static char filename[128];
-	char directory[128];
+	static char filename[MAXFILE];
+	char directory[MAXDIR];
 	FILE *sprite = NULL;
 
-	strcpy(directory, reldirectory);
+	strncpy(directory, reldirectory, MAXDIR);
 	getspritefilename(filename, basefilename, directory, ext, spriteno);
 
 	size_t dir_len = strlen(directory);
