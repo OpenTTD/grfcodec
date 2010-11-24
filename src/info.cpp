@@ -222,10 +222,10 @@ void infowriter::newband(pcxfile *pcx)
 
 			if (d->data[0] == 0xff && d->size>4 && spriteno>1) {	// binary include file
 				int namelen = d->data[1];
-				char *filename = new char[strlen(pcx->getdirectory())+namelen+1];
+				int len = strlen(pcx->getdirectory()) + namelen + 1;
+				char *filename = new char[len];
 
-				strcpy(filename, pcx->getdirectory());
-				strcat(filename, (char*) d->data + 2);
+				snprintf(filename, len, "%s%s", pcx->getdirectory(), (char*) d->data + 2);
 				fprintf(info, "**\t %s\n", filename);
 
 				FILE *bin = fopen(filename, "wb");
