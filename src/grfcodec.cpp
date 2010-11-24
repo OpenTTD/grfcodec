@@ -204,16 +204,8 @@ bool _interactive;
 static int movetoreal(char *newfile, char *realfile)
 {
 	// rename original to bak if bak doesn't exist
-	char *bakfile = (char*) malloc(strlen(realfile) + 4);
-	char *c;
-	FILE *tmp;
-
-	strcpy(bakfile, realfile);
-	c = strrchr(bakfile, '.');
-	if (!c) c = bakfile + strlen(bakfile);
-	strcpy(c, ".bak");
-
-	tmp = fopen(bakfile, "rb");
+	char *bakfile = getbakfilename(realfile);
+	FILE *tmp = fopen(bakfile, "rb");
 
 	if (!tmp && (errno == ENOENT)) {
 		// .bak doesn't exist, rename orig to .bak
