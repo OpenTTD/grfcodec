@@ -4,13 +4,8 @@
 static void CopyIt(char *dst, const char *src, unsigned maxlen)
 {
 	if (dst) {
-		if(strlen(src) >= maxlen)
-		{
-			strncpy(dst, src, maxlen);
-			dst[maxlen] = 0;
-		}
-		else
-			strcpy(dst, src);
+		strncpy(dst, src, maxlen);
+		dst[maxlen] = 0;
 	}
 }
 
@@ -30,31 +25,34 @@ static int DotFound(const char *pB)
 	return 0;
 }
 
-static char *stpcopy(char *dest, const char *src)
+static char *stpcopy(char *dest, const char *src, unsigned maxlen)
 {
-  return strcpy(dest, src) + strlen(src);
+	CopyIt(dest, src, maxlen);
+	return dest + strlen(dest);
 }
 
 void fnmerge(register char *pathP, const char *driveP,
 	const char *dirP, const char *nameP, const char *extP)
 {
-	if (driveP && *driveP)
-		{
+	char *origpathP = pathP;
+	if (driveP && *driveP) {
 		*pathP++ = *driveP++;
 		*pathP++ = ':';
-		}
-	if (dirP && *dirP)
-		{
-		pathP = stpcopy(pathP,dirP);
+	}
+
+	if (dirP && *dirP) {
+		pathP = stpcopy(pathP, dirP, MAXPATH - (pathP - origpathP));
 		if (*(pathP-1) != '\\' && *(pathP-1) != '/') *pathP++ = '/';
-		}
-	if (nameP)
-	pathP = stpcopy(pathP,nameP);
-	if (extP && *extP)
-		{
+	}
+
+	if (nameP) {
+		pathP = stpcopy(pathP, nameP, MAXPATH - (pathP - origpathP));
+	}
+
+	if (extP && *extP) {
 		if (*extP != '.') *pathP++ = '.';
-		pathP = stpcopy(pathP,extP);
-		}
+		pathP = stpcopy(pathP, extP, MAXPATH - (pathP - origpathP));
+	}
 	*pathP = 0;
 }
 
