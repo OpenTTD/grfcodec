@@ -16,5 +16,6 @@ void cfread(const char *action, void *ptr, size_t size, size_t n, FILE *stream);
 void cfwrite(const char *action, const void *ptr, size_t size, size_t n, FILE *stream);
 
 char *getbakfilename(const char *filename);
+char *safestrncpy(char *dest, const char *src, size_t n);
 
 #endif /* _GRFCOMM_H */
