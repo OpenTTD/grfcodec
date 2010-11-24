@@ -79,10 +79,10 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 	while (*pathP == ' ')
 		pathP++;
 	if ((Wrk = strlen(pathP)) > MAXPATH)
-		Wrk = MAXPATH;
+		Wrk = MAXPATH - 1;
 	*pB++ = 0;
-	safestrncpy(pB, pathP, Wrk);
-	*(pB += Wrk) = 0;
+	safestrncpy(pB, pathP, Wrk + 1);
+	pB += Wrk;
 
 	/*
 	  Split the filename and fill corresponding nonzero pointers
