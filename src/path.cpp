@@ -1,13 +1,7 @@
 
+#include <stdio.h>
 #include "path.h"
-
-static void CopyIt(char *dst, const char *src, unsigned maxlen)
-{
-	if (dst) {
-		strncpy(dst, src, maxlen);
-		dst[maxlen] = 0;
-	}
-}
+#include "grfcomm.h"
 
 static int DotFound(const char *pB)
 {
@@ -27,7 +21,7 @@ static int DotFound(const char *pB)
 
 static char *stpcopy(char *dest, const char *src, unsigned maxlen)
 {
-	CopyIt(dest, src, maxlen);
+	safestrncpy(dest, src, maxlen);
 	return dest + strlen(dest);
 }
 
@@ -87,7 +81,7 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 	if ((Wrk = strlen(pathP)) > MAXPATH)
 		Wrk = MAXPATH;
 	*pB++ = 0;
-	strncpy(pB, pathP, Wrk);
+	safestrncpy(pB, pathP, Wrk);
 	*(pB += Wrk) = 0;
 
 	/*
@@ -101,7 +95,7 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 				Wrk = DotFound(pB);
 			if ((!Wrk) && ((Ret & EXTENSION) == 0)) {
 				Ret |= EXTENSION;
-				CopyIt(extP, pB, MAXEXT - 1);
+				safestrncpy(extP, pB, MAXEXT);
 				*pB = 0;
 			}
 			continue;
@@ -112,7 +106,7 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 			if (Wrk) {
 				if (*++pB)
 					Ret |= DIRECTORY;
-				CopyIt(dirP, pB, MAXDIR - 1);
+				safestrncpy(dirP, pB, MAXDIR);
 				*pB-- = 0;
 				break;
 			}
@@ -122,7 +116,7 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 				Wrk++;
 				if (*++pB)
 					Ret |= FILENAME;
-					CopyIt(nameP, pB, MAXFILE - 1);
+					safestrncpy(nameP, pB, MAXFILE);
 					*pB-- = 0;
 					if (*pB == 0 || (*pB == ':' && pB == &buf[2]))
 						break;
@@ -140,7 +134,7 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 	if (*pB == ':') {
 		if (buf[1])
 			Ret |= DRIVE;
-		CopyIt(driveP, &buf[1], MAXDRIVE - 1);
+		safestrncpy(driveP, &buf[1], MAXDRIVE);
 	}
 
 	return (Ret);

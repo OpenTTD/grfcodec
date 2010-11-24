@@ -326,7 +326,7 @@ static int mergeset(FILE *grd, const char *grffile)
 
 		c=strchr(grffile, ':');
 		if (c) {
-			strncpy(tempfile, grffile, sizeof(tempfile)-1);
+			safestrncpy(tempfile, grffile, sizeof(tempfile));
 			i=c-grffile+1;
 			if (i<sizeof(tempfile))
 				tempfile[i]=0;

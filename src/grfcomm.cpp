@@ -45,15 +45,15 @@ static int getspritefilename(char *filename, const char *basefilename, char *sub
 
 	if (strlen(sdrive)) {		// drive given, go relative
 		char sfullpath[MAXPATH];
-		strncpy(sfullpath, subdirectory, MAXPATH);
+		safestrncpy(sfullpath, subdirectory, MAXPATH);
 		fnsplit(sfullpath, sdrive, sdirectory, NULL, NULL);
 
-		strncpy(bdrive, sdrive, MAXDRIVE);
+		safestrncpy(bdrive, sdrive, MAXDRIVE);
 	}
 
 	if (strlen(sdirectory)) {
 		int offset = (sdirectory[0] == '\\' || sdirectory[0] == '/') ? 0 : strlen(bdirectory);
-		strncpy(bdirectory + offset, sdirectory, MAXDIR - offset);
+		safestrncpy(bdirectory + offset, sdirectory, MAXDIR - offset);
 	}
 
 	if (spriteno >= 0) {
@@ -96,7 +96,7 @@ static int getspritefilename(char *filename, const char *basefilename, char *sub
 		*/
 	}
 
-	strncpy(bext, ext, MAXEXT);
+	safestrncpy(bext, ext, MAXEXT);
 
 	fnmerge(filename, bdrive, bdirectory, bname, bext);
 	fnmerge(subdirectory, bdrive, bdirectory, NULL, NULL);
@@ -110,7 +110,7 @@ char *spritefilename(const char *basefilename, const char *reldirectory, const c
 	char directory[MAXDIR];
 	FILE *sprite = NULL;
 
-	strncpy(directory, reldirectory, MAXDIR);
+	safestrncpy(directory, reldirectory, MAXDIR);
 	getspritefilename(filename, basefilename, directory, ext, spriteno);
 
 	size_t dir_len = strlen(directory);
@@ -207,4 +207,13 @@ char *getbakfilename(const char *filename)
 	strcpy(c, ".bak"); // Safe use due to already checked buffer size
 
 	return bakfile;
+}
+
+char *safestrncpy(char *dest, const char *src, size_t n)
+{
+	if (dest == NULL) return dest;
+
+	strncpy(dest, src, n);
+	if (n > 0) dest[n - 1] = 0;
+	return dest;
 }
