@@ -485,7 +485,7 @@ NDF_END
 #define REPEAT_UNTIL(data, length, ...) '*', data, length, __VA_ARGS__
 
 static const char _dat0[]={
-NDF_HEADER(0x0D, 11),
+NDF_HEADER(0x0D, 12),
 /*Maximum feature:*/ 0x11,
 // Feature 00:
 /*00*/ WORD | DATE, INVALID, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, BYTE, BYTE, BYTE | DECIMAL,
@@ -566,8 +566,8 @@ BYTE, REPEAT_N(BYTE, DATAFROM(0)), END,
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
 /*08*/ BYTE,          0x41, 0x41, DWORD | QUOTED, 0x00, 0xFC, TEXTID,         0x12, 0x12, DWORD | DECIMAL, 0x12, 0x12,
 /*0C*/ WORD | QUOTED, 0x12, 0x12, DWORD | QUOTED, 0x12, 0x12, DWORD | QUOTED, 0x12, 0x12, WORD  | DECIMAL, 0x12, 0x12,
-/*10*/ SUBDATA,       0x00, 0x00, SUBDATA,        0x00, 0xFF, DWORD | QUOTED, 0x00, 0xFC, SUBDATA,         0x00, 0x7E,
-/*14*/ SUBDATA,       0x00, 0x7E, BYTE,           0x00, 0x7E,
+/*10*/ SUBDATA,       0x00, 0x00, SUBDATA,        0x00, 0xFF, DWORD | QUOTED, 0x00, 0xFC, SUBDATA,         0x7E, 0x7E,
+/*14*/ SUBDATA,       0x7E, 0x7E, BYTE,           0x7E, 0x7E,
 END,
 // Subdata - prop 10:
 REPEAT_N(SUBDATA, 11), SUBDATA, END,
