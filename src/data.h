@@ -77,8 +77,8 @@ DATA_FILE(2r)
 
 END_DATA()
 
-#define myfopen(file) _myfopen(dat##file)
-FILE*_myfopen(files);
+#define myfopen(file) _myfopen(dat##file, false)
+FILE*_myfopen(files, bool);
 int _CheckEOF(int,files,const char*,int);
 int _GetCheckWord(FILE*,files,const char*,int);
 void _myfread(FILE*,uchar*,uint,files,const char*,int);
