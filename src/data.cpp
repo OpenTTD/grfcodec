@@ -993,7 +993,7 @@ bool finddir(string&dir){
 	return true;
 }
 
-string getdir(){
+static string getdir(bool allow_mkdir){
 	string *pret;
 	string cwd,home,homedrpath;
 	if(datadir!=""){
@@ -1010,11 +1010,14 @@ string getdir(){
 		home=safetostring(getenv("HOME"));
 		homedrpath=safetostring(getenv("HOMEDRIVE"))+safetostring(getenv("HOMEPATH"));
 		free(pcwd);
-		if(finddir(cwd))pret=&cwd;
-		else if(finddir(home)||(!home.empty()&&makedir(home)))pret=&home;
-		else if(finddir(homedrpath)||makedir(homedrpath))pret=&homedrpath;
-		else{
-			verify(makedir(cwd,true));
+		if (finddir(cwd)) {
+			pret=&cwd;
+		} else if (finddir(home) || (!home.empty() && (!allow_mkdir || makedir(home)))) {
+			pret=&home;
+		} else if (finddir(homedrpath) || (!allow_mkdir || makedir(homedrpath))) {
+			pret=&homedrpath;
+		} else{
+			if (allow_mkdir) verify(makedir(cwd, true));
 			pret=&cwd;
 		}
 	}
@@ -1023,7 +1026,7 @@ string getdir(){
 }
 
 FILE*tryopen(const char*name,const char*mode,bool allownull=false){
-	static string dir=getdir();
+	string dir = getdir(mode[0] == 'w');
 	FILE*pFile=fopen((dir+name).c_str(),mode);
 	if(pFile||allownull)return pFile;
 	IssueMessage(0,DATAFILE_ERROR,OPEN,name+1,ERRNO,errno);
@@ -1032,7 +1035,7 @@ FILE*tryopen(const char*name,const char*mode,bool allownull=false){
 	exit(EDATA);
 }
 
-FILE*_myfopen(files file){
+FILE*_myfopen(files file, bool write){
 	FILE*pFile=tryopen(data[file].name,"rb",true);
 	if(pFile){
 		if(fgetc(pFile)==data[file].data[0]&&fgetc(pFile)>=data[file].data[1]){
@@ -1045,14 +1048,27 @@ FILE*_myfopen(files file){
 		}
 		fclose(pFile);
 	}
-	pFile=tryopen(data[file].name,"wb");
-	if(fwrite(data[file].data,1,data[file].len,pFile)!=data[file].len){
-		IssueMessage(0,DATAFILE_ERROR,WRITE,data[file].name+1,-1);
-		assert(false);
-		exit(EDATA);
+#if WITH_FMEMOPEN
+	if (!write) {
+		pFile = fmemopen(const_cast<char *>(data[file].data), data[file].len, "rb");
+		if (pFile == NULL) {
+			IssueMessage(0, DATAFILE_ERROR, OPEN, data[file].name + 1, ERRNO, errno);
+			perror(NULL);
+			assert(false);
+			exit(EDATA);
+		}
+	} else
+#endif /* WITH_FMEMOPEN */
+	{
+		pFile = tryopen(data[file].name,"wb");
+		if (fwrite(data[file].data, 1, data[file].len, pFile) != data[file].len) {
+			IssueMessage(0, DATAFILE_ERROR, WRITE, data[file].name + 1, -1);
+			assert(false);
+			exit(EDATA);
+		}
+		fclose(pFile);
+		pFile = tryopen(data[file].name,"rb");
 	}
-	fclose(pFile);
-	pFile=tryopen(data[file].name,"rb");
 	fgetc(pFile);
 	fgetc(pFile);
 	if(file>datfeat && (uint)fgetc(pFile)<MaxFeature()){
