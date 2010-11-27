@@ -128,7 +128,7 @@ int __cdecl main(const int argc,char**argv){
 		case 0:continue;
 		case 257: /* --write-data */
 			for (int i = 0; i < FILES_MAX; i++) {
-				FILE *pFile = _myfopen((files)i);
+				FILE *pFile = _myfopen((files)i, true);
 				fclose(pFile);
 			}
 			continue;

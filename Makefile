@@ -72,6 +72,13 @@ ifeq ($(MACHINE),mingw32)
 FLAGS += -DMINGW
 endif
 
+# Sadly enough fmemopen is
+ifneq ($(shell grep fmemopen /usr/include/stdio.h 2> /dev/null | wc -l),0)
+ifndef NO_FMEMOPEN
+FLAGS += -DWITH_FMEMOPEN
+endif
+endif
+
 ifeq ($(shell uname),Darwin)
 FLAGS += -isystem/opt/local/include
 endif

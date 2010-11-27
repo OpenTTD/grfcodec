@@ -11,6 +11,7 @@ Changes in 5.1.0 (unreleased)
   - Add support for string code 9A 0D..9A 15.
   - Change format of some warning messages to provide more information.
   - Fix stack validator triggering a (wrong) assert
+  - For operating systems where fmemopen is supported the data files and its directory are not created by default anymore.
 - GRFCodec specific changes:
   - Prevent pcxfile::expirelines from reading more lines than the spritesheet has.
   - Fix several mismatched delete/free valgrind warnings.
