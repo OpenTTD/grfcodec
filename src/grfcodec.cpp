@@ -151,9 +151,11 @@ static void showimageformats()
 	printf(
 		"Options for the -o paramter:\n"
 		"\n"
-		"	pcx (default)\n"
 #ifdef WITH_PNG
-		"	png\n"
+		"	pcx\n"
+		"	png (default)\n"
+#else
+		"	pcx (default)\n"
 #endif
 		"\n"
 		);
@@ -241,7 +243,13 @@ enum SpriteSheetFormat {
 #ifdef WITH_PNG
 	SSF_PNG,
 #endif
-} _outputformat = SSF_PCX;
+};
+
+#ifdef WITH_PNG
+SpriteSheetFormat _outputformat = SSF_PNG;
+#else
+SpriteSheetFormat _outputformat = SSF_PCX;
+#endif
 
 const char * getoutputext()
 {
