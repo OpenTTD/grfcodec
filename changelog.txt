@@ -1,4 +1,4 @@
-Changes in 5.1.0 (unreleased)
+Changes in 5.1.0 (2010-12-10)
 - Add support for PNG formatted sprite sheets with both encoding and decoding (requires libpng).
 - NFORenum specific changes:
   - Data file updates
