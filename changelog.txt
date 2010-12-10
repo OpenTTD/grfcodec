@@ -6,7 +6,8 @@ Changes in 5.1.0 (unreleased)
     - Action 0 ship property 1C.
     - Action 0 cargo properties 1B, 1C.
     - Action 0 general variable properties 13..15.
-    - Action 2 object variables 43, 47.
+    - Action 0 object property 17.
+    - Action 2 object variables 43, 47, 48.
     - Callback 10 works for road vehicles and ships as well.
   - Add support for string code 9A 0D..9A 15.
   - Change format of some warning messages to provide more information.

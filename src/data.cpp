@@ -485,7 +485,7 @@ NDF_END
 #define REPEAT_UNTIL(data, length, ...) '*', data, length, __VA_ARGS__
 
 static const char _dat0[]={
-NDF_HEADER(0x0D, 12),
+NDF_HEADER(0x0D, 13),
 /*Maximum feature:*/ 0x11,
 // Feature 00:
 /*00*/ WORD | DATE, INVALID, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, BYTE, BYTE, BYTE | DECIMAL,
@@ -638,7 +638,7 @@ END,
 // Feature 0F:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
 /*08*/ DWORD | QUOTED, WORD, WORD, BYTE, BYTE, BYTE, DWORD | DATE, DWORD | DATE,
-/*10*/ WORD | HEX, WORD | HEX, BYTE | DECIMAL, WORD, BYTE, WORD | HEX, BYTE,
+/*10*/ WORD | HEX, WORD | HEX, BYTE | DECIMAL, WORD, BYTE, WORD | HEX, BYTE, BYTE,
 END,
 
 // Feature 10:
@@ -696,7 +696,7 @@ NDF_END
 #define LASTVAR80(var) (var == 0xFF ? 0xFF : var + 1), (var == 0xFF ? 0xF0 : 0x80)
 #define NOVAR80 LASTVAR80(0x7F)
 static const char _dat2v[]={
-NDF_HEADER(0x0D, 24),
+NDF_HEADER(0x0D, 25),
 /*Maximum feature:*/ 0x11,
 /*Maximum operator:*/ 0x16,
 // Global variables:
@@ -788,7 +788,7 @@ DWORD6x(0x60, 0xFF),
 NOVAR80,
 // Feature 0F:
 /*Related:*/ 0x08,
-VAR(0x40, 3), WORD(0x41), DWORD(0x42), BYTE(0x43), BYTE(0x44), DWORD(0x45), DWORD(0x46), BYTE(0x47),
+VAR(0x40, 3), WORD(0x41), DWORD(0x42), BYTE(0x43), BYTE(0x44), DWORD(0x45), DWORD(0x46), BYTE(0x47), BYTE(0x48),
 WORD(0x5F),
 WORD6x(0x60, 0xFF), BYTE6x(0x61, 0xFF), DWORD6x(0x62, 0xFF), WORD6x(0x63, 0xFF),
 DWORD6x(0x64, 0xFF),
