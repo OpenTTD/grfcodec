@@ -1,3 +1,7 @@
+Changes in 5.1.1 (unreleased)
+- GRFCodec specific changes:
+  - Make PNG the default output sprite sheet format if libpng is found.
+
 Changes in 5.1.0 (2010-12-10)
 - Add support for PNG formatted sprite sheets with both encoding and decoding (requires libpng).
 - NFORenum specific changes:
