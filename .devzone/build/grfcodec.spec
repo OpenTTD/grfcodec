@@ -2,7 +2,7 @@ Name:           %{dz_repo}
 Version:        5.0.0.%{dz_version}
 Release:        %{_vendor}%{?suse_version}
 Summary:        A suite of programs to develop NewGRFs
-Group:          Development/Tools
+Group:          Development/Tools/Building
 License:        GPLv2+
 URL:            http://dev.openttdcoop.org/projects/grfcodec
 Source0:        %{name}-%{dz_version}.tar
