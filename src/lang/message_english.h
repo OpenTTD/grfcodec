@@ -100,7 +100,7 @@ NFO_MESSAGE(EXTRA,"Extra %s. The %d declared by sprite %d have already been seen
 NFO_MESSAGE(UNEXPECTED,"Unexpected %s found.\n",USE_PREFIX)
 NFO_MESSAGE(FEATURE_MISMATCH,"Feature byte does not match feature byte of preceding Action %x at sprite %d.\n",USE_PREFIX)
 NFO_MESSAGE(RAND_2_NUMSETS,"Rand02s require power-of-two sets to choose from.\n",USE_PREFIX)
-  MESSAGE_UNUSED(NEITHER_SET_CALLBACK)
+NFO_MESSAGE(INDIRECT_VAR_7E,"Variable 7B is not allowed with parameter 7E.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NEITHER_ID_CALLBACK,"%4x is neither callback nor %s.\n",USE_PREFIX)
 NFO_MESSAGE(UNDEFINED_SPRITE_SET,"Sprite set %2x does not appear in the preceding Action 1 (sprite %d).\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_CARGO_TYPE,"Invalid cargo type: %2x\n",USE_PREFIX|HAS_OFFSET)
@@ -150,7 +150,7 @@ NFO_MESSAGE(UNREACHABLE_VAR,"Variation %d cannot be reached.\n",USE_PREFIX)
 NFO_MESSAGE(EXTRA_DATA,"No more data was expected. Found %d bytes, expected %d bytes.\n",USE_PREFIX)
 NFO_MESSAGE(REUSED_DEFAULT,"Default ID appears earlier in sprite.\n",USE_PREFIX)
 NFO_MESSAGE(RESERVED_GRFID,"GRFIDs with a first byte of FF are reserved.\n",USE_PREFIX)
-  MESSAGE_UNUSED(DOES_NOT_FOLLOW)
+NFO_MESSAGE(INDIRECT_VAR_NOT_6X,"Variable 7B only useful for 60+x variables.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(SHIFT_TOO_FAR,"Shifting variable %2x past its length.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NO_MODIFICATIONS,"Action 6 does not make any changes.\n",USE_PREFIX)
 NFO_MESSAGE(DOES_NOT_MODIFY,"This section does not make any changes.\n",USE_PREFIX|HAS_OFFSET)
@@ -271,6 +271,7 @@ NFO_MESSAGE(NESTED_CHOICE_LIST,"Choice lists can't be nested.\n",USE_PREFIX|HAS_
 NFO_MESSAGE(NOT_IN_CHOICE_LIST,"Choice list string code outside of choice list.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NO_DEFAULT_IN_CHOICE_LIST,"No default choice in choice list.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(CHOICE_LIST_NOT_TERMINATED,"The choice list is not terminated.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(INDIRECT_VAR_START,"The first accessed variable may not be 7B.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
