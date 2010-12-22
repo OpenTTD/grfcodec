@@ -206,6 +206,7 @@ CHANGED_FEATURE(var)
 		while(true){//read <var> [<param>] <varadjust> [<op> ...]. off reports byte to be read.
 			if(Is60x(var=data.ExtractByte(off++)))param=data.ExtractByte(off++);
 			shift=data.ExtractByte(off++);
+			if(!isadv&&var==0x7B) IssueMessage(WARNING1,INDIRECT_VAR_START,off-3);
 			Check2v::Instance().Check(effFeature,var,off-2-(Is60x(var)?1:0),param,shift&0x1F);
 			if((shift&0xC0)==0xC0){
 				IssueMessage(FATAL,INVALID_SHIFT,off-1);
