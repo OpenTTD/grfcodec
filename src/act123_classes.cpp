@@ -139,6 +139,11 @@ uint Check2v::GetEffFeature(uint feature,uint type){
 
 void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 	if(feature>MaxFeature())return;
+	uint real_var=var;
+	if(real_var==0x7B){
+		var=param;
+		if(var<0x60 || var>=0x80) IssueMessage(WARNING1,INDIRECT_VAR_NOT_6X,offs);
+	}
 	if(var&0x80){
 		if(var>_p[feature].last80) IssueMessage(ERROR,NONEXISTANT_VARIABLE,offs,var);
 		else if(!IsValid(feature, var)) IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
@@ -147,6 +152,10 @@ void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 		IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
 	else{
 		if(var==0x7E){
+			if(real_var==0x7B){
+				IssueMessage(ERROR,INDIRECT_VAR_7E,offs);
+				return;
+			}
 			act123::IDarray&IDs=act123::Instance().defined2IDs;
 			if(!IDs.is_defined(param)) IssueMessage(ERROR,UNDEFINED_ID,offs+1,param);
 			else{
@@ -154,7 +163,7 @@ void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 					IssueMessage(WARNING1,FEATURE_CALL_MISMATCH,offs+1,param,IDs.GetFeature(param));
 				IDs.use(param);
 			}
-		}else if(var>=0x60 && param>MaxParam(feature,var))
+		}else if(var>=0x60 && real_var!=0x7B && param>MaxParam(feature,var))
 			IssueMessage(WARNING1,PARAM_TOO_LARGE,offs+1,param,var);
 		if(shift>=GetWidth(feature, var)<<3)IssueMessage(WARNING1,SHIFT_TOO_FAR,offs+2,var);
 	}
