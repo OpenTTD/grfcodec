@@ -3,6 +3,7 @@ Changes in 5.1.1 (unreleased)
   - Make PNG the default output sprite sheet format if libpng is found.
 - NFORenum specific changes:
   - Add support for variable 7B.
+  - Warn if the palette is not specified via an Action 14.
 
 Changes in 5.1.0 (2010-12-10)
 - Add support for PNG formatted sprite sheets with both encoding and decoding (requires libpng).

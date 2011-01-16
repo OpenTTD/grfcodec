@@ -302,6 +302,7 @@ void check_sprite(PseudoSprite&data){
 		_grfver=data.ExtractByte(1);
 		if(_grfver<2||_grfver>7)IssueMessage(ERROR,INVALID_VERSION,GRF);
 		if(status.act14!=0&&_grfver<7)IssueMessage(ERROR,INVALID_VERSION_ACT14,_grfver);
+		if(_act14_pal==0&&_grfver>=7)IssueMessage(WARNING1,MISSING_PALETTE_INFO);
 		const uint GRFid=data.ExtractDword(2);
 		data.SetGRFID(2);
 		if((GRFid&0xFF)==0xFF&&GRFid!=0xFFFFFFFF)IssueMessage(WARNING1,RESERVED_GRFID);

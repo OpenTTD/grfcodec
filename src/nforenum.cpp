@@ -212,7 +212,7 @@ int __cdecl main(const int argc,char**argv){
 		fin.clear();
 		reset_sanity();
 		reset_commands();
-		_grfver=0;
+		_grfver=_act14_pal=0;
 		if (_interactive) IssueMessage(0,PROCESSING_FILE,basename.c_str());
 		result=process_file(fin);
 		fin.close();
