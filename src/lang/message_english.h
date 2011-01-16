@@ -272,6 +272,8 @@ NFO_MESSAGE(NOT_IN_CHOICE_LIST,"Choice list string code outside of choice list.\
 NFO_MESSAGE(NO_DEFAULT_IN_CHOICE_LIST,"No default choice in choice list.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(CHOICE_LIST_NOT_TERMINATED,"The choice list is not terminated.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INDIRECT_VAR_START,"The first accessed variable may not be 7B.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(MISSING_PALETTE_INFO,"There was no Action 14 specifying the palette.\n",USE_PREFIX)
+NFO_MESSAGE(INVALID_PALETTE_INFO,"Palette information must be 1 byte (\"D\", \"W\" or \"A\").\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 

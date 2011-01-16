@@ -46,6 +46,7 @@ extern const char*COMMENT_PREFIX; // Comment prefix string
 
 extern unsigned int _spritenum; // Current sprite number
 extern unsigned int _grfver; // GRF format version of current NFO
+extern unsigned int _act14_pal; // Palette info from action 14
 extern unsigned int _autocorrect; // Auto-correction level
 
 //TODO: add command-line arguments to set these appropriately.
