@@ -33,4 +33,4 @@ const string COMMENT="/;#";
 string datadir;
 const char*COMMENT_PREFIX="//";
 bool dosleep=true;
-unsigned int _spritenum,_grfver,_autocorrect=0;
+unsigned int _spritenum,_grfver,_autocorrect=0,_act14_pal;

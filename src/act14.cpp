@@ -31,16 +31,23 @@ using namespace std;
 #include"strings.h"
 #include"command.h"
 
-static bool Check14(PseudoSprite&data, uint&offset)
+static bool Check14(PseudoSprite&data, uint&offset, vector<uint>&idstack)
 {
+	/* Define IDs in an endian-independant manner */
+	static union {
+		char text[5];
+		uint id;
+	} ID_INFO = {"INFO"}, ID_PALS = {"PALS"};
+
 	uint type = data.ExtractByte(offset++);
 	while (type != 0) {
-		//uint id = data.ExtractDword(offset);
+		uint id = data.ExtractDword(offset);
 		offset += 4;
+		idstack.push_back(id);
 
 		switch (type) {
 			case 'C':
-				if (!Check14(data, offset)) return false;
+				if (!Check14(data, offset, idstack)) return false;
 				break;
 
 			case 'T': {
@@ -58,8 +65,16 @@ static bool Check14(PseudoSprite&data, uint&offset)
 			}
 
 			case 'B': {
+				extern uint _act14_pal;
 				uint size = data.ExtractWord(offset);
-				offset += 2 + size;
+				offset += 2;
+				if (idstack.size()==2 && idstack[0]==ID_INFO.id && idstack[1]==ID_PALS.id) {
+					uint pal=data.ExtractByte(offset);
+					if (size==1 && (pal=='D' || pal=='W' || pal=='A')) {
+						_act14_pal=pal;
+					} else IssueMessage(ERROR, INVALID_PALETTE_INFO, offset);
+				}
+				offset += size;
 				break;
 			}
 
@@ -67,6 +82,7 @@ static bool Check14(PseudoSprite&data, uint&offset)
 				IssueMessage(FATAL, UNKNOWN_ACT14_TYPE, offset, type);
 				return false;
 		}
+		idstack.pop_back();
 		type = data.ExtractByte(offset++);
 	}
 	return true;
@@ -74,6 +90,7 @@ static bool Check14(PseudoSprite&data, uint&offset)
 
 void Check14(PseudoSprite&data)
 {
+	vector<uint>idstack;
 	uint offset = 1;
-	Check14(data, offset);
+	Check14(data, offset, idstack);
 }

@@ -689,3 +689,8 @@ it is supposed to represent. Narrow or widen the escape as necessary. If
 the byte indices do not match, then check the preceding code for validity.
 If possible, add escapes so this check will trigger earlier.
 Unlike every other offset in NFORenum, these are 1-based offsets, not 0-based.
+
+219: "There was no Action 14 specifying the palette." (Warn 1)
+NFORenum encountered an Action 8 with GRF version >= 7, but did not encounter
+an Action14 specifying the palette used by the GRF.
+Add an Action14 with "INFO"->"PALS" palette information before the Action 8.
