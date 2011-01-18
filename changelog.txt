@@ -2,6 +2,8 @@ Changes in 5.1.1 (unreleased)
 - GRFCodec specific changes:
   - Make PNG the default output sprite sheet format if libpng is found.
 - NFORenum specific changes:
+  - Data file updates
+    - Action 0 rail types properties 17..19.
   - Add support for variable 7B.
   - Warn if the palette is not specified via an Action 14.
 
