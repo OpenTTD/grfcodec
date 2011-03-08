@@ -204,7 +204,13 @@ CHANGED_FEATURE(var)
 		uint oldop = 0;
 		varRange ranges(extract);
 		while(true){//read <var> [<param>] <varadjust> [<op> ...]. off reports byte to be read.
-			if(Is60x(var=data.ExtractByte(off++)))param=data.ExtractByte(off++);
+			var=data.ExtractByte(off++);
+			if(op==0xF && oldop!=0xE && oldop!=0x10 && var!=0x7B)
+				IssueMessage(WARNING1,DISCARD_UNSTORED,off-2);
+			else if(op==0x10 && !Check2v::Instance().IsValid(effFeature, 0x7C))
+				IssueMessage(ERROR,NO_PERS_REGS,off-2);
+			oldop = op;
+			if(Is60x(var))param=data.ExtractByte(off++);
 			shift=data.ExtractByte(off++);
 			if(!isadv&&var==0x7B) IssueMessage(WARNING1,INDIRECT_VAR_START,off-3);
 			Check2v::Instance().Check(effFeature,var,off-2-(Is60x(var)?1:0),param,shift&0x1F);
@@ -222,11 +228,6 @@ CHANGED_FEATURE(var)
 				IssueMessage(ERROR,INVALID_OP,off-1,op);
 			else
 				data.SetOpByte(off-1, '2');
-			if(op==0xF && oldop!=0xE && oldop!=0x10)
-				IssueMessage(WARNING1,DISCARD_UNSTORED,off-1);
-			else if(op==0x10 && !Check2v::Instance().IsValid(effFeature, 0x7C))
-				IssueMessage(ERROR,NO_PERS_REGS,off-1);
-			oldop = op;
 		}
 		uint nument2=data.ExtractByte(off);//off switches to byte-just-read.
 		if(isadv)data.SetEol(off-1,1);
