@@ -4,6 +4,7 @@ Changes in 5.1.1 (unreleased)
 - NFORenum specific changes:
   - Data file updates
     - Action 0 rail types properties 17..1A.
+    - Action 4 language ID 0x12 (Faroese)
   - Add support for variable 7B.
   - Warn if the palette is not specified via an Action 14.
 
