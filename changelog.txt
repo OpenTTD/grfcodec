@@ -1,10 +1,11 @@
-Changes in 5.1.1 (unreleased)
+Changes in 5.1.1 (2011-03-19)
 - GRFCodec specific changes:
   - Make PNG the default output sprite sheet format if libpng is found.
 - NFORenum specific changes:
   - Data file updates
     - Action 0 rail types properties 17..1A.
-    - Action 4 language ID 0x12 (Faroese)
+    - Action 4 language ID 0x12 (Faroese).
+    - Action 2 station variable 67 is dword sized.
   - Add support for variable 7B.
   - Warn if the palette is not specified via an Action 14.
 
