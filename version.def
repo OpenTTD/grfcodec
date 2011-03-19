@@ -1,5 +1,5 @@
 # Current year
-YEAR = 2010
+YEAR = 2011
 
 ifdef REVISION
 REV := $(REVISION)
