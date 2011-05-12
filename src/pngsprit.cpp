@@ -28,7 +28,7 @@ void pngwrite::filestart()
 	png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	info = png_create_info_struct(png);
 	if (!png || !info) {
-		printf("%s: Agh! Unable to initalize libpng!\n", this->filename());
+		printf("%s: Agh! Unable to initialize libpng!\n", this->filename());
 		exit (254);
 	}
 
@@ -122,7 +122,7 @@ void pngread::filestart()
 	png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	info = png_create_info_struct(png);
 	if (!png || !info) {
-		printf("%s: Agh! Unable to initalize libpng!\n", this->filename());
+		printf("%s: Agh! Unable to initialize libpng!\n", this->filename());
 		exit (254);
 	}
 
