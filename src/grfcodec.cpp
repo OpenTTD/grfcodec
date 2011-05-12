@@ -149,7 +149,7 @@ static void showcolourmaps()
 static void showimageformats()
 {
 	printf(
-		"Options for the -o paramter:\n"
+		"Options for the -o parameter:\n"
 		"\n"
 #ifdef WITH_PNG
 		"	pcx\n"
