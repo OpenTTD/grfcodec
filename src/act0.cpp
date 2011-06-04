@@ -449,7 +449,12 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 		switch(ch){
 		case'|':return true;
 		case'l':
-			if(vdata.GetData(++i)!=str.ExtractByte(str_loc++)){
+			/* Check for a specific raw data value.
+			 * As this is used to check for certain formats, we do not want stuff like warning 209,
+			 * so use LinkSafeExtractByte().
+			 * Though the correct way of doing this would be to change the behaviour of '|' to dismiss
+			 * all warnings and errors of the branch that was declined, this still works reasonable well. */
+			if(vdata.GetData(++i)!=str.LinkSafeExtractByte(str_loc++)){
 				str_loc=orig_loc;
 				findPipe=true;
 			}
