@@ -323,43 +323,70 @@ CHANGED_FEATURE(std)
 			break;
 		}case 3:{ // House/Industry tile format
 			uint ground=data.ExtractDword(4);
-			bool mismatch=false,hasGround=(ground!=0);
-			if(ground)CheckSpriteNum(ground,4,act1,feature,mismatch,hasGround);
+			uint ground_flags=0;
+			uint off=8;
+			if(nument1&0x40) {
+				ground_flags=data.ExtractWord(off);off+=2;
+				if(ground_flags&0x01)off+=1;
+				if(ground_flags&0x02)off+=1;
+				if(ground_flags&0x04)off+=1;
+				/*(flags&0x08) is valid but doesn't eat an extra byte*/
+				if(ground_flags&0xFFF0)IssueMessage(ERROR,INVALID_ACT2_FLAGS,8);
+			}
+			bool mismatch=false,hasGround=(ground!=0)||(ground_flags&0x06);
+			if(ground&&!(ground_flags&0x06))CheckSpriteNum(ground,4,act1,feature,mismatch,hasGround);
 			if(nument1){//Extended format
+				bool has_flags = nument1&0x40;
+				nument1&=0x3F;
 				data.SetEol(3,3);//EOL before ground sprite
-				data.SetEol(7,1);//EOL after ground sprite
-				uint off=7;
+				data.SetEol(off-1,1);//EOL after ground sprite
 				for(i=0;i<nument1||_autocorrect;/*increment in last statement in try block*/){
 					try{
-						uint building=data.ExtractDword(off+1),xoff=data.ExtractByte(off+5),
-							yoff=data.ExtractByte(off+6),zoff=data.ExtractByte(off+7);
-						if(!CheckSpriteNum(building,off+1,act123::Instance().act1,feature,mismatch,hasGround)&&
+						uint curoff=off;
+						uint building=data.ExtractDword(curoff);
+						curoff+=4;
+						uint flags=0;
+						if(has_flags){
+							flags=data.ExtractWord(curoff);
+							curoff+=2;
+						}
+						uint xoff=data.ExtractByte(curoff++);
+						uint yoff=data.ExtractByte(curoff++);
+						uint zoff=data.ExtractByte(curoff++);
+
+						if(!CheckSpriteNum(building,off,act123::Instance().act1,feature,mismatch,hasGround)&&
 							(_autocorrect==2||(_autocorrect&&Get2Type(act1.feature)==3))){
 							IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 							IssueMessage(0,AUTOCORRECTING,1,FEATURE,feature,act1.feature);
 							data.SetByteAt(1,feature=act1.feature);
 							goto stdChangedFeature;
 						}
-						if(!building)IssueMessage(ERROR,NO_BUILDING_SPRITE,off+1);
+						if(!building&&!(flags&0x06))IssueMessage(ERROR,NO_BUILDING_SPRITE,off);
 						if(zoff!=0x80){
-							uint x=data.ExtractByte(off+8),y=data.ExtractByte(off+9);
-							data.ExtractByte(off+10);
-							off+=3;
-							if(xoff>16)IssueMessage(WARNING3,TOO_LARGE,off+2,XOFF,16);
-							else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,off+2,XOFF_EXT,16);
-							if(yoff>16)IssueMessage(WARNING3,TOO_LARGE,off+3,YOFF,16);
-							else if(yoff+y>16)IssueMessage(WARNING3,TOO_LARGE,off+3,YOFF_EXT,16);
-							//if(zoff+z>0x87)IssueMessage(WARNING1,TOO_LARGE,off+4,ZOFF_EXT,0x87);
+							uint x=data.ExtractByte(curoff++);
+							uint y=data.ExtractByte(curoff++);
+							data.ExtractByte(curoff++);
+							if(xoff>16)IssueMessage(WARNING3,TOO_LARGE,curoff-6,XOFF,16);
+							else if(xoff+x>16)IssueMessage(WARNING3,TOO_LARGE,curoff-6,XOFF_EXT,16);
+							if(yoff>16)IssueMessage(WARNING3,TOO_LARGE,curoff-5,YOFF,16);
+							else if(yoff+y>16)IssueMessage(WARNING3,TOO_LARGE,curoff-5,YOFF_EXT,16);
 						}
-						off+=7;
-						if(++i!=nument1)data.SetEol(off,2);
-						if(i==0x7F&&_autocorrect)throw 0;
+						if(flags&0x01)curoff+=1;
+						if(flags&0x02)curoff+=1;
+						if(flags&0x04)curoff+=1;
+						/*(flags&0x08) is valid but doesn't eat an extra byte*/
+						if(flags&0x10)curoff+=2;
+						if(flags&0x20)curoff+=1;
+						if(flags&0xFFC0)IssueMessage(ERROR,INVALID_ACT2_FLAGS,8);
+						off=curoff;
+						if(++i!=nument1)data.SetEol(off-1,1);
+						if(i==0x3F&&_autocorrect)throw 0;
 					}catch(...){
 						if(_autocorrect&&i){
 							if(i!=nument1){
 								IssueMessage(0,CONSOLE_AUTOCORRECT,_spritenum);
 								IssueMessage(0,AUTOCORRECTING,3,NUMSPRITES,nument1,i);
-								data.SetByteAt(3,i);
+								data.SetByteAt(3,i|(has_flags?0x40:0));
 							}
 							break;
 						}else{
@@ -368,7 +395,7 @@ CHANGED_FEATURE(std)
 						}
 					}
 				}
-				if(++off!=length)IssueMessage(WARNING2,EXTRA_DATA,length,off);
+				if(off!=length)IssueMessage(WARNING2,EXTRA_DATA,length,off);
 				if(!hasGround)IssueMessage(WARNING2,NO_GROUNDSPRITE,NONTRANS);
 			}else{//Basic format
 				if(!ground)IssueMessage(ERROR,NO_GROUNDSPRITE,GROUND);
