@@ -33,11 +33,15 @@ using namespace std;
 
 static bool Check14(PseudoSprite&data, uint&offset, vector<uint>&idstack)
 {
-	/* Define IDs in an endian-independant manner */
-	static union {
-		char text[5];
-		uint id;
-	} ID_INFO = {"INFO"}, ID_PALS = {"PALS"};
+	/* NFORenum reads the NFO, which is a text file. As per definition the
+	 * NFO is LE ordered. If characters are interpreted as bytes they will
+	 * therefore be read in LE order. ExtractDword does interpret the
+	 * characters as bytes and construct a host endian ordered integer. 
+	 * Consequently, there is no need to swap endian for the read data; it 
+	 * will always be in the host order, or the constant below as long as
+	 * they have the expected integer value, thus reverse due to LE. */
+	static const uint ID_INFO = 0x4F464E49; // INFO in reverse order (LE)
+	static const uint ID_PALS = 0x534C4150; // PALS in reverse order (LE)
 
 	uint type = data.ExtractByte(offset++);
 	while (type != 0) {
@@ -68,7 +72,7 @@ static bool Check14(PseudoSprite&data, uint&offset, vector<uint>&idstack)
 				extern uint _act14_pal;
 				uint size = data.ExtractWord(offset);
 				offset += 2;
-				if (idstack.size()==2 && idstack[0]==ID_INFO.id && idstack[1]==ID_PALS.id) {
+				if (idstack.size()==2 && idstack[0]==ID_INFO && idstack[1]==ID_PALS) {
 					uint pal=data.ExtractByte(offset);
 					if (size==1 && (pal=='D' || pal=='W' || pal=='A')) {
 						_act14_pal=pal;
