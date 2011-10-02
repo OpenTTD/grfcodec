@@ -1,5 +1,7 @@
 Changes in 5.1.2
 - NFORenum specific changes:
+  - Data file updates
+    - Action 3 canals id 8
   - Support the advanced sprite layout in action2.
   - Fix action 14 palette checking on BE machines.
   - Disable warning 209 when checking action 0 raw ('l') data.
