@@ -164,7 +164,7 @@ static const char _datB[]="\x01\x02"
 #define OFFSET 0x88                  /* Allow replacing sprite ranges with offsets */
 #define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
 static const char _dat5[]={
-NDF_HEADER(0x04, 10),
+NDF_HEADER(0x04, 11),
 /*04*/                  OPTIONS(3), 0x30, 0x70, 0xF0,
 /*05*/                  OPTIONS(1), 0x30,
 /*06*/                  OPTIONS(2), 0x4A, 0x5A,
@@ -182,7 +182,7 @@ NDF_HEADER(0x04, 10),
 /*12*/                  OPTIONS(1), 0x08,
 /*13*/                  OPTIONS(1), 0x37,
 /*14*/ OFFSET,          OPTIONS(1), 0x24,
-/*15*/ OFFSET,          OPTIONS(1), 0xA0,
+/*15*/ OFFSET,          OPTIONS(1), 0xA2,
 /*16*/ OFFSET,          OPTIONS(1), 0x09,
 00,
 NDF_END
