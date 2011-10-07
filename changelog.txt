@@ -1,4 +1,4 @@
-Changes in 5.1.2
+Changes in 5.1.2 (2011-10-07)
 - NFORenum specific changes:
   - Data file updates
     - Action 3 canals ID 8.
