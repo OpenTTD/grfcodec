@@ -1,3 +1,14 @@
+Changes in 5.1.3 (unreleased)
+- NFORenum specific changes:
+  - Data file updates
+    - Action 0 train property 2B.
+    - Action 0 road vehicle properties 22 and 23.
+    - Action 0 ship properties 1D.
+    - Action 0 aircraft property 1C.
+    - Action 0 railtype property 1B.
+    - Action 2 vehicle variable 4B.
+    - Action D patch variable 14.
+
 Changes in 5.1.2 (2011-10-07)
 - NFORenum specific changes:
   - Data file updates
