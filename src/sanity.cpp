@@ -300,7 +300,7 @@ void check_sprite(PseudoSprite&data){
 		if(status.act8!=0&&status.act8!=(unsigned)-1)IssueMessage(ERROR,DUPLICATE_ACT,8,status.act8);
 		status.act8=_spritenum;
 		_grfver=data.ExtractByte(1);
-		if(_grfver<2||_grfver>7)IssueMessage(ERROR,INVALID_VERSION,GRF);
+		if(_grfver<2||_grfver>8)IssueMessage(ERROR,INVALID_VERSION,GRF);
 		if(status.act14!=0&&_grfver<7)IssueMessage(ERROR,INVALID_VERSION_ACT14,_grfver);
 		if(_act14_pal==0&&_grfver>=7)IssueMessage(WARNING1,MISSING_PALETTE_INFO);
 		const uint GRFid=data.ExtractDword(2);
