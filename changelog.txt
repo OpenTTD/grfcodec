@@ -6,7 +6,9 @@ Changes in 5.1.3 (unreleased)
     - Action 0 ship properties 1D.
     - Action 0 aircraft property 1C.
     - Action 0 railtype property 1B.
+    - Action 2 callback 15E.
     - Action 2 vehicle variable 4B.
+    - Action 8 GRF version 8.
     - Action D patch variable 14.
 
 Changes in 5.1.2 (2011-10-07)
@@ -15,7 +17,6 @@ Changes in 5.1.2 (2011-10-07)
     - Action 3 canals ID 8.
     - Action 5 type 15 takes 0xA2 sprites.
     - Action 5 types 84, 85, 86, 88, 89, 8A, 8B, 8F, 90, 91, 92 and 93
-    - Action 8 GRF version 8.
   - Support the advanced sprite layout in action2.
   - Fix action 14 palette checking on BE machines.
   - Disable warning 209 when checking action 0 raw ('l') data.
