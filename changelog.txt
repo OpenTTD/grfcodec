@@ -10,6 +10,7 @@ Changes in 5.1.3 (unreleased)
     - Action 2 vehicle variable 4B.
     - Action 8 GRF version 8.
     - Action D patch variable 14.
+  - Support for font size 3 (monospaced font).
 
 Changes in 5.1.2 (2011-10-07)
 - NFORenum specific changes:
