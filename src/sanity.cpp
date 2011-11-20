@@ -412,7 +412,7 @@ void check_sprite(PseudoSprite&data){
 		status.expectedsprites=0;
 		for(uint i=0;i<status.seensprites;i++){
 			uint sprites=data.ExtractByte(2+4*i);
-			if(sprites>2)IssueMessage(ERROR,INVALID_FONT,2+4*i,sprites);
+			if(sprites>3)IssueMessage(ERROR,INVALID_FONT,2+4*i,sprites);
 			sprites=data.ExtractByte(3+4*i);
 			if(!sprites)
 				IssueMessage(WARNING1,SET_WITH_NO_SPRITES,3+4*i,i);
