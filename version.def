@@ -2,15 +2,10 @@
 YEAR = 2011
 
 ifdef REVISION
-REV := $(REVISION)
+VERSIONSTR := r$(REVISION)
 else
-VERSIONS := $(shell AWK="$(AWK)" "./findversion.sh")
-REV      := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
+VERSIONS   := $(shell AWK="$(AWK)" "./findversion.sh")
+REV        := $(shell echo "$(VERSIONS)" | cut -f 2 -d'	')
+VER        := $(shell echo "$(VERSIONS)" | cut -f 1 -d'	')
+VERSIONSTR := $(shell [ `echo "$(VERSIONS)" | cut -c 1` = 'r' ] && echo "trunk $(VER)" && exit; echo "$(VER) r$(REV)")
 endif
-
-# Make sure we have something in REV
-ifeq ($(REV),)
-REV := norev000
-endif
-
-VERSIONSTR = ${REV}
