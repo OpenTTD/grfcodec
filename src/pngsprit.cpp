@@ -17,7 +17,7 @@ pngwrite::pngwrite(multifile *mfile): pcxwrite(mfile), png(NULL), info(NULL)
 }
 pngwrite::~pngwrite()
 {
-	// Make sure we clean up if grfcodec terminates prematurely 
+	// Make sure we clean up if grfcodec terminates prematurely
 	if (png)
 		png_destroy_write_struct(&png, &info);
 }
@@ -43,15 +43,15 @@ void pngwrite::filedone(int final)
 	// Do not save the png until the grf file has been processed
 	if (final && png && cache.size() > 0)
 	{
+		// Initialise libpng io
+		png_init_io(png, curfile);
+
 		// Store the final image's size
 		png_set_IHDR(png, info, sx, totaly, 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
 			PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
 		// Set the palette data
 		png_set_PLTE(png, info, (png_color*)pcxwrite::palette, 256);
-
-		// Initial libpng io
-		png_init_io(png, curfile);
 
 		// Write the the png header
 		png_write_info(png, info);
@@ -63,6 +63,9 @@ void pngwrite::filedone(int final)
 		// Write the image data
 		for (unsigned int i = 0, j = cache.size(); i < j; i += sx)
 			png_write_row(png, (png_byte*)&cache[i]);
+
+		// Finalise writing
+		png_write_end(png, info);
 
 		// Cleanup incase we are writing multiple files
 		png_destroy_write_struct(&png, &info);
