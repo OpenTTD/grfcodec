@@ -1,3 +1,9 @@
+Changes in 5.1.4 (unreleased)
+- NFORenum specific changes:
+  - Data file updates
+    - Action 0 airport property 11.
+    - Action 0 railtype property 1C.
+
 Changes in 5.1.3 (2011-12-19)
 - GRFCodec specific changes:
   - Fix creation of PNG as some versions of libpng would see the generated PNG as corrupt.
