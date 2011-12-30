@@ -16,7 +16,8 @@ Sprite Info
 
    WORD size
           Note, size can be either compressed or uncompressed size, see
-          below. It includes the following info bytes.
+          below. It includes the following info bytes unless it is a
+          special sprite (see below).
 
    BYTE info
           Bitcoded value that determines what type this sprite is.
