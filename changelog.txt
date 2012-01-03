@@ -4,6 +4,7 @@ Changes in 5.1.4 (unreleased)
     - Action 0 airport property 11.
     - Action 0 railtype property 1C.
     - Action 0 aircraft property 1F.
+    - Action 4 language ID 0x3D (Australian).
 
 Changes in 5.1.3 (2011-12-19)
 - GRFCodec specific changes:
