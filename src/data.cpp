@@ -292,52 +292,52 @@ NDF_END
 #undef GROUNDVEHICLE
 #undef VEHICLE
 
-/*	Languages
-	=========
-
-	Names of languages by ID (empty if not defined), each terminated by newline
-*/
-static const char _datlangs[]="\x00\x05"
-//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*0x*/	"American\n"	"English\n"		"German\n"		"French\n"
-/*0x*/	"Spanish\n"		"Esperanto\n"	"Ido\n"			"Russian\n"
-/*0x*/	"Irish\n"		"Maltese\n"		"Tamil\n"		"Chuvash\n"
-/*0x*/	"Chinese (Trad)\n" "Serbian\n" "Norwegian (Nynorsk)\n" "Welsh\n"
-//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*1x*/	"Belarusian\n"	"Marathi\n"		"Faroese\n"		"\n"
-/*1x*/	"Arabic (Egypt)\n" "Czech\n"	"Slovak\n"		"\n"
-/*1x*/	"Bulgarian\n"	"\n"			"\n"			"Afrikaans\n"
-/*1x*/	"\n"			"\n"			"Greek\n"		"Dutch\n"
-//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*2x*/	"\n"			"Basque\n"		"Catalan\n"		"Luxembourgish\n"
-/*2x*/	"Hungarian\n"	"\n"			"Macedonian\n"	"Italian\n"
-/*2x*/	"Romanian\n"	"Icelandic\n"	"Latvian\n"		"Lithuanian\n"
-/*2x*/	"Slovenian\n"	"Danish\n"		"Swedish\n"		"Norwegian (Bokmal)\n"
-//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*3x*/	"Polish\n"		"Galician\n"	"Frisian\n"		"Ukrainian\n"
-/*3x*/	"Estonian\n"	"Finnish\n"		"Portuguese\n"	"Brazilian Portuguese\n"
-/*3x*/	"Croatian\n"	"Japanese\n"	"Korean\n"		"\n"
-/*3x*/	"Malay\n"		"\n"			"Turkish\n"		"\n"
-//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*4x*/	"\n"			"\n"			"Thai\n"		"\n"
-/*4x*/	"\n"			"\n"			"\n"			"\n"
-/*4x*/	"\n"			"\n"			"\n"			"\n"
-/*4x*/	"\n"			"\n"			"\n"			"\n"
-//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*5x*/	"\n"			"\n"			"\n"			"\n"
-/*5x*/	"Vietnamese\n"	"\n"			"Chinese (Simp)\n" "\n"
-/*5x*/	"\n"			"\n"			"Indonesian\n"	"\n"
-/*5x*/	"Urdu\n"		"\n"			"\n"			"\n"
-//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*6x*/	"\n"			"Hebrew\n"		"Persian\n"		"\n"
-/*6x*/	"\n"			"\n"			"\n"			"\n"
-/*6x*/	"\n"			"\n"			"\n"			"\n"
-/*6x*/	"\n"			"\n"			"\n"			"\n"
-//		x0/x4/x8/xC		x1/x5/x9/xD		x2/x6/xA/xE		x3/x7/xB/xF
-/*7x*/	"\n"			"\n"			"\n"			"\n"
-/*7x*/	"\n"			"\n"			"\n"			"\n"
-/*7x*/	"\n"			"\n"			"\n"			"\n"
-/*7x*/	"\n"			"\n"			"\n"			"any\n"
+/* Languages
+ * ========
+ *
+ * Names of languages by ID (empty if not defined), each terminated by newline
+ */
+static const char _datlangs[]="\x00\x06"
+//      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
+/*0x*/  "American\n"              "English\n"               "German\n"                "French\n"
+/*0x*/  "Spanish\n"               "Esperanto\n"             "Ido\n"                   "Russian\n"
+/*0x*/  "Irish\n"                 "Maltese\n"               "Tamil\n"                 "Chuvash\n"
+/*0x*/  "Chinese (Traditional)\n" "Serbian\n"               "Norwegian (Nynorsk)\n"   "Welsh\n"
+//      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
+/*1x*/  "Belarusian\n"            "Marathi\n"               "Faroese\n"               "\n"
+/*1x*/  "Arabic (Egypt)\n"        "Czech\n"                 "Slovak\n"                "\n"
+/*1x*/  "Bulgarian\n"             "\n"                      "\n"                      "Afrikaans\n"
+/*1x*/  "\n"                      "\n"                      "Greek\n"                 "Dutch\n"
+//      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
+/*2x*/  "\n"                      "Basque\n"                "Catalan\n"               "Luxembourgish\n"
+/*2x*/  "Hungarian\n"             "\n"                      "Macedonian\n"            "Italian\n"
+/*2x*/  "Romanian\n"              "Icelandic\n"             "Latvian\n"               "Lithuanian\n"
+/*2x*/  "Slovenian\n"             "Danish\n"                "Swedish\n"               "Norwegian (Bokmal)\n"
+//      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
+/*3x*/  "Polish\n"                "Galician\n"              "Frisian\n"               "Ukrainian\n"
+/*3x*/  "Estonian\n"              "Finnish\n"               "Portuguese\n"            "Brazilian Portuguese\n"
+/*3x*/  "Croatian\n"              "Japanese\n"              "Korean\n"                "\n"
+/*3x*/  "Malay\n"                 "Australian\n"            "Turkish\n"               "\n"
+//      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
+/*4x*/  "\n"                      "\n"                      "Thai\n"                  "\n"
+/*4x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*4x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*4x*/  "\n"                      "\n"                      "\n"                      "\n"
+//      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
+/*5x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*5x*/  "Vietnamese\n"            "\n"                      "Chinese (Simplified)\n"  "\n"
+/*5x*/  "\n"                      "\n"                      "Indonesian\n"            "\n"
+/*5x*/  "Urdu\n"                  "\n"                      "\n"                      "\n"
+//      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
+/*6x*/  "\n"                      "Hebrew\n"                "Persian\n"               "\n"
+/*6x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*6x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*6x*/  "\n"                      "\n"                      "\n"                      "\n"
+//      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
+/*7x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*7x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*7x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*7x*/  "\n"                      "\n"                      "\n"                      "any\n"
 ;
 
 /*	Version check data
