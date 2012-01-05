@@ -468,7 +468,7 @@ NDF_END
  * May be specified alone, or combined with any of the BYTE/EXTBYTE/WORD/DWORD datas */
 #define LINEBREAK 0xC0
 
-/* Is replaced by the data following after the next END. Mulitple SUBDATA are resolved in a LIFO style. */
+/* Is replaced by the data following after the next END. Mulitple SUBDATA are resolved in a depth-first style. */
 #define SUBDATA 0xFE
 
 /* Raw byte to appear in the nfo */
