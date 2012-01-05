@@ -2,7 +2,7 @@ Changes in 5.1.4 (unreleased)
 - NFORenum specific changes:
   - Data file updates
     - Action 0 airport property 11.
-    - Action 0 railtype property 1C.
+    - Action 0 railtype properties 1C and 1D.
     - Action 0 aircraft property 1F.
     - Action 4 language ID 0x3D (Australian).
 
