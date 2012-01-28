@@ -719,7 +719,7 @@ NDF_END
 #define LASTVAR80(var) (var == 0xFF ? 0xFF : var + 1), (var == 0xFF ? 0xF0 : 0x80)
 #define NOVAR80 LASTVAR80(0x7F)
 static const char _dat2v[]={
-NDF_HEADER(0x0D, 25),
+NDF_HEADER(0x0D, 26),
 /*Maximum feature:*/ 0x11,
 /*Maximum operator:*/ 0x16,
 // Global variables:
@@ -818,7 +818,7 @@ DWORD6x(0x64, 0xFF),
 NOVAR80,
 // Feature 10:
 /*Related:*/ 0x10,
-BYTE(0x40), BYTE(0x41), BYTE(0x42), DWORD(0x43),
+BYTE(0x40), BYTE(0x41), BYTE(0x42), DWORD(0x43), BYTE(0x44),
 WORD(0x5F),
 NOVAR80,
 // Feature 11:
