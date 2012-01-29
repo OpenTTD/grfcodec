@@ -337,8 +337,6 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 	long totaluncomp = 1, totalcomp = 1;
 	long totaltransp = 1, totaluntransp = 1;
 	long totalreg = 1, totalunreg = 1;
-	int spriteno = 0;
-
 
 	for(int i=0;i<info.size();i++){
 		//int comp1 = totalcomp / totaluncomp;
@@ -353,7 +351,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 		if (_interactive) {
 			printf("\rSprite%5d  Done:%3d%%  "
 				"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
-				spriteno, (int) (i*100L/info.size()),
+				i, (int) (i*100L/info.size()),
 				comp2, comp4, comp6);
 		}
 
@@ -404,7 +402,6 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 			totalcomp += spritesize;
 			totaluncomp += spritesize;
-			spriteno++;
 
 			U16 le_spritesize = BE_SWAP16(spritesize);
 			cfwrite(action, &le_spritesize, 1, 2, grf);
@@ -431,13 +428,12 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			U16 size=sprite.size();
 			totalcomp += size;
 			totaluncomp += size;
-			spriteno++;
 
 			U16 le_size = BE_SWAP16(size);
 			cfwrite(action, &le_size, 1, 2, grf);
 			fputc(0xff, grf);
 			cfwrite(action, sprite.GetData(),1,size,grf);
-			if(spriteno == 1 && sprite.size() == 4){
+			if(i == 0 && sprite.size() == 4){
 				int reported = *((S32*)sprite.GetData());
 				reported = BE_SWAP32(reported) + 1;
 				if(reported != info.size() && !_quiet)
@@ -519,14 +515,14 @@ foundlast:
 
 			U16 compsize;
 			if (HASTRANSPARENCY(info.inf.info)) {
-				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, spriteno);
+				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, i);
 				totaltransp += getlasttilesize();	// how much after transparency removed
 				totaluntransp += info.imgsize;		// how much with transparency
 
 				totalreg += compsize;			// how much after transp&redund removed
 				totalunreg += getlasttilesize();	// how much with redund
 			} else {
-				compsize = encoderegular(grf, image, info.imgsize, info.inf, compress);
+				compsize = encoderegular(grf, image, info.imgsize, info.inf, compress, i);
 				totaltransp += info.imgsize;
 				totaluntransp += info.imgsize;
 
@@ -536,7 +532,6 @@ foundlast:
 
 			totalcomp += compsize;
 			totaluncomp += info.imgsize;
-			spriteno++;
 			free(image);
 		}
 			break;
