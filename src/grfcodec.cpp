@@ -403,8 +403,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			totalcomp += spritesize;
 			totaluncomp += spritesize;
 
-			U16 le_spritesize = BE_SWAP16(spritesize);
-			cfwrite(action, &le_spritesize, 1, 2, grf);
+			writespritesize(action, spritesize, grf);
 			fputc(0xff, grf);
 			fputc(0xff, grf);
 			fputc(namelen, grf);
@@ -429,8 +428,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			totalcomp += size;
 			totaluncomp += size;
 
-			U16 le_size = BE_SWAP16(size);
-			cfwrite(action, &le_size, 1, 2, grf);
+			writespritesize(action, size, grf);
 			fputc(0xff, grf);
 			cfwrite(action, sprite.GetData(),1,size,grf);
 			if(i == 0 && sprite.size() == 4){
