@@ -78,4 +78,8 @@ void writespritesize(const char *action, unsigned int spritesize, FILE *grf);
 void writeword(const char *action, unsigned int value, FILE *grf);
 void writedword(const char *action, unsigned int value, FILE *grf);
 
+unsigned int readspritesize(const char *action, FILE *grf);
+U16 readword(const char *action, FILE *grf);
+U32 readdword(const char *action, FILE *grf);
+
 #endif /* _SPRITES_H */
