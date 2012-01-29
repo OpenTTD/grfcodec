@@ -659,10 +659,9 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 		}
 	}
 
-	U16 le_size = size;
-	le_size = BE_SWAP16(le_size);
-	cfwrite("writing sprite", &le_size, 1, 2, grf);
-	cfwrite("writing sprite", compr, 1, realcompsize + 8, grf);
+	static const char *action = "writing real sprite";
+	writespritesize(action, size, grf);
+	cfwrite(action, compr, 1, realcompsize + 8, grf);
 
 	free(compr);
 	free(uncomp);
@@ -670,3 +669,19 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 	return realcompsize;
 }
 
+void writespritesize(const char *action, unsigned int spritesize, FILE *grf)
+{
+	writeword(action, spritesize, grf);
+}
+
+void writeword(const char *action, unsigned int value, FILE *grf)
+{
+	U16 le_value = BE_SWAP16(value);
+	cfwrite(action, &le_value, 1, 2, grf);
+}
+
+void writedword(const char *action, unsigned int value, FILE *grf)
+{
+	U32 le_value = BE_SWAP32(value);
+	cfwrite(action, &le_value, 1, 4, grf);
+}
