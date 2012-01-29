@@ -146,14 +146,33 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 	return datasize;
 }
 
-/** Do an (big) endian swap if needed. */
-void SpriteInfo::be_swap()
+void SpriteInfo::writetobuffer(U8 *buffer)
 {
-#ifdef GRFCODEC_BIG_ENDIAN
-	this->xdim = BE_SWAP16(this->xdim);
-	this->xrel = BE_SWAP16(this->xrel);
-	this->yrel = BE_SWAP16(this->yrel);
-#endif
+	int i = 0;
+	buffer[i++] = this->info;
+	buffer[i++] = this->ydim;
+	buffer[i++] = this->xdim & 0xFF;
+	buffer[i++] = this->xdim >> 8;
+	buffer[i++] = this->xrel & 0xFF;
+	buffer[i++] = this->xrel >> 8;
+	buffer[i++] = this->yrel & 0xFF;
+	buffer[i++] = this->yrel >> 8;
+}
+
+void SpriteInfo::readfromfile(const char *action, FILE *grf)
+{
+	char buffer[8];
+	cfread(action, &buffer, 1, sizeof(buffer), grf);
+
+	int i = 0;
+	this->info = buffer[i++];
+	this->ydim = buffer[i++];
+	this->xdim = buffer[i] | (buffer[i + 1] << 8);
+	i += 2;
+	this->xrel = buffer[i] | (buffer[i + 1] << 8);
+	i += 2;
+	this->yrel = buffer[i] | (buffer[i + 1] << 8);
+	i += 2;
 }
 
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
@@ -194,8 +213,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 	}
 
 	fseek(grf, startpos, SEEK_SET);
-	cfread(action, &info, 1, sizeof(info), grf);
-	info.be_swap();
+	info.readfromfile(action, grf);
 
 	sx = info.xdim;
 	sy = info.ydim;
@@ -594,11 +612,10 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 		exit(2);
 	}
 
-	inf.be_swap();
 	long result;
 	U16 realcompsize = 0;
 	while (1) {
-		memcpy(compr, &inf, 8);
+		inf.writetobuffer(compr);
 		if (docompress)
 			result = realcompress(image, imgsize, compr+8, compsize-8, &realcompsize);
 		else
