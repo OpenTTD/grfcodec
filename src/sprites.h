@@ -73,5 +73,8 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);
 U16 getlasttilesize();
 U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, SpriteInfo inf, int docompress, int spriteno);
 U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno);
+void writespritesize(const char *action, unsigned int spritesize, FILE *grf);
+void writeword(const char *action, unsigned int value, FILE *grf);
+void writedword(const char *action, unsigned int value, FILE *grf);
 
 #endif /* _SPRITES_H */
