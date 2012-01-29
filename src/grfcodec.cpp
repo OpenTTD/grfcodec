@@ -643,8 +643,8 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 			printf("Sprite %d at %lX, %3d%% done\r", count, ftell(grf), lastpct);
 		}
 
+		result = decodesprite(grf, pcx, &writer, count);
 		count++;
-		result = decodesprite(grf, pcx, &writer);
 	} while (result);
 	count--;
 

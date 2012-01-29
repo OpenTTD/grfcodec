@@ -69,7 +69,7 @@ class spritestorage {
 
 extern int maxx, maxy, maxs;
 
-int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer);
+int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno);
 
 U16 getlasttilesize();
 U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, SpriteInfo inf, int docompress, int spriteno);
