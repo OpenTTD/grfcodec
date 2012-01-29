@@ -44,7 +44,8 @@ struct SpriteInfo {
 	S16 xrel; ///< Horizontal offset
 	S16 yrel; ///< Vertical offset
 
-	void be_swap();
+	void writetobuffer(U8 *buffer);
+	void readfromfile(const char *action, FILE *grf);
 };
 
 class spriteinfowriter : public bandnotify {
