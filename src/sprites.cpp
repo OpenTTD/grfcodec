@@ -494,8 +494,8 @@ U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, 
 	while (1) {	// repeat in case we didn't allocate enough memory
 		U8 *tile = (U8*) malloc(tilesize);
 		if (!tile) {
-			printf("\nError: can't allocate %ld bytes for tile memory\n",
-				tilesize);
+			printf("\nError: can't allocate %ld bytes for tile memory of sprite %d\n",
+				tilesize, spriteno);
 			exit(2);
 		}
 
@@ -575,13 +575,13 @@ U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, 
 
 		lasttilesize = tileofs;
 
-		int result = encoderegular(grf, tile, tileofs, inf, docompress);
+		int result = encoderegular(grf, tile, tileofs, inf, docompress, spriteno);
 		free(tile);
 		return result;
 	}
 }
 
-U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress)
+U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno)
 {
 	long compsize = imgsize + 24 + 8, uncompsize = compsize + 8;
 	unsigned int size;
@@ -589,8 +589,8 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 	U8 *compr = (U8*) malloc(compsize);
 	U8 *uncomp = (U8*) malloc(uncompsize);
 	if (!compr || !uncomp) {
-		printf("\nError: can't allocate %ld bytes for compressed buffer\n",
-			compsize + uncompsize);
+		printf("\nError: can't allocate %ld bytes for compressed buffer while encoding sprite %d\n",
+			compsize + uncompsize, spriteno);
 		exit(2);
 	}
 
@@ -619,13 +619,13 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 					uncompsize = -result;
 					uncomp = (U8*) realloc(uncomp, uncompsize);
 					if (!uncomp) {
-						printf("\nError increasing sprite buffer size\n");
+						printf("\nError increasing sprite buffer size for sprite %d\n", spriteno);
 						exit(2);
 					}
 				}
 				// and verifying
 				if ((result-imgsize-8) || memcmp(uncomp+8, image, imgsize)) {
-					printf("\nError: invalid compression, ");
+					printf("\nError: invalid compression of sprite %d, ", spriteno);
 					if (result-imgsize-8)
 						printf("length diff %ld, ", result-imgsize-8);
 					else {
@@ -649,12 +649,12 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 			compsize = -result;
 			compr = (U8*) realloc(compr, compsize);
 			if (!compr) {
-				printf("\nError: can't allocate %ld bytes for compressed buffer\n",
-					compsize);
+				printf("\nError: can't allocate %ld bytes for compressed buffer of sprite %d\n",
+					compsize, spriteno);
 				exit(2);
 			}
 		} else {
-			printf("\nError: unknown error while compressing\n");
+			printf("\nError: unknown error while compressing sprite %d\n", spriteno);
 			exit(2);
 		}
 	}
