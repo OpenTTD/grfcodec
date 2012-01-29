@@ -161,25 +161,17 @@ void SpriteInfo::writetobuffer(U8 *buffer)
 
 void SpriteInfo::readfromfile(const char *action, FILE *grf)
 {
-	char buffer[8];
-	cfread(action, &buffer, 1, sizeof(buffer), grf);
-
-	int i = 0;
-	this->info = buffer[i++];
-	this->ydim = buffer[i++];
-	this->xdim = buffer[i] | (buffer[i + 1] << 8);
-	i += 2;
-	this->xrel = buffer[i] | (buffer[i + 1] << 8);
-	i += 2;
-	this->yrel = buffer[i] | (buffer[i + 1] << 8);
-	i += 2;
+	this->info = fgetc(grf);
+	this->ydim = fgetc(grf);
+	this->xdim = readword(action, grf);
+	this->xrel = readword(action, grf);
+	this->yrel = readword(action, grf);
 }
 
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 {
 	static const char *action = "decoding sprite";
 	unsigned long size, datasize, inbufsize, outbufsize, startpos;
-	U16 wsize;
 	SpriteInfo info;
 	U8 *inbuffer, *outbuffer;
 	int sx, sy;
@@ -191,12 +183,8 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 
 	store->newsprite();
 
-	cfread(action, &wsize, 2, 1, grf);
-	wsize = BE_SWAP16(wsize);
-	size = wsize;
-
-	if (!size)
-		return 0;
+	size = readspritesize(action, grf);
+	if (size == 0) return 0;
 
 	startpos = ftell(grf);
 	U8 inf;
@@ -701,4 +689,23 @@ void writedword(const char *action, unsigned int value, FILE *grf)
 {
 	U32 le_value = BE_SWAP32(value);
 	cfwrite(action, &le_value, 1, 4, grf);
+}
+
+unsigned int readspritesize(const char *action, FILE *grf)
+{
+	return readword(action, grf);
+}
+
+U16 readword(const char *action, FILE *grf)
+{
+	U16 le_value;
+	cfread(action, &le_value, 1, 2, grf);
+	return BE_SWAP16(le_value);
+}
+
+U32 writedword(const char *action, FILE *grf)
+{
+	U32 le_value;
+	cfread(action, &le_value, 1, 4, grf);
+	return BE_SWAP32(le_value);
 }
