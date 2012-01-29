@@ -74,7 +74,7 @@ static int decoderegular(const U8 *buffer, int sx, int sy, spritestorage *store)
 	return 1;
 }
 
-static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* out, unsigned long outsize)
+static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* out, unsigned long outsize, int spriteno)
 {
 	unsigned long inused, datasize, compsize, *testsize;
 
@@ -106,7 +106,7 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 			unsigned long offset = ( (code & 7) << 8) | ofs;
 
 			if (datasize < offset) {
-				printf("\nOffset too large!\n");
+				printf("\nOffset too large in sprite %d!\n", spriteno);
 				exit(2);
 			}
 
@@ -138,7 +138,7 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 	}
 
 	if (inused > *insize) {
-		printf("\nNot enough input data for decompression\n");
+		printf("\nNot enough input data for decompression of sprite %d\n", spriteno);
 		exit(2);
 	}
 
@@ -168,7 +168,7 @@ void SpriteInfo::readfromfile(const char *action, FILE *grf)
 	this->yrel = readword(action, grf);
 }
 
-int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
+int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno)
 {
 	static const char *action = "decoding sprite";
 	unsigned long size, datasize, inbufsize, outbufsize, startpos;
@@ -224,7 +224,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 	inbuffer = (U8*) malloc(inbufsize);
 	outbuffer = (U8*) malloc(outbufsize);
 	if (!inbuffer || !outbuffer) {
-		printf("\nError allocating sprite buffer, want %ld\n", inbufsize + outbufsize);
+		printf("\nError allocating sprite buffer, want %ld for sprite %d\n", inbufsize + outbufsize, spriteno);
 		exit(2);
 	}
 
@@ -233,15 +233,15 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer)
 		fseek(grf, startpos, SEEK_SET);
 		inbufsize = fread(inbuffer, 1, inbufsize, grf);
 		if (inbufsize == 0) {
-			printf("\nError reading sprite\n");
+			printf("\nError reading sprite %d\n", spriteno);
 			exit(2);
 		}
-		result = uncompress(size, inbuffer, &inbufsize, outbuffer, outbufsize);
+		result = uncompress(size, inbuffer, &inbufsize, outbuffer, outbufsize, spriteno);
 		if (result < 0) {
 			outbufsize = -result;
 			outbuffer = (U8*) realloc(outbuffer, outbufsize);
 			if (!outbuffer) {
-				printf("\nError increasing sprite buffer size\n");
+				printf("\nError increasing sprite buffer size for sprite %d\n", spriteno);
 				exit(2);
 			}
 		}
@@ -619,7 +619,7 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 
 				// check that the compression is correct, by uncompressing again
 				unsigned long insize = realcompsize + 8;
-				result = uncompress(size, compr, &insize, uncomp, uncompsize);
+				result = uncompress(size, compr, &insize, uncomp, uncompsize, spriteno);
 				if (result < 0) {
 					uncompsize = -result;
 					uncomp = (U8*) realloc(uncomp, uncompsize);
@@ -703,7 +703,7 @@ U16 readword(const char *action, FILE *grf)
 	return BE_SWAP16(le_value);
 }
 
-U32 writedword(const char *action, FILE *grf)
+U32 readdword(const char *action, FILE *grf)
 {
 	U32 le_value;
 	cfread(action, &le_value, 1, 4, grf);
