@@ -44,8 +44,9 @@ struct SpriteInfo {
 	S16 xrel; ///< Horizontal offset
 	S16 yrel; ///< Vertical offset
 
-	void writetobuffer(U8 *buffer);
-	void readfromfile(const char *action, FILE *grf);
+	void writetobuffer(U8 *buffer, int grfcontversion);
+	void readfromfile(const char *action, int grfcontversion, FILE *grf);
+	static int Size(int grfcontversion) { return 8; }
 };
 
 class spriteinfowriter : public bandnotify {
@@ -69,16 +70,16 @@ class spritestorage {
 
 extern int maxx, maxy, maxs;
 
-int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno);
+int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno, int grfcontversion);
 
 U16 getlasttilesize();
-U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, SpriteInfo inf, int docompress, int spriteno);
-U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno);
-void writespritesize(const char *action, unsigned int spritesize, FILE *grf);
+U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, int grfcontversion);
+U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno, int grfcontversion);
+void writespritesize(const char *action, unsigned int spritesize, int grfcontversion, FILE *grf);
 void writeword(const char *action, unsigned int value, FILE *grf);
 void writedword(const char *action, unsigned int value, FILE *grf);
 
-unsigned int readspritesize(const char *action, FILE *grf);
+unsigned int readspritesize(const char *action, int grfcontversion, FILE *grf);
 U16 readword(const char *action, FILE *grf);
 U32 readdword(const char *action, FILE *grf);
 
