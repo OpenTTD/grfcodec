@@ -317,7 +317,7 @@ FILE *spritefiles::nextfile()
 int _crop=0;
 int _quiet=0;
 
-static int encode(const char *file, const char *dir, int compress, int *colourmap)
+static int encode(const char *file, const char *dir, int compress, int *colourmap, int grfcontversion)
 {
 	char *grfnew, *infofile;
 	FILE *grf;
@@ -403,7 +403,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			totalcomp += spritesize;
 			totaluncomp += spritesize;
 
-			writespritesize(action, spritesize, grf);
+			writespritesize(action, spritesize, grfcontversion, grf);
 			fputc(0xff, grf);
 			fputc(0xff, grf);
 			fputc(namelen, grf);
@@ -428,7 +428,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			totalcomp += size;
 			totaluncomp += size;
 
-			writespritesize(action, size, grf);
+			writespritesize(action, size, grfcontversion, grf);
 			fputc(0xff, grf);
 			cfwrite(action, sprite.GetData(),1,size,grf);
 			if(i == 0 && sprite.size() == 4){
@@ -513,14 +513,14 @@ foundlast:
 
 			U16 compsize;
 			if (HASTRANSPARENCY(info.inf.info)) {
-				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, i);
+				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, i, grfcontversion);
 				totaltransp += getlasttilesize();	// how much after transparency removed
 				totaluntransp += info.imgsize;		// how much with transparency
 
 				totalreg += compsize;			// how much after transp&redund removed
 				totalunreg += getlasttilesize();	// how much with redund
 			} else {
-				compsize = encoderegular(grf, image, info.imgsize, info.inf, compress, i);
+				compsize = encoderegular(grf, image, info.imgsize, info.inf, compress, i, grfcontversion);
 				totaltransp += info.imgsize;
 				totaluntransp += info.imgsize;
 
@@ -643,7 +643,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 			printf("Sprite %d at %lX, %3d%% done\r", count, ftell(grf), lastpct);
 		}
 
-		result = decodesprite(grf, pcx, &writer, count);
+		result = decodesprite(grf, pcx, &writer, count, 1);
 		count++;
 	} while (result);
 	count--;
@@ -907,7 +907,7 @@ int main(int argc, char **argv)
 		usage();
 
 	if (action == 1) {
-		return encode(grffile, directory, compress, colourmap);
+		return encode(grffile, directory, compress, colourmap, 1);
 	} else if (action == 2) {
 		if (!palette)
 			palette = findpal(grffile);
