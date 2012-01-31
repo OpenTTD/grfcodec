@@ -21,6 +21,9 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <string>
+
+using namespace std;
 
 #include "pcxfile.h"
 #include "typesize.h"
@@ -43,6 +46,10 @@ struct SpriteInfo {
 	U16 xdim; ///< Number of columns in the sprite.
 	S16 xrel; ///< Horizontal offset
 	S16 yrel; ///< Vertical offset
+
+	string name;
+	int xpos,ypos,imgsize;
+	bool forcereopen;
 
 	void writetobuffer(U8 *buffer, int grfcontversion);
 	void readfromfile(const char *action, int grfcontversion, FILE *grf);
