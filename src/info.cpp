@@ -184,11 +184,11 @@ infowriter::infowriter(FILE *info, int maxboxes, int useplaintext)
 
 	infowriter::useplaintext = useplaintext;
 	infowriter::maxboxes = maxboxes;
-	boxes = new box[maxboxes];
+	boxes = new Box*[maxboxes];
 	boxnum = 0;
 	spriteno = 0;
 	for (int i=0; i<maxboxes; i++)
-		boxes[i].type = isinvalid;
+		boxes[i] = NULL;
 }
 
 infowriter::~infowriter()
@@ -203,9 +203,9 @@ void infowriter::newband(pcxfile *pcx)
 
 	for (i=0; i<boxnum; i++) {
 		fprintf(info, "%5d ", spriteno++);
-		switch (boxes[i].type) {
-		case issprite: {
-			box::foo::boxsprite *s = &(boxes[i].h.sprite);
+		switch (boxes[i]->type) {
+		case Box::issprite: {
+			BoxSprite *s = (BoxSprite*)boxes[i];
 
 			fprintf(info, infoline, pcx->filename(), s->x,
 				pcx->subimagey(),
@@ -215,8 +215,8 @@ void infowriter::newband(pcxfile *pcx)
 			fputs("\n", info);
 			break;  }
 
-		case isdata:	{
-			box::foo::boxdata *d = &(boxes[i].h.data);
+		case Box::isdata:	{
+			BoxData *d = (BoxData*)boxes[i];
 			int instr = 0;
 			int count = 0;
 
@@ -315,20 +315,22 @@ void infowriter::newband(pcxfile *pcx)
 
 	boxnum = 0;
 
-	for (i=0; i<maxboxes; i++)
-		boxes[i].type = isinvalid;
+	for (i=0; i<maxboxes; i++) {
+		delete boxes[i];
+		boxes[i] = NULL;
+	}
 }
 
 void infowriter::resize(int newmaxboxes)
 {
 	printf("Reallocating memory for %d boxes\n", newmaxboxes);
 	infowriter::maxboxes = newmaxboxes;
-	box *newboxes = new box[newmaxboxes];
+	Box **newboxes = new Box*[newmaxboxes];
 	int i;
 	for (i=0; i<maxboxes; i++)
 		newboxes[i] = boxes[i];
 	for (; i<newmaxboxes; i++)
-		newboxes[i].type = isinvalid;
+		newboxes[i] = NULL;
 	delete[](boxes);
 	boxes = newboxes;
 }
@@ -338,11 +340,7 @@ void infowriter::addsprite(int x, SpriteInfo info)
 	if (boxnum >= maxboxes)
 		resize(maxboxes*2);
 
-	boxes[boxnum].type = issprite;
-	boxes[boxnum].h.sprite.x = x;
-	boxes[boxnum].h.sprite.info = info;
-
-	boxnum++;
+	boxes[boxnum++] = new BoxSprite(x, info);
 }
 
 void infowriter::adddata(U16 size, U8 *data)
@@ -350,11 +348,7 @@ void infowriter::adddata(U16 size, U8 *data)
 	if (boxnum >= maxboxes)
 		resize(maxboxes*2);
 
-	boxes[boxnum].type = isdata;
-	boxes[boxnum].h.data.size = size;
-	boxes[boxnum].h.data.data = data;
-
-	boxnum++;
+	boxes[boxnum++] = new BoxData(size, data);
 }
 
 void infowriter::done(int count)

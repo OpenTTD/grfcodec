@@ -139,15 +139,15 @@ Real::Real(size_t sprite,int infover,const string&data){
 			throw Sprite::unparseable("Could not find filename",sprite);
 		if(isspace(data[loc+4]))break;
 	}
-	if((name=data.substr(0,loc+4))!=prevname){
+	if((inf.name=data.substr(0,loc+4))!=prevname){
 		prevy=0;
-		prevname=name;
+		prevname=inf.name;
 	}
 	const char*meta=data.c_str()+loc+5;
 	if(infover<3){
 		unsigned int intinf[8];
 		if(sscanf(data.c_str(), "%d %d %x %x %x %x %x %x %x %x",
-			&xpos, &ypos,
+			&inf.xpos, &inf.ypos,
 			&(intinf[0]), &(intinf[1]), &(intinf[2]), &(intinf[3]),
 			&(intinf[4]), &(intinf[5]), &(intinf[6]), &(intinf[7]))!=10)
 			throw Sprite::unparseable("Insufficient meta-data",sprite);
@@ -162,7 +162,7 @@ Real::Real(size_t sprite,int infover,const string&data){
 		inf.yrel = S16(intinf[6] | intinf[7] >> 8);
 	}else{
 		int sx,sy,rx,ry,comp;
-		if(sscanf(meta,"%d %d %2x %d %d %d %d",&xpos,&ypos,&comp,&sy,&sx,&rx,&ry)!=7){
+		if(sscanf(meta,"%d %d %2x %d %d %d %d",&inf.xpos,&inf.ypos,&comp,&sy,&sx,&rx,&ry)!=7){
 			throw Sprite::unparseable("Insufficient meta-data",sprite);
 		}
 		if(sx<1)throw Sprite::unparseable("xsize is too small",sprite);
@@ -180,11 +180,11 @@ Real::Real(size_t sprite,int infover,const string&data){
 		inf.yrel = S16(ry);
 	}
 	if (infover < 4)
-		ypos++;	// bug, had an extra line at the top
-	if(xpos<0)throw Sprite::unparseable("xpos is too small",sprite);
-	if(ypos<0)throw Sprite::unparseable("ypos is too small",sprite);
-	forcereopen=(ypos<prevy);
-	prevy=ypos;
+		inf.ypos++;	// bug, had an extra line at the top
+	if(inf.xpos<0)throw Sprite::unparseable("xpos is too small",sprite);
+	if(inf.ypos<0)throw Sprite::unparseable("ypos is too small",sprite);
+	inf.forcereopen=(inf.ypos<prevy);
+	prevy=inf.ypos;
 }
 
 string Real::prevname;

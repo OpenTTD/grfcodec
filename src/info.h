@@ -36,6 +36,24 @@ private:
 	pcxread* MakeReader()const;
 };
 
+struct Box {
+	enum boxtype {issprite, isdata};
+	Box(boxtype type) : type(type) {}
+	boxtype type;
+};
+
+struct BoxData : Box {
+	BoxData(U16 size, U8 *data) : Box(isdata), size(size), data(data) {}
+	U16 size;
+	U8 *data;
+};
+
+struct BoxSprite : Box {
+	BoxSprite(int x, SpriteInfo info) : Box(issprite), x(x), info(info) {}
+	int x;
+	SpriteInfo info;
+};
+
 class infowriter :  public spriteinfowriter {
 	public:
 	infowriter(FILE *info, int maxboxes, int useplaintext);
@@ -51,23 +69,8 @@ class infowriter :  public spriteinfowriter {
 	FILE *info;
 
 	void resize(int newmaxboxes);
+	Box **boxes;
 
-	enum boxtype {isinvalid, issprite, isdata};
-
-	struct box {
-		boxtype type;
-		union foo {
-			struct boxsprite {
-				int x;
-				SpriteInfo info;
-			} sprite;
-
-			struct boxdata {
-				U16 size;
-				U8 *data;
-			} data;
-		} h;
-	} *boxes;
 	int spriteno, maxboxes, boxnum;
 	int useplaintext;
 };
