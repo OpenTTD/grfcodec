@@ -49,11 +49,6 @@ class Real:public Sprite{
 public:
 	Real(size_t,int,const string&);
 	Sprite::SpriteType GetType()const{return ST_REAL;}
-	int size()const{return inf.imgsize;}
-	const char*GetName()const{return inf.name.c_str();}
-	int x()const{return inf.xpos;}
-	int y()const{return inf.ypos;}
-	bool reopen()const{return inf.forcereopen;}
 	SpriteInfo inf;
 private:
 	ostream&output(ostream&)const;

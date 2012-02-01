@@ -94,17 +94,18 @@ inforeader::~inforeader()
 	delete imgfile;
 }
 
-void inforeader::PrepareReal(const Real&sprite){
-	if ( sprite.reopen() || !imgfile || !imgname || (stricmp(sprite.GetName(), imgname) != 0) ) {
+void inforeader::PrepareReal(const SpriteInfo&info){
+	inf=info;
+	if ( inf.forcereopen || !imgfile || !imgname || (stricmp(inf.name.c_str(), imgname) != 0) ) {
 		// new file
 
 		delete imgfile;
 
+		imgname = inf.name.c_str();
 		if (_interactive) {
-			printf("Loading %s\n", sprite.GetName());
+			printf("Loading %s\n", imgname);
 		}
 
-		imgname = sprite.GetName();
 		imgfile = MakeReader();
 		if (!imgfile) {
 			printf("\nError: can't open %s\n", imgname);
@@ -117,12 +118,10 @@ void inforeader::PrepareReal(const Real&sprite){
 		imgfile->startimage(0, 0, 0, 0, NULL);
 	}
 
-	inf = sprite.inf;
-
 	sx = inf.xdim;
 	sy = inf.ydim;
 
-	imgfile->startsubimage(sprite.x(), sprite.y(), sx, sy);
+	imgfile->startsubimage(inf.xpos, inf.ypos, sx, sy);
 
 	imgsize = (long) sx * (long) sy;
 }
