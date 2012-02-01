@@ -444,7 +444,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 			break;
 		case Sprite::ST_REAL:{	// real sprite, encode it
 			const Real&sprite=(Real&)info[i];
-			info.PrepareReal(sprite.inf);
+			info.PrepareReal(sprite.infs[0]);
 			U8 *image = (U8*) malloc(info.imgsize);
 			if (!image) {
 				fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
