@@ -24,6 +24,7 @@
 #define _NFOSPRITE_H
 
 #include <istream>
+#include <vector>
 
 #include"typesize.h"
 #include"sprites.h"
@@ -47,9 +48,9 @@ public:
 
 class Real:public Sprite{
 public:
-	Real(size_t,int,const string&);
+	void AddSprite(size_t,int,const string&);
 	Sprite::SpriteType GetType()const{return ST_REAL;}
-	SpriteInfo inf;
+	vector<SpriteInfo> infs;
 private:
 	ostream&output(ostream&)const;
 	static string prevname;
