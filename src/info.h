@@ -22,7 +22,7 @@ class inforeader {
 	long imgsize;
 	int sx, sy;
 	SpriteInfo inf;
-	void PrepareReal(const Real&);
+	void PrepareReal(const SpriteInfo&info);
 	int getsprite(U8 *sprite);
 
 	pcxread *imgfile;
