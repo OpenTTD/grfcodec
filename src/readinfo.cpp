@@ -111,7 +111,8 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 				}else{
 					flush_buffer();
 					checkspriteno();
-					sprites.push_back(Real(sprites.size(),infover,datapart));
+					sprites.push_back(Real());
+					((Real*)sprites.last())->AddSprite(sprites.size(),infover,datapart);
 				}
 			}
 		}
@@ -126,7 +127,7 @@ Sprite::unparseable::unparseable(string reason,size_t sprite){
 	this->reason="Error: "+reason+".\n\tWhile reading sprite:"+itoa((int)sprite)+'\n';
 }
 
-Real::Real(size_t sprite,int infover,const string&data){
+void Real::AddSprite(size_t sprite,int infover,const string&data){
 	string::size_type loc=NPOS;
 	string udata=UCase(data);
 	while(true){
@@ -139,6 +140,7 @@ Real::Real(size_t sprite,int infover,const string&data){
 			throw Sprite::unparseable("Could not find filename",sprite);
 		if(isspace(data[loc+4]))break;
 	}
+	SpriteInfo inf;
 	if((inf.name=data.substr(0,loc+4))!=prevname){
 		prevy=0;
 		prevname=inf.name;
@@ -185,6 +187,8 @@ Real::Real(size_t sprite,int infover,const string&data){
 	if(inf.ypos<0)throw Sprite::unparseable("ypos is too small",sprite);
 	inf.forcereopen=(inf.ypos<prevy);
 	prevy=inf.ypos;
+
+	infs.push_back(inf);
 }
 
 string Real::prevname;
