@@ -471,6 +471,63 @@ int process_file(istream&in){
 	}
 }
 
+/**
+ * Extract a decimal integer from the beginning of a string.
+ * This can involve parsing a RPN expression.
+ * @param[in,out] input         Input to extract integer from. The extracted data is removed from this string.
+ * @param[out]    token         Extracted integer
+ * @param[in,out] processed     Processed data. The extracte data is appended to this string.
+ * @param[in,out] anyprocessing Is set to true, if the data added to \a processed differs from the date removed
+ *                              from \a input. E.g. because of parsing an RPN expression.
+ * @return true on error
+ */
+static bool extract_int(string&input,int&token,string&processed,bool&anyprocessing)
+{
+	const char *start = input.c_str();
+	const char *pos = start;
+	while (isspace(*pos)) pos++;
+	const char *end = NULL;
+	token = strtol(pos, const_cast<char**>(&end), 10);
+	if (pos == end) {
+		if(RPNOFF()||*pos!='(') return true;
+		size_t offs = pos - start;
+		token = DoCalc(input,offs);
+		if(offs==NPOS) return true;
+		anyprocessing = true;
+		input.erase(0, offs);
+		processed.append(mysprintf(" %d", token));
+	} else {
+		size_t count = end - start;
+		processed.append(input, 0, count);
+		input.erase(0, count);
+	}
+	return false;
+}
+
+/**
+ * Extract a hexadecimal integer from the beginning of a string.
+ * This can involve parsing a RPN expression.
+ * @param[in,out] input         Input to extract integer from. The extracted data is removed from this string.
+ * @param[out]    token         Extracted integer
+ * @param[in,out] processed     Processed data. The extracte data is appended to this string.
+ * @param[in,out] anyprocessing Is set to true, if the data added to \a processed differs from the date removed
+ *                              from \a input. E.g. because of parsing an RPN expression.
+ * @return true on error
+ */
+static bool extract_hex(string&input,int&token,string&processed,bool&anyprocessing)
+{
+	const char *start = input.c_str();
+	const char *pos = start;
+	while (isspace(*pos)) pos++;
+	const char *end = NULL;
+	token = strtol(pos, const_cast<char**>(&end), 16);
+	if (pos == end) return true;
+	size_t count = end - start;
+	processed.append(input, 0, count);
+	input.erase(0, count);
+	return false;
+}
+
 bool verify_real(string&data){
 	string::size_type loc=NPOS;
 	string udata=UCase(data);
@@ -487,40 +544,21 @@ bool verify_real(string&data){
 		if(isspace(data[loc+4]))break;
 	}
 	string name=data.substr(0,loc+4);
-	int var_list[7]={0,0,1,1,1,0,0},
-		&xpos=var_list[0],
-		&ypos=var_list[1],
-		&comp=var_list[2],
-		&ysize=var_list[3],
-		&xsize=var_list[4],
-		&xrel=var_list[5],
-		&yrel=var_list[6];
-	const char*const var_names[7]={"xpos","ypos","comp","ysize","xsize","xrel","yrel"};
+	int xpos, ypos, comp, ysize, xsize, xrel, yrel;
 	string meta=data.substr(loc+5);
-	string::size_type offs=NPOS;
-	uchar state=0; // bitmask of calculated variables
-	int var;
-	while((var=sscanf(meta.c_str(),"%d %d %2x %d %d %d %d",&xpos,&ypos,&comp,&ysize,&xsize,&xrel,&yrel))!=7){
-		if(RPNOFF()||
-			//Calculation on comp, already tried to calculate this datum, or no more parens->broken sprite
-			var==2||state&(1<<var)||(offs=meta.find('('))==NPOS||
-			//If OK so far, calculate and store datum. If calc fails, offs == NPOS; sprite is broken
-			(var_list[var]=DoCalc(meta,offs),offs==NPOS)){
-			if(COMMENTON()||RPNON()||(RPNOFF()&&meta.find('(')==NPOS))IssueMessage(0,REAL_MISSING_DATA,var_names[var]);
-			return COMMENTOFF();
-		}
-		state|=1<<var;//Mark calculation
-		const char* rest(meta.c_str()+offs);
-		switch(var) {
-		case 0: meta=mysprintf("%d%t",xpos,rest); break;
-		case 1: meta=mysprintf("%d %d%t",xpos,ypos,rest); break;
-		case 3: meta=mysprintf("%d %d %2x %d%t",xpos,ypos,comp,ysize,rest); break;
-		case 4: meta=mysprintf("%d %d %2x %d %d%t",xpos,ypos,comp,ysize,xsize,rest); break;
-		case 5: meta=mysprintf("%d %d %2x %d %d %d%t",xpos,ypos,comp,ysize,xsize,xrel,rest); break;
-		default: meta=mysprintf("%d %d %2x %d %d %d %d%t",xpos,ypos,comp,ysize,xsize,xrel,yrel,rest); break;
-		}
-	}
-	if(state)data=data.substr(0,loc+5)+meta;
+	string processed;
+	bool anyprocessing = false;
+
+	if (extract_int(meta,xpos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xpos");  return COMMENTOFF(); }
+	if (extract_int(meta,ypos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ypos");  return COMMENTOFF(); }
+	if (extract_hex(meta,comp, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"comp");  return COMMENTOFF(); }
+	if (extract_int(meta,ysize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ysize"); return COMMENTOFF(); }
+	if (extract_int(meta,xsize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xsize"); return COMMENTOFF(); }
+	if (extract_int(meta,xrel, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xrel");  return COMMENTOFF(); }
+	if (extract_int(meta,yrel, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"yrel");  return COMMENTOFF(); }
+
+	if (anyprocessing) data=data.substr(0,loc+5)+processed+meta;
+
 	if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
 	if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YPOS,0);
 	if(!(comp&1)||(comp&0x4B)!=comp)IssueMessage(comp==0xFF?ERROR:WARNING1,REAL_BAD_COMP,comp);
