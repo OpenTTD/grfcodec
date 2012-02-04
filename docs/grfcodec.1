@@ -1,6 +1,6 @@
 .\"                                      Hey, EMACS: -*- nroff -*-
 .\" Please adjust this date whenever revising the manpage.
-.Dd October 23, 2010
+.Dd February 3, 2012
 .Dt GRFCodec 1
 .Sh NAME
 .Nm GRFCodec
@@ -26,14 +26,14 @@ Encode a GRF file. The
 .Ar GRF\(hyfile
 to pass is the file where to encode to. The source of the GRF\(hyfile, i.e. the .nfo, will be looked for in
 .Pa sprites/GRF\(hyfile.nfo .
-All PCX files will be searched for relative from the location of the GRF\(hyfile.
+All graphics files will be searched for relative from the location of the GRF\(hyfile.
 .It Fl d
 Decode a GRF file. The
 .Ar GRF\(hyfile
 to pass is the file to decode. The result will be in
 .Pa sprites/GRF\(hyfile.nfo
 and
-.Pa sprites/GRF\(hyfile.pcx .
+.Pa sprites/GRF\(hyfile.png .
 .It Fl s
 Silences the progress output in interactive mode
 .It Fl v
@@ -66,7 +66,7 @@ Disable production of both quoted and unquoted escape sequences.
 This has the side effect of producing a version 6 .nfo, instead
 of a version 7 .nfo.
 .It Fl X
-List sprite numbers in the PCX file in hex.
+List sprite numbers in the image file in hex.
 .El
 .Pp
 Options for encoding:
@@ -77,6 +77,10 @@ Crop extraneous transparent blue from real sprites
 Save uncompressed data (probably not a good idea)
 .It Fl q
 Suppress warning messages
+.It Fl g Ar num
+Create a GRF file with the given container version. Valid versions are
+1 and 2, where the latter allows bigger sprites, larger sounds, and
+multiple zoom levels and bit depths for the sprites.
 .El
 .Pp
 Options for both encoding and decoding:

@@ -25,7 +25,7 @@
 
 using namespace std;
 
-#define ZOOM_LEVELS (1)
+#define ZOOM_LEVELS (6)
 extern const char *zoom_levels[ZOOM_LEVELS];
 
 #include "pcxfile.h"
@@ -57,12 +57,12 @@ struct SpriteInfo {
 
 	void writetobuffer(U8 *buffer, int grfcontversion);
 	void readfromfile(const char *action, int grfcontversion, FILE *grf);
-	static int Size(int grfcontversion) { return 8; }
+	static int Size(int grfcontversion) { return grfcontversion == 2 ? 10 : 8; }
 };
 
 class spriteinfowriter : public bandnotify {
 	public:
-	virtual void addsprite(bool /*first*/, int /*x*/, SpriteInfo /*info*/) { };
+	virtual void addsprite(bool /* first */, int /*x*/, SpriteInfo /*info*/) { };
 	virtual void adddata(U16 /*size*/, U8 * /*data*/) { };
 };
 
@@ -81,7 +81,7 @@ class spritestorage {
 
 extern int maxx, maxy, maxs;
 
-int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno, int grfcontversion);
+int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno, U32 *dataoffset, int grfcontversion);
 
 U16 getlasttilesize();
 U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, int grfcontversion);

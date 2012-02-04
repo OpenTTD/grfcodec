@@ -89,6 +89,7 @@ static void usage(void)
 		"    -u        Save uncompressed data (probably not a good idea)\n"
 		"    -q        Suppress warning messages\n"
 		"    -s        Suppress progress output\n"
+		"    -g <num>  Version of the encoded container format (default 1, maximum 2)\n"
 		"\n"
 		"Options for both encoding and decoding:\n"
 		"    -m <num>  Apply colour translation to all sprites except character-glyphs.\n"
@@ -317,6 +318,12 @@ FILE *spritefiles::nextfile()
 int _crop=0;
 int _quiet=0;
 
+static const char header[] = {
+	'\x00', '\x00',                 // End-of-file marker for old OTTDp versions
+	'G',    'R',    'F',    '\x82', // Container version 2
+	'\x0D', '\x0A', '\x1A', '\x0A', // Detect garbled transmission
+};
+
 static int encode(const char *file, const char *dir, int compress, int *colourmap, int grfcontversion)
 {
 	char *grfnew, *infofile;
@@ -338,211 +345,251 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 	long totaltransp = 1, totaluntransp = 1;
 	long totalreg = 1, totalunreg = 1;
 
-	for(int i=0;i<info.size();i++){
-		//int comp1 = totalcomp / totaluncomp;
-		int comp2 = (100L * totalcomp / totaluncomp);// % 100;
+	if (grfcontversion == 2) {
+		cfwrite("writing header", header, sizeof(header), 1, grf);
+		int size = 1 + 4; // The size of the zoom + end of data
+		for(int i = 0; i < info.size(); i++) {
+			switch(info[i].GetType()){
+			case Sprite::ST_INCLUDE:
+			case Sprite::ST_REAL:
+				size += 4 + 1 + 4; // Size + type + ID
+				break;
 
-		//int comp3 = totaltransp / totaluntransp;
-		int comp4 = (100L * totaltransp / totaluntransp);// % 100;
-
-		//int comp5 = totalreg / totalunreg;
-		int comp6 = (100L * totalreg / totalunreg);// % 100;
-
-		if (_interactive) {
-			printf("\rSprite%5d  Done:%3d%%  "
-				"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
-				i, (int) (i*100L/info.size()),
-				comp2, comp4, comp6);
-		}
-
-		switch(info[i].GetType()){
-		case Sprite::ST_INCLUDE:{
-			static const char *action = "copying binary blob";
-			const char *bininclude=((const Include&)info[i]).GetName();
-			FILE *bin = fopen(bininclude, "rb");
-			if (!bin) {
-				fperror("%s:%i: Error: Cannot include %s: Could not open.\n", file, i, bininclude);
-				exit(2);
-			}
-
-			struct stat stat_buf;
-			if ( fstat(fileno(bin), &stat_buf) ) {
-				fperror("%s:%i: Error: Could not stat %s.\n", file, i, bininclude);
-				exit(2);
-			}
-			if ( stat_buf.st_mode & S_IFDIR ) {
-				fprintf(stderr, "%s:%i: Error: Cannot include %s: Is a directory.\n", file, i, bininclude);
-				exit(2);
-			}
-			off_t fsize = stat_buf.st_size;
-
-			const char *nameofs = bininclude + strlen(bininclude);
-			while (nameofs > bininclude) {
-				nameofs--;
-				if (nameofs[0] == '\\' || nameofs[0] == '/') {
-					nameofs++;
-					break;
-				}
-			}
-			int namelen = strlen(nameofs);
-			if (namelen > 255) {
-				fprintf(stderr, "%s:%i: Error: binary include has too long filename %s\n", file, i, nameofs);
-				exit(2);
-			}
-
-			int spritesize = 3 + namelen + fsize;
-			if (spritesize < 5) {
-				fprintf(stderr, "%s:%i: Error: binary include %s is empty\n", file, i, nameofs);
-				exit(2);
-			}
-			if (spritesize > 65535) {
-				fprintf(stderr, "%s:%i: Error: binary include %s is too large\n", file, i, nameofs);
-				exit(2);
-			}
-
-			totalcomp += spritesize;
-			totaluncomp += spritesize;
-
-			writespritesize(action, spritesize, grfcontversion, grf);
-			fputc(0xff, grf);
-			fputc(0xff, grf);
-			fputc(namelen, grf);
-			cfwrite(action, nameofs, namelen+1, 1, grf);
-
-			char *buffer = new char[16384];
-			while (fsize > 0) {
-				int chunk = 16384;
-				if (chunk > fsize) chunk=fsize;
-				cfread(action, buffer, chunk, 1, bin);
-				cfwrite(action, buffer, chunk, 1, grf);
-				fsize -= chunk;
-			}
-			delete[]buffer;
-			fclose(bin);
-		}
-			break;
-		case Sprite::ST_PSEUDO:{
-			static const char *action = "writing pseudo sprite";
-			const Pseudo&sprite=(const Pseudo&)info[i];
-			U16 size=sprite.size();
-			totalcomp += size;
-			totaluncomp += size;
-
-			writespritesize(action, size, grfcontversion, grf);
-			fputc(0xff, grf);
-			cfwrite(action, sprite.GetData(),1,size,grf);
-			if(i == 0 && sprite.size() == 4){
-				int reported = *((S32*)sprite.GetData());
-				reported = BE_SWAP32(reported) + 1;
-				if(reported != info.size() && !_quiet)
-					fprintf(stderr, "%s:1: Warning: Found %d %s sprites than sprite 0 reports.\n",
-					file,
-					abs(info.size() - reported),
-					info.size()>reported?"more":"fewer");
+			case Sprite::ST_PSEUDO:
+				size += 4 + 1 + ((const Pseudo&)info[i]).size();
+				break;
 			}
 		}
-			break;
-		case Sprite::ST_REAL:{	// real sprite, encode it
-			const Real&sprite=(Real&)info[i];
-			info.PrepareReal(sprite.infs[0]);
-			U8 *image = (U8*) malloc(info.imgsize);
-			if (!image) {
-				fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
-				exit(2);
-			}
-
-			info.getsprite(image);
-
-			int k=0;
-			for (int j=info.imgsize-1; j >= 0; j--)
-				if (image[j] == 0xFF) k++;
-
-			if (k && !_quiet)
-				fprintf(stderr, "%s:%d: Warning: %d of %ld pixels (%ld%%) are pure white\n",
-					file, i, k, info.imgsize, k*100/info.imgsize);
-
-			if(_crop && !DONOTCROP(info.inf.info)){
-				int i=0,j=0;
-				for(i=info.imgsize-1;i>=0;i--)if(image[i])break; // Find last non-blue pixel
-				if(i<0)// We've got an all-blue sprite
-					info.sx=info.sy=info.imgsize=1;
-				else{
-					i=info.imgsize-(i+info.sx-i%info.sx/*begining of next line*/);
-					info.sy-=i/info.sx;
-
-					for(i=0;i<info.imgsize;i++){
-						if(image[i])
-							break; // Find first non-blue pixel
-					}
-					i-=i%info.sx;// Move to beginning of line
-
-					info.sy-=i/info.sx;
-					info.inf.yrel+=i/info.sx;
-					if(i)memmove(image,image+i,info.imgsize-i);
-					for(i=0;i<info.sx;i++){
-						for(j=0;j<info.sy;j++){
-							if(image[i+j*info.sx])goto foundfirst;
-						}
-					}
-foundfirst:
-					if(i){
-						for(j=0;j<info.sy;j++)
-							memmove(image+j*(info.sx-i),image+j*info.sx+i,info.sx-i);
-						info.inf.xrel+=i;
-						info.sx-=i;
-					}
-
-					for(i=info.sx-1;i>=0;i--){
-						for(j=0;j<info.sy;j++){
-							if(image[i+j*info.sx])goto foundlast;
-						}
-					}
-foundlast:
-					i=info.sx-i-1;
-					if(i){
-						for(j=1;j<info.sy;j++)
-							memmove(image+j*(info.sx-i),image+j*info.sx,info.sx-i);
-						info.sx-=i;
-					}
-
-				}
-				info.inf.xdim = info.sx;
-				info.inf.ydim = info.sy;
-				info.imgsize = info.sx * info.sy;
-			}
-
-			U16 compsize;
-			if (HASTRANSPARENCY(info.inf.info)) {
-				compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, i, grfcontversion);
-				totaltransp += getlasttilesize();	// how much after transparency removed
-				totaluntransp += info.imgsize;		// how much with transparency
-
-				totalreg += compsize;			// how much after transp&redund removed
-				totalunreg += getlasttilesize();	// how much with redund
-			} else {
-				compsize = encoderegular(grf, image, info.imgsize, info.inf, compress, i, grfcontversion);
-				totaltransp += info.imgsize;
-				totaluntransp += info.imgsize;
-
-				totalreg += compsize;
-				totalunreg += info.imgsize;
-			}
-
-			totalcomp += compsize;
-			totaluncomp += info.imgsize;
-			free(image);
-		}
-			break;
-		default:
-			fprintf(stderr, "%s:%d: Error: What type of sprite is that?", file, i);
-			exit(2);
-		}
+		writedword("writing header", size, grf);
+		fputc(0x00, grf); // Compression
 	}
 
-	U16 endoffile = 0;
-	U32 checksum = 0;
-	cfwrite("writing end-of-file", &endoffile, 1, 2, grf);
-	cfwrite("writing checksum", &checksum, 1, 4, grf);
+	for (int pass = 1; pass <= grfcontversion; pass++) {
+		for(int i=0;i<info.size();i++){
+			if (_interactive && pass != grfcontversion) {
+				int comp2 = (100L * totalcomp / totaluncomp);// % 100;
+				int comp4 = (100L * totaltransp / totaluntransp);// % 100;
+				int comp6 = (100L * totalreg / totalunreg);// % 100;
+				printf("\rSprite%5d  Done:%3d%%  "
+					"Compressed:%3d%% (Transparency:%3d%%, Redundancy:%3d%%)\r",
+					i, (int) (i*100L/info.size()),
+					comp2, comp4, comp6);
+			}
+
+			switch(info[i].GetType()){
+			case Sprite::ST_INCLUDE:{
+				static const char *action = "copying binary blob";
+				if (pass != grfcontversion) {
+					writespritesize(action, 4, grfcontversion, grf);
+					fputc(0xfd, grf);
+					writedword(action, i, grf);
+					break;
+				}
+
+				const char *bininclude=((const Include&)info[i]).GetName();
+				FILE *bin = fopen(bininclude, "rb");
+				if (!bin) {
+					fperror("%s:%i: Error: Cannot include %s: Could not open.\n", file, i, bininclude);
+					exit(2);
+				}
+
+				struct stat stat_buf;
+				if ( fstat(fileno(bin), &stat_buf) ) {
+					fperror("%s:%i: Error: Could not stat %s.\n", file, i, bininclude);
+					exit(2);
+				}
+				if ( stat_buf.st_mode & S_IFDIR ) {
+					fprintf(stderr, "%s:%i: Error: Cannot include %s: Is a directory.\n", file, i, bininclude);
+					exit(2);
+				}
+				off_t fsize = stat_buf.st_size;
+
+				const char *nameofs = bininclude + strlen(bininclude);
+				while (nameofs > bininclude) {
+					nameofs--;
+					if (nameofs[0] == '\\' || nameofs[0] == '/') {
+						nameofs++;
+						break;
+					}
+				}
+				int namelen = strlen(nameofs);
+				if (namelen > 255) {
+					fprintf(stderr, "%s:%i: Error: binary include has too long filename %s\n", file, i, nameofs);
+					exit(2);
+				}
+
+				int spritesize = 3 + namelen + fsize;
+				if (spritesize < 5) {
+					fprintf(stderr, "%s:%i: Error: binary include %s is empty\n", file, i, nameofs);
+					exit(2);
+				}
+				if (grfcontversion > 1) spritesize++; // We need the first 0xFF to be accounted for as well.
+				/* GRF container version only allowed 64K, the rest prevents underflows. */
+				if ((grfcontversion == 1 && spritesize > 65535) || spritesize < fsize || spritesize < 0) {
+					fprintf(stderr, "%s:%i: Error: binary include %s is too large\n", file, i, nameofs);
+					exit(2);
+				}
+
+				totalcomp += spritesize;
+				totaluncomp += spritesize;
+
+				if (grfcontversion == 2) writedword(action, i, grf);
+				writespritesize(action, spritesize, grfcontversion, grf);
+				fputc(0xff, grf);
+				fputc(0xff, grf);
+				fputc(namelen, grf);
+				cfwrite(action, nameofs, namelen+1, 1, grf);
+
+				char *buffer = new char[16384];
+				while (fsize > 0) {
+					int chunk = 16384;
+					if (chunk > fsize) chunk=fsize;
+					cfread(action, buffer, chunk, 1, bin);
+					cfwrite(action, buffer, chunk, 1, grf);
+					fsize -= chunk;
+				}
+				delete[]buffer;
+				fclose(bin);
+			}
+				break;
+			case Sprite::ST_PSEUDO:{
+				if (pass != 1) {
+					break;
+				}
+
+				static const char *action = "writing pseudo sprite";
+				const Pseudo&sprite=(const Pseudo&)info[i];
+				U16 size=sprite.size();
+				totalcomp += size;
+				totaluncomp += size;
+
+				writespritesize(action, size, grfcontversion, grf);
+				fputc(0xff, grf);
+				cfwrite(action, sprite.GetData(),1,size,grf);
+				if(i == 0 && sprite.size() == 4){
+					int reported = *((S32*)sprite.GetData());
+					reported = BE_SWAP32(reported) + 1;
+					if(reported != info.size() && !_quiet)
+						fprintf(stderr, "%s:1: Warning: Found %d %s sprites than sprite 0 reports.\n",
+						file,
+						abs(info.size() - reported),
+						info.size()>reported?"more":"fewer");
+				}
+			}
+				break;
+			case Sprite::ST_REAL:{	// real sprite, encode it
+				static const char *action = "writing real sprite";
+
+				const Real&sprite=(Real&)info[i];
+				for (size_t j = 0; j < (grfcontversion == 1 ? 1 : sprite.infs.size()); j++) {
+					if (pass != grfcontversion) {
+						writespritesize(action, 4, grfcontversion, grf);
+						fputc(0xfd, grf);
+						writedword(action, i, grf);
+						break;
+					}
+
+					info.PrepareReal(sprite.infs[j]);
+					U8 *image = (U8*) malloc(info.imgsize);
+					if (!image) {
+						fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
+						exit(2);
+					}
+
+					info.getsprite(image);
+
+					int k=0;
+					for (int j=info.imgsize-1; j >= 0; j--)
+						if (image[j] == 0xFF) k++;
+
+					if (k && !_quiet)
+						fprintf(stderr, "%s:%d: Warning: %d of %ld pixels (%ld%%) are pure white\n",
+							file, i, k, info.imgsize, k*100/info.imgsize);
+
+					if(_crop && !DONOTCROP(info.inf.info)){
+						int i=0,j=0;
+						for(i=info.imgsize-1;i>=0;i--)if(image[i])break; // Find last non-blue pixel
+						if(i<0)// We've got an all-blue sprite
+							info.sx=info.sy=info.imgsize=1;
+						else{
+							i=info.imgsize-(i+info.sx-i%info.sx/*begining of next line*/);
+							info.sy-=i/info.sx;
+
+							for(i=0;i<info.imgsize;i++){
+								if(image[i])
+									break; // Find first non-blue pixel
+							}
+							i-=i%info.sx;// Move to beginning of line
+
+							info.sy-=i/info.sx;
+							info.inf.yrel+=i/info.sx;
+							if(i)memmove(image,image+i,info.imgsize-i);
+							for(i=0;i<info.sx;i++){
+								for(j=0;j<info.sy;j++){
+									if(image[i+j*info.sx])goto foundfirst;
+								}
+							}
+foundfirst:
+							if(i){
+								for(j=0;j<info.sy;j++)
+									memmove(image+j*(info.sx-i),image+j*info.sx+i,info.sx-i);
+								info.inf.xrel+=i;
+								info.sx-=i;
+							}
+
+							for(i=info.sx-1;i>=0;i--){
+								for(j=0;j<info.sy;j++){
+									if(image[i+j*info.sx])goto foundlast;
+								}
+							}
+foundlast:
+							i=info.sx-i-1;
+							if(i){
+								for(j=1;j<info.sy;j++)
+									memmove(image+j*(info.sx-i),image+j*info.sx,info.sx-i);
+								info.sx-=i;
+							}
+
+						}
+						info.inf.xdim = info.sx;
+						info.inf.ydim = info.sy;
+						info.imgsize = info.sx * info.sy;
+					}
+
+					U16 compsize;
+					if (HASTRANSPARENCY(info.inf.info)) {
+						compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, i, grfcontversion);
+						totaltransp += getlasttilesize();	// how much after transparency removed
+						totaluntransp += info.imgsize;		// how much with transparency
+
+						totalreg += compsize;			// how much after transp&redund removed
+						totalunreg += getlasttilesize();	// how much with redund
+					} else {
+						compsize = encoderegular(grf, image, info.imgsize, info.inf, compress, i, grfcontversion);
+						totaltransp += info.imgsize;
+						totaluntransp += info.imgsize;
+
+						totalreg += compsize;
+						totalunreg += info.imgsize;
+					}
+
+					totalcomp += compsize;
+					totaluncomp += info.imgsize;
+					free(image);
+				}
+			}
+				break;
+			default:
+				fprintf(stderr, "%s:%d: Error: What type of sprite is that?", file, i);
+				exit(2);
+			}
+		}
+
+		writespritesize("writing end-of-file", 0, grfcontversion, grf);
+		if (grfcontversion == 1) {
+			writedword("writing checksum", 0, grf);
+		}
+	}
 
 	fclose(grf);
 
@@ -591,6 +638,20 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	fseek(grf, 0, SEEK_END);
 	fsize = ftell(grf);
 	fseek(grf, 0, SEEK_SET);
+
+	static const char *action = "reading header";
+	U8 buffer[sizeof(header)];
+	cfread(action, buffer, 1, sizeof(buffer), grf);
+	int grfcontversion = memcmp(buffer, header, sizeof(header)) == 0 ? 2 : 1;
+
+	U32 dataoffset = 0;
+	if (grfcontversion == 1) {
+		fseek(grf, 0, SEEK_SET);
+	} else {
+		dataoffset = sizeof(header) + 4 + readdword(action, grf); // GRF data offset
+		fgetc(grf); // Compression
+	}
+	printf("Found grf container version %d\n", grfcontversion);
 
 	// We do the 'file' and 'writer' seperate to make
 	//   this a little bit less messy
@@ -643,7 +704,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 			printf("Sprite %d at %lX, %3d%% done\r", count, ftell(grf), lastpct);
 		}
 
-		result = decodesprite(grf, pcx, &writer, count, 1);
+		result = decodesprite(grf, pcx, &writer, count, &dataoffset, grfcontversion);
 		count++;
 	} while (result);
 	count--;
@@ -791,6 +852,7 @@ int main(int argc, char **argv)
 	U8 *palette = NULL;
 	int *colourmap = NULL;
 	int useplaintext = 1;
+	int grfcontversion = 1;
 
 	_interactive = (isatty(fileno(stdout)) != 0);
 
@@ -802,7 +864,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:o:tfxqcsX");
+		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:o:tfxqcsXg:");
 
 		if (opt == (char) EOF)
 			break;
@@ -840,6 +902,10 @@ int main(int argc, char **argv)
 				break;
 		case 'c':
 			_crop++;
+			break;
+		case 'g':
+			grfcontversion = atoi(optarg);
+			if (grfcontversion < 1 || grfcontversion > 2) usage();
 			break;
 		case 'm':
 		case 'M':
@@ -907,7 +973,7 @@ int main(int argc, char **argv)
 		usage();
 
 	if (action == 1) {
-		return encode(grffile, directory, compress, colourmap, 1);
+		return encode(grffile, directory, compress, colourmap, grfcontversion);
 	} else if (action == 2) {
 		if (!palette)
 			palette = findpal(grffile);

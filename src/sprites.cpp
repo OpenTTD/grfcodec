@@ -82,7 +82,7 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 	memcpy(out, in, infobytes);
 
 	testsize = &datasize;
-	if (SIZEISCOMPRESSED(in[0]))	// size is the compressed size
+	if (grfcontversion == 2 || SIZEISCOMPRESSED(in[0]))	// size is the compressed size
 		testsize = &compsize;
 
 	compsize = infobytes;		// initially we only have the info data
@@ -150,8 +150,16 @@ static long uncompress(unsigned long size, U8* in, unsigned long *insize, U8* ou
 void SpriteInfo::writetobuffer(U8 *buffer, int grfcontversion)
 {
 	int i = 0;
-	buffer[i++] = this->info;
-	buffer[i++] = this->ydim;
+	if (grfcontversion == 2) {
+		/* Copy bits 3 and 6 of the nfo and make it, for now, an 8bpp normal GRF. */
+		buffer[i++] = 0x04 | (this->info & (1 << 3 | 1 << 6));
+		buffer[i++] = this->zoom;
+		buffer[i++] = this->ydim & 0xFF;
+		buffer[i++] = this->ydim >> 8;
+	} else {
+		buffer[i++] = this->info;
+		buffer[i++] = this->ydim;
+	}
 	buffer[i++] = this->xdim & 0xFF;
 	buffer[i++] = this->xdim >> 8;
 	buffer[i++] = this->xrel & 0xFF;
@@ -162,17 +170,26 @@ void SpriteInfo::writetobuffer(U8 *buffer, int grfcontversion)
 
 void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf)
 {
-	this->info = fgetc(grf);
-	this->ydim = fgetc(grf);
+	int i = 0;
+	if (grfcontversion == 2) {
+		/* According to the documentation bit 0 must always be set, and bits 3 and 6 are the same as in the nfo. */
+		this->info = (1 << 0) | (fgetc(grf) & (1 << 3 | 1 << 6));
+		this->zoom = fgetc(grf);
+		this->ydim = readword(action, grf);
+		i += 2;
+	} else {
+		this->info = fgetc(grf);
+		this->ydim = fgetc(grf);
+	}
 	this->xdim = readword(action, grf);
 	this->xrel = readword(action, grf);
 	this->yrel = readword(action, grf);
 }
 
-int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno, int grfcontversion)
+int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno, U32 *dataoffset, int grfcontversion)
 {
 	static const char *action = "decoding sprite";
-	unsigned long size, datasize, inbufsize, outbufsize, startpos;
+	unsigned long size, datasize, inbufsize, outbufsize, startpos, returnpos = 0;
 	SpriteInfo info;
 	U8 *inbuffer, *outbuffer;
 	int sx, sy;
@@ -190,86 +207,133 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 	startpos = ftell(grf);
 	U8 inf;
 	cfread(action, &inf, 1, 1, grf);
+	U32 id = 0;
 
-	if (inf == 0xff) {
-		store->setsize(1, 0);
-		outbuffer = (U8*) malloc(size);
-		//outbuffer[0] = 0xff;
-		cfread(action, outbuffer, 1, size, grf);
-		writer->adddata(size, outbuffer/*+1*/);
-		store->spritedone();
-		return 1;
-	}
+	if (grfcontversion == 2 && inf == 0xfd) {
+		// Jump to the data offset
+		id = readdword(action, grf);
+		returnpos = ftell(grf);
 
-	fseek(grf, startpos, SEEK_SET);
-	info.readfromfile(action, grfcontversion, grf);
-
-	sx = info.xdim;
-	sy = info.ydim;
-	outbufsize = 0L + sx * sy + SpriteInfo::Size(grfcontversion);
-	store->setsize(sx, sy);
-
-	if (SIZEISCOMPRESSED(info.info)) {	// compressed size stated
-		inbufsize = size;
-		// assume uncompressed is max. twice the compressed
-		outbufsize <<= 1;
-	} else {
-		// assume compressed is max 12% larger than uncompressed (overhead etc.)
-		inbufsize = size + (size >> 3);
-	}
-
-	if (HASTRANSPARENCY(info.info)) {
-		outbufsize += 0L + info.ydim * 4;
-	}
-
-	inbuffer = (U8*) malloc(inbufsize);
-	outbuffer = (U8*) malloc(outbufsize);
-	if (!inbuffer || !outbuffer) {
-		printf("\nError allocating sprite buffer, want %ld for sprite %d\n", inbufsize + outbufsize, spriteno);
-		exit(2);
+		fseek(grf, *dataoffset, SEEK_SET);
 	}
 
 	long result;
-	do {
-		fseek(grf, startpos, SEEK_SET);
-		inbufsize = fread(inbuffer, 1, inbufsize, grf);
-		if (inbufsize == 0) {
-			printf("\nError reading sprite %d\n", spriteno);
-			exit(2);
-		}
-		result = uncompress(size, inbuffer, &inbufsize, outbuffer, outbufsize, spriteno, grfcontversion);
-		if (result < 0) {
-			outbufsize = -result;
-			outbuffer = (U8*) realloc(outbuffer, outbufsize);
-			if (!outbuffer) {
-				printf("\nError increasing sprite buffer size for sprite %d\n", spriteno);
+	for (int i = 0;; i++) {
+		if (returnpos != 0) {
+			U32 dataid = readdword(action, grf);
+			if (id != dataid) {
+				if (i > 0) break;
+				printf("\nUnexpected id for sprite %d; expected %d got %d\n", spriteno, id, dataid);
 				exit(2);
 			}
+			size = readdword(action, grf);
+			if (size == 0) {
+				printf("\nUnexpected size for sprite %d; expected non-zero got %d\n", spriteno, (int)size);
+				exit(2);
+			}
+
+			startpos = ftell(grf);
+			cfread(action, &inf, 1, 1, grf);
 		}
-	} while (result < 0);
-	datasize = result;
-	fseek(grf, startpos + inbufsize, SEEK_SET);
 
-	writer->addsprite(true, store->curspritex(), info);
+		if (inf == 0xff) {
+			store->setsize(1, 0);
+			outbuffer = (U8*) malloc(size);
+			//outbuffer[0] = 0xff;
+			cfread(action, outbuffer, 1, size, grf);
+			writer->adddata(size, outbuffer/*+1*/);
+			store->spritedone();
+			return 1;
+		}
 
-	if (HASTRANSPARENCY(info.info))	// it's a tile
-		result = decodetile(outbuffer, sx, sy, store, grfcontversion);
-	else
-		result = decoderegular(outbuffer, sx, sy, store, grfcontversion);
+		fseek(grf, startpos, SEEK_SET);
+		info.readfromfile(action, grfcontversion, grf);
 
-	store->spritedone(sx, sy);
+		if(info.zoom >= ZOOM_LEVELS){
+			printf("\nUnknown zoom level %02x for sprite %d\n", info.zoom, spriteno);
+			exit(2);
+		}
+
+		sx = info.xdim;
+		sy = info.ydim;
+		const int infobytes = SpriteInfo::Size(grfcontversion);
+		outbufsize = 0L + sx * sy + infobytes;
+		store->setsize(sx, sy);
+
+		if (grfcontversion == 2 && HASTRANSPARENCY(info.info)) size -= 4;
+
+		if (grfcontversion == 2 || SIZEISCOMPRESSED(info.info)) {	// compressed size stated
+			inbufsize = size;
+			// assume uncompressed is max. twice the compressed
+			outbufsize <<= 1;
+		} else {
+			// assume compressed is max 12% larger than uncompressed (overhead etc.)
+			inbufsize = size + (size >> 3);
+		}
+
+		if (HASTRANSPARENCY(info.info)) {
+			outbufsize += 0L + info.ydim * 4;
+		}
+
+		inbuffer = (U8*) malloc(inbufsize);
+		outbuffer = (U8*) malloc(outbufsize);
+		if (!inbuffer || !outbuffer) {
+			printf("\nError allocating sprite buffer, want %ld for sprite %d\n", inbufsize + outbufsize, spriteno);
+			exit(2);
+		}
+
+		do {
+			fseek(grf, startpos, SEEK_SET);
+			if (grfcontversion == 2 && HASTRANSPARENCY(info.info)) {
+				int tmp = fread(inbuffer, 1, infobytes, grf);
+				readdword(action, grf);
+				inbufsize = tmp + fread(inbuffer + infobytes, 1, inbufsize - infobytes, grf);
+			} else {
+				inbufsize = fread(inbuffer, 1, inbufsize, grf);
+			}
+			if (inbufsize == 0) {
+				printf("\nError reading sprite %d\n", spriteno);
+				exit(2);
+			}
+			result = uncompress(size, inbuffer, &inbufsize, outbuffer, outbufsize, spriteno, grfcontversion);
+			if (result < 0) {
+				outbufsize = -result;
+				outbuffer = (U8*) realloc(outbuffer, outbufsize);
+				if (!outbuffer) {
+					printf("\nError increasing sprite buffer size for sprite %d\n", spriteno);
+					exit(2);
+				}
+			}
+		} while (result < 0);
+		datasize = result;
+		writer->addsprite(i == 0, store->curspritex(), info);
+
+		if (HASTRANSPARENCY(info.info))	// it's a tile
+			result = decodetile(outbuffer, sx, sy, store, grfcontversion);
+		else
+			result = decoderegular(outbuffer, sx, sy, store, grfcontversion);
+
+		store->spritedone(sx, sy);
 
 
-	if (sy > maxy)
-		maxy = sy;
-	if (sx > maxx)
-		maxx = sx;
-	if (datasize > (unsigned long) maxs)
-		maxs = datasize;
+		if (sy > maxy)
+			maxy = sy;
+		if (sx > maxx)
+			maxx = sx;
+		if (datasize > (unsigned long) maxs)
+			maxs = datasize;
 
-	free(inbuffer);
-	free(outbuffer);
+		free(inbuffer);
+		free(outbuffer);
 
+		if (returnpos != 0) {
+			*dataoffset = startpos + inbufsize;
+		} else {
+			returnpos = startpos + inbufsize;
+			break;
+		}
+	}
+	fseek(grf, returnpos, SEEK_SET);
 	return result;
 }
 
@@ -611,7 +675,7 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 		else
 			result = fakecompress(image, imgsize, compr+infobytes, compsize-infobytes, &realcompsize);
 
-		if (SIZEISCOMPRESSED(inf.info))	// write compressed size
+		if (grfcontversion == 2 || SIZEISCOMPRESSED(inf.info))	// write compressed size
 			size = realcompsize + infobytes;
 		else
 			size = imgsize + infobytes;
@@ -667,8 +731,16 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 	}
 
 	static const char *action = "writing real sprite";
+	if (grfcontversion == 2) {
+		writedword(action, spriteno, grf);
+		if (HASTRANSPARENCY(inf.info)) size += 4;
+	}
 	writespritesize(action, size, grfcontversion, grf);
-	cfwrite(action, compr, 1, realcompsize + infobytes, grf);
+	cfwrite(action, compr, 1, infobytes, grf);
+	if (grfcontversion == 2 && HASTRANSPARENCY(inf.info)) {
+		writedword(action, imgsize, grf);
+	}
+	cfwrite(action, compr + infobytes, 1, realcompsize, grf);
 
 	free(compr);
 	free(uncomp);
@@ -678,7 +750,11 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 
 void writespritesize(const char *action, unsigned int spritesize, int grfcontversion, FILE *grf)
 {
-	writeword(action, spritesize, grf);
+	if (grfcontversion == 2) {
+		writedword(action, spritesize, grf);
+	} else {
+		writeword(action, spritesize, grf);
+	}
 }
 
 void writeword(const char *action, unsigned int value, FILE *grf)
@@ -695,7 +771,7 @@ void writedword(const char *action, unsigned int value, FILE *grf)
 
 unsigned int readspritesize(const char *action, int grfcontversion, FILE *grf)
 {
-	return readword(action, grf);
+	return grfcontversion == 2 ? readdword(action, grf) : readword(action, grf);
 }
 
 U16 readword(const char *action, FILE *grf)

@@ -1,49 +1,145 @@
 
                              Format of a GRF File
 
-   A GRF file is a collection of "sprites", meaning rectangular graphics
-   objects that are drawn to the screen. Examples are the vehicle
-   graphics, the landscape tiles, and pretty much everything that you see
-   on the screen.
+   A GRF file is a collection of "sprites", defining pretty much everything
+   that you can see in the game. The sprites can be graphics, but also define
+   many non-visual properties of the game entities like vehicles.
 
-   The GRF file is simply one sprite following after another until the
-   end of the file with no meta-information, except for a checksum at the
+   There are two different file formats defined. The older format 1 simply
+   consists of one sprite following another until the end of the file,
+   with no header or other meta-information, except for a checksum at the
    very end of the file.
 
-Sprite Info
+   Format 2 consists of a header, followed by a data section containing all
+   non-image sprites, followed by a sprite section containing the actual
+   graphics.
 
-   Each sprite starts with a record of the following data:
+   All numbers in a GRF file are stored in little-endian byte order.
 
-   WORD size
-          Note, size can be either compressed or uncompressed size, see
-          below. It includes the following info bytes unless it is a
-          special sprite (see below).
+
+File header (format 2 only)
+
+   A format 2 GRF starts with a header with the following bytes:
+          00 00 47 52 46 82 0D 0A 1A 0A
+
+   DWORD sprite_offs
+          Number of bytes to skip after this DWORD to reach the start of
+          the sprite section.
+
+   BYTE data_compr
+          Compression format of the data section.
+
+     00     No compression
+     others Not defined
+
+Data section (formats 1 and 2)
+
+   The data section consists of sprites with the following format:
+   
+   WORD  size (format 1)
+   DWORD size (format 2)
+          The size of the current sprite, not including itself. The meaning
+          depends on the info byte that follows.
 
    BYTE info
           Bitcoded value that determines what type this sprite is.
 
+     FF     Pseudo sprite that contains non-image data, see the
+              NewGraphicsSpecs for details. For a pseudo sprite, the
+              size does *not* include the info byte.
+     FD     (Only valid in format 2) Reference to sprite section. Size does
+              *not* include the info byte.
+     others (Only valid in format 1) Normal sprite with image data, see the
+              section "Normal sprites" for details. If bit 2 is set, size
+              is the length of the sprite in the file including the info byte.
+              If it is not set, you have to decode the image data to find out
+              where the next sprite starts.
+
+   DATA data
+          The length of the data depends on size and info.
+
+          If the info value is FD, this is a single DWORD containing an ID
+          that is looked up in the sprite section and processed instead of
+          this sprite.
+
+   The data sections is termindated by a WORD (format 1) / DWORD (format 2)
+   of value 0.
+
+   For format 1 GRFs, a four byte checksum follows. The algorithm to calculate
+   it is unknown, but it is never processed by the game anyway.
+
+Sprite section (format 2 only)
+
+   The sprite section consists of entries with the following format:
+
+   DWORD id
+          ID used to reference the entry from the data section.
+
+   DWORD size
+          Length of the following data in the file.
+
+   BYTE info
+          Bitcoded value that determines what type this sprite is.
+
+     FF     Non-image data, for example sounds. See the NewGraphicsSpecs
+              for details.
+     others Image data, see the section "Normal sprites" for details.
+
+   DATA data
+          size-1 bytes of data.
+
+   Multiple entries with the same ID are allowed. IDs must be ordered
+   ascending.
+
+   The sprite section is terminated by a DWORD of value 0, which means
+   that 0 is never a valid ID.
+
+Normal sprites
+
+   Normal sprites contain the visible graphics of the game. The exact format
+   depends on the file format. For format 1 files, normal sprites occur in
+   the data section, while for format 2 files they are found in the sprite
+   section.
+
+   For format 1 GRFs, the info byte has the following meaning:
+
    Bit Val Meaning
-    0   1  Color index 0 is transparent. (should always be set)
-    1   2  Size is compressed size if set
+    0   1  Color index 0 is transparent (should always be set).
+    1   2  Size is compressed size if set.
              If this bit is set, the given size is simply the size in the
              file. If it is unset, you *must* decompress it to find out
              how large it is in the file.
-    3   8  Has transparency (i.e. is a tile), see below
+    3   8  Has transparency (i.e. is a tile), see below.
     6  40h The exact size of this sprite is significant. If not set,
-             grfcodec may attempt to remove extraneous transparent pixels
+             grfcodec may attempt to remove extraneous transparent pixels.
+    others Undefined.
 
-   others  ?
+   For format 2 GRFs, the info byte has the following meaning:
+   
+   Bit Val Meaning
+    0   1  Pixel format contains RGB components.
+    1   2  Pixel format contains alpha component.
+    2   4  Pixel format contains mask/palette component.
+    3   8  Has transparency (i.e. is a tile), see below.
+    6  40h The exact size of this sprite is significant. If not set,
+             grfcodec may attempt to remove extraneous transparent pixels.
+    others Undefined.
 
-          If info==0xff, the sprite is a special type and has none of the
-          following info bytes, it is simply a stream of some bytes with
-          the given size. For example, these are used for specifying
-          colour maps for the transparency feature and the company
-          colours, as well as making a grey-scale image for the
-          newspaper. With TTDPatch, these sprites are so-called
-          "actions", see NewGraphicsSpecs on the TTDPatch wiki for more
-          details.
+   Pixel components are ordered R, G, B, A, M, with not present components
+   skipped without padding. For file format 1, pixel format is implicitly
+   defined to be only the palette component.
 
-   BYTE ydim
+   BYTE zoom_level (format 2 only)
+          Zoom level of the current sprite, the following values are defined:
+            00  normal zoom
+            01  4x zoom-in
+            02  2x zoom-in
+            03  2x zoom-out
+            04  4x zoom-out
+            05  8x zoom-out
+
+   BYTE ydim (format 1)
+   WORD ydim (format 2)
           How many lines there are in the sprite (y dimension)
 
    WORD xdim
@@ -54,15 +150,14 @@ Sprite Info
           coordinate for each sprite.
 
    WORD yrel
-          Vertical offset
+          Vertical offset.
+
+   DWORD uncomp_size (format 2, only if info bit 3 is set)
+          Uncompressed size of the tile encoded image data.
 
    After this follows the actual compressed data. If info bit 3 is not
-   set, the data is simply a stream of pixels from left to right, and
-   from top to bottom, making up xdim*ydim bytes.
-
-   Finally, the file ends with a four byte checksum. I do not know the
-   algorithm to calculate this, however it isn't important because this
-   checksum is never even looked at anyway.
+   set, the data is simply a stream of bytes from left to right, and
+   from top to bottom, making up xdim*ydim pixels.
 
 Tile sprites
 
@@ -132,12 +227,4 @@ unsigned long offset = ( (code & 7) << 8 ) | lofs;
    And that's pretty much all you need to know about a GRF file!
    ______________________________________________________________________
 
-   Copyright © 1999-2003 by Josef Drexler.
-
-
-
-    Last changed on May 17 2003 15:45 EDT by [1]Josef Drexler
-
-References
-
-   1. http://www.ttdpatch.net/email.php?TTDPatch%2CGRFCodec
+   Copyright © 1999-2012 by Josef Drexler.
