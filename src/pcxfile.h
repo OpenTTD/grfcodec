@@ -69,12 +69,6 @@ struct pcxheader {
 	U8 filler[54];
 };
 
-class bandnotify {	// used when a band is written to the PCX file
-	public:
-	virtual ~bandnotify(){}
-	virtual void newband(class pcxfile* /*pcx*/) { };
-};
-
 class pcxfile {
 	public:
 	virtual ~pcxfile();
@@ -90,7 +84,7 @@ class pcxfile {
 
 	void newfile(bool paletted, int sx);
 	void newheader(int sx);
-	void startimage(bool paletted, int sx, int sy, int bandx, int bandy, bandnotify *notify);
+	void startimage(bool paletted, int sx, int sy, int bandx, int bandy);
 	void alloclines(int newlines);
 	void expirelines(int oldlines);
 	void initline(int y);
@@ -147,7 +141,6 @@ public:
 	    totaly;			// total lines written so far
 	int bandlines;
 	int codecing;
-	bandnotify *notify;
 	bool paletted;
 	class colourmap{
 	public:

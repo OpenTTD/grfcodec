@@ -19,6 +19,8 @@ class pcxwrite : public pcxfile, public spritestorage {
 	virtual void setsize(int sx, int sy)
 		{ startsubimage(-1, -1, sx, sy); };
 	virtual int  curspritex() {return subimagex();};
+	virtual int  curspritey() {return subimagey();};
+	virtual const char *filename(){return pcxfile::filename();};
 	virtual void newrow() { newline(); };
 	virtual void nextpixel(CommonPixel colour) { streamputpixel(colour); };
 	virtual void spritedone() { endsubimage(); };

@@ -67,9 +67,10 @@ struct SpriteInfo {
 	static int Size(int grfcontversion) { return grfcontversion == 2 ? 10 : 8; }
 };
 
-class spriteinfowriter : public bandnotify {
+class spriteinfowriter {
 	public:
-	virtual void addsprite(bool /* first */, int /*x*/, SpriteInfo /*info*/) { };
+	~spriteinfowriter() {}
+	virtual void addsprite(bool /* first */, const char * /* filename */, int /* y */, int /*x*/, SpriteInfo /*info*/) { };
 	virtual void adddata(U16 /*size*/, U8 * /*data*/) { };
 };
 
@@ -79,6 +80,8 @@ class spritestorage {
 	virtual void newsprite() {};
 	virtual void setsize(int /*sx*/, int /*sy*/) {};
 	virtual int  curspritex() {return 0;};
+	virtual int  curspritey() {return 0;};
+	virtual const char *filename(){return NULL;};
 	virtual void newrow() {};
 	virtual void nextpixel(CommonPixel /*colour*/) {};
 	virtual void spritedone(int /*sx*/, int /*sy*/) {};

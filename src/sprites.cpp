@@ -317,7 +317,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 			result = decoderegular(outbuffer, sx, sy, imgbuffer, grfcontversion);
 
 		store->setsize(sx, sy);
-		writer->addsprite(i == 0, store->curspritex(), info);
+		writer->addsprite(i == 0, store->filename(), store->curspritex(), store->curspritey(), info);
 		for (int y=0; y<sy; y++) {
 			for (int x=0; x<sx; x++)
 				store->nextpixel(CommonPixel(0, 0, 0, 0, imgbuffer[y * sx + x]));
