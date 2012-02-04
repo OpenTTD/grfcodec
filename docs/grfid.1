@@ -1,12 +1,12 @@
 .\"                                      Hey, EMACS: -*- nroff -*-
 .\" Please adjust this date whenever revising the manpage.
-.Dd August 05, 2010
+.Dd February 03, 2012
 .Dt GRFID 1
 .Sh NAME
 .Nm GRFID
 .Nd A tool to extract the (New)GRF ID from a (New)GRF
 .Sh SYNOPSIS
-.Op Fl hv
+.Op Fl hvm
 .Nm grfid Ar file
 .Sh DESCRIPTION
 GRFID tries to find the (New)GRF identifier of that (New)GRF.
@@ -16,6 +16,11 @@ identifier is printed hexadecimally to stdout.
 .Bl -tag
 .It Fl h
 Display the help message.
+.It Fl m Ar file
+Display the MD5 checksum of the given NewGRF. For GRF container
+format 2 this checksum only contains the data section, i.e. it
+excludes the sprite section to make it easier to construct NewGRFs
+with different zoom levels.
 .It Fl v
 Display the version.
 .El
@@ -24,7 +29,9 @@ The documentation in
 .Pa /usr/share/doc/grfcodec/
 .Sh AUTHOR
 GRFID was written by Peter Nelson.
+GRFID uses MD5 code that was written by L. Peter Deutsch.
 .Pp
 This manual page was written by Remko Bijker.
 .Sh COPYRIGHT
 GRFID is Copyright (C) 2009 by Peter Nelson.
+MD5 code is Copyright (C) 1999, 2002 by L. Peter Deutsch.

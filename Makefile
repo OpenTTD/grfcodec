@@ -146,7 +146,7 @@ GRFDIFFSRC=grfcomm.cpp error.cpp sprites.cpp grfdiff.cpp path.cpp
 
 GRFMERGESRC=grfcomm.cpp error.cpp grfmerge.cpp path.cpp
 
-GRFIDSRC=grfid.cpp
+GRFIDSRC=grfid.cpp md5.cpp
 
 NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
   act79D.cpp actB.cpp actF.cpp act14.cpp command.cpp data.cpp globals.cpp \

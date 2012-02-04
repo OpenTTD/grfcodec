@@ -1,4 +1,7 @@
 Changes in 5.1.4 (unreleased)
+- NFO version 32 for supporting GRF container version 2.
+- GRF container version 2 with bigger sprites and multiple images (bit depth and zoom level) for real sprites.
+- GRFID now has a command line option to create the (OpenTTD) MD5 checksum of a NewGRF. For GRF container version 2 NewGRFs this means the MD5 checksum of the header and data sections.
 - NFORenum specific changes:
   - Data file updates
     - Action 0 airport property 11.

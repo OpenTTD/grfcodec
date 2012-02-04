@@ -27,8 +27,14 @@ int main (int argc, char *argv[])
 	if (argc > 1 && strcmp(argv[1], "BE") == 0) little_endian = false;
 	if (argc > 1 && strcmp(argv[1], "LE") == 0) little_endian = true;
 
-	printf("#ifndef ENDIAN_H\n#define ENDIAN_H\n#define GRFCODEC_%s_ENDIAN\n#endif /* ENDIAN_H */\n",
-		little_endian ? "LITTLE" : "BIG");
+	const char *endian = little_endian ? "LITTLE" : "BIG";
+	printf(
+		"#ifndef ENDIAN_H\n"
+		"#define ENDIAN_H\n"
+		"#define GRFCODEC_%s_ENDIAN 1\n"
+		"#define ARCH_IS_%s_ENDIAN 1\n"
+		"#endif /* ENDIAN_H */\n",
+		endian, endian);
 
 	return 0;
 }
