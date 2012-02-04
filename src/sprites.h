@@ -28,6 +28,13 @@ using namespace std;
 #define ZOOM_LEVELS (6)
 extern const char *zoom_levels[ZOOM_LEVELS];
 
+#define DEPTHS (3)
+extern const char *depths[DEPTHS];
+
+static const int DEPTH_8BPP  = 0;
+static const int DEPTH_32BPP = 1;
+static const int DEPTH_MASK  = 2;
+
 #include "pcxfile.h"
 #include "typesize.h"
 
@@ -44,6 +51,7 @@ extern const char *zoom_levels[ZOOM_LEVELS];
 /** Information about a single sprite. */
 struct SpriteInfo {
 	U8 info;  ///< Info byte; bit 1: size is compressed size, bit 3: tile transparancy, value 0xFF: special sprite.
+	U8 depth; ///< The "depth" of the image.
 	U8 zoom;  ///< The zoom level.
 	U16 ydim; ///< Number of lines in the sprite.
 	U16 xdim; ///< Number of columns in the sprite.
@@ -83,7 +91,7 @@ extern int maxx, maxy, maxs;
 int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno, U32 *dataoffset, int grfcontversion);
 
 U16 getlasttilesize();
-U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, int grfcontversion);
+U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion);
 U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno, int grfcontversion);
 void writespritesize(const char *action, unsigned int spritesize, int grfcontversion, FILE *grf);
 void writeword(const char *action, unsigned int value, FILE *grf);

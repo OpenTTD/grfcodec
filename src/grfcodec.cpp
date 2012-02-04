@@ -496,11 +496,26 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 						exit(2);
 					}
 
+					bool has_mask=sprite.infs[j].depth==DEPTH_8BPP;
+					bool rgba=sprite.infs[j].depth==DEPTH_32BPP;
 					info.getsprite(image);
+					if(j+1<sprite.infs.size()&&sprite.infs[j+1].depth==DEPTH_MASK){
+						j++;
+						info.PrepareReal(sprite.infs[j]);
+						CommonPixel *mask = (CommonPixel*) calloc(info.imgsize, sizeof(CommonPixel));
+						if (!mask) {
+							fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
+							exit(2);
+						}
+						info.getsprite(mask);
+						for (int i = 0; i < info.imgsize; i++) image[i].m = mask[i].m;
+						free(mask);
+						has_mask=true;
+					}
 
 					int k=0;
 					for (int j=info.imgsize-1; j >= 0; j--)
-						if (image[j].m == 0xFF) k++;
+						if (has_mask && image[j].m == 0xFF) k++;
 
 					if (k && !_quiet)
 						fprintf(stderr, "%s:%d: Warning: %d of %ld pixels (%ld%%) are pure white\n",
@@ -508,7 +523,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 					if(_crop && !DONOTCROP(info.inf.info)){
 						int i=0,j=0;
-						for(i=info.imgsize-1;i>=0;i--)if(!image[i].IsTransparent())break; // Find last non-blue pixel
+						for(i=info.imgsize-1;i>=0;i--)if(!image[i].IsTransparent(has_mask, rgba))break; // Find last non-blue pixel
 						if(i<0)// We've got an all-blue sprite
 							info.sx=info.sy=info.imgsize=1;
 						else{
@@ -516,7 +531,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 							info.sy-=i/info.sx;
 
 							for(i=0;i<info.imgsize;i++){
-								if(!image[i].IsTransparent())
+								if(!image[i].IsTransparent(has_mask, rgba))
 									break; // Find first non-blue pixel
 							}
 							i-=i%info.sx;// Move to beginning of line
@@ -526,7 +541,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 							if(i)memmove(image,image+i,(info.imgsize-i)*sizeof(CommonPixel));
 							for(i=0;i<info.sx;i++){
 								for(j=0;j<info.sy;j++){
-									if(!image[i+j*info.sx].IsTransparent())goto foundfirst;
+									if(!image[i+j*info.sx].IsTransparent(has_mask, rgba))goto foundfirst;
 								}
 							}
 foundfirst:
@@ -539,7 +554,7 @@ foundfirst:
 
 							for(i=info.sx-1;i>=0;i--){
 								for(j=0;j<info.sy;j++){
-									if(!image[i+j*info.sx].IsTransparent())goto foundlast;
+									if(!image[i+j*info.sx].IsTransparent(has_mask, rgba))goto foundlast;
 								}
 							}
 foundlast:
@@ -556,7 +571,8 @@ foundlast:
 						info.imgsize = info.sx * info.sy;
 					}
 
-					U8 *imgbuffer = (U8*)malloc(info.imgsize);
+					U8 bytes_per_pixel=(has_mask?1:0)+(rgba?4:0);
+					U8 *imgbuffer = (U8*)malloc(info.imgsize*bytes_per_pixel);
 					if (!imgbuffer) {
 						fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
 						exit(2);
@@ -564,7 +580,7 @@ foundlast:
 
 					U16 compsize;
 					if (HASTRANSPARENCY(info.inf.info)) {
-						compsize = encodetile(grf, image, info.imgsize, info.sx, info.sy, info.inf, compress, i, grfcontversion);
+						compsize = encodetile(grf, image, info.imgsize*bytes_per_pixel, info.sx, info.sy, info.inf, compress, i, has_mask, rgba, grfcontversion);
 						totaltransp += getlasttilesize();	// how much after transparency removed
 						totaluntransp += info.imgsize;		// how much with transparency
 
@@ -572,9 +588,9 @@ foundlast:
 						totalunreg += getlasttilesize();	// how much with redund
 					} else {
 						for (int j = 0; j < info.imgsize; j++) {
-							image[j].Encode(imgbuffer + j);
+							image[j].Encode(imgbuffer + (j * bytes_per_pixel), has_mask, rgba);
 						}
-						compsize = encoderegular(grf, imgbuffer, info.imgsize, info.inf, compress, i, grfcontversion);
+						compsize = encoderegular(grf, imgbuffer, info.imgsize*bytes_per_pixel, info.inf, compress, i, grfcontversion);
 						totaltransp += info.imgsize;
 						totaluntransp += info.imgsize;
 
