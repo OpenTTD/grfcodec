@@ -108,19 +108,27 @@ pngread::~pngread()
 void pngread::setline(CommonPixel *band)
 {
 	// Read the next row of the png file
-	U8 *row = (U8*)malloc(sx);
+	U8 *row = (U8*)malloc(sx*(paletted?1:4));
 	png_read_row(png, row, NULL);
 
 	for (int i = 0; i < sx; i++) {
-		band[i].m = row[i];
+		if (paletted) {
+			band[i].m = row[i];
+		} else {
+			band[i].r = row[i * 4];
+			band[i].g = row[i * 4 + 1];
+			band[i].b = row[i * 4 + 2];
+			band[i].a = row[i * 4 + 3];
+		}
 	}
 }
 
 extern bool _force;
 extern int _quiet;
 
-void pngread::filestart()
+void pngread::filestart(bool paletted)
 {
+	this->paletted=paletted;
 	if (png) {
 		// Technically this should never be reached but as a safety net
 		png_read_end(png, info);
@@ -157,37 +165,44 @@ void pngread::filestart()
 
 	png_read_info(png, info);
 
-	// Colour depth / format
-	if (png_get_channels(png, info) >= 3) {
-		fprintf(stderr, "%s: Cannot read true colour PNG files!\n", this->filename());
-		exit(2);
-	}
-	if (png_get_channels(png, info) != 1 || png_get_bit_depth(png, info) != 8 || png_get_color_type(png, info) != PNG_COLOR_TYPE_PALETTE) {
-		fprintf(stderr, "%s: Cannot read non-paletted PNG files!\n", this->filename());
-		exit(2);
-	}
+	if (paletted) {
+		// Colour depth / format
+		if (png_get_channels(png, info) >= 3) {
+			fprintf(stderr, "%s: Cannot read true colour PNG files!\n", this->filename());
+			exit(2);
+		}
+		if (png_get_channels(png, info) != 1 || png_get_bit_depth(png, info) != 8 || png_get_color_type(png, info) != PNG_COLOR_TYPE_PALETTE) {
+			fprintf(stderr, "%s: Cannot read non-paletted PNG files!\n", this->filename());
+			exit(2);
+		}
 
-	// Gather the png's palette information
-	int entries;
-	U8 *palette; // Compatible format RGB
+		// Gather the png's palette information
+		int entries;
+		U8 *palette; // Compatible format RGB
 
-	png_get_PLTE(png, info, (png_color**)&palette, &entries);
-	if (entries != 256) {
-		fprintf(stderr, "%s: PNG file is not a 256 colour file!\n", this->filename());
-		exit(2);
-	}
+		png_get_PLTE(png, info, (png_color**)&palette, &entries);
+		if (entries != 256) {
+			fprintf(stderr, "%s: PNG file is not a 256 colour file!\n", this->filename());
+			exit(2);
+		}
 
-	// Look for a matching palette
-	int i=0;
-	for( ; i<NUM_PALS; i++)
-		if(!memcmp(palette, defaultpalettes[i], 768)) break;
+		// Look for a matching palette
+		int i=0;
+		for( ; i<NUM_PALS; i++)
+			if(!memcmp(palette, defaultpalettes[i], 768)) break;
 
-	if (i == NUM_PALS) {
-		if ( _force ) {
-			if (!_quiet) fprintf(stderr, "%s: Warning: Encoding despite unrecognized palette.\n", this->filename());
-		} else {
-			fprintf(stderr, "%s: Error: Unrecognized palette, aborting.\n"
-				"Specify -f on the command line to override this check.\n", this->filename());
+		if (i == NUM_PALS) {
+			if ( _force ) {
+				if (!_quiet) fprintf(stderr, "%s: Warning: Encoding despite unrecognized palette.\n", this->filename());
+			} else {
+				fprintf(stderr, "%s: Error: Unrecognized palette, aborting.\n"
+					"Specify -f on the command line to override this check.\n", this->filename());
+				exit(2);
+			}
+		}
+	} else {
+		if (png_get_channels(png, info) != 4) {
+			fprintf(stderr, "%s: Cannot only read 32bpp PNG files with alpha layer!\n", this->filename());
 			exit(2);
 		}
 	}

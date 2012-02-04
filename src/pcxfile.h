@@ -77,14 +77,14 @@ class pcxfile {
 	virtual FILE *getnextfile() { return mfile->nextfile(); };
 	virtual FILE *getcurfile() { return mfile->curfile(); };
 	virtual void filedone(int /*final*/) { };
-	virtual void filestart()
+	virtual void filestart(bool paletted)
 		{ fseek(curfile, sizeof(header), SEEK_SET); };
 
 	void setfile(multifile *mfile);
 
-	void newfile(int sx);
+	void newfile(bool paletted, int sx);
 	void newheader(int sx);
-	void startimage(int sx, int sy, int bandx, int bandy, bandnotify *notify);
+	void startimage(bool paletted, int sx, int sy, int bandx, int bandy, bandnotify *notify);
 	void alloclines(int newlines);
 	void expirelines(int oldlines);
 	void initline(int y);
@@ -142,6 +142,7 @@ public:
 	int bandlines;
 	int codecing;
 	bandnotify *notify;
+	bool paletted;
 	class colourmap{
 	public:
 		colourmap():map(new int[256]),deletemap(true){

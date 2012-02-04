@@ -33,7 +33,7 @@ class pngread: public pcxread {
 	pngread(singlefile * mfile);
 	~pngread();
 
-	void filestart();
+	void filestart(bool paletted);
 	void setline(CommonPixel *band);
 
 	private:
@@ -44,6 +44,7 @@ class pngread: public pcxread {
 	multifile *mfile;
 	png_struct *png;
 	png_info *info;
+	bool paletted;
 };
 
 #endif /* WITH_PNG */

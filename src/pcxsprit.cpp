@@ -87,8 +87,12 @@ void pcxwrite::setcolours(U8 bg, U8 bord, int skip)
 	borderskip = skip;
 }
 
-void pcxwrite::filestart()
+void pcxwrite::filestart(bool paletted)
 {
+	if (!paletted){
+		fprintf(stderr, "GRFCodec supports only paletted PCX files.\n");
+		exit(2);
+	}
 	writeheader();
 	fseek(curfile, sizeof(header), SEEK_SET);
 }

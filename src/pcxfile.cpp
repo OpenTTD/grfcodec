@@ -50,6 +50,7 @@ pcxfile::pcxfile()
 	header.window[2] = 65535;
 	codecing = 0;
 	notify = NULL;
+	paletted = true;
 
 }
 
@@ -70,7 +71,7 @@ void pcxfile::setfile(multifile *mfile)
 	curfile = mfile->curfile();
 }
 
-void pcxfile::newfile(int sx)
+void pcxfile::newfile(bool paletted, int sx)
 {
 	if (curfile) {    	// do we already have a file
 		filedone(1);
@@ -86,7 +87,8 @@ void pcxfile::newfile(int sx)
 		py = 0;
 	}
 
-	filestart();
+	this->paletted = paletted;
+	filestart(paletted);
 }
 
 void pcxfile::newheader(int sx)
@@ -106,7 +108,7 @@ void pcxfile::newheader(int sx)
 	header.bpl = sx;
 }
 
-void pcxfile::startimage(int sx, int sy, int bandx, int bandy, bandnotify *notify)
+void pcxfile::startimage(bool paletted, int sx, int sy, int bandx, int bandy, bandnotify *notify)
 {
 	pcxfile::notify = notify;
 
@@ -115,7 +117,7 @@ void pcxfile::startimage(int sx, int sy, int bandx, int bandy, bandnotify *notif
 	pcxfile::bandx = bandx;
 	pcxfile::bandy = bandy;
 
-	newfile(sx);
+	newfile(paletted, sx);
 
 	if (bandy > bandlines)
 		alloclines(bandy);
@@ -299,7 +301,7 @@ void pcxfile::newband()
 	int i, y;
 
 	if ( (totaly + thisbandy > sy) && (thisbandy <= sy) ) {	// would be too large
-		newfile(sx);
+		newfile(this->paletted, sx);
 	}
 
 	if (notify)
