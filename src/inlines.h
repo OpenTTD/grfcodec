@@ -39,6 +39,13 @@ inline istream&eat_white(istream&in){
 	return in;
 }
 
+inline void strip_trailing_white(string&str){
+	string::iterator last = str.end();
+	for (string::iterator i = str.begin(); i != str.end(); i++)
+		if (!isspace(*i)) last = i;
+	if (last != str.end()) str.erase(last+1, str.end());
+}
+
 inline int ctoi(char ch){
 	if(ch>='0'&&ch<='9')return ch-'0';
 	if(ch>='A'&&ch<='F')return ch-'A'+10;

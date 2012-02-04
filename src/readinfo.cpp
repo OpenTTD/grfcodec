@@ -93,6 +93,7 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 				if(spritestream.ignore().peek()=='*'){
 					flush_buffer();
 					getline(eat_white(spritestream.ignore()),datapart);
+					strip_trailing_white(datapart);
 					checkspriteno();
 					sprites.push_back(Include(datapart));
 				}else{
