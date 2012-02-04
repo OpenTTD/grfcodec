@@ -53,7 +53,7 @@ using namespace boost::gregorian;
 #include"inlines.h"
 
 extern int _quiet;
-const char *zoom_levels[ZOOM_LEVELS] = { "normal" };
+const char *zoom_levels[ZOOM_LEVELS] = { "normal", "zi4", "zi2", "zo2", "zo4", "zo8" };
 
 #define checkspriteno()\
 	if(spriteno!=-1&&spriteno!=(int)sprites.size() && !_quiet){\
@@ -120,7 +120,6 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 							datapart.erase(0, 1);
 						} while (isspace(datapart[0]));
 					}
-					sprites.push_back(Real());
 					((Real*)sprites.last())->AddSprite(sprites.size()-1,infover,datapart);
 				}
 			}
