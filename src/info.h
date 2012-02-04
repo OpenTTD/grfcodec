@@ -37,7 +37,7 @@ private:
 };
 
 struct Box {
-	enum boxtype {issprite, isdata};
+	enum boxtype {issprite, isspriteextension, isdata};
 	Box(boxtype type) : type(type) {}
 	boxtype type;
 };
@@ -49,7 +49,7 @@ struct BoxData : Box {
 };
 
 struct BoxSprite : Box {
-	BoxSprite(int x, SpriteInfo info) : Box(issprite), x(x), info(info) {}
+	BoxSprite(bool first, int x, SpriteInfo info) : Box(first ? issprite : isspriteextension), x(x), info(info) {}
 	int x;
 	SpriteInfo info;
 };
@@ -60,7 +60,7 @@ class infowriter :  public spriteinfowriter {
 	virtual ~infowriter();
 
 	virtual void newband(pcxfile *pcx);
-	virtual void addsprite(int x, SpriteInfo info);
+	virtual void addsprite(bool first, int x, SpriteInfo info);
 	virtual void adddata(U16 size, U8 *data);
 
 	void done(int count);

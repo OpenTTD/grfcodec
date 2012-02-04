@@ -250,7 +250,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 	datasize = result;
 	fseek(grf, startpos + inbufsize, SEEK_SET);
 
-	writer->addsprite(store->curspritex(), info);
+	writer->addsprite(true, store->curspritex(), info);
 
 	if (HASTRANSPARENCY(info.info))	// it's a tile
 		result = decodetile(outbuffer, sx, sy, store, grfcontversion);
