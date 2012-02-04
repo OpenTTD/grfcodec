@@ -176,6 +176,7 @@ void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf)
 		i += 2;
 	} else {
 		this->info = fgetc(grf);
+		this->zoom = 0;
 		this->ydim = fgetc(grf);
 	}
 	this->xdim = readword(action, grf);
