@@ -10,8 +10,9 @@
 *                       *
 \***********************/
 
-pngwrite::pngwrite(multifile *mfile): pcxwrite(mfile), png(NULL), info(NULL)
+pngwrite::pngwrite(multifile *mfile, bool paletted): pcxwrite(mfile), png(NULL), info(NULL)
 {
+	this->paletted = paletted;
 	// Hopefully 8MiB should suffice
 	cache.reserve(8*1024*1024);
 }
@@ -46,12 +47,18 @@ void pngwrite::filedone(int final)
 		// Initialise libpng io
 		png_init_io(png, curfile);
 
-		// Store the final image's size
-		png_set_IHDR(png, info, sx, totaly, 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
-			PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+		if (paletted) {
+			// Store the final image's size
+			png_set_IHDR(png, info, sx, totaly, 8, PNG_COLOR_TYPE_PALETTE, PNG_INTERLACE_NONE,
+				PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
-		// Set the palette data
-		png_set_PLTE(png, info, (png_color*)pcxwrite::palette, 256);
+			// Set the palette data
+			png_set_PLTE(png, info, (png_color*)pcxwrite::palette, 256);
+		} else {
+			// Store the final image's size
+			png_set_IHDR(png, info, sx, totaly, 8, PNG_COLOR_TYPE_RGBA, PNG_INTERLACE_NONE,
+				PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+		}
 
 		// Write the the png header
 		png_write_info(png, info);
@@ -61,7 +68,7 @@ void pngwrite::filedone(int final)
 		png_set_flush(png, 64);
 
 		// Write the image data
-		for (unsigned int i = 0, j = cache.size(); i < j; i += sx)
+		for (unsigned int i = 0, j = cache.size(); i < j; i += sx * (paletted ? 1 : 4))
 			png_write_row(png, (png_byte*)&cache[i]);
 
 		// Finalise writing
@@ -77,16 +84,24 @@ void pngwrite::filedone(int final)
 
 // Hooks the writing of lines out to file,
 //   which we will be buffering internally
-void pngwrite::encodebytes(CommonPixel byte, int num)
+void pngwrite::encodebytes(const CommonPixel &pixel, int num)
 {
-	for (int i = 0; i < num; i++)
-		cache.push_back(byte.m);
+	for (int i = 0; i < num; i++) {
+		if (paletted) {
+			cache.push_back(pixel.m);
+		} else {
+			cache.push_back(pixel.r);
+			cache.push_back(pixel.g);
+			cache.push_back(pixel.b);
+			cache.push_back(pixel.a);
+		}
+	}
 }
 
-void pngwrite::encodebytes(CommonPixel buffer[], int num)
+void pngwrite::encodebytes(const CommonPixel *buffer, int num)
 {
 	for (int i = 0; i < num; i++)
-		cache.push_back(buffer[i].m);
+		this->encodebytes(buffer[i], 1);
 }
 
 /***********************\

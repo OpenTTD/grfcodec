@@ -8,15 +8,15 @@
 
 class pngwrite: public pcxwrite {
 	public:
-	pngwrite(multifile *mfile);
+	pngwrite(multifile *mfile, bool paletted);
 	~pngwrite();
 
 	void filestart(bool paletted);
 	void filedone(int final);
 
 	protected:
-	void encodebytes(CommonPixel byte, int num);
-	void encodebytes(CommonPixel buffer[], int num);
+	void encodebytes(const CommonPixel &pixel, int num);
+	void encodebytes(const CommonPixel *buffer, int num);
 
 	private:
 	pngwrite(const pngwrite&);

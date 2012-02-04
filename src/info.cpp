@@ -213,8 +213,8 @@ void infowriter::flush()
 			BoxSprite *s = (BoxSprite*)boxes[i];
 
 			if (_useexts) {
-				fprintf(info, "%s 8bpp %4d %4d %4d %4d %4d %4d %s",
-						s->filename, s->x, s->y,
+				fprintf(info, "%s %5s %4d %4d %4d %4d %4d %4d %s",
+						s->filename, depths[s->info.depth], s->x, s->y,
 						s->info.xdim, s->info.ydim,
 						s->info.xrel, s->info.yrel,
 						zoom_levels[s->info.zoom]);
