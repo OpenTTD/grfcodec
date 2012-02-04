@@ -252,12 +252,12 @@ SpriteSheetFormat _outputformat = SSF_PNG;
 SpriteSheetFormat _outputformat = SSF_PCX;
 #endif
 
-const char * getoutputext()
+const char * getoutputext(bool rgba)
 {
 	switch (_outputformat) {
 #ifdef WITH_PNG
 		case SSF_PNG:
-			return ".png";
+			return rgba ? "32.png" : ".png";
 #endif
 		case SSF_PCX:
 		default:
@@ -268,7 +268,7 @@ const char * getoutputext()
 class spritefiles : public multifile {
 public:
 	spritefiles() { init(); }
-	spritefiles(const char *basename, const char *directory);
+	spritefiles(const char *basename, const char *directory, bool rgba);
 	virtual FILE *curfile()  { return thecurfile; }
 	virtual FILE *nextfile();
 	virtual const char *filename() { return thecurfilename; }
@@ -279,19 +279,22 @@ private:
 		basename = thecurfilename = NULL;
 		directory = NULL;
 		filenum = 0;
+		rgba=false;
 	}
 		FILE *thecurfile;
 		char *thecurfilename;
 		const char *directory;
 		const char *basename;
 		unsigned int filenum;
+		bool rgba;
 };
 
-spritefiles::spritefiles(const char *basename, const char *directory)
+spritefiles::spritefiles(const char *basename, const char *directory, bool rgba)
 {
 	init();
 	spritefiles::basename = basename;
 	spritefiles::directory = directory;
+	spritefiles::rgba=rgba;
 }
 
 FILE *spritefiles::nextfile()
@@ -299,7 +302,7 @@ FILE *spritefiles::nextfile()
 	FILE *oldfile = thecurfile;
 	char *oldname = thecurfilename;
 
-	thecurfilename = strdup(spritefilename(basename, directory, getoutputext(), filenum++, "wb", 1));
+	thecurfilename = strdup(spritefilename(basename, directory, getoutputext(rgba), filenum++, "wb", 1));
 	thecurfile = fopen(thecurfilename, "wb");
 
 	if (thecurfile) {	// new open succeeded, close old one
@@ -681,24 +684,29 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 
 	// We do the 'file' and 'writer' seperate to make
 	//   this a little bit less messy
-	multifile *imgname;
-	pcxwrite *pcx;
+	multifile *imgname, *imgname32;
+	pcxwrite *pcx, *pcx32;
 
-	if (height == -1)
-		imgname = new singlefile(spritefilename(file, dir, getoutputext(), -2, "wb", 1),"wb", dir);
-	else
-		imgname = new spritefiles(file, dir);
+	if (height == -1) {
+		imgname   = new singlefile(spritefilename(file, dir, getoutputext(false), -2, "wb", 1),"wb", dir);
+		imgname32 = new singlefile(spritefilename(file, dir, getoutputext(true),  -2, "wb", 1),"wb", dir);
+	} else {
+		imgname   = new spritefiles(file, dir, false);
+		imgname32 = new spritefiles(file, dir, true);
+	}
 
 	// Select the appropriate writer
 	switch (_outputformat) {
 #ifdef WITH_PNG
 		case SSF_PNG:
-			pcx = new pngwrite(imgname);
+			pcx   = new pngwrite(imgname, false);
+			pcx32 = new pngwrite(imgname32, true);
 			break;
 #endif
 		case SSF_PCX:
 		default:
-			pcx = new pcxwrite(imgname);
+			pcx   = new pcxwrite(imgname);
+			pcx32 = NULL;
 			break;
 	}
 
@@ -710,6 +718,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	pcx->setpalette(palette);
 
 	pcx->setcolours(255, 0, 0);
+	pcx32->setcolours(255, 0, 0);
 
 	infowriter writer(info, (width + box - 1) / box, useplaintext, pcx->getdirectory());
 
@@ -717,6 +726,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 		pcx->installwritemap(colourmap);
 
 	pcx->startimage(true, width, height, box, box);
+	pcx32->startimage(false, width, height, box, box);
 
 	count = 0;
 
@@ -730,14 +740,19 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 			printf("Sprite %d at %lX, %3d%% done\r", count, ftell(grf), lastpct);
 		}
 
-		result = decodesprite(grf, pcx, &writer, count, &dataoffset, grfcontversion);
+		pcx->newsprite();
+		pcx32->newsprite();
+
+		result = decodesprite(grf, pcx, pcx32, &writer, count, &dataoffset, grfcontversion);
 		writer.flush();
 		count++;
 	} while (result);
 	count--;
 
 	pcx->endimage();
+	pcx32->endimage();
 	delete(pcx);	// closes output file
+	delete(pcx32);
 
 	writer.flush();
 	writer.done(count);

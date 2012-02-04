@@ -51,6 +51,27 @@ struct CommonPixel {
 		if (has_mask) *buffer++ = this->m;
 		return buffer;
 	}
+
+	const U8 *Decode(const U8 *buffer, bool has_mask, bool rgba)
+	{
+		if (rgba) {
+			this->r = *buffer++;
+			this->g = *buffer++;
+			this->b = *buffer++;
+			this->a = *buffer++;
+		}
+		if (has_mask) this->m = *buffer++;
+		return buffer;
+	}
+
+	void MakeTransparent()
+	{
+		this->r = 0;
+		this->g = 0;
+		this->b = 0;
+		this->a = 0;
+		this->m = 0;
+	}
 };
 
 struct pcxheader {
@@ -122,8 +143,8 @@ public:
 
 	void startdecoding();
 	void startencoding();
-	virtual void encodebytes(CommonPixel byte, int num);
-	virtual void encodebytes(CommonPixel buffer[], int num);
+	virtual void encodebytes(const CommonPixel &pixel, int num);
+	virtual void encodebytes(const CommonPixel *buffer, int num);
 	void decodebytes(CommonPixel buffer[], int num);
 	void endencoding();
 

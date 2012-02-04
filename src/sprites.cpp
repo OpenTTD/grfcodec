@@ -24,48 +24,72 @@
 
 int maxx = 0, maxy = 0, maxs = 0;
 
-static int decodetile(U8 *buffer, int sx, int sy, U8 *imgbuffer, int grfcontversion)
+static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, U32 tilesize, bool has_mask, bool rgba, int grfcontversion)
 {
-	U16 *ibuffer = (U16*) buffer;
+	bool long_format = tilesize > 65535;
+	bool long_chunk  = sx > 256;
+	buffer += SpriteInfo::Size(grfcontversion);
 
 	for (int y=0; y<sy; y++) {
-		long offset = BE_SWAP16(ibuffer[SpriteInfo::Size(grfcontversion) / 2 + y]) + SpriteInfo::Size(grfcontversion);
+		long offset;
+		if (long_format) {
+			U32 *ibuffer = (U32*)buffer;
+			offset = BE_SWAP32(ibuffer[y]);
+		} else {
+			U16 *ibuffer = (U16*)buffer;
+			offset = BE_SWAP16(ibuffer[y]);
+		}
 
-		long x, islast, chunkstart=0;
+		long x, islast, chunkstart=0, len, ofs;
 		do {
-			islast   = buffer[offset]   & 0x80;
-			long len = buffer[offset++] & 0x7f;
-			long ofs = buffer[offset++];
+			if (long_chunk) {
+				islast = buffer[offset + 1] & 0x80;
+				len = (buffer[offset + 1] & 0x7f) << 8 | buffer[offset + 0];
+				ofs = buffer[offset + 2] << 8 | buffer[offset + 3];
+				offset += 4;
+			} else {
+				islast = buffer[offset] & 0x80;
+				len = buffer[offset++] & 0x7f;
+				ofs = buffer[offset++];
+			}
 
 			// fill from beginning of last chunk to start
 			// of this one, with "background" colour
-			for (x=chunkstart; x<ofs; x++)
-				*imgbuffer++ = 0;
+			for (x=chunkstart; x<ofs; x++) {
+				imgbuffer->MakeTransparent();
+				imgbuffer++;
+			}
 
 			// then copy the number of actual bytes
+			const U8 *obuffer = buffer + offset;
 			for (x=0; x<len; x++) {
-				int col = buffer[offset++];
-				*imgbuffer++ = col;
+				obuffer = imgbuffer->Decode(obuffer, has_mask, rgba);
+				imgbuffer++;
 			}
+			offset += obuffer - (buffer + offset);
 			chunkstart = ofs + len;
 
 		} while (!islast);
 
 		// and fill from the end of the last chunk to the
 		// end of the line
-		for (x=chunkstart; x<sx; x++)
-			*imgbuffer++ = 0;
+		for (x=chunkstart; x<sx; x++) {
+			imgbuffer->MakeTransparent();
+			imgbuffer++;
+		}
 	}
 
 	return 1;
 }
 
-static int decoderegular(const U8 *buffer, int sx, int sy, U8 *imgbuffer, int grfcontversion)
+static int decoderegular(const U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, bool has_mask, bool rgba, int grfcontversion)
 {
-	long offset = SpriteInfo::Size(grfcontversion);
+	buffer += SpriteInfo::Size(grfcontversion);
 	for (int y=0; y<sy; y++) {
-		for (int x=0; x<sx; x++)
-			*imgbuffer++ = buffer[offset++];
+		for (int x=0; x<sx; x++) {
+			buffer = imgbuffer->Decode(buffer, has_mask, rgba);
+			imgbuffer++;
+		}
 	}
 
 	return 1;
@@ -175,13 +199,21 @@ void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf)
 {
 	int i = 0;
 	if (grfcontversion == 2) {
+		U8 data = fgetc(grf);
 		/* According to the documentation bit 0 must always be set, and bits 3 and 6 are the same as in the nfo. */
-		this->info = (1 << 0) | (fgetc(grf) & (1 << 3 | 1 << 6));
+		this->info = (1 << 0) | (data & (1 << 3 | 1 << 6));
+		switch(data&0x7){
+			case 0x03: this->depth=DEPTH_32BPP; break;
+			case 0x04: this->depth=DEPTH_8BPP; break;
+			case 0x07: this->depth=DEPTH_MASK; break;
+			default: this->depth=DEPTH_8BPP; break;
+		}
 		this->zoom = fgetc(grf);
 		this->ydim = readword(action, grf);
 		i += 2;
 	} else {
 		this->info = fgetc(grf);
+		this->depth = DEPTH_8BPP;
 		this->zoom = 0;
 		this->ydim = fgetc(grf);
 	}
@@ -190,20 +222,31 @@ void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf)
 	this->yrel = readword(action, grf);
 }
 
-int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int spriteno, U32 *dataoffset, int grfcontversion)
+static void writesprite(bool first, spritestorage *image_writer, spriteinfowriter *info_writer, CommonPixel *image, SpriteInfo info)
+{
+	image_writer->setsize(info.xdim, info.ydim);
+	info_writer->addsprite(first, image_writer->filename(), image_writer->curspritex(), image_writer->curspritey(), info);
+	for (int y=0; y<info.ydim; y++) {
+		for (int x=0; x<info.xdim; x++)
+			image_writer->nextpixel(*image++);
+		image_writer->newrow();
+	}
+	image_writer->spritedone(info.xdim, info.ydim);
+}
+
+int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, spriteinfowriter *writer, int spriteno, U32 *dataoffset, int grfcontversion)
 {
 	static const char *action = "decoding sprite";
 	unsigned long size, datasize, inbufsize, outbufsize, startpos, returnpos = 0;
 	SpriteInfo info;
-	U8 *inbuffer, *outbuffer, *imgbuffer;
+	U8 *inbuffer, *outbuffer;
+	CommonPixel *imgbuffer;
 	int sx, sy;
 
-	if (!writer || !store) {
+	if (!writer || !imgpal) {
 		printf("\nparameter is NULL!\n");
 		exit(2);
 	}
-
-	store->newsprite();
 
 	size = readspritesize(action, grfcontversion, grf);
 	if (size == 0) return 0;
@@ -241,12 +284,12 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 		}
 
 		if (inf == 0xff) {
-			store->setsize(1, 0);
+			imgpal->setsize(1, 0);
 			outbuffer = (U8*) malloc(size);
 			//outbuffer[0] = 0xff;
 			cfread(action, outbuffer, 1, size, grf);
 			writer->adddata(size, outbuffer/*+1*/);
-			store->spritedone();
+			imgpal->spritedone();
 			return 1;
 		}
 
@@ -280,17 +323,18 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 
 		inbuffer = (U8*) malloc(inbufsize);
 		outbuffer = (U8*) malloc(outbufsize);
-		imgbuffer = (U8*) calloc(sx * sy, 1);
+		imgbuffer = (CommonPixel*) calloc(sx * sy, sizeof(CommonPixel));
 		if (!inbuffer || !outbuffer || !imgbuffer) {
 			printf("\nError allocating sprite buffer, want %ld for sprite %d\n", inbufsize + outbufsize + sx * sy, spriteno);
 			exit(2);
 		}
 
+		U32 tilesize = 0;
 		do {
 			fseek(grf, startpos, SEEK_SET);
 			if (grfcontversion == 2 && HASTRANSPARENCY(info.info)) {
 				int tmp = fread(inbuffer, 1, infobytes, grf);
-				readdword(action, grf);
+				tilesize = readdword(action, grf);
 				inbufsize = tmp + fread(inbuffer + infobytes, 1, inbufsize - infobytes, grf);
 			} else {
 				inbufsize = fread(inbuffer, 1, inbufsize, grf);
@@ -311,20 +355,26 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 		} while (result < 0);
 		datasize = result;
 
+		bool has_mask=info.depth==DEPTH_MASK||info.depth==DEPTH_8BPP;
+		bool rgba=info.depth==DEPTH_MASK||info.depth==DEPTH_32BPP;
 		if (HASTRANSPARENCY(info.info))	// it's a tile
-			result = decodetile(outbuffer, sx, sy, imgbuffer, grfcontversion);
+			result = decodetile(outbuffer, sx, sy, imgbuffer, tilesize, has_mask, rgba, grfcontversion);
 		else
-			result = decoderegular(outbuffer, sx, sy, imgbuffer, grfcontversion);
+			result = decoderegular(outbuffer, sx, sy, imgbuffer, has_mask, rgba, grfcontversion);
 
-		store->setsize(sx, sy);
-		writer->addsprite(i == 0, store->filename(), store->curspritex(), store->curspritey(), info);
-		for (int y=0; y<sy; y++) {
-			for (int x=0; x<sx; x++)
-				store->nextpixel(CommonPixel(0, 0, 0, 0, imgbuffer[y * sx + x]));
-			store->newrow();
+		if (info.depth==DEPTH_32BPP) {
+			writesprite(false, imgrgba, writer, imgbuffer, info);
+		} else if (info.depth==DEPTH_MASK) {
+			info.depth=DEPTH_32BPP;
+			writesprite(false, imgrgba, writer, imgbuffer, info);
+			info.depth=DEPTH_MASK;
+			writesprite(false, imgpal, writer, imgbuffer, info);
+		} else if (info.depth==DEPTH_8BPP) {
+			writesprite(i == 0, imgpal, writer, imgbuffer, info);
+		} else {
+			printf("\nError unknown sprite depth %d\n", spriteno);
+			exit(2);
 		}
-		store->spritedone(sx, sy);
-
 
 		if (sy > maxy)
 			maxy = sy;
