@@ -82,8 +82,8 @@ void pcxwrite::filedone(int final)
 
 void pcxwrite::setcolours(U8 bg, U8 bord, int skip)
 {
-	background = bg;
-	border = bord;
+	background.m = bg;
+	border.m = bord;
 	borderskip = skip;
 }
 
@@ -128,7 +128,7 @@ void pcxwrite::startsubimage(int /*x*/, int /*y*/, int sx, int sy)
 		bx = sx - 2;
 		by = sy - 2;
 		for (i=0; i < 2*bx+2*by; i+=borderskip) {
-			border = i & 8;
+			border.m = i & 8;
 
 			if (i < bx)
 				putpixel(i, 0, border);
@@ -186,9 +186,9 @@ void pcxwrite::showspriteno()
 	}
 }
 
-void pcxwrite::setline(U8 *band)
+void pcxwrite::setline(CommonPixel *band)
 {
-	memset(band, background, sx);
+	for (int i = 0; i < sx; i++) band[i] = background;
 }
 
 void pcxwrite::spritedone(int sx, int sy){
@@ -198,12 +198,12 @@ void pcxwrite::spritedone(int sx, int sy){
 
 	for(int cx=0, x=subofsx(cx,0);cx<sx&&maybeGlyph;cx++,x++)
 		for(int cy=0, y=subofsy(cy,0);cy<sy;cy++,y++)
-			maybeGlyph &= (band[y][x] < 3);
+			maybeGlyph &= (band[y][x].m < 3);
 
 	if (!maybeGlyph)
 		for(int cx=0, x=subofsx(cx,0);cx<sx;cx++,x++)
 			for(int cy=0, y=subofsy(cy,0);cy<sy;cy++,y++)
-				band[y][x] = putcolourmap[band[y][x]];
+				band[y][x].m = putcolourmap[band[y][x].m];
 }
 
 void pcxwrite::writeheader()
@@ -293,7 +293,7 @@ void pcxread::startsubimage(int x, int y, int sx, int sy)
 	dy = 0;
 }
 
-void pcxread::setline(U8 *band)
+void pcxread::setline(CommonPixel *band)
 {
 	startdecoding();
 

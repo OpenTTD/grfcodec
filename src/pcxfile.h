@@ -25,6 +25,17 @@
 #include "typesize.h"
 #include "file.h"
 
+/** Definition of a common pixel in GRFCodec's realm. */
+struct CommonPixel {
+	U8 r;  ///< Red-channel
+	U8 g;  ///< Green-channel
+	U8 b;  ///< Blue-channel
+	U8 a;  ///< Alpha-channel
+	U8 m;  ///< Remap-channel
+
+	explicit CommonPixel(U8 r = 0, U8 g = 0, U8 b = 0, U8 a = 0, U8 m = 0) : r(r), g(g), b(b), a(a), m(m) {}
+};
+
 struct pcxheader {
 	U8 manuf;	// 10
 	U8 version;	// 5
@@ -66,22 +77,22 @@ class pcxfile {
 	void alloclines(int newlines);
 	void expirelines(int oldlines);
 	void initline(int y);
-	virtual void setline(U8* /*band*/) { };
+	virtual void setline(CommonPixel* /*band*/) { };
 	void endimage();
 
 	virtual void startsubimage(int /*x*/, int /*y*/, int /*sx*/, int /*sy*/) { };
 	void newline();
-	void streamputpixel(U8 colour);
-	void streamputpixel(U8 *buffer, unsigned long datasize);
+	void streamputpixel(CommonPixel colour);
+	void streamputpixel(CommonPixel *buffer, unsigned long datasize);
 private:
-	U8 streamgetpixel();
+	CommonPixel streamgetpixel();
 public:
-	void streamgetpixel(U8 *buffer, unsigned long datasize);
+	void streamgetpixel(CommonPixel *buffer, unsigned long datasize);
 
 	void installreadmap(int *map);
 	void installwritemap(int *map);
 
-	void putpixel(int x, int y, U8 colour);
+	void putpixel(int x, int y, CommonPixel colour);
 	//U8 getpixel(int x, int y);
 	int  subimagex()
 		{ return subx + dx; }
@@ -100,9 +111,9 @@ public:
 
 	void startdecoding();
 	void startencoding();
-	virtual void encodebytes(U8 byte, int num);
-	virtual void encodebytes(U8 buffer[], int num);
-	void decodebytes(U8 buffer[], int num);
+	virtual void encodebytes(CommonPixel byte, int num);
+	virtual void encodebytes(CommonPixel buffer[], int num);
+	void decodebytes(CommonPixel buffer[], int num);
 	void endencoding();
 
 	int subofsx(int x, int checkbound);
@@ -143,7 +154,7 @@ public:
 		colourmap(const colourmap&);// not copyable
 	} getcolourmap, putcolourmap;
 
-	U8 **band;
+	CommonPixel **band;
 
 	private:
 

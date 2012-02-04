@@ -14,13 +14,13 @@ class pcxwrite : public pcxfile, public spritestorage {
 
 	virtual void newsprite() {spriteno++; };
 	virtual void startsubimage(int x, int y, int sx, int sy);
-	virtual void setline(U8 *band);
+	virtual void setline(CommonPixel *band);
 
 	virtual void setsize(int sx, int sy)
 		{ startsubimage(-1, -1, sx, sy); };
 	virtual int  curspritex() {return subimagex();};
 	virtual void newrow() { newline(); };
-	virtual void nextpixel(U8 colour) { streamputpixel(colour); };
+	virtual void nextpixel(CommonPixel colour) { streamputpixel(colour); };
 	virtual void spritedone() { endsubimage(); };
 	virtual void spritedone(int sx, int sy);
 
@@ -39,8 +39,8 @@ class pcxwrite : public pcxfile, public spritestorage {
 	void showspriteno();
 
 	int borderskip, spriteno, lastdigitx;
-	U8 background;
-	U8 border;
+	CommonPixel background;
+	CommonPixel border;
 
 	pcxwrite(const pcxwrite&);//not copyable: pcxfile::colormap
 	void operator=(const pcxwrite&);//not assignable: pcxfile::colormap
@@ -53,7 +53,7 @@ class pcxread : public pcxfile {
 	virtual void filestart();
 
 	virtual void startsubimage(int x, int y, int sx, int sy);
-	virtual void setline(U8 *band);
+	virtual void setline(CommonPixel *band);
 
 	void readheader();
 

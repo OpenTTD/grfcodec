@@ -13,16 +13,16 @@ class pngwrite: public pcxwrite {
 
 	void filestart();
 	void filedone(int final);
-	
+
 	protected:
-	void encodebytes(U8 byte, int num);
-	void encodebytes(U8 buffer[], int num);
+	void encodebytes(CommonPixel byte, int num);
+	void encodebytes(CommonPixel buffer[], int num);
 
 	private:
 	pngwrite(const pngwrite&);
 	void operator=(const pngwrite&);
 
-	private:	
+	private:
 	png_struct *png;
 	png_info *info;
 	std::vector<U8> cache;
@@ -34,7 +34,7 @@ class pngread: public pcxread {
 	~pngread();
 
 	void filestart();
-	void setline(U8 *band);
+	void setline(CommonPixel *band);
 
 	private:
 	pngread(const pngread&);
