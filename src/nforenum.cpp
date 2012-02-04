@@ -672,10 +672,10 @@ bool verify_real(string&data,RealSpriteState&formats){
 			else { IssueMessage(0,REAL_MISSING_DATA,"zoom"); return COMMENTOFF(); }
 
 			string flag;
-			bool chunked = false, cropped=false;
+			bool chunked = false, nocrop=false;
 			while (!extract_string(meta,flag,processed,anyprocessing)) {
 				if (!chunked&&flag=="chunked") chunked = true;
-				else if (!cropped&&flag=="cropped") cropped = true;
+				else if (!nocrop&&flag=="nocrop") nocrop = true;
 				else { IssueMessage(0,REAL_UNKNOWN_FLAG,flag.c_str()); return COMMENTOFF(); }
 			}
 
