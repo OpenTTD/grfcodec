@@ -49,25 +49,28 @@ struct BoxData : Box {
 };
 
 struct BoxSprite : Box {
-	BoxSprite(bool first, int x, SpriteInfo info) : Box(first ? issprite : isspriteextension), x(x), info(info) {}
+	BoxSprite(bool first, const char *filename, int x, int y, SpriteInfo info) : Box(first ? issprite : isspriteextension), filename(strdup(filename)), x(x), y(y), info(info) {}
+	~BoxSprite() { free(filename); }
+	char *filename;
 	int x;
+	int y;
 	SpriteInfo info;
 };
 
 class infowriter :  public spriteinfowriter {
 	public:
-	infowriter(FILE *info, int maxboxes, int useplaintext);
+	infowriter(FILE *info, int maxboxes, int useplaintext, const char *directory);
 	virtual ~infowriter();
 
-	virtual void newband(pcxfile *pcx);
-	virtual void addsprite(bool first, int x, SpriteInfo info);
+	void flush();
+	virtual void addsprite(bool first, const char *filename, int x, int y, SpriteInfo info);
 	virtual void adddata(U16 size, U8 *data);
 
 	void done(int count);
 
 	private:
 	FILE *info;
-
+	const char *directory;
 	void resize(int newmaxboxes);
 	Box **boxes;
 

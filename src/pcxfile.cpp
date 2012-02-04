@@ -49,7 +49,6 @@ pcxfile::pcxfile()
 	mfile = NULL;
 	header.window[2] = 65535;
 	codecing = 0;
-	notify = NULL;
 	paletted = true;
 
 }
@@ -108,10 +107,8 @@ void pcxfile::newheader(int sx)
 	header.bpl = sx;
 }
 
-void pcxfile::startimage(bool paletted, int sx, int sy, int bandx, int bandy, bandnotify *notify)
+void pcxfile::startimage(bool paletted, int sx, int sy, int bandx, int bandy)
 {
-	pcxfile::notify = notify;
-
 	pcxfile::sx = sx;
 	pcxfile::sy = sy;
 	pcxfile::bandx = bandx;
@@ -198,8 +195,6 @@ void pcxfile::endimage()
 		delete[](band);
 		band = NULL;
 	}
-
-	notify = NULL;
 
 	filedone(1);
 }
@@ -303,9 +298,6 @@ void pcxfile::newband()
 	if ( (totaly + thisbandy > sy) && (thisbandy <= sy) ) {	// would be too large
 		newfile(this->paletted, sx);
 	}
-
-	if (notify)
-		notify->newband(this);
 
 	totaly += thisbandy;
 

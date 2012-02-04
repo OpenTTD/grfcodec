@@ -711,12 +711,12 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 
 	pcx->setcolours(255, 0, 0);
 
-	infowriter writer(info, (width + box - 1) / box, useplaintext);
+	infowriter writer(info, (width + box - 1) / box, useplaintext, pcx->getdirectory());
 
 	if (colourmap)
 		pcx->installwritemap(colourmap);
 
-	pcx->startimage(true, width, height, box, box, &writer);
+	pcx->startimage(true, width, height, box, box);
 
 	count = 0;
 
@@ -731,6 +731,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 		}
 
 		result = decodesprite(grf, pcx, &writer, count, &dataoffset, grfcontversion);
+		writer.flush();
 		count++;
 	} while (result);
 	count--;
@@ -738,6 +739,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	pcx->endimage();
 	delete(pcx);	// closes output file
 
+	writer.flush();
 	writer.done(count);
 
 	fclose(info);
