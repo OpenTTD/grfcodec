@@ -242,6 +242,11 @@ void infowriter::newband(pcxfile *pcx)
 				char *filename = new char[len];
 
 				snprintf(filename, len, "%s%s", pcx->getdirectory(), (char*) d->data + 2);
+				// Strip trailing whitespace
+				int last = 0;
+				for (int j=0; j<len-1; j++)
+					if (!isspace(filename[j])) last = j;
+				filename[last+1] = '\0';
 				fprintf(info, "**\t %s\n", filename);
 
 				FILE *bin = fopen(filename, "wb");
