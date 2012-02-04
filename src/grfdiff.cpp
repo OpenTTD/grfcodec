@@ -443,7 +443,7 @@ int mkdiff()
 		verbdata[0] = verbdata[1] = data = NULL;
 		for (i=0; i<2; i++) if (grf[i]) {
 			verbsize[i] = 0;
-			res[i] = decodesprite(grf[i], grfdata[i], grfinf[i], spriteno, NULL, 1);
+			res[i] = decodesprite(grf[i], grfdata[i], NULL, grfinf[i], spriteno, NULL, 1);
 		}
 
 		if (grf[0] && (res[0] != res[1])) {

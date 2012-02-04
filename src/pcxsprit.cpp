@@ -84,6 +84,7 @@ void pcxwrite::setcolours(U8 bg, U8 bord, int skip)
 {
 	background.m = bg;
 	border.m = bord;
+	border.a = 0xFF;
 	borderskip = skip;
 }
 

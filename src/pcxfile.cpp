@@ -337,7 +337,7 @@ void pcxfile::startdecoding()
 	codecing = 2;
 }
 
-void pcxfile::encodebytes(CommonPixel buffer[], int num)
+void pcxfile::encodebytes(const CommonPixel *buffer, int num)
 {
 	int thisrun;
 	U8 byte;
@@ -364,7 +364,7 @@ void pcxfile::encodebytes(CommonPixel buffer[], int num)
 	}
 }
 
-void pcxfile::encodebytes(CommonPixel pixel, int num)
+void pcxfile::encodebytes(const CommonPixel &pixel, int num)
 {
 	U8 byte = pixel.m;
 	int thisrun;

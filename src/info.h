@@ -39,6 +39,7 @@ private:
 struct Box {
 	enum boxtype {issprite, isspriteextension, isdata};
 	Box(boxtype type) : type(type) {}
+	virtual ~Box() {}
 	boxtype type;
 };
 
