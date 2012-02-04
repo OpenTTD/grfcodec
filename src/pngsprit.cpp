@@ -121,6 +121,7 @@ void pngread::setline(CommonPixel *band)
 			band[i].a = row[i * 4 + 3];
 		}
 	}
+	free(row);
 }
 
 extern bool _force;

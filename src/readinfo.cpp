@@ -54,6 +54,7 @@ using namespace boost::gregorian;
 
 extern int _quiet;
 const char *zoom_levels[ZOOM_LEVELS] = { "normal", "zi4", "zi2", "zo2", "zo4", "zo8" };
+const char *depths[DEPTHS] = { "8bpp", "32bpp", "mask" };
 
 #define checkspriteno()\
 	if(spriteno!=-1&&spriteno!=(int)sprites.size() && !_quiet){\
@@ -167,6 +168,7 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 				throw Sprite::unparseable("\"Byte\" "+itoa(i)+" isn't.",sprite);
 		}
 		inf.info = U8(intinf[0]);
+		inf.depth = DEPTH_8BPP;
 		inf.zoom = 0;
 		inf.ydim = U8(intinf[1]);
 		inf.xdim = U16(intinf[2] | intinf[3] >> 8);
@@ -186,6 +188,7 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 		if(ry<-32768)throw Sprite::unparseable("yrel is too small",sprite);
 		if(ry>32767)throw Sprite::unparseable("yrel is too large",sprite);
 		inf.zoom = 0;
+		inf.depth = DEPTH_8BPP;
 		inf.info = U8(comp);
 		inf.ydim = U8(sy);
 		inf.xdim = U16(sx);
@@ -195,39 +198,48 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 		int sx,sy,rx,ry;
 		char depth[8],zoom[8],flags[2][8];
 		int read = sscanf(meta,"%7s %d %d %d %d %d %d %7s %7s %7s",depth,&inf.xpos,&inf.ypos,&sx,&sy,&rx,&ry,zoom,flags[0],flags[1]);
-		if(read < 8){
+		if(strcmp(depth,"mask")==0?read!=3:read < 8){
 			throw Sprite::unparseable("Insufficient meta-data",sprite);
 		}
-		if(sx<1)throw Sprite::unparseable("xsize is too small",sprite);
-		if(sx>0xFFFF)throw Sprite::unparseable("xsize is too large",sprite);
-		if(sy<1)throw Sprite::unparseable("ysize is too small",sprite);
-		if(sy>0xFFFF)throw Sprite::unparseable("ysize is too large",sprite);
-		if(rx<-32768)throw Sprite::unparseable("xrel is too small",sprite);
-		if(rx>32767)throw Sprite::unparseable("xrel is too large",sprite);
-		if(ry<-32768)throw Sprite::unparseable("yrel is too small",sprite);
-		if(ry>32767)throw Sprite::unparseable("yrel is too large",sprite);
-		if(strcmp(depth,"8bpp")!=0)throw Sprite::unparseable("invalid depth",sprite);
-		inf.zoom=0xFF;
-		for (int i = 0; i < ZOOM_LEVELS; i++) {
-			if(strcmp(zoom,zoom_levels[i])==0){
-				inf.zoom = i;
+		inf.depth=0xFF;
+		for (int i = 0; i < DEPTHS; i++) {
+			if(strcmp(depth,depths[i])==0){
+				inf.depth = i;
 				break;
 			}
 		}
-		if (inf.zoom==0xFF)throw Sprite::unparseable("invalid zoom",sprite);
+		if (inf.depth==0xFF)throw Sprite::unparseable("invalid depth",sprite);
 		inf.info = 1; // Bit 1 has to be always set for container version 1
-		for (int i = 8; i < read; i++) {
-			const char *flag=flags[i - 8];
-			/* Comment. */
-			if (*flag == '#' || *flag == '/' || *flag == ';') break;
-			if (strcmp(flag,"chunked")==0)inf.info|=8;
-			else if (strcmp(flag,"nocrop")==0)inf.info|=64;
-			else throw Sprite::unparseable("invalid flag",sprite);
+		if (inf.depth!=DEPTH_MASK){
+			if(sx<1)throw Sprite::unparseable("xsize is too small",sprite);
+			if(sx>0xFFFF)throw Sprite::unparseable("xsize is too large",sprite);
+			if(sy<1)throw Sprite::unparseable("ysize is too small",sprite);
+			if(sy>0xFFFF)throw Sprite::unparseable("ysize is too large",sprite);
+			if(rx<-32768)throw Sprite::unparseable("xrel is too small",sprite);
+			if(rx>32767)throw Sprite::unparseable("xrel is too large",sprite);
+			if(ry<-32768)throw Sprite::unparseable("yrel is too small",sprite);
+			if(ry>32767)throw Sprite::unparseable("yrel is too large",sprite);
+			inf.zoom=0xFF;
+			for (int i = 0; i < ZOOM_LEVELS; i++) {
+				if(strcmp(zoom,zoom_levels[i])==0){
+					inf.zoom = i;
+					break;
+				}
+			}
+			if (inf.zoom==0xFF)throw Sprite::unparseable("invalid zoom",sprite);
+			for (int i = 8; i < read; i++) {
+				const char *flag=flags[i - 8];
+				/* Comment. */
+				if (*flag == '#' || *flag == '/' || *flag == ';') break;
+				if (strcmp(flag,"chunked")==0)inf.info|=8;
+				else if (strcmp(flag,"nocrop")==0)inf.info|=64;
+				else throw Sprite::unparseable("invalid flag",sprite);
+			}
+			inf.ydim = U16(sy);
+			inf.xdim = U16(sx);
+			inf.xrel = S16(rx);
+			inf.yrel = S16(ry);
 		}
-		inf.ydim = U16(sy);
-		inf.xdim = U16(sx);
-		inf.xrel = S16(rx);
-		inf.yrel = S16(ry);
 	}
 	if (infover < 4)
 		inf.ypos++;	// bug, had an extra line at the top
@@ -237,6 +249,16 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 	prevy=inf.ypos;
 
 	if(infs.size()==0&&inf.zoom!=0)throw Sprite::unparseable("first sprite is not 8bpp normal zoom sprite",sprite);
+	if(inf.depth==DEPTH_MASK){
+		SpriteInfo parent=infs[infs.size()-1];
+		if (parent.depth!=DEPTH_32BPP)throw Sprite::unparseable("mask sprite not preceded by 32bpp sprite",sprite);
+		inf.info = parent.info;
+		inf.ydim = parent.ydim;
+		inf.xdim = parent.xdim;
+		inf.xrel = parent.xrel;
+		inf.yrel = parent.yrel;
+		inf.zoom = parent.zoom;
+	}
 	infs.push_back(inf);
 }
 
