@@ -10,7 +10,7 @@ class pcxwrite : public pcxfile, public spritestorage {
 	pcxwrite(multifile *mfile);
 
 	virtual void filedone(int final);
-	virtual void filestart();
+	virtual void filestart(bool paletted);
 
 	virtual void newsprite() {spriteno++; };
 	virtual void startsubimage(int x, int y, int sx, int sy);

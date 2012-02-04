@@ -490,7 +490,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 					}
 
 					info.PrepareReal(sprite.infs[j]);
-					CommonPixel *image = (CommonPixel*) malloc(info.imgsize * sizeof(CommonPixel));
+					CommonPixel *image = (CommonPixel*) calloc(info.imgsize, sizeof(CommonPixel));
 					if (!image) {
 						fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
 						exit(2);
@@ -700,7 +700,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	if (colourmap)
 		pcx->installwritemap(colourmap);
 
-	pcx->startimage(width, height, box, box, &writer);
+	pcx->startimage(true, width, height, box, box, &writer);
 
 	count = 0;
 
