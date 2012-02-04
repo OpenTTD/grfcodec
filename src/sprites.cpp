@@ -149,7 +149,13 @@ void SpriteInfo::writetobuffer(U8 *buffer, int grfcontversion)
 	int i = 0;
 	if (grfcontversion == 2) {
 		/* Copy bits 3 and 6 of the nfo and make it, for now, an 8bpp normal GRF. */
-		buffer[i++] = 0x04 | (this->info & (1 << 3 | 1 << 6));
+		U8 img=0;
+		switch(this->depth){
+			case DEPTH_8BPP:  img=0x04; break;
+			case DEPTH_32BPP: img=0x03; break;
+			case DEPTH_MASK:  img=0x07; break;
+		}
+		buffer[i++] = img | (this->info & (1 << 3 | 1 << 6));
 		buffer[i++] = this->zoom;
 		buffer[i++] = this->ydim & 0xFF;
 		buffer[i++] = this->ydim >> 8;
@@ -563,7 +569,7 @@ U16 getlasttilesize()
 	return lasttilesize;
 }
 
-U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, int grfcontversion)
+U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion)
 {
 	long tilesize = imgsize + 16L * sy;
 	bool long_format = false;
@@ -598,14 +604,14 @@ U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy
 
 			while ( (x1 < sx) && (tileofs + offset_size + sx < tilesize) ) {
 				// find where next non-transparent part starts
-				while ( (x1 < sx) && (image[y*sx+x1].IsTransparent()) )
+				while ( (x1 < sx) && (image[y*sx+x1].IsTransparent(has_mask, rgba)) )
 					x1++;
 
 				if (x1 < sx) {
 					int len = 1;
 					// ...and where it ends
 					x2 = x1 + 1;
-					while ( (x2 < sx) && (len < chunk_len) && (!image[y*sx+x2].IsTransparent()) ) {
+					while ( (x2 < sx) && (len < chunk_len) && (!image[y*sx+x2].IsTransparent(has_mask, rgba)) ) {
 						len++;
 						x2++;
 					}
@@ -614,7 +620,7 @@ U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy
 						if (x1 > trans_len) // chunk cannot start after 255; move it back
 							x1 = trans_len;
 						x2 = sx;
-						while ( (image[y*sx+x2-1].IsTransparent()) )
+						while ( (image[y*sx+x2-1].IsTransparent(has_mask, rgba)) )
 							x2--;
 						len = x2 - x1;
 						if (len > chunk_len) { // chunk is too long
@@ -640,7 +646,7 @@ U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy
 					}
 					U8 *buffer = tile + tileofs;
 					for (int i = 0; i < len; i++) {
-						buffer = image[y*sx+x1+i].Encode(buffer);
+						buffer = image[y*sx+x1+i].Encode(buffer, has_mask, rgba);
 					}
 					tileofs += buffer - (tile + tileofs);
 				} else {	// transparent to end of line

@@ -111,7 +111,7 @@ void inforeader::PrepareReal(const SpriteInfo&info){
 		if (colourmap)
 			imgfile->installreadmap(colourmap);
 
-		imgfile->startimage(true, 0, 0, 0, 0, NULL);
+		imgfile->startimage(inf.depth!=DEPTH_32BPP, 0, 0, 0, 0, NULL);
 	}
 
 	sx = inf.xdim;

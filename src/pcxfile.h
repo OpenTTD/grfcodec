@@ -35,14 +35,20 @@ struct CommonPixel {
 
 	explicit CommonPixel(U8 r = 0, U8 g = 0, U8 b = 0, U8 a = 0, U8 m = 0) : r(r), g(g), b(b), a(a), m(m) {}
 
-	bool IsTransparent() const
+	bool IsTransparent(bool has_mask, bool rgba) const
 	{
-		return this->m == 0;
+		return !((has_mask && this->m) || (rgba && this->a));
 	}
 
-	U8 *Encode(U8 *buffer) const
+	U8 *Encode(U8 *buffer, bool has_mask, bool rgba) const
 	{
-		*buffer++ = this->m;
+		if (rgba) {
+			*buffer++ = this->r;
+			*buffer++ = this->g;
+			*buffer++ = this->b;
+			*buffer++ = this->a;
+		}
+		if (has_mask) *buffer++ = this->m;
 		return buffer;
 	}
 };
