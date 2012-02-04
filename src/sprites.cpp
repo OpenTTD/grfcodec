@@ -24,7 +24,7 @@
 
 int maxx = 0, maxy = 0, maxs = 0;
 
-static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store, int grfcontversion)
+static int decodetile(U8 *buffer, int sx, int sy, U8 *imgbuffer, int grfcontversion)
 {
 	U16 *ibuffer = (U16*) buffer;
 
@@ -40,12 +40,12 @@ static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store, int grfc
 			// fill from beginning of last chunk to start
 			// of this one, with "background" colour
 			for (x=chunkstart; x<ofs; x++)
-				store->nextpixel(0);
+				*imgbuffer++ = 0;
 
 			// then copy the number of actual bytes
 			for (x=0; x<len; x++) {
 				int col = buffer[offset++];
-				store->nextpixel(col);
+				*imgbuffer++ = col;
 			}
 			chunkstart = ofs + len;
 
@@ -54,21 +54,18 @@ static int decodetile(U8 *buffer, int sx, int sy, spritestorage *store, int grfc
 		// and fill from the end of the last chunk to the
 		// end of the line
 		for (x=chunkstart; x<sx; x++)
-			store->nextpixel(0);
-
-		store->newrow();
+			*imgbuffer++ = 0;
 	}
 
 	return 1;
 }
 
-static int decoderegular(const U8 *buffer, int sx, int sy, spritestorage *store, int grfcontversion)
+static int decoderegular(const U8 *buffer, int sx, int sy, U8 *imgbuffer, int grfcontversion)
 {
 	long offset = SpriteInfo::Size(grfcontversion);
 	for (int y=0; y<sy; y++) {
 		for (int x=0; x<sx; x++)
-			store->nextpixel(buffer[offset++]);
-		store->newrow();
+			*imgbuffer++ = buffer[offset++];
 	}
 
 	return 1;
@@ -191,7 +188,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 	static const char *action = "decoding sprite";
 	unsigned long size, datasize, inbufsize, outbufsize, startpos, returnpos = 0;
 	SpriteInfo info;
-	U8 *inbuffer, *outbuffer;
+	U8 *inbuffer, *outbuffer, *imgbuffer;
 	int sx, sy;
 
 	if (!writer || !store) {
@@ -258,7 +255,6 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 		sy = info.ydim;
 		const int infobytes = SpriteInfo::Size(grfcontversion);
 		outbufsize = 0L + sx * sy + infobytes;
-		store->setsize(sx, sy);
 
 		if (grfcontversion == 2 && HASTRANSPARENCY(info.info)) size -= 4;
 
@@ -277,8 +273,9 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 
 		inbuffer = (U8*) malloc(inbufsize);
 		outbuffer = (U8*) malloc(outbufsize);
-		if (!inbuffer || !outbuffer) {
-			printf("\nError allocating sprite buffer, want %ld for sprite %d\n", inbufsize + outbufsize, spriteno);
+		imgbuffer = (U8*) calloc(sx * sy, 1);
+		if (!inbuffer || !outbuffer || !imgbuffer) {
+			printf("\nError allocating sprite buffer, want %ld for sprite %d\n", inbufsize + outbufsize + sx * sy, spriteno);
 			exit(2);
 		}
 
@@ -306,13 +303,19 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 			}
 		} while (result < 0);
 		datasize = result;
-		writer->addsprite(i == 0, store->curspritex(), info);
 
 		if (HASTRANSPARENCY(info.info))	// it's a tile
-			result = decodetile(outbuffer, sx, sy, store, grfcontversion);
+			result = decodetile(outbuffer, sx, sy, imgbuffer, grfcontversion);
 		else
-			result = decoderegular(outbuffer, sx, sy, store, grfcontversion);
+			result = decoderegular(outbuffer, sx, sy, imgbuffer, grfcontversion);
 
+		store->setsize(sx, sy);
+		writer->addsprite(i == 0, store->curspritex(), info);
+		for (int y=0; y<sy; y++) {
+			for (int x=0; x<sx; x++)
+				store->nextpixel(imgbuffer[y * sx + x]);
+			store->newrow();
+		}
 		store->spritedone(sx, sy);
 
 
@@ -325,6 +328,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 
 		free(inbuffer);
 		free(outbuffer);
+		free(imgbuffer);
 
 		if (returnpos != 0) {
 			*dataoffset = startpos + inbufsize;
