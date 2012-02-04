@@ -566,6 +566,10 @@ U16 getlasttilesize()
 U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, int grfcontversion)
 {
 	long tilesize = imgsize + 16L * sy;
+	bool long_format = false;
+	const bool long_chunk = grfcontversion == 2 && sx > 256;
+	const int chunk_len = long_chunk ? 0x7FFF : 0x7F;
+	const int trans_len = long_chunk ? 0xFFFF : 0xFF;
 
 	while (1) {	// repeat in case we didn't allocate enough memory
 		U8 *tile = (U8*) malloc(tilesize);
@@ -575,19 +579,24 @@ U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy
 			exit(2);
 		}
 
-		long tileofs = 2L * sy;		// first sy (int) offsets, then data
+		long offset_size = long_format ? 4 : 2;
+		long tileofs = offset_size * sy;		// first sy (int) offsets, then data
 
-		U16 *lineofs = (U16*) tile;
 		int y;
 
 		for (y=0; y<sy; y++) {
 			int x1 = 0, x2 = 0;
 
-			lineofs[y] = tileofs;
-			lineofs[y] = BE_SWAP16(lineofs[y]);
+			if (long_format) {
+				U32 *lineofs = (U32*)tile;
+				lineofs[y] = BE_SWAP32(tileofs);
+			} else {
+				U16 *lineofs = (U16*)tile;
+				lineofs[y] = BE_SWAP16(tileofs);
+			}
 			long lastlenofs = tileofs;
 
-			while ( (x1 < sx) && (tileofs + 2 + sx < tilesize) ) {
+			while ( (x1 < sx) && (tileofs + offset_size + sx < tilesize) ) {
 				// find where next non-transparent part starts
 				while ( (x1 < sx) && (image[y*sx+x1].IsTransparent()) )
 					x1++;
@@ -596,22 +605,22 @@ U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy
 					int len = 1;
 					// ...and where it ends
 					x2 = x1 + 1;
-					while ( (x2 < sx) && (len < 0x7f) && (!image[y*sx+x2].IsTransparent()) ) {
+					while ( (x2 < sx) && (len < chunk_len) && (!image[y*sx+x2].IsTransparent()) ) {
 						len++;
 						x2++;
 					}
 
-					if (x2 > 255) { // chunk extends past the 255-wall; encode the remainder of the line
-						if (x1 > 255) // chunk cannot start after 255; move it back
-							x1 = 255;
+					if (x2 > trans_len) { // chunk extends past the 255-wall; encode the remainder of the line
+						if (x1 > trans_len) // chunk cannot start after 255; move it back
+							x1 = trans_len;
 						x2 = sx;
 						while ( (image[y*sx+x2-1].IsTransparent()) )
 							x2--;
 						len = x2 - x1;
-						if (len > 0x7f) { // chunk is too long
-							if (x1 < 255) {  // first encode the part before the wall
-								len = 255 - x1;
-								x2 = 255;
+						if (len > chunk_len) { // chunk is too long
+							if (x1 < trans_len) {  // first encode the part before the wall
+								len = trans_len - x1;
+								x2 = trans_len;
 							} else { // chunk starts at wall, abort
 								printf("Error: Sprite %d is too wide to use tile encoding.\n", spriteno);
 								exit(2);
@@ -620,8 +629,15 @@ U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy
 					}
 
 					lastlenofs = tileofs;
-					tile[tileofs++] = len;
-					tile[tileofs++] = x1;
+					if (long_chunk) {
+						tile[tileofs++] = len & 0xFF;
+						tile[tileofs++] = len >> 8;
+						tile[tileofs++] = x1 & 0xFF;
+						tile[tileofs++] = x1 >> 8;
+					} else {
+						tile[tileofs++] = len;
+						tile[tileofs++] = x1;
+					}
 					U8 *buffer = tile + tileofs;
 					for (int i = 0; i < len; i++) {
 						buffer = image[y*sx+x1+i].Encode(buffer);
@@ -631,23 +647,37 @@ U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy
 					if (x2 == 0) {	// totally empty line
 						tile[tileofs++] = 0;
 						tile[tileofs++] = 0;
+						if (long_chunk) {
+							tile[tileofs++] = 0;
+							tile[tileofs++] = 0;
+						}
 					}
 					x2 = x1;
 				}
 				x1 = x2;
 			}
-			tile[lastlenofs] |= 0x80;
-			if (tileofs + 2 + sx >= tilesize)
+			tile[lastlenofs + (long_chunk ? 1 : 0)] |= 0x80;
+			if (tileofs + offset_size + sx >= tilesize)
 				break;
 		}
 
-		if (tileofs + 2 + sx >= tilesize) {
+		if (tileofs + offset_size + sx >= tilesize) {
 			// tile didn't hold all data, estimate real size
 			// and enlarge it
 			free(tile);
 			long imgofs = y*sx + 1L;
 			tilesize = tilesize * imgsize / imgofs;
 			tilesize += (tilesize >> 3) + 16L;
+			continue;
+		}
+
+		if (!long_format && tileofs >= 65536) {
+			if (grfcontversion == 1) {
+				printf("Error: Sprite %d is too big to use tile encoding.\n", spriteno);
+				exit(2);
+			}
+			free(tile);
+			long_format = true;
 			continue;
 		}
 

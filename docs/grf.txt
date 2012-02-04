@@ -167,22 +167,29 @@ Tile sprites
    pixels, but the chunks may skip a few pixels which are then
    transparent.
 
-   The sprite data first starts off with a list of two-byte offsets, one
-   for each line. These determine at which offset each line starts,
-   counted from the first info byte. Then follow the chunks for the
-   lines:
+   The sprite data first starts off with a list of WORD offsets for
+   format 1 GRFs and format 2 GRFs with an uncompressed size below 65536
+   bytes. If the size is bigger in a format 2 GRF, the sprite starts
+   with a list of DWORD offsets. There is one offset for each line. These
+   determine at which offset each line starts, counted from the first data
+   byte.
 
-   BYTE cinfo
+   Then follow the chunks for the lines:
+
+   BYTE cinfo (format 1)
+   WORD cinfo (format 2 if width > 256)
           The high bit is set if this is the last chunk in the line. The
           line need not be filled entirely, any remaining pixels are
-          simply transparent. The lower seven bits give the length of
+          simply transparent. The lower seven/fifteen bits give the length of
           this chunk in pixels.
 
-   BYTE cofs
+   BYTE cofs (format 1)
+   WORD cofs (format 2 if width > 256)
           x offset at which this chunk starts. The pixels between this
           chunk and the last one will be transparent.
 
-   After this follow (cinfo & 0x7f) bytes of pixels.
+   After this follow (cinfo & 0x7f or cinfo & 0x7fff, respectively) bytes
+   of pixels.
 
 Compression algorithm
 
