@@ -11,7 +11,7 @@ class pngwrite: public pcxwrite {
 	pngwrite(multifile *mfile);
 	~pngwrite();
 
-	void filestart();
+	void filestart(bool paletted);
 	void filedone(int final);
 
 	protected:
