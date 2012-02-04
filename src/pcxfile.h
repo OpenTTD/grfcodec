@@ -34,6 +34,17 @@ struct CommonPixel {
 	U8 m;  ///< Remap-channel
 
 	explicit CommonPixel(U8 r = 0, U8 g = 0, U8 b = 0, U8 a = 0, U8 m = 0) : r(r), g(g), b(b), a(a), m(m) {}
+
+	bool IsTransparent() const
+	{
+		return this->m == 0;
+	}
+
+	U8 *Encode(U8 *buffer) const
+	{
+		*buffer++ = this->m;
+		return buffer;
+	}
 };
 
 struct pcxheader {

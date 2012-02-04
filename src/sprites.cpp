@@ -563,7 +563,7 @@ U16 getlasttilesize()
 	return lasttilesize;
 }
 
-U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, int grfcontversion)
+U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, int grfcontversion)
 {
 	long tilesize = imgsize + 16L * sy;
 
@@ -589,14 +589,14 @@ U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, 
 
 			while ( (x1 < sx) && (tileofs + 2 + sx < tilesize) ) {
 				// find where next non-transparent part starts
-				while ( (x1 < sx) && (image[y*sx+x1] == background) )
+				while ( (x1 < sx) && (image[y*sx+x1].IsTransparent()) )
 					x1++;
 
 				if (x1 < sx) {
 					int len = 1;
 					// ...and where it ends
 					x2 = x1 + 1;
-					while ( (x2 < sx) && (len < 0x7f) && (image[y*sx+x2] != background) ) {
+					while ( (x2 < sx) && (len < 0x7f) && (!image[y*sx+x2].IsTransparent()) ) {
 						len++;
 						x2++;
 					}
@@ -605,7 +605,7 @@ U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, 
 						if (x1 > 255) // chunk cannot start after 255; move it back
 							x1 = 255;
 						x2 = sx;
-						while ( (image[y*sx+x2-1] == background) )
+						while ( (image[y*sx+x2-1].IsTransparent()) )
 							x2--;
 						len = x2 - x1;
 						if (len > 0x7f) { // chunk is too long
@@ -622,9 +622,11 @@ U16 encodetile(FILE *grf, const U8 *image, long imgsize, U8 background, int sx, 
 					lastlenofs = tileofs;
 					tile[tileofs++] = len;
 					tile[tileofs++] = x1;
-					memmove( &(tile[tileofs]), &(image[y*sx+x1]), len);
-
-					tileofs += len;
+					U8 *buffer = tile + tileofs;
+					for (int i = 0; i < len; i++) {
+						buffer = image[y*sx+x1+i].Encode(buffer);
+					}
+					tileofs += buffer - (tile + tileofs);
 				} else {	// transparent to end of line
 					if (x2 == 0) {	// totally empty line
 						tile[tileofs++] = 0;
