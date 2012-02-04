@@ -125,12 +125,12 @@ void pcxfile::startimage(int sx, int sy, int bandx, int bandy, bandnotify *notif
 
 void pcxfile::alloclines(int newlines)
 {
-	U8 **newband, **oldband = band;
+	CommonPixel **newband, **oldband = band;
 
 	if (newlines <= bandlines)
 		return;
 
-	newband = new U8*[newlines];
+	newband = new CommonPixel*[newlines];
 	if (!newband) {
 		printf("%s: Error allocating band array\n", this->filename());
 		exit(2);
@@ -141,7 +141,7 @@ void pcxfile::alloclines(int newlines)
 		newband[i] = oldband[i];
 
 	for (i=bandlines; i<newlines; i++) {
-		newband[i] = new U8[sx];
+		newband[i] = new CommonPixel[sx];
 		if (!(newband[i])) {
 			printf("%s: Error allocating new band lines\n", this->filename());
 			exit(2);
@@ -161,7 +161,7 @@ void pcxfile::alloclines(int newlines)
 void pcxfile::expirelines(int oldlines)
 {
 	for (int i=0; i<oldlines; i++) {
-		U8 *old = band[0];
+		CommonPixel *old = band[0];
 		memmove( &(band[0]), &(band[1]), (bandlines-1)*sizeof(band[0]));
 		band[bandlines-1] = old;
 
@@ -208,13 +208,13 @@ void pcxfile::newline()
 	cy++;
 }
 
-void pcxfile::streamputpixel(U8 colour)
+void pcxfile::streamputpixel(CommonPixel colour)
 {
 	int x = subofsx(cx, 1);
 	int y = subofsy(cy, 1);
 
-	if (putcolourmap[colour] == -1) {
-		printf("%s: Agh! Putting colour %d but it has no map!\n", this->filename(), colour);
+	if (putcolourmap[colour.m] == -1) {
+		printf("%s: Agh! Putting colour %d but it has no map!\n", this->filename(), colour.m);
 		exit(2);
 	}
 
@@ -222,7 +222,7 @@ void pcxfile::streamputpixel(U8 colour)
 	cx++;
 }
 
-void pcxfile::streamputpixel(U8 *buffer, unsigned long datasize)
+void pcxfile::streamputpixel(CommonPixel *buffer, unsigned long datasize)
 {
 	for (unsigned long i=0; i<datasize; i++) {
 		streamputpixel(buffer[i]);
@@ -231,45 +231,46 @@ void pcxfile::streamputpixel(U8 *buffer, unsigned long datasize)
 	}
 }
 
-U8 pcxfile::streamgetpixel()
+CommonPixel pcxfile::streamgetpixel()
 {
 	int x = subofsx(cx, 0);
 	int y = subofsy(cy, 0);
 
 	cx++;
 	if (x < 0 || y < 0)
-		return 255;
+		return CommonPixel(0, 0, 0, 0, 255);
 	else
 		return band[y][x];
 }
 
 extern bool _mapAll;
 
-void pcxfile::streamgetpixel(U8 *buffer, unsigned long datasize)
+void pcxfile::streamgetpixel(CommonPixel *buffer, unsigned long datasize)
 {
 	unsigned long i=0;
-	int colour;
+	CommonPixel colour;
 	bool maybeGlyph=!_mapAll;
 	for (; i<datasize; i++) {
 		colour = streamgetpixel();
-		maybeGlyph &= (colour < 3);
+		maybeGlyph &= (colour.m < 3);
 		buffer[i] = colour;
 		if ( (i % px) == (unsigned long) px-1)
 			newline();
 	}
 	if (!maybeGlyph)
 		for(i=0; i<datasize; i++)
-			buffer[i] = getcolourmap[buffer[i]];
+			buffer[i].m = getcolourmap[buffer[i].m];
 }
 
-void pcxfile::putpixel(int x, int y, U8 colour)
+void pcxfile::putpixel(int x, int y, CommonPixel colour)
 {
-	if (putcolourmap[colour] == -1) {
-		printf("%s: Agh! Putting colour %d but it has no map!\n", this->filename(), colour);
+	if (putcolourmap[colour.m] == -1) {
+		printf("%s: Agh! Putting colour %d but it has no map!\n", this->filename(), colour.m);
 		exit(2);
 	}
 
-	band[subofsy(y, 1)][subofsx(x, 1)] = putcolourmap[colour];
+	colour.m = putcolourmap[colour.m];
+	band[subofsy(y, 1)][subofsx(x, 1)] = colour;
 }
 
 /*U8 pcxfile::getpixel(int x, int y)
@@ -342,7 +343,7 @@ void pcxfile::startdecoding()
 	codecing = 2;
 }
 
-void pcxfile::encodebytes(U8 buffer[], int num)
+void pcxfile::encodebytes(CommonPixel buffer[], int num)
 {
 	int thisrun;
 	U8 byte;
@@ -353,11 +354,11 @@ void pcxfile::encodebytes(U8 buffer[], int num)
 	}
 
 	while (num) {
-		byte = *(buffer++);
+		byte = (buffer++)->m;
 		num--;
 
 		thisrun = 1;
-		while (num && (byte == *buffer) && (thisrun < 0x3f)) {
+		while (num && (byte == buffer->m) && (thisrun < 0x3f)) {
 			thisrun++;
 			buffer++;
 			num--;
@@ -369,8 +370,9 @@ void pcxfile::encodebytes(U8 buffer[], int num)
 	}
 }
 
-void pcxfile::encodebytes(U8 byte, int num)
+void pcxfile::encodebytes(CommonPixel pixel, int num)
 {
+	U8 byte = pixel.m;
 	int thisrun;
 
 	if (codecing != 1) {
@@ -390,7 +392,7 @@ void pcxfile::encodebytes(U8 byte, int num)
 	}
 }
 
-void pcxfile::decodebytes(U8 buffer[], int num)
+void pcxfile::decodebytes(CommonPixel buffer[], int num)
 {
 	U8 byte = 0;
 	int thisrun, used;
@@ -405,7 +407,7 @@ void pcxfile::decodebytes(U8 buffer[], int num)
 		used = run;
 		if (used > num)
 			used = num;
-		memset(buffer, byte, used);
+		for (int i = 0; i < used; i++) buffer[i].m = byte;
 		buffer += used;
 		num -= used;
 		thisrun -= used;
@@ -420,12 +422,12 @@ void pcxfile::decodebytes(U8 buffer[], int num)
 			used = thisrun;
 			if (used > num)
 				used = num;
-			memset(buffer, byte, used);
+			for (int i = 0; i < used; i++) buffer[i].m = byte;
 			buffer += used;
 			num -= used;
 			thisrun -= used;
 		} else {
-			*(buffer++) = byte;
+			(buffer++)->m = byte;
 			num--;
 		}
 	}

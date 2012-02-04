@@ -133,7 +133,7 @@ pcxread* inforeader::MakeReader()const{
 #endif
 }
 
-int inforeader::getsprite(U8 *sprite)
+int inforeader::getsprite(CommonPixel *sprite)
 {
 	imgfile->streamgetpixel(sprite, imgsize);
 	return 1;

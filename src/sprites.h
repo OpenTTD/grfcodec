@@ -41,7 +41,6 @@ extern const char *zoom_levels[ZOOM_LEVELS];
 #define MINOVERLAP 3
 #define MAXOVERLAP 15	// must be <= 15 b/o how it's encoded
 
-
 /** Information about a single sprite. */
 struct SpriteInfo {
 	U8 info;  ///< Info byte; bit 1: size is compressed size, bit 3: tile transparancy, value 0xFF: special sprite.
@@ -73,7 +72,7 @@ class spritestorage {
 	virtual void setsize(int /*sx*/, int /*sy*/) {};
 	virtual int  curspritex() {return 0;};
 	virtual void newrow() {};
-	virtual void nextpixel(U8 /*colour*/) {};
+	virtual void nextpixel(CommonPixel /*colour*/) {};
 	virtual void spritedone(int /*sx*/, int /*sy*/) {};
 	virtual void spritedone() {};
 };
