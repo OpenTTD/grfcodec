@@ -88,6 +88,18 @@ inline uint32_t Swap32(uint32_t x)
 	return ((x >> 24) & 0xFF) | ((x >> 8) & 0xFF00) | ((x << 8) & 0xFF0000) | ((x << 24) & 0xFF000000);
 }
 
+static const char header[] = {
+	'\x00', '\x00',                 // End-of-file marker for old OTTDp versions
+	'G',    'R',    'F',    '\x82', // Container version 2
+	'\x0D', '\x0A', '\x1A', '\x0A', // Detect garbled transmission
+};
+
+inline uint32_t ReadSize(int grfcontversion)
+{
+	return grfcontversion == 2 ? ReadDWord() : ReadWord();
+}
+
+
 const char *GetGrfID(const char *filename, uint32_t *grfid)
 {
 	*grfid = 0;
@@ -104,14 +116,21 @@ const char *GetGrfID(const char *filename, uint32_t *grfid)
 	_file_buffer = (uint8_t*)mmap(NULL, _file_length, PROT_READ, MAP_PRIVATE, fileno(f), 0);
 	_buffer = _file_buffer;
 
+	int grfcontversion = 1;
+
+	if (_file_length > sizeof(header) && memcmp(_buffer, header, sizeof(header)) == 0) {
+		grfcontversion = 2;
+		_buffer += sizeof(header) + 4 + 1; // Header + offset till data + compression
+	}
+
 	/* Check the magic header, or what there is of one */
-	if (ReadWord() != 0x04 || ReadByte() != 0xFF) return "No magic header";
+	if (ReadSize(grfcontversion) != 0x04 || ReadByte() != 0xFF) return "No magic header";
 
 	/* Number of sprites. */
 	ReadDWord();
 
 	while (_buffer < _file_buffer + _file_length) {
-		uint16_t num = ReadWord();
+		uint32_t num = ReadSize(grfcontversion);
 		if (num == 0) break;
 
 		uint8_t type = ReadByte();
