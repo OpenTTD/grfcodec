@@ -275,6 +275,11 @@ NFO_MESSAGE(INDIRECT_VAR_START,"The first accessed variable may not be 7B.\n",US
 NFO_MESSAGE(MISSING_PALETTE_INFO,"There was no Action 14 specifying the palette.\n",USE_PREFIX)
 NFO_MESSAGE(INVALID_PALETTE_INFO,"Palette information must be 1 byte (\"D\", \"W\" or \"A\").\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(INVALID_ACT2_FLAGS,"Unknown flag set (offset %d) in advanced action2.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NOT_IN_REALSPRITE,"Found realsprite continuation line while looking for sprite %d.\n",0)
+NFO_MESSAGE(REAL_UNKNOWN_FLAG,"Unknown or duplicate flag '%t'.\n",0)
+NFO_MESSAGE(REAL_DUPLICATE_ZOOM,"Duplicate zoomlevel/depth sprite.\n",0)
+NFO_MESSAGE(REAL_8BPP_NORMAL_FIRST,"8bpp normal zoom sprite must appear first.\n",0)
+NFO_MESSAGE(REAL_32BPP_BEFORE_MASK,"mask sprites must be preceded by 32bpp sprites.\n",0)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
