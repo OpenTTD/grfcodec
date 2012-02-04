@@ -33,6 +33,7 @@
 #include<cassert>
 #include<cstdlib>
 #include<getopt.h>
+#include<set>
 
 #ifdef MINGW
 	#include <io.h>
@@ -74,9 +75,28 @@ nfe_map nfo_escapes;
 #define __cdecl
 #endif
 
+struct RealSpriteFormat{
+	bool bpp32;
+	int zoom;
+
+	bool operator<(const RealSpriteFormat&other)const{
+		return bpp32==other.bpp32?zoom<other.zoom:other.bpp32;
+	}
+};
+
+struct RealSpriteState {
+	std::set<RealSpriteFormat> present;
+	bool mask_allowed;
+
+	void Reset(){
+		present.clear();
+		mask_allowed = false;
+	}
+};
+
 int process_file(istream&);
 void output_buffer(const string&,bool,int);
-bool verify_real(string&);
+bool verify_real(string&,RealSpriteState&);
 
 static int _retval=EOK;
 static int _force=0;
@@ -303,7 +323,7 @@ int process_file(istream&in){
 		hasHeader=true;
 		getline(in,sprite);//Info version (first sprite for ancient NFO versions)
 		if(sscanf(sprite.c_str(),"// (Info version %d)",&NFOversion)){
-			if(NFOversion<4||NFOversion>7){
+			if((NFOversion<4||NFOversion>7)&&NFOversion!=32){
 				IssueMessage(0,UNKNOWN_VERSION,NFOversion);
 				if(NFOversion>7){
 					IssueMessage(0,SKIPPING_FILE);
@@ -350,6 +370,7 @@ int process_file(istream&in){
 
 	int temp=-1,size,oldspritenum=-1;
 	_spritenum=(unsigned)-1;
+	RealSpriteState realsprite_state;
 	string::size_type firstnotpseudo;
 	bool isPatch=false;
 	ostringstream outbuffer;
@@ -376,6 +397,7 @@ int process_file(istream&in){
 				temp=-1;
 			}
 			if(spritestream.peek()=='*'){
+				realsprite_state.Reset();
 				if(spritestream.ignore().peek()=='*'){
 					SetVersion(6);
 					getline(eat_white(spritestream.ignore()),datapart);
@@ -401,6 +423,22 @@ int process_file(istream&in){
 						buffer+='\n';
 					}
 				}
+			}else if(NFOversion>=32&&spritestream.peek()=='|'){
+				eat_white(spritestream.ignore());
+				getline(spritestream,datapart);
+				if(realsprite_state.present.empty()){
+					IssueMessage(0,NOT_IN_REALSPRITE,_spritenum+1);
+					buffer+="//"+sprite+'\n';
+				}else{
+					if(verify_real(datapart,realsprite_state)){
+						flush_buffer();
+						(*pNfo)<<"    | "<<datapart<<endl;
+					}else{
+						buffer+="//"+sprite+'\n';
+						SetCode(EPARSE);
+						IssueMessage(0,PARTIAL_PARSE_FAILURE,_spritenum);
+					}
+				}
 			}else{
 				getline(spritestream,datapart);
 				firstnotpseudo=datapart.find_first_not_of(VALID_PSEUDO);
@@ -416,7 +454,8 @@ int process_file(istream&in){
 					}
 				}else{
 					_spritenum++;
-					if(verify_real(datapart)){
+					realsprite_state.Reset();
+					if(verify_real(datapart,realsprite_state)){
 						_spritenum--;
 						flush_buffer();
 						_spritenum++;
@@ -460,7 +499,7 @@ int process_file(istream&in){
 				for (uint i=0; i<extra_lines.size(); i++)
 					(*real_out)<<extra_lines[i]<<"\n";
 			}
-			(*real_out)<<NFO_FORMAT;
+			(*real_out)<<NFO_FORMAT(NFOversion);
 			if(isPatch)(*real_out)<<"    0 * 4\t "<<mysprintf("%8x\n",GetState(DIFF)?0:_spritenum);
 			(*real_out)<<outbuffer.str();
 			pNfo=real_out;
@@ -469,6 +508,39 @@ int process_file(istream&in){
 		}
 		inj_getline(in,sprite);
 	}
+}
+
+/**
+ * Extract a string token from the beginning of a string.
+ * This can involve parsing a RPN expression.
+ * @param[in,out] input         Input to extract integer from. The extracted data is removed from this string.
+ * @param[out]    token         Extracted token.
+ * @param[in,out] processed     Processed data. The extracte data is appended to this string.
+ * @param[in,out] anyprocessing Is set to true, if the data added to \a processed differs from the date removed
+ *                              from \a input. E.g. because of parsing an RPN expression.
+ * @return true on error
+ */
+static bool extract_string(string&input,string&token,string&processed,bool&anyprocessing)
+{
+	const char *start = input.c_str();
+	const char *pos = start;
+	while (isspace(*pos)) pos++;
+
+	if (is_comment(input, pos - start)) {
+		processed.append(input);
+		input.erase();
+		return true;
+	}
+
+	const char *end = pos;
+	while (*end != '\0' && !isspace(*end)) end++;
+	if (end == pos) return true;
+	token = input.substr(pos - start, end - pos);
+	while (isspace(*end)) end++;
+	size_t count = end - start;
+	processed.append(input, 0, count);
+	input.erase(0, count);
+	return false;
 }
 
 /**
@@ -528,7 +600,7 @@ static bool extract_hex(string&input,int&token,string&processed,bool&anyprocessi
 	return false;
 }
 
-bool verify_real(string&data){
+bool verify_real(string&data,RealSpriteState&formats){
 	string::size_type loc=NPOS;
 	string udata=UCase(data);
 	while(true){
@@ -544,34 +616,112 @@ bool verify_real(string&data){
 		if(isspace(data[loc+4]))break;
 	}
 	string name=data.substr(0,loc+4);
-	int xpos, ypos, comp, ysize, xsize, xrel, yrel;
-	string meta=data.substr(loc+5);
-	string processed;
-	bool anyprocessing = false;
 
-	if (extract_int(meta,xpos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xpos");  return COMMENTOFF(); }
-	if (extract_int(meta,ypos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ypos");  return COMMENTOFF(); }
-	if (extract_hex(meta,comp, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"comp");  return COMMENTOFF(); }
-	if (extract_int(meta,ysize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ysize"); return COMMENTOFF(); }
-	if (extract_int(meta,xsize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xsize"); return COMMENTOFF(); }
-	if (extract_int(meta,xrel, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xrel");  return COMMENTOFF(); }
-	if (extract_int(meta,yrel, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"yrel");  return COMMENTOFF(); }
+	if(NFOversion>=32){
+		string depth;
+		int xpos, ypos, xsize, ysize, xrel, yrel, zoom;
+		string meta=data.substr(loc+5);
+		string processed;
+		bool anyprocessing = false;
+		if (extract_string(meta,depth,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"depth");  return COMMENTOFF(); }
+		if (depth=="mask"){
+			if (!formats.mask_allowed) {
+				IssueMessage(0,REAL_32BPP_BEFORE_MASK);  return COMMENTOFF();
+			}
+			formats.mask_allowed = false;
+			if (extract_int(meta,xpos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xpos");  return COMMENTOFF(); }
+			if (extract_int(meta,ypos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ypos");  return COMMENTOFF(); }
 
-	if (anyprocessing) data=data.substr(0,loc+5)+processed+meta;
+			if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
+			if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YPOS,0);
 
-	if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
-	if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YPOS,0);
-	if(!(comp&1)||(comp&0x4B)!=comp)IssueMessage(comp==0xFF?ERROR:WARNING1,REAL_BAD_COMP,comp);
-	if(xsize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XSIZE,1);
-	else if(xsize>0xFFFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XSIZE,0xFFFF);
-	if(ysize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YSIZE,1);
-	else if(ysize>0xFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,YSIZE,0xFF);
-	if(xsize*ysize>0xFFFF)IssueMessage(ERROR,REAL_SPRITE_TOO_LARGE);
-	if(xrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XREL,-32768);
-	else if(xrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XREL,32767);
-	if(yrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YREL,-32768);
-	else if(yrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,YREL,32767);
-	return true;
+			string flag;
+			while (!extract_string(meta,flag,processed,anyprocessing)) {
+				{ IssueMessage(0,REAL_UNKNOWN_FLAG,flag.c_str()); return COMMENTOFF(); }
+			}
+		} else if (depth=="32bpp"||depth=="8bpp"){
+			formats.mask_allowed = depth=="32bpp";
+
+			string zoom_str;
+			if (extract_int(meta,xpos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xpos");  return COMMENTOFF(); }
+			if (extract_int(meta,ypos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ypos");  return COMMENTOFF(); }
+			if (extract_int(meta,xsize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xsize"); return COMMENTOFF(); }
+			if (extract_int(meta,ysize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ysize"); return COMMENTOFF(); }
+			if (extract_int(meta,xrel, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xrel");  return COMMENTOFF(); }
+			if (extract_int(meta,yrel, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"yrel");  return COMMENTOFF(); }
+			if (extract_string(meta,zoom_str,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"zoom");  return COMMENTOFF(); }
+
+			if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
+			if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YPOS,0);
+			if(xsize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XSIZE,1);
+			else if(xsize>0xFFFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XSIZE,0xFFFF);
+			if(ysize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YSIZE,1);
+			else if(ysize>0xFFFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,YSIZE,0xFFFF);
+			if(xsize*ysize>0xFFFFFF)IssueMessage(ERROR,REAL_SPRITE_TOO_LARGE); // arbitrary but sane limit
+			if(xrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XREL,-32768);
+			else if(xrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XREL,32767);
+			if(yrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YREL,-32768);
+			else if(yrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,YREL,32767);
+
+			if (zoom_str=="normal") zoom = 0;
+			else if (zoom_str=="zi4") zoom = 1;
+			else if (zoom_str=="zi2") zoom = 2;
+			else if (zoom_str=="zo2") zoom = 3;
+			else if (zoom_str=="zo4") zoom = 4;
+			else if (zoom_str=="zo8") zoom = 5;
+			else { IssueMessage(0,REAL_MISSING_DATA,"zoom"); return COMMENTOFF(); }
+
+			string flag;
+			bool chunked = false, cropped=false;
+			while (!extract_string(meta,flag,processed,anyprocessing)) {
+				if (!chunked&&flag=="chunked") chunked = true;
+				else if (!cropped&&flag=="cropped") cropped = true;
+				else { IssueMessage(0,REAL_UNKNOWN_FLAG,flag.c_str()); return COMMENTOFF(); }
+			}
+
+			RealSpriteFormat format;
+			format.bpp32 = depth=="32bpp";
+			format.zoom = zoom;
+
+			if (formats.present.empty()&&(format.bpp32||format.zoom!=0)) IssueMessage(0,REAL_8BPP_NORMAL_FIRST);
+			if (formats.present.count(format) > 0) { IssueMessage(0,REAL_DUPLICATE_ZOOM); return COMMENTOFF(); }
+			formats.present.insert(format);
+		} else {
+			IssueMessage(0,REAL_MISSING_DATA,"depth");
+			return COMMENTOFF();
+		}
+		if (anyprocessing) data=data.substr(0,loc+5)+processed+meta;
+		return true;
+	}else{
+		int xpos, ypos, comp, ysize, xsize, xrel, yrel;
+		string meta=data.substr(loc+5);
+		string processed;
+		bool anyprocessing = false;
+
+		if (extract_int(meta,xpos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xpos");  return COMMENTOFF(); }
+		if (extract_int(meta,ypos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ypos");  return COMMENTOFF(); }
+		if (extract_hex(meta,comp, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"comp");  return COMMENTOFF(); }
+		if (extract_int(meta,ysize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ysize"); return COMMENTOFF(); }
+		if (extract_int(meta,xsize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xsize"); return COMMENTOFF(); }
+		if (extract_int(meta,xrel, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xrel");  return COMMENTOFF(); }
+		if (extract_int(meta,yrel, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"yrel");  return COMMENTOFF(); }
+
+		if (anyprocessing) data=data.substr(0,loc+5)+processed+meta;
+
+		if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
+		if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YPOS,0);
+		if(!(comp&1)||(comp&0x4B)!=comp)IssueMessage(comp==0xFF?ERROR:WARNING1,REAL_BAD_COMP,comp);
+		if(xsize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XSIZE,1);
+		else if(xsize>0xFFFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XSIZE,0xFFFF);
+		if(ysize<1)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YSIZE,1);
+		else if(ysize>0xFF)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,YSIZE,0xFF);
+		if(xsize*ysize>0xFFFF)IssueMessage(ERROR,REAL_SPRITE_TOO_LARGE);
+		if(xrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XREL,-32768);
+		else if(xrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,XREL,32767);
+		if(yrel<-32768)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YREL,-32768);
+		else if(yrel>32767)IssueMessage(ERROR,REAL_VAL_TOO_LARGE,YREL,32767);
+		return true;
+	}
 }
 
 void output_buffer(const string&sprite,bool isPatch,int spriteno){
