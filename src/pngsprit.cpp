@@ -77,16 +77,16 @@ void pngwrite::filedone(int final)
 
 // Hooks the writing of lines out to file,
 //   which we will be buffering internally
-void pngwrite::encodebytes(U8 byte, int num)
+void pngwrite::encodebytes(CommonPixel byte, int num)
 {
 	for (int i = 0; i < num; i++)
-		cache.push_back(byte);
+		cache.push_back(byte.m);
 }
 
-void pngwrite::encodebytes(U8 buffer[], int num)
+void pngwrite::encodebytes(CommonPixel buffer[], int num)
 {
 	for (int i = 0; i < num; i++)
-		cache.push_back(buffer[i]);
+		cache.push_back(buffer[i].m);
 }
 
 /***********************\
@@ -105,10 +105,15 @@ pngread::~pngread()
 		png_destroy_read_struct(&png, &info, NULL);
 }
 
-void pngread::setline(U8 *band)
+void pngread::setline(CommonPixel *band)
 {
 	// Read the next row of the png file
-	png_read_row(png, band, NULL);
+	U8 *row = (U8*)malloc(sx);
+	png_read_row(png, row, NULL);
+
+	for (int i = 0; i < sx; i++) {
+		band[i].m = row[i];
+	}
 }
 
 extern bool _force;

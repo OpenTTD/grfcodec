@@ -490,7 +490,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 					}
 
 					info.PrepareReal(sprite.infs[j]);
-					U8 *image = (U8*) malloc(info.imgsize);
+					CommonPixel *image = (CommonPixel*) malloc(info.imgsize * sizeof(CommonPixel));
 					if (!image) {
 						fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
 						exit(2);
@@ -500,7 +500,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 					int k=0;
 					for (int j=info.imgsize-1; j >= 0; j--)
-						if (image[j] == 0xFF) k++;
+						if (image[j].m == 0xFF) k++;
 
 					if (k && !_quiet)
 						fprintf(stderr, "%s:%d: Warning: %d of %ld pixels (%ld%%) are pure white\n",
@@ -508,7 +508,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 					if(_crop && !DONOTCROP(info.inf.info)){
 						int i=0,j=0;
-						for(i=info.imgsize-1;i>=0;i--)if(image[i])break; // Find last non-blue pixel
+						for(i=info.imgsize-1;i>=0;i--)if(image[i].m)break; // Find last non-blue pixel
 						if(i<0)// We've got an all-blue sprite
 							info.sx=info.sy=info.imgsize=1;
 						else{
@@ -516,37 +516,37 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 							info.sy-=i/info.sx;
 
 							for(i=0;i<info.imgsize;i++){
-								if(image[i])
+								if(image[i].m)
 									break; // Find first non-blue pixel
 							}
 							i-=i%info.sx;// Move to beginning of line
 
 							info.sy-=i/info.sx;
 							info.inf.yrel+=i/info.sx;
-							if(i)memmove(image,image+i,info.imgsize-i);
+							if(i)memmove(image,image+i,(info.imgsize-i)*sizeof(CommonPixel));
 							for(i=0;i<info.sx;i++){
 								for(j=0;j<info.sy;j++){
-									if(image[i+j*info.sx])goto foundfirst;
+									if(image[i+j*info.sx].m)goto foundfirst;
 								}
 							}
 foundfirst:
 							if(i){
 								for(j=0;j<info.sy;j++)
-									memmove(image+j*(info.sx-i),image+j*info.sx+i,info.sx-i);
+									memmove(image+j*(info.sx-i),image+j*info.sx+i,(info.sx-i)*sizeof(CommonPixel));
 								info.inf.xrel+=i;
 								info.sx-=i;
 							}
 
 							for(i=info.sx-1;i>=0;i--){
 								for(j=0;j<info.sy;j++){
-									if(image[i+j*info.sx])goto foundlast;
+									if(image[i+j*info.sx].m)goto foundlast;
 								}
 							}
 foundlast:
 							i=info.sx-i-1;
 							if(i){
 								for(j=1;j<info.sy;j++)
-									memmove(image+j*(info.sx-i),image+j*info.sx,info.sx-i);
+									memmove(image+j*(info.sx-i),image+j*info.sx,(info.sx-i)*sizeof(CommonPixel));
 								info.sx-=i;
 							}
 
@@ -556,16 +556,25 @@ foundlast:
 						info.imgsize = info.sx * info.sy;
 					}
 
+					U8 *imgbuffer = (U8*)malloc(info.imgsize);
+					if (!imgbuffer) {
+						fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
+						exit(2);
+					}
+					for (int j = 0; j < info.imgsize; j++) {
+						imgbuffer[j] = image[j].m;
+					}
+
 					U16 compsize;
 					if (HASTRANSPARENCY(info.inf.info)) {
-						compsize = encodetile(grf, image, info.imgsize, 0, info.sx, info.sy, info.inf, compress, i, grfcontversion);
+						compsize = encodetile(grf, imgbuffer, info.imgsize, 0, info.sx, info.sy, info.inf, compress, i, grfcontversion);
 						totaltransp += getlasttilesize();	// how much after transparency removed
 						totaluntransp += info.imgsize;		// how much with transparency
 
 						totalreg += compsize;			// how much after transp&redund removed
 						totalunreg += getlasttilesize();	// how much with redund
 					} else {
-						compsize = encoderegular(grf, image, info.imgsize, info.inf, compress, i, grfcontversion);
+						compsize = encoderegular(grf, imgbuffer, info.imgsize, info.inf, compress, i, grfcontversion);
 						totaltransp += info.imgsize;
 						totaluntransp += info.imgsize;
 
@@ -575,6 +584,7 @@ foundlast:
 
 					totalcomp += compsize;
 					totaluncomp += info.imgsize;
+					free(imgbuffer);
 					free(image);
 				}
 			}

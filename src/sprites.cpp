@@ -313,7 +313,7 @@ int decodesprite(FILE *grf, spritestorage *store, spriteinfowriter *writer, int 
 		writer->addsprite(i == 0, store->curspritex(), info);
 		for (int y=0; y<sy; y++) {
 			for (int x=0; x<sx; x++)
-				store->nextpixel(imgbuffer[y * sx + x]);
+				store->nextpixel(CommonPixel(0, 0, 0, 0, imgbuffer[y * sx + x]));
 			store->newrow();
 		}
 		store->spritedone(sx, sy);
