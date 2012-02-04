@@ -81,7 +81,7 @@ static void usage(void)
 		"    -x        Disable production of unquoted escape sequences.\n"
 		"    -xx       Disable production of both quoted and unquoted escape sequences.\n"
 		"              This has the side effect of producing a version 6 .nfo, instead\n"
-		"              of a version 7 .nfo.\n"
+		"              of a version 32 .nfo.\n"
 		"    -X        List sprite numbers in the PCX file in hex.\n"
 		"\n"
 		"Options for encoding:\n"

@@ -25,6 +25,9 @@
 
 using namespace std;
 
+#define ZOOM_LEVELS (1)
+extern const char *zoom_levels[ZOOM_LEVELS];
+
 #include "pcxfile.h"
 #include "typesize.h"
 
@@ -42,7 +45,8 @@ using namespace std;
 /** Information about a single sprite. */
 struct SpriteInfo {
 	U8 info;  ///< Info byte; bit 1: size is compressed size, bit 3: tile transparancy, value 0xFF: special sprite.
-	U8 ydim;  ///< Number of lines in the sprite.
+	U8 zoom;  ///< The zoom level.
+	U16 ydim; ///< Number of lines in the sprite.
 	U16 xdim; ///< Number of columns in the sprite.
 	S16 xrel; ///< Horizontal offset
 	S16 yrel; ///< Vertical offset
@@ -58,7 +62,7 @@ struct SpriteInfo {
 
 class spriteinfowriter : public bandnotify {
 	public:
-	virtual void addsprite(int /*x*/, SpriteInfo /*info*/) { };
+	virtual void addsprite(bool /*first*/, int /*x*/, SpriteInfo /*info*/) { };
 	virtual void adddata(U16 /*size*/, U8 * /*data*/) { };
 };
 

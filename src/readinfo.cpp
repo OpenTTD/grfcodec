@@ -53,6 +53,7 @@ using namespace boost::gregorian;
 #include"inlines.h"
 
 extern int _quiet;
+const char *zoom_levels[ZOOM_LEVELS] = { "normal" };
 
 #define checkspriteno()\
 	if(spriteno!=-1&&spriteno!=(int)sprites.size() && !_quiet){\
@@ -87,7 +88,8 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 				spritestream.clear();
 				temp=-1;
 			}
-			if(spritestream.peek()=='*'){
+			char peeked=spritestream.peek();
+			if(peeked=='*'){
 				if(spritestream.ignore().peek()=='*'){
 					flush_buffer();
 					getline(eat_white(spritestream.ignore()),datapart);
@@ -111,8 +113,15 @@ void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
 				}else{
 					flush_buffer();
 					checkspriteno();
+					if (peeked!='|') {
+						sprites.push_back(Real());
+					} else {
+						do {
+							datapart.erase(0, 1);
+						} while (isspace(datapart[0]));
+					}
 					sprites.push_back(Real());
-					((Real*)sprites.last())->AddSprite(sprites.size(),infover,datapart);
+					((Real*)sprites.last())->AddSprite(sprites.size()-1,infover,datapart);
 				}
 			}
 		}
@@ -158,11 +167,12 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 				throw Sprite::unparseable("\"Byte\" "+itoa(i)+" isn't.",sprite);
 		}
 		inf.info = U8(intinf[0]);
+		inf.zoom = 0;
 		inf.ydim = U8(intinf[1]);
 		inf.xdim = U16(intinf[2] | intinf[3] >> 8);
 		inf.xrel = S16(intinf[4] | intinf[5] >> 8);
 		inf.yrel = S16(intinf[6] | intinf[7] >> 8);
-	}else{
+	}else if(infover<32){
 		int sx,sy,rx,ry,comp;
 		if(sscanf(meta,"%d %d %2x %d %d %d %d",&inf.xpos,&inf.ypos,&comp,&sy,&sx,&rx,&ry)!=7){
 			throw Sprite::unparseable("Insufficient meta-data",sprite);
@@ -175,8 +185,46 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 		if(rx>32767)throw Sprite::unparseable("xrel is too large",sprite);
 		if(ry<-32768)throw Sprite::unparseable("yrel is too small",sprite);
 		if(ry>32767)throw Sprite::unparseable("yrel is too large",sprite);
+		inf.zoom = 0;
 		inf.info = U8(comp);
 		inf.ydim = U8(sy);
+		inf.xdim = U16(sx);
+		inf.xrel = S16(rx);
+		inf.yrel = S16(ry);
+	}else{
+		int sx,sy,rx,ry;
+		char depth[8],zoom[8],flags[2][8];
+		int read = sscanf(meta,"%7s %d %d %d %d %d %d %7s %7s %7s",depth,&inf.xpos,&inf.ypos,&sx,&sy,&rx,&ry,zoom,flags[0],flags[1]);
+		if(read < 8){
+			throw Sprite::unparseable("Insufficient meta-data",sprite);
+		}
+		if(sx<1)throw Sprite::unparseable("xsize is too small",sprite);
+		if(sx>0xFFFF)throw Sprite::unparseable("xsize is too large",sprite);
+		if(sy<1)throw Sprite::unparseable("ysize is too small",sprite);
+		if(sy>0xFFFF)throw Sprite::unparseable("ysize is too large",sprite);
+		if(rx<-32768)throw Sprite::unparseable("xrel is too small",sprite);
+		if(rx>32767)throw Sprite::unparseable("xrel is too large",sprite);
+		if(ry<-32768)throw Sprite::unparseable("yrel is too small",sprite);
+		if(ry>32767)throw Sprite::unparseable("yrel is too large",sprite);
+		if(strcmp(depth,"8bpp")!=0)throw Sprite::unparseable("invalid depth",sprite);
+		inf.zoom=0xFF;
+		for (int i = 0; i < ZOOM_LEVELS; i++) {
+			if(strcmp(zoom,zoom_levels[i])==0){
+				inf.zoom = i;
+				break;
+			}
+		}
+		if (inf.zoom==0xFF)throw Sprite::unparseable("invalid zoom",sprite);
+		inf.info = 1; // Bit 1 has to be always set for container version 1
+		for (int i = 8; i < read; i++) {
+			const char *flag=flags[i - 8];
+			/* Comment. */
+			if (*flag == '#' || *flag == '/' || *flag == ';') break;
+			if (strcmp(flag,"chunked")==0)inf.info|=8;
+			else if (strcmp(flag,"nocrop")==0)inf.info|=64;
+			else throw Sprite::unparseable("invalid flag",sprite);
+		}
+		inf.ydim = U16(sy);
 		inf.xdim = U16(sx);
 		inf.xrel = S16(rx);
 		inf.yrel = S16(ry);
@@ -188,6 +236,7 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 	inf.forcereopen=(inf.ypos<prevy);
 	prevy=inf.ypos;
 
+	if(infs.size()==0&&inf.zoom!=0)throw Sprite::unparseable("first sprite is not 8bpp normal zoom sprite",sprite);
 	infs.push_back(inf);
 }
 
