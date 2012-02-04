@@ -508,7 +508,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 					if(_crop && !DONOTCROP(info.inf.info)){
 						int i=0,j=0;
-						for(i=info.imgsize-1;i>=0;i--)if(image[i].m)break; // Find last non-blue pixel
+						for(i=info.imgsize-1;i>=0;i--)if(!image[i].IsTransparent())break; // Find last non-blue pixel
 						if(i<0)// We've got an all-blue sprite
 							info.sx=info.sy=info.imgsize=1;
 						else{
@@ -516,7 +516,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 							info.sy-=i/info.sx;
 
 							for(i=0;i<info.imgsize;i++){
-								if(image[i].m)
+								if(!image[i].IsTransparent())
 									break; // Find first non-blue pixel
 							}
 							i-=i%info.sx;// Move to beginning of line
@@ -526,7 +526,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 							if(i)memmove(image,image+i,(info.imgsize-i)*sizeof(CommonPixel));
 							for(i=0;i<info.sx;i++){
 								for(j=0;j<info.sy;j++){
-									if(image[i+j*info.sx].m)goto foundfirst;
+									if(!image[i+j*info.sx].IsTransparent())goto foundfirst;
 								}
 							}
 foundfirst:
@@ -539,7 +539,7 @@ foundfirst:
 
 							for(i=info.sx-1;i>=0;i--){
 								for(j=0;j<info.sy;j++){
-									if(image[i+j*info.sx].m)goto foundlast;
+									if(!image[i+j*info.sx].IsTransparent())goto foundlast;
 								}
 							}
 foundlast:
@@ -561,19 +561,19 @@ foundlast:
 						fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
 						exit(2);
 					}
-					for (int j = 0; j < info.imgsize; j++) {
-						imgbuffer[j] = image[j].m;
-					}
 
 					U16 compsize;
 					if (HASTRANSPARENCY(info.inf.info)) {
-						compsize = encodetile(grf, imgbuffer, info.imgsize, 0, info.sx, info.sy, info.inf, compress, i, grfcontversion);
+						compsize = encodetile(grf, image, info.imgsize, info.sx, info.sy, info.inf, compress, i, grfcontversion);
 						totaltransp += getlasttilesize();	// how much after transparency removed
 						totaluntransp += info.imgsize;		// how much with transparency
 
 						totalreg += compsize;			// how much after transp&redund removed
 						totalunreg += getlasttilesize();	// how much with redund
 					} else {
+						for (int j = 0; j < info.imgsize; j++) {
+							image[j].Encode(imgbuffer + j);
+						}
 						compsize = encoderegular(grf, imgbuffer, info.imgsize, info.inf, compress, i, grfcontversion);
 						totaltransp += info.imgsize;
 						totaluntransp += info.imgsize;
