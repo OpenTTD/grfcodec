@@ -33,6 +33,8 @@ code -- inasmuch as NFO can be beautified :)
 
 GRFCodec, GRFDiff, GRFMerge and GRFID are licensed under the GNU General
 Public License version 2.0. For more information, see the file 'COPYING'.
+GRFID contains the MD5 implementation written by L. Peter Deutsch and
+licensed under the zlib license.
 
 NFORenum is licensed under the GNU General Public License version 2, or at
 your option, any later version. For more information, see 'COPYING'

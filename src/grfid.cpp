@@ -10,6 +10,8 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "md5.h"
+
 #ifndef WIN32
 #include <sys/mman.h>
 #else
@@ -160,18 +162,52 @@ const char *GetGrfID(const char *filename, uint32_t *grfid)
 	return (*grfid == 0) ? "File valid but no GrfID found" : NULL;
 }
 
+const char *GetMD5(const char *filename, md5_state_t *md5)
+{
+	FILE *f = fopen(filename, "rb");
+	if (f == NULL) return "Unable to open file";
+
+	/* Get the length of the file */
+	fseek(f, 0, SEEK_END);
+	_file_length = ftell(f);
+	fseek(f, 0, SEEK_SET);
+
+	/* Map the file into memory */
+	_file_buffer = (uint8_t*)mmap(NULL, _file_length, PROT_READ, MAP_PRIVATE, fileno(f), 0);
+	_buffer = _file_buffer;
+
+	size_t read_length = _file_length;
+	if (_file_length > sizeof(header) && memcmp(_buffer, header, sizeof(header)) == 0) {
+		_buffer += sizeof(header);
+		/* Reduce the length to contain only the data, but not the sprites. */
+		read_length = sizeof(header) + 4 + ReadDWord();
+	}
+
+	md5_append(md5, _file_buffer, read_length);
+
+	munmap(_file_buffer, _file_length);
+	fclose(f);
+
+	return NULL;
+}
+
 int main(int argc, char **argv)
 {
-	if (argc < 2 || strcmp(argv[1], "-h") == 0) {
+	if (argc < 2 || strcmp(argv[1], "-h") == 0 || (strcmp(argv[1], "-m") == 0 && argc < 3)) {
 		printf(
 			"GRFID " VERSION " - Copyright (C) 2009 by Peter Nelson\n"
 			"\n"
 			"Usage:\n"
 			"    GRFID <NewGRF-File>\n"
 			"        Get the GRF ID from the NewGRF file\n"
+			"    GRFID -m <NewGRF-File>\n"
+			"        Get the MD5 checksum of the NewGRF file\n"
+			"    GRFID -v\n"
+			"        Get the version of GRFID\n"
 			"\n"
 			"You may copy and redistribute it under the terms of the GNU General Public\n"
-			"License, as stated in the file 'COPYING'.\n");
+			"License, as stated in the file 'COPYING'.\n"
+			"Uses MD5 implementation of L. Peter Deutsch.\n");
 		return 1;
 	}
 	if (strcmp(argv[1], "-v") == 0) {
@@ -179,15 +215,31 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	uint32_t grfid;
-	const char *err = GetGrfID(argv[1], &grfid);
+	const char *err;
+	if (strcmp(argv[1], "-m") == 0) {
+		md5_state_t md5;
+		md5_init(&md5);
+		err = GetMD5(argv[2], &md5);
+		if (err == NULL) {
+			md5_byte_t digest[16];
+			md5_finish(&md5, digest);
+			for (size_t i = 0; i < sizeof(digest); i++) {
+				printf("%02x", digest[i]);
+			}
+			printf("\n");
+			return 0;
+		}
+	} else {
+		uint32_t grfid;
+		err = GetGrfID(argv[1], &grfid);
 
-	if (err == NULL) {
-		printf("%08x\n", grfid);
-		return 0;
+		if (err == NULL) {
+			printf("%08x\n", grfid);
+			return 0;
+		}
 	}
 
-	printf("Unable to get GrfID: %s\n", err);
+	printf("Unable to get requested information: %s\n", err);
 	return 1;
 }
 
