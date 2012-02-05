@@ -243,7 +243,7 @@ ifneq ($(UPX),)
 	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
 endif
 
-release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r $(GRFSTRIP)_r $(NFORENUM)_r
+.NOTPARALLEL release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r $(GRFSTRIP)_r $(NFORENUM)_r
 
 # make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
 objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.cpp=objs/%.os)
