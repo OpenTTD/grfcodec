@@ -385,7 +385,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 				if (pass != grfcontversion) {
 					writespritesize(action, 4, grfcontversion, grf);
 					fputc(0xfd, grf);
-					writedword(action, i, grf);
+					writedword(action, i + 1, grf);
 					break;
 				}
 
@@ -436,7 +436,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 				totalcomp += spritesize;
 				totaluncomp += spritesize;
 
-				if (grfcontversion == 2) writedword(action, i, grf);
+				if (grfcontversion == 2) writedword(action, i + 1, grf);
 				writespritesize(action, spritesize, grfcontversion, grf);
 				fputc(0xff, grf);
 				fputc(0xff, grf);
@@ -488,7 +488,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 					if (pass != grfcontversion) {
 						writespritesize(action, 4, grfcontversion, grf);
 						fputc(0xfd, grf);
-						writedword(action, i, grf);
+						writedword(action, i + 1, grf);
 						break;
 					}
 
