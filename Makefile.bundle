@@ -44,6 +44,7 @@ bundle: release
 	$(_C)cp $(GRFCODEC)        "$(BUNDLE_DIR)/"
 	$(_C)cp $(GRFDIFF)         "$(BUNDLE_DIR)/"
 	$(_C)cp $(GRFID)           "$(BUNDLE_DIR)/"
+	$(_C)cp $(GRFSTRIP)        "$(BUNDLE_DIR)/"
 	$(_C)cp $(GRFMERGE)        "$(BUNDLE_DIR)/"
 	$(_C)cp $(NFORENUM)        "$(BUNDLE_DIR)/"
 	$(_C)cp COPYING            "$(BUNDLE_DIR)/COPYING"
@@ -62,6 +63,7 @@ install: bundle
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFMERGE)" "$(DESTDIR)$(bindir)/"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFDIFF)" "$(DESTDIR)$(bindir)/"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFID)" "$(DESTDIR)$(bindir)/"
+	$(_C)install -m 755 "$(BUNDLE_DIR)/$(GRFSTRIP)" "$(DESTDIR)$(bindir)/"
 	$(_C)install -m 755 "$(BUNDLE_DIR)/$(NFORENUM)" "$(DESTDIR)$(bindir)/"
 ifndef DO_NOT_INSTALL_DOCS
 	$(_C)install -d "$(DESTDIR)$(docdir)"
