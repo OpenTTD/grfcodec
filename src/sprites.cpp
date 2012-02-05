@@ -389,6 +389,7 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 
 		if (returnpos != 0) {
 			*dataoffset = startpos + inbufsize;
+			if (grfcontversion == 2 && HASTRANSPARENCY(info.info)) *dataoffset += 4;
 		} else {
 			returnpos = startpos + inbufsize;
 			break;
