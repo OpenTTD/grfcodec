@@ -825,7 +825,7 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 
 	static const char *action = "writing real sprite";
 	if (grfcontversion == 2) {
-		writedword(action, spriteno, grf);
+		writedword(action, spriteno + 1, grf);
 		if (HASTRANSPARENCY(inf.info)) size += 4;
 	}
 	writespritesize(action, size, grfcontversion, grf);
