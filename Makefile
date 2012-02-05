@@ -197,7 +197,7 @@ clean:
 
 mrproper: clean
 	$(_C)rm -f src/version.h src/grfmrg.cpp
-	$(_C)touch -ct 9901010000 ttdpal.h # don't delete it, so we don't confuse svn, but force it to be remade
+	$(_C)touch -ct 9901010000 ttdpal.h # don't delete it, so we don't confuse version control, but force it to be remade
 
 distclean: mrproper
 	$(_C)rm -rf Makefile.local
