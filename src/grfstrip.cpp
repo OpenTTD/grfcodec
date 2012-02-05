@@ -99,13 +99,17 @@ const char *Strip(const char *origin, const char *dest, uint32_t allowed)
 
 	if (_buffer >= end) return "Invalid GRF";
 
-	fwrite(_file_buffer, 1, _buffer - _file_buffer, fout);
+	if (fwrite(_file_buffer, 1, _buffer - _file_buffer, fout) != (size_t)(_buffer - _file_buffer)) {
+		return "Could not write to file";
+	}
 
 	for (;;) {
 		uint8_t *begin = _buffer;
 		uint32_t id = ReadDWord();
 		if (id == 0) {
-			fwrite(begin, 1, end - begin, fout);
+			if (fwrite(begin, 1, end - begin, fout) != (size_t)(end - begin)) {
+				return "Could not write to file";
+			}
 			break;
 		}
 
@@ -117,7 +121,9 @@ const char *Strip(const char *origin, const char *dest, uint32_t allowed)
 
 		if (info == 0xFF || (allowed & (1 << offset)) != 0) {
 			/* Copy */
-			fwrite(begin, 1, size + 8, fout);
+			if (fwrite(begin, 1, size + 8, fout) != (size_t)(size + 8)) {
+				return "Could not write to file";
+			}
 		}
 
 		/* Skip sprite. */
