@@ -30,6 +30,7 @@ GRFCODEC     ?= grfcodec$(EXE)
 GRFDIFF      ?= grfdiff$(EXE)
 GRFMERGE     ?= grfmerge$(EXE)
 GRFID        ?= grfid$(EXE)
+GRFSTRIP     ?= grfstrip$(EXE)
 NFORENUM     ?= nforenum$(EXE)
 ENDIAN_CHECK ?= endian_check$(EXE)
 
@@ -148,6 +149,8 @@ GRFMERGESRC=grfcomm.cpp error.cpp grfmerge.cpp path.cpp
 
 GRFIDSRC=grfid.cpp md5.cpp
 
+GRFSTRIPSRC=grfstrip.cpp
+
 NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
   act79D.cpp actB.cpp actF.cpp act14.cpp command.cpp data.cpp globals.cpp \
   inject.cpp messages.cpp pseudo.cpp rangedint.cpp nforenum.cpp sanity.cpp \
@@ -158,7 +161,7 @@ PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars&ttw_pb_pal1&ttw
 PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 
 # deafult targets
-all: $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) $(NFORENUM)
+all: $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) $(GRFSTRIP) $(NFORENUM)
 
 remake:
 	$(_E) [CLEAN]
@@ -187,13 +190,17 @@ $(GRFID): $(GRFIDSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 
+$(GRFSTRIP): $(GRFSTRIPSRC:%.cpp=objs/%.o)
+	$(_E) [LD] $@
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
+
 $(NFORENUM): $(NFORENUMSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 
 
 clean:
-	$(_C)rm -rf objs $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) $(NFORENUM) bundle bundles grfcodec-* src/endian.h
+	$(_C)rm -rf objs $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) $(GRFSTRIP) $(NFORENUM) bundle bundles grfcodec-* src/endian.h
 
 mrproper: clean
 	$(_C)rm -f src/version.h src/grfmrg.cpp
@@ -236,7 +243,7 @@ ifneq ($(UPX),)
 	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
 endif
 
-release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r $(NFORENUM)_r
+release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r $(GRFSTRIP)_r $(NFORENUM)_r
 
 # make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
 objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.cpp=objs/%.os)
@@ -288,7 +295,8 @@ objs/grfcodec.o: src/version.h
 objs/grfmerge.o: src/version.h
 objs/grfmerge.os: src/version.h
 objs/grfdiff.o: src/version.h
-objs/grfidc.o: src/version.h
+objs/grfid.o: src/version.h
+objs/grfstrip.o: src/version.h
 objs/message_mgr.o: src/version.h
 objs/messages.o: src/version.h
 
@@ -301,6 +309,7 @@ ifndef NO_MAKEFILE_DEP
 -include $(GRFMERGESRC:%.cpp=objs/%.o.d)
 -include $(GRFDIFFSRC:%.cpp=objs/%.o.d)
 -include $(GRFIDSRC:%.cpp=objs/%.o.d)
+-include $(GRFSTRIPSRC:%.cpp=objs/%.o.d)
 -include $(GRFMERGESRC:%.cpp=objs/%.os.d)
 -include $(NFORENUMSRC:%.cpp=objs/%.o.d)
 endif

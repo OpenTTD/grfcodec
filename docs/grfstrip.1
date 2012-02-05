@@ -1,0 +1,30 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" Please adjust this date whenever revising the manpage.
+.Dd February 04, 2012
+.Dt GRFStrip 1
+.Sh NAME
+.Nm GRFID
+.Nd A tool strip (some) real sprites from a GRF
+.Sh SYNOPSIS
+.Op Fl hv
+.Nm grfstrip Ar origin dest [depth zoom]
+.Sh DESCRIPTION
+GRFStrip strips all real sprites from a GRF and leaves only the ones
+specified in the tuples at the command line and the 8bpp normal zoom.
+The new GRF file will be written to dest.
+.Sh OPTIONS
+.Bl -tag
+.It Fl h
+Display the help message.
+.It Fl v
+Display the version.
+.El
+.Sh SEE ALSO
+The documentation in
+.Pa /usr/share/doc/grfcodec/
+.Sh AUTHOR
+GRFStrip was written by Remko Bijker.
+.Pp
+This manual page was written by Remko Bijker.
+.Sh COPYRIGHT
+GRFStrip is Copyright (C) 2012 by Remko Bijker.
