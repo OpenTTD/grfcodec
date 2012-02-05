@@ -89,7 +89,7 @@ using namespace std;
 #define WD 0x20        /* Action D Write access allowed */
 #define RD 0x40        /* Action D Read access allowed */
 #define R7 0x80        /* Action 7 Read access allowed */
-static const char _dat79Dv[]={
+static const unsigned char _dat79Dv[]={
 NDF_HEADER(0x20, 5),
 /* Number of variables: */ 0x25,
 
@@ -163,7 +163,7 @@ static const char _datB[]="\x01\x02"
 #define WORD 0x84                    /* Spritecount is larger than a byte and is defined using W() */
 #define OFFSET 0x88                  /* Allow replacing sprite ranges with offsets */
 #define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
-static const char _dat5[]={
+static const unsigned char _dat5[]={
 NDF_HEADER(0x04, 11),
 /*04*/ OFFSET,          OPTIONS(3), 0x30, 0x70, 0xF0,
 /*05*/ OFFSET,          OPTIONS(1), 0x30,
@@ -236,7 +236,7 @@ static const char _datTextIDs[]="\x04\x09"
 #define NONE 0x80
 #define GROUNDVEHICLE MASK(TRAIN) | MASK(ROADVEH)
 #define VEHICLE MASK(TRAIN) | MASK(ROADVEH) | MASK(SHIP) | MASK(AIRCRAFT)
-static const char _datcallbacks[]={
+static const unsigned char _datcallbacks[]={
 NDF_HEADER(0x05, 21),
 /* Count: */ W(0x15F),
 /* 00*/ NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE,
@@ -367,7 +367,7 @@ static const char _datversions[]="\x00\x04"
 #define ACT2_HOUSE 0x03
 #define ACT2_INDPROD 0x04
 #define ACT2_NONE 0xFF
-static const char _datfeat[]={
+static const unsigned char _datfeat[]={
 NDF_HEADER(0x12, 3),
 /* Max. feature: */ 0x11,
 
@@ -484,7 +484,7 @@ NDF_END
 /* Repeat 'data' until a certain terminator with length 'length' is encountered */
 #define REPEAT_UNTIL(data, length, ...) '*', data, length, __VA_ARGS__
 
-static const char _dat0[]={
+static const unsigned char _dat0[]={
 NDF_HEADER(0x0D, 21),
 /*Maximum feature:*/ 0x11,
 // Feature 00:
@@ -718,7 +718,7 @@ NDF_END
 #define DWORD6x(var, max) VAR6x(var, 4, max)
 #define LASTVAR80(var) (var == 0xFF ? 0xFF : var + 1), (var == 0xFF ? 0xF0 : 0x80)
 #define NOVAR80 LASTVAR80(0x7F)
-static const char _dat2v[]={
+static const unsigned char _dat2v[]={
 NDF_HEADER(0x0D, 26),
 /*Maximum feature:*/ 0x11,
 /*Maximum operator:*/ 0x16,
@@ -842,7 +842,7 @@ NDF_END
 #undef NOVAR80
 
 #define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
-static const char _datD[]={
+static const unsigned char _datD[]={
 NDF_HEADER(0x14, 6),
 /*Maximum feature:*/ 0x11,
 /*Max patch variable:*/ 0x14,
@@ -869,7 +869,7 @@ NDF_HEADER(0x14, 6),
 NDF_END
 };
 
-static const char _datIDs[]={
+static const unsigned char _datIDs[]={
 NDF_HEADER(0x77, 4),
 /*Maximum feature:*/ 0x11,
 /*00*/W(0x73),
@@ -895,7 +895,7 @@ NDF_END
 #undef W
 
 /*	Action 4 strings */
-static const char _dat4[]={
+static const unsigned char _dat4[]={
 NDF_HEADER(0x03, 5),
 /*Maximum feature:*/ 0x11,
 // Rules for one-byte IDs:
@@ -942,7 +942,7 @@ NDF_END
 
 /*	Randomized action 2 */
 #define ACT2RANDOM(self_bits, related_bits, num_triggers) self_bits, related_bits, num_triggers
-static const char _dat2r[]={
+static const unsigned char _dat2r[]={
 NDF_HEADER(0x02, 6),
 /*Maximum feature:*/ 0x11,
 /*00*/ACT2RANDOM( 8,  8, 5),
