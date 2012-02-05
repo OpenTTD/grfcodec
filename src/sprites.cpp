@@ -270,7 +270,7 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 			U32 dataid = readdword(action, grf);
 			if (id != dataid) {
 				if (i > 0) break;
-				printf("\nUnexpected id for sprite %d; expected %d got %d\n", spriteno, id, dataid);
+				printf("\nUnexpected id for sprite %d; expected %d got %d\n", spriteno, (int)id, (int)dataid);
 				exit(2);
 			}
 			size = readdword(action, grf);
