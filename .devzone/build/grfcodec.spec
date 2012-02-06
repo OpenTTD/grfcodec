@@ -44,6 +44,7 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
 %{_bindir}/grfdiff
 %{_bindir}/grfid
 %{_bindir}/grfmerge
+%{_bindir}/grfstrip
 %{_bindir}/nforenum
 %dir %{_datadir}/doc/grfcodec
 %doc %{_datadir}/doc/grfcodec/COPYING
@@ -52,6 +53,7 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
 %{_mandir}/man1/grfdiff.1*
 %{_mandir}/man1/grfid.1*
 %{_mandir}/man1/grfmerge.1*
+%{_mandir}/man1/grfstrip.1*
 %{_mandir}/man1/nforenum.1*
 
 %changelog
