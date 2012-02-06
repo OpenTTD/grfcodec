@@ -263,8 +263,12 @@ pcxread::pcxread(singlefile *mfile)
 	setfile(mfile);
 };
 
-void pcxread::filestart()
+void pcxread::filestart(bool paletted)
 {
+	if (!paletted){
+		fprintf(stderr, "GRFCodec supports only paletted PCX files.\n");
+		exit(2);
+	}
 	readheader();
 	fseek(curfile, sizeof(header), SEEK_SET);
 }
