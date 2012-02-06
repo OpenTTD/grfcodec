@@ -52,7 +52,7 @@ class pcxread : public pcxfile {
 	public:
 	pcxread(singlefile *mfile);
 
-	virtual void filestart();
+	virtual void filestart(bool paletted);
 
 	virtual void startsubimage(int x, int y, int sx, int sy);
 	virtual void setline(CommonPixel *band);
