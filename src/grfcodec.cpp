@@ -718,7 +718,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	pcx->setpalette(palette);
 
 	pcx->setcolours(255, 0, 0);
-	pcx32->setcolours(255, 0, 0);
+	if (pcx32 != NULL) pcx32->setcolours(255, 0, 0);
 
 	infowriter writer(info, (width + box - 1) / box, useplaintext, pcx->getdirectory());
 
@@ -726,7 +726,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 		pcx->installwritemap(colourmap);
 
 	pcx->startimage(true, width, height, box, box);
-	pcx32->startimage(false, width, height, box, box);
+	if (pcx32 != NULL) pcx32->startimage(false, width, height, box, box);
 
 	count = 0;
 
@@ -741,7 +741,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 		}
 
 		pcx->newsprite();
-		pcx32->newsprite();
+		if (pcx32 != NULL) pcx32->newsprite();
 
 		result = decodesprite(grf, pcx, pcx32, &writer, count, &dataoffset, grfcontversion);
 		writer.flush();
@@ -750,7 +750,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	count--;
 
 	pcx->endimage();
-	pcx32->endimage();
+	if (pcx32 != NULL) pcx32->endimage();
 	delete(pcx);	// closes output file
 	delete(pcx32);
 
