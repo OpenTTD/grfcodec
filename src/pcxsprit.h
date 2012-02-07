@@ -40,9 +40,9 @@ class pcxwrite : public pcxfile, public spritestorage {
 	private:
 	void showspriteno();
 
-	int borderskip, spriteno, lastdigitx;
 	CommonPixel background;
 	CommonPixel border;
+	int borderskip, spriteno, lastdigitx;
 
 	pcxwrite(const pcxwrite&);//not copyable: pcxfile::colormap
 	void operator=(const pcxwrite&);//not assignable: pcxfile::colormap
