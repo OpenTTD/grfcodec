@@ -753,6 +753,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	if (pcx32 != NULL) pcx32->endimage();
 	delete(pcx);	// closes output file
 	delete(pcx32);
+	if (pcx32 == NULL) delete imgname32;
 
 	writer.flush();
 	writer.done(count);
