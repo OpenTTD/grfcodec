@@ -10,6 +10,7 @@ Changes in 5.1.4 (unreleased)
     - Action 0 cargo property 1D.
     - Action 2 railtype variable 44.
     - Action 4 language ID 0x3D (Australian).
+    - Action 5 type 17/97.
 
 Changes in 5.1.3 (2011-12-19)
 - GRFCodec specific changes:
