@@ -169,6 +169,7 @@ int main(int argc, char **argv)
 			depth_offset = 0;
 		} else {
 			printf("Invalid depth \"%s\"\n", argv[i]);
+			return 1;
 		}
 
 		static const char *zoom[] = { "normal", "zi4", "zi2", "zo2", "zo4", "zo8" };
