@@ -407,7 +407,7 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 	return result;
 }
 
-static long fakecompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
+static long fakecompress(const U8 *in, long insize, U8 *out, long outsize, long *compsize, int grfcontversion)
 {
 	long needsize = insize + ((insize + 0x7f) / 0x7f);
 	if (outsize < needsize) {
@@ -426,7 +426,7 @@ static long fakecompress(const U8 *in, long insize, U8 *out, long outsize, U16 *
 		outpos += rest;
 		inpos += rest;
 	}
-	if (outpos > 65535) {
+	if (outpos > (grfcontversion == 2 ? 1048576 : 65535)) {
 		printf("\nSorry, uncompressed sprite too large\n");
 		exit(2);
 	}
@@ -554,7 +554,7 @@ static multitype strategy2(const U8* data, unsigned int datasize, unsigned int d
 #pragma warning(disable:4701)//chunk may be used uninitialized
 #endif
 
-static long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *compsize)
+static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long *compsize)
 {
 	long inpos = 0, outpos = 0;
 	U8 *lastcodepos = out;
@@ -621,14 +621,14 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, U16 *
 #pragma warning(default:4701)
 #endif
 
-static U16 lasttilesize;
+static long lasttilesize;
 
-U16 getlasttilesize()
+long getlasttilesize()
 {
 	return lasttilesize;
 }
 
-U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion)
+long encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion)
 {
 	long tilesize = imgsize + 16L * sy;
 	bool long_format = false;
@@ -754,7 +754,7 @@ U16 encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy
 	}
 }
 
-U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno, int grfcontversion)
+long encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno, int grfcontversion)
 {
 	const int infobytes = SpriteInfo::Size(grfcontversion);
 	long compsize = imgsize + 24 + infobytes, uncompsize = compsize + infobytes;
@@ -769,13 +769,13 @@ U16 encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int 
 	}
 
 	long result;
-	U16 realcompsize = 0;
+	long realcompsize = 0;
 	while (1) {
 		inf.writetobuffer(compr, grfcontversion);
 		if (docompress)
 			result = realcompress(image, imgsize, compr+infobytes, compsize-infobytes, &realcompsize);
 		else
-			result = fakecompress(image, imgsize, compr+infobytes, compsize-infobytes, &realcompsize);
+			result = fakecompress(image, imgsize, compr+infobytes, compsize-infobytes, &realcompsize, grfcontversion);
 
 		if (grfcontversion == 2 || SIZEISCOMPRESSED(inf.info))	// write compressed size
 			size = realcompsize + infobytes;
