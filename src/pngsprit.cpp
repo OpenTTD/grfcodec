@@ -218,7 +218,7 @@ void pngread::filestart(bool paletted)
 		}
 	} else {
 		if (png_get_channels(png, info) != 4) {
-			fprintf(stderr, "%s: Cannot only read 32bpp PNG files with alpha layer!\n", this->filename());
+			fprintf(stderr, "%s: Cannot read 32bpp PNG files without alpha layer!\n", this->filename());
 			exit(2);
 		}
 	}
