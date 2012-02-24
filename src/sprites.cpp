@@ -628,7 +628,7 @@ long getlasttilesize()
 	return lasttilesize;
 }
 
-long encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion)
+long encodetile(U8 **compressed_data, long *uncompressed_size, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion)
 {
 	long tilesize = imgsize + 16L * sy;
 	bool long_format = false;
@@ -748,13 +748,14 @@ long encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int s
 
 		lasttilesize = tileofs;
 
-		int result = encoderegular(grf, tile, tileofs, inf, docompress, spriteno, grfcontversion);
+		*uncompressed_size = tileofs;
+		int result = encoderegular(compressed_data, tile, tileofs, inf, docompress, spriteno, grfcontversion);
 		free(tile);
 		return result;
 	}
 }
 
-long encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno, int grfcontversion)
+long encoderegular(U8 **compressed_data, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno, int grfcontversion)
 {
 	const int infobytes = SpriteInfo::Size(grfcontversion);
 	long compsize = imgsize + 24 + infobytes, uncompsize = compsize + infobytes;
@@ -832,22 +833,27 @@ long encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int
 		}
 	}
 
+	*compressed_data = compr;
+	free(uncomp);
+
+	return realcompsize;
+}
+
+void writesprite(FILE *grf, const U8 *compressed_data, int compressed_size, int uncompressed_size, SpriteInfo inf, int spriteno, int grfcontversion)
+{
+	const int infobytes = SpriteInfo::Size(grfcontversion);
 	static const char *action = "writing real sprite";
+	int size = compressed_size + infobytes;
 	if (grfcontversion == 2) {
 		writedword(action, spriteno + 1, grf);
 		if (HASTRANSPARENCY(inf.info)) size += 4;
 	}
 	writespritesize(action, size, grfcontversion, grf);
-	cfwrite(action, compr, 1, infobytes, grf);
+	cfwrite(action, compressed_data, 1, infobytes, grf);
 	if (grfcontversion == 2 && HASTRANSPARENCY(inf.info)) {
-		writedword(action, imgsize, grf);
+		writedword(action, uncompressed_size, grf);
 	}
-	cfwrite(action, compr + infobytes, 1, realcompsize, grf);
-
-	free(compr);
-	free(uncomp);
-
-	return realcompsize;
+	cfwrite(action, compressed_data + infobytes, 1, compressed_size, grf);
 }
 
 void writespritesize(const char *action, unsigned int spritesize, int grfcontversion, FILE *grf)
