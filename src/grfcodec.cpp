@@ -583,7 +583,11 @@ foundlast:
 
 					U16 compsize;
 					if (HASTRANSPARENCY(info.inf.info)) {
-						compsize = encodetile(grf, image, info.imgsize*bytes_per_pixel, info.sx, info.sy, info.inf, compress, i, has_mask, rgba, grfcontversion);
+						U8 *compressed_data;
+						long uncompsize;
+						compsize = encodetile(&compressed_data, &uncompsize, image, info.imgsize*bytes_per_pixel, info.sx, info.sy, info.inf, compress, i, has_mask, rgba, grfcontversion);
+						writesprite(grf, compressed_data, compsize, uncompsize, info.inf, i, grfcontversion);
+						free(compressed_data);
 						totaltransp += getlasttilesize();	// how much after transparency removed
 						totaluntransp += info.imgsize;		// how much with transparency
 
@@ -593,7 +597,9 @@ foundlast:
 						for (int j = 0; j < info.imgsize; j++) {
 							image[j].Encode(imgbuffer + (j * bytes_per_pixel), has_mask, rgba);
 						}
-						compsize = encoderegular(grf, imgbuffer, info.imgsize*bytes_per_pixel, info.inf, compress, i, grfcontversion);
+						U8 *compressed_data;
+						compsize = encoderegular(&compressed_data, imgbuffer, info.imgsize*bytes_per_pixel, info.inf, compress, i, grfcontversion);
+						writesprite(grf, compressed_data, compsize, info.imgsize*bytes_per_pixel, info.inf, i, grfcontversion);
 						totaltransp += info.imgsize;
 						totaluntransp += info.imgsize;
 

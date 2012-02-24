@@ -94,8 +94,9 @@ extern int maxx, maxy, maxs;
 int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, spriteinfowriter *writer, int spriteno, U32 *dataoffset, int grfcontversion);
 
 long getlasttilesize();
-long encodetile(FILE *grf, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion);
-long encoderegular(FILE *grf, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno, int grfcontversion);
+long encodetile(U8 **compressed_data, long *uncompressed_size, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion);
+long encoderegular(U8 **compressed_data, const U8 *image, long imgsize, SpriteInfo inf, int docompress, int spriteno, int grfcontversion);
+void writesprite(FILE *grf, const U8 *compressed_data, int compressed_size, int uncompressed_size, SpriteInfo inf, int spriteno, int grfcontversion);
 void writespritesize(const char *action, unsigned int spritesize, int grfcontversion, FILE *grf);
 void writeword(const char *action, unsigned int value, FILE *grf);
 void writedword(const char *action, unsigned int value, FILE *grf);
