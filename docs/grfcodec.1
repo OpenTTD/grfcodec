@@ -1,6 +1,6 @@
 .\"                                      Hey, EMACS: -*- nroff -*-
 .\" Please adjust this date whenever revising the manpage.
-.Dd February 3, 2012
+.Dd February 24, 2012
 .Dt GRFCodec 1
 .Sh NAME
 .Nm GRFCodec
@@ -81,6 +81,9 @@ Suppress warning messages
 Create a GRF file with the given container version. Valid versions are
 1 and 2, where the latter allows bigger sprites, larger sounds, and
 multiple zoom levels and bit depths for the sprites.
+.It Fl n
+Try both compression algorithms and use the most efficient. This might
+cause trouble when loading the NewGRF in TTDPatch.
 .El
 .Pp
 Options for both encoding and decoding:

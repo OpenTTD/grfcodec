@@ -90,6 +90,7 @@ static void usage(void)
 		"    -q        Suppress warning messages\n"
 		"    -s        Suppress progress output\n"
 		"    -g <num>  Version of the encoded container format (default 1, maximum 2)\n"
+		"    -n        Try both compression algorithms and choose the most efficient\n"
 		"\n"
 		"Options for both encoding and decoding:\n"
 		"    -m <num>  Apply colour translation to all sprites except character-glyphs.\n"
@@ -200,6 +201,7 @@ static const defpal defpals[] =
 static int *colourmaps[] = { palmap0, palmap1 };
 
 bool _interactive;
+bool _best_compression = false;
 
 static int movetoreal(char *newfile, char *realfile)
 {
@@ -575,41 +577,53 @@ foundlast:
 					}
 
 					U8 bytes_per_pixel=(has_mask?1:0)+(rgba?4:0);
-					U8 *imgbuffer = (U8*)malloc(info.imgsize*bytes_per_pixel);
-					if (!imgbuffer) {
-						fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
-						exit(2);
+					U8 *compressed_chunked = NULL;
+					U8 *compressed_regular = NULL;
+					long compressed_size_chunked = 1 << 30;
+					long compressed_size_regular = 1 << 30;
+					long uncompressed_size_chunked = 0;
+
+					bool force_chunk = HASTRANSPARENCY(info.inf.info);
+					if (force_chunk || _best_compression) {
+						SpriteInfo inf = info.inf;
+						inf.info |= 8; // Set chunked status
+						compressed_size_chunked = encodetile(&compressed_chunked, &uncompressed_size_chunked, image, info.imgsize*bytes_per_pixel, info.sx, info.sy, inf, compress, i, has_mask, rgba, grfcontversion);
 					}
-
-					U16 compsize;
-					if (HASTRANSPARENCY(info.inf.info)) {
-						U8 *compressed_data;
-						long uncompsize;
-						compsize = encodetile(&compressed_data, &uncompsize, image, info.imgsize*bytes_per_pixel, info.sx, info.sy, info.inf, compress, i, has_mask, rgba, grfcontversion);
-						writesprite(grf, compressed_data, compsize, uncompsize, info.inf, i, grfcontversion);
-						free(compressed_data);
-						totaltransp += getlasttilesize();	// how much after transparency removed
-						totaluntransp += info.imgsize;		// how much with transparency
-
-						totalreg += compsize;			// how much after transp&redund removed
-						totalunreg += getlasttilesize();	// how much with redund
-					} else {
+					if (!force_chunk || _best_compression) {
+						U8 *imgbuffer = (U8*)malloc(info.imgsize*bytes_per_pixel);
+						if (!imgbuffer) {
+							fprintf(stderr, "%s:%d: Error: can't allocate sprite memory (%ld bytes)\n", file, i, info.imgsize);
+							exit(2);
+						}
 						for (int j = 0; j < info.imgsize; j++) {
 							image[j].Encode(imgbuffer + (j * bytes_per_pixel), has_mask, rgba);
 						}
-						U8 *compressed_data;
-						compsize = encoderegular(&compressed_data, imgbuffer, info.imgsize*bytes_per_pixel, info.inf, compress, i, grfcontversion);
-						writesprite(grf, compressed_data, compsize, info.imgsize*bytes_per_pixel, info.inf, i, grfcontversion);
-						totaltransp += info.imgsize;
-						totaluntransp += info.imgsize;
-
-						totalreg += compsize;
-						totalunreg += info.imgsize;
+						SpriteInfo inf = info.inf;
+						inf.info &= ~8; // Clear chunked status
+						compressed_size_regular = encoderegular(&compressed_regular, imgbuffer, info.imgsize*bytes_per_pixel, inf, compress, i, grfcontversion);
+						free(imgbuffer);
 					}
 
-					totalcomp += compsize;
+					bool use_chunk = compressed_size_chunked < compressed_size_regular;
+					long uncompressed_size = use_chunk ? uncompressed_size_chunked : info.imgsize*bytes_per_pixel;
+					long compressed_size   = use_chunk ? compressed_size_chunked : compressed_size_regular;
+					if (use_chunk) {
+						info.inf.info |= 8; // Set chunked status
+					} else {
+						info.inf.info &= ~8; // Clear chunked status
+					}
+					writesprite(grf, use_chunk ? compressed_chunked : compressed_regular, compressed_size, uncompressed_size, info.inf, i, grfcontversion);
+
+					totaltransp += uncompressed_size;	// how much after transparency removed
+					totaluntransp += info.imgsize;		// how much with transparency
+
+					totalreg += compressed_size;			// how much after transp&redund removed
+					totalunreg += uncompressed_size;	// how much with redund
+
+					totalcomp += compressed_size;
 					totaluncomp += info.imgsize;
-					free(imgbuffer);
+					free(compressed_chunked);
+					free(compressed_regular);
 					free(image);
 				}
 			}
@@ -914,7 +928,7 @@ int main(int argc, char **argv)
 
 	// parse option arguments
 	while (1) {
-		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:o:tfxqcsXg:");
+		char opt = getopt(argc, argv, "dev?w:h:b:up:m:M:o:tfxqcsXg:n");
 
 		if (opt == (char) EOF)
 			break;
@@ -937,6 +951,9 @@ int main(int argc, char **argv)
 			break;
 		case 'b':
 			box = atoi(optarg);
+			break;
+		case 'n':
+			_best_compression = true;
 			break;
 		case 'p':
 			unsigned int palnum;
