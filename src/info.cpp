@@ -213,13 +213,18 @@ void infowriter::flush()
 			BoxSprite *s = (BoxSprite*)boxes[i];
 
 			if (_useexts) {
-				fprintf(info, "%s %5s %4d %4d %4d %4d %4d %4d %s",
-						s->filename, depths[s->info.depth], s->x, s->y,
-						s->info.xdim, s->info.ydim,
-						s->info.xrel, s->info.yrel,
-						zoom_levels[s->info.zoom]);
-				if (HASTRANSPARENCY(s->info.info)) fputs(" chunked", info);
-				if (DONOTCROP(s->info.info)) fputs(" nocrop", info);
+				if (s->info.depth == 2) {
+					fprintf(info, "%s %5s %4d %4d",
+							s->filename, depths[s->info.depth], s->x, s->y);
+				} else {
+					fprintf(info, "%s %5s %4d %4d %4d %4d %4d %4d %s",
+							s->filename, depths[s->info.depth], s->x, s->y,
+							s->info.xdim, s->info.ydim,
+							s->info.xrel, s->info.yrel,
+							zoom_levels[s->info.zoom]);
+					if (HASTRANSPARENCY(s->info.info)) fputs(" chunked", info);
+					if (DONOTCROP(s->info.info)) fputs(" nocrop", info);
+				}
 			} else {
 				fprintf(info, "%s %d %d %02X %d %d %d %d",
 						s->filename, s->x, s->y,
