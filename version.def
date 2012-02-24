@@ -1,5 +1,5 @@
 # Current year
-YEAR = 2011
+YEAR = 2012
 
 ifdef REVISION
 VERSIONSTR := r$(REVISION)
