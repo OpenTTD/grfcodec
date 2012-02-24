@@ -843,7 +843,11 @@ void writesprite(FILE *grf, const U8 *compressed_data, int compressed_size, int 
 {
 	const int infobytes = SpriteInfo::Size(grfcontversion);
 	static const char *action = "writing real sprite";
-	int size = compressed_size + infobytes;
+	int size;
+	if (grfcontversion == 2 || SIZEISCOMPRESSED(inf.info))	// write compressed size
+		size = compressed_size + infobytes;
+	else
+		size = uncompressed_size + infobytes;
 	if (grfcontversion == 2) {
 		writedword(action, spriteno + 1, grf);
 		if (HASTRANSPARENCY(inf.info)) size += 4;
