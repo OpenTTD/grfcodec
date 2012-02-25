@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 			"\n"
 			"Usage:\n"
 			"    GRFSTRIP <origin> <dest> [<depth> <zoom>]\n"
-			"        Strip real sprites that are not in the set \"normal 8bpp and the ones"
+			"        Strip real sprites that are not in the set \"normal 8bpp and the ones\n"
 			"        specified at the command line\" from origin into dest.\n"
 			"    GRFSTRIP -v\n"
 			"        Get the version of GRFSTRIP\n"
