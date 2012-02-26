@@ -479,7 +479,7 @@ CHANGED_FEATURE(act3)
 	for (i=0; i<numCIDs; i++) {
 		data>>cargo>>cid;
 		if ((feature == 0x0F && cargo != 0x00 && cargo != 0xFF) ||
-				(feature == 0x10 && cargo > 0x09) ||
+				(feature == 0x10 && cargo > 0x0A) ||
 				(feature <= 0x04 && cargo>CargoTransTable() && cargo != 0xFF && (cargo != 0xFE || feature != 4)))
 			IssueMessage(ERROR,INVALID_CARGO_TYPE,cargo.loc(),cargo.val());
 		if(ids[cargo])
