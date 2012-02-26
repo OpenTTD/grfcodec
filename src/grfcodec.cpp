@@ -604,7 +604,8 @@ foundlast:
 						free(imgbuffer);
 					}
 
-					bool use_chunk = compressed_size_chunked < compressed_size_regular;
+					/* GRF container version 2 saves 4 extra bytes for the chunked data. */
+					bool use_chunk = compressed_size_chunked + (grfcontversion == 2 ? 4 : 0) < compressed_size_regular;
 					long uncompressed_size = use_chunk ? uncompressed_size_chunked : info.imgsize*bytes_per_pixel;
 					long compressed_size   = use_chunk ? compressed_size_chunked : compressed_size_regular;
 					if (use_chunk) {
