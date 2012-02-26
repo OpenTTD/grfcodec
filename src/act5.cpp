@@ -36,6 +36,8 @@ using namespace std;
 #include"messages.h"
 #include"command.h"
 
+extern bool _base_grf;
+
 class c5{
 public:
 	int maxFeature(){return (int)sizes.size()+3;}
@@ -105,6 +107,8 @@ int Check5(PseudoSprite&data,sanstate&state){
 			if(expSprites[i] == 0)goto countok;
 			if(expSprites[i] == sprites)goto countok;
 		}
+		/* A base GRF may provide 10 sprites for shores. */
+		if(_base_grf && feature == 0x0D && sprites == 0x0A)goto countok;
 		Act5CountWarn(expSprites);
 	}else{
 		if(!(expSprites[0]&8))
