@@ -109,6 +109,8 @@ int Check5(PseudoSprite&data,sanstate&state){
 		}
 		/* A base GRF may provide 10 sprites for shores. */
 		if(_base_grf && feature == 0x0D && sprites == 0x0A)goto countok;
+		/* Having more sprites is generally okay for base GRFs as they are then more up-to-date than NFORenum. */
+		if(_base_grf && feature == 0x15 && sprites > expSprites[0])goto countok;
 		Act5CountWarn(expSprites);
 	}else{
 		if(!(expSprites[0]&8))
