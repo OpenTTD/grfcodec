@@ -605,10 +605,8 @@ bool verify_real(string&data,RealSpriteState&formats){
 	string udata=UCase(data);
 	while(true){
 		loc=udata.find(".PCX",loc+1);
-#ifdef WITH_PNG
 		if(loc==NPOS)
 			loc = udata.find(".PNG",loc+1);
-#endif
 		if(loc==NPOS){
 			IssueMessage(0,REAL_NO_FILENAME);
 			return false;
