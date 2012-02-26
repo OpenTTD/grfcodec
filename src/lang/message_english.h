@@ -81,7 +81,7 @@ NFO_MESSAGE(COMMAND_UNKNOWN_VERSION,"Unknown version number. If this version has
 NFO_MESSAGE(INVALID_CHARACTER,"Invalid character: \"%c\".\n",0)
 NFO_MESSAGE(INVALID_EXTENSION,"Invalid escape sequence.\n",0)
 NFO_MESSAGE(UNTERMINATED_STRING,"Unterminated literal string.\n",0)
-MESSAGE(REAL_NO_FILENAME,"Apparent real sprite does not contain a file name.\n",TO_NULL|MAKE_COMMENT)
+NFO_MESSAGE(REAL_NO_FILENAME,"Apparent real sprite does not contain a file name.\n",MAKE_COMMENT)
 NFO_MESSAGE(REAL_MISSING_DATA,"Could not read %t from apparent real sprite.\n",0)
 
 //FATAL
