@@ -146,8 +146,13 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 		if(loc==NPOS)
 			loc = udata.find(".PNG",loc+1);
 #endif
-		if(loc==NPOS)
+		if(loc==NPOS) {
+#ifndef WITH_PNG
+			loc = udata.find(".PNG",loc+1);
+			if(loc!=NPOS) throw Sprite::unparseable("Found PNG sprite, but GRFCodec is compiled without PNG support",sprite);
+#endif
 			throw Sprite::unparseable("Could not find filename",sprite);
+		}
 		if(isspace(data[loc+4]))break;
 	}
 	SpriteInfo inf;
