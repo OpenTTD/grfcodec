@@ -39,6 +39,8 @@ using namespace std;
 #include"strings.h"
 #include"pseudo.h"
 
+bool _base_grf = false;
+
 class features{
 public:
 	uint maxFeat;
@@ -306,6 +308,7 @@ void check_sprite(PseudoSprite&data){
 		const uint GRFid=data.ExtractDword(2);
 		data.SetGRFID(2);
 		if((GRFid&0xFF)==0xFF&&GRFid!=0xFFFFFFFF)IssueMessage(WARNING1,RESERVED_GRFID);
+		_base_grf=(GRFid&0xFFFFFF)==0x00544FFF;
 		if(length<8){
 			IssueMessage(ERROR,INVALID_LENGTH,ACTION,8,AT_LEAST,8);
 			break;
