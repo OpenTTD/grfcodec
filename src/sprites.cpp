@@ -604,7 +604,8 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long 
 			lastcodepos = &(out[outpos++]);
 			inpos += overlap;
 		} else {	//  no we didn't. Increase length of verbatim chunk
-			if (*lastcodepos == 0x7f) {	// maximum length 127
+			if (*lastcodepos == 0x80) {	// maximum length 128, encoded as 0
+				*lastcodepos = 0;
 				lastcodepos = &(out[outpos++]);	// start new one
 				*lastcodepos = 0;
 			}
