@@ -37,7 +37,7 @@ struct CommonPixel {
 
 	bool IsTransparent(bool has_mask, bool rgba) const
 	{
-		return !((has_mask && this->m) || (rgba && this->a));
+		return rgba ? this->a == 0 : this->m == 0;
 	}
 
 	U8 *Encode(U8 *buffer, bool has_mask, bool rgba) const
