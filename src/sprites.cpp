@@ -24,7 +24,7 @@
 
 int maxx = 0, maxy = 0, maxs = 0;
 
-static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, U32 tilesize, bool has_mask, bool rgba, int grfcontversion)
+static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, long tilesize, bool has_mask, bool rgba, int grfcontversion)
 {
 	bool long_format = tilesize > 65535;
 	bool long_chunk  = grfcontversion == 2 && sx > 256;
