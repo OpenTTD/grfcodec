@@ -30,6 +30,8 @@ static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, U32 ti
 	bool long_chunk  = grfcontversion == 2 && sx > 256;
 	buffer += SpriteInfo::Size(grfcontversion);
 
+	if (tilesize <= sy * (long_format ? 4U : 2U) + SpriteInfo::Size(grfcontversion)) return -1;
+
 	for (int y=0; y<sy; y++) {
 		long offset;
 		if (long_format) {
@@ -43,11 +45,13 @@ static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, U32 ti
 		long x, islast, chunkstart=0, len, ofs;
 		do {
 			if (long_chunk) {
+				if (offset + 3 >= tilesize) return -1;
 				islast = buffer[offset + 1] & 0x80;
 				len = (buffer[offset + 1] & 0x7f) << 8 | buffer[offset + 0];
 				ofs = buffer[offset + 3] << 8 | buffer[offset + 2];
 				offset += 4;
 			} else {
+				if (offset + 1 >= tilesize) return -1;
 				islast = buffer[offset] & 0x80;
 				len = buffer[offset++] & 0x7f;
 				ofs = buffer[offset++];
@@ -62,6 +66,7 @@ static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, U32 ti
 
 			// then copy the number of actual bytes
 			const U8 *obuffer = buffer + offset;
+			if (offset + len > tilesize) return -1;
 			for (x=0; x<len; x++) {
 				obuffer = imgbuffer->Decode(obuffer, has_mask, rgba);
 				imgbuffer++;
@@ -329,7 +334,7 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 			exit(2);
 		}
 
-		U32 tilesize = 0;
+		unsigned long tilesize = 0;
 		do {
 			fseek(grf, startpos, SEEK_SET);
 			if (grfcontversion == 2 && HASTRANSPARENCY(info.info)) {
@@ -357,10 +362,23 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 
 		bool has_mask=info.depth==DEPTH_MASK||info.depth==DEPTH_8BPP;
 		bool rgba=info.depth==DEPTH_MASK||info.depth==DEPTH_32BPP;
-		if (HASTRANSPARENCY(info.info))	// it's a tile
+		if (HASTRANSPARENCY(info.info)) { // it's a tile
+			if (grfcontversion == 2 && datasize != tilesize + SpriteInfo::Size(grfcontversion)) {
+				printf("\nError: not enough data to perform tile decoding for sprite %d\n", spriteno);
+				exit(2);
+			}
 			result = decodetile(outbuffer, sx, sy, imgbuffer, tilesize, has_mask, rgba, grfcontversion);
-		else
+			if (result < 0) {
+				printf("\nError: expected more data during tile decoding for sprite %d\n", spriteno);
+				exit(2);
+			}
+		} else {
+			if (grfcontversion == 2 && datasize != (unsigned long)(sx * sy) + SpriteInfo::Size(grfcontversion)) {
+				printf("\nError: not enough data to perform regular decoding for sprite %d\n", spriteno);
+				exit(2);
+			}
 			result = decoderegular(outbuffer, sx, sy, imgbuffer, has_mask, rgba, grfcontversion);
+		}
 
 		if (info.depth==DEPTH_32BPP) {
 			if (imgrgba == NULL) {
