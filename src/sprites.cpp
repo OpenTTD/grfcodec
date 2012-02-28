@@ -601,6 +601,8 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long 
 			out[outpos++] = ofsl;
 
 			out[outpos] = 0;	// start new interim verbatim chunk
+			if (*lastcodepos == 0x80)
+				*lastcodepos = 0;
 			lastcodepos = &(out[outpos++]);
 			inpos += overlap;
 		} else {	//  no we didn't. Increase length of verbatim chunk
@@ -630,6 +632,8 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long 
 
 	if (!*lastcodepos)
 		outpos--;
+	if (*lastcodepos == 0x80)
+		*lastcodepos = 0;
 
 	*compsize = outpos;
 
