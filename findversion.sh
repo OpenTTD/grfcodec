@@ -78,6 +78,10 @@ if [ -d "$ROOT_DIR/.hg" ]; then
 		REV=r$REV_NR
 		BRANCH=`hg branch | sed 's@^default$@@'`
 	fi
+elif [ -f "$ROOT_DIR/.ottdrev" ]; then
+	# We are an exported source bundle
+	cat $ROOT_DIR/.ottdrev
+	exit
 else
 	# We don't know
 	MODIFIED="1"
