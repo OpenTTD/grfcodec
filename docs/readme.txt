@@ -1,6 +1,6 @@
 GRF development tools README
-Last updated:    2011-12-19
-Release version: 5.1.3
+Last updated:    2012-03-05
+Release version: 6.0.0
 ------------------------------------------------------------------------
 
 
@@ -31,10 +31,11 @@ GRFID is a small tool for extracting the so-called GRF ID from a GRF.
 NFORenum is a tool checking NFO code for errors, and for beautifying that
 code -- inasmuch as NFO can be beautified :)
 
-GRFCodec, GRFDiff, GRFMerge and GRFID are licensed under the GNU General
-Public License version 2.0. For more information, see the file 'COPYING'.
-GRFID contains the MD5 implementation written by L. Peter Deutsch and
-licensed under the zlib license.
+GRFCodec, GRFDiff, GRFMerge, GRFID and GRFStrip are licensed under the
+GNU General Public License version 2.0. For more information, see the
+file 'COPYING'. GRFID contains the MD5 implementation written by
+L. Peter Deutsch and this MD5 implementation is licensed under the
+zlib license.
 
 NFORenum is licensed under the GNU General Public License version 2, or at
 your option, any later version. For more information, see 'COPYING'
@@ -44,7 +45,7 @@ your option, any later version. For more information, see 'COPYING'
 2) Contact:
 -- --------
 Contact can be made via the issue tracker / source repository at
-http://dev.openttdcoop.org/projects/nforenum or via IRC on the
+http://dev.openttdcoop.org/projects/grfcodec or via IRC on the
 #openttdcoop.devzone channel on OFTC.
 
 
