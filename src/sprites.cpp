@@ -30,7 +30,7 @@ static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, long t
 	bool long_chunk  = grfcontversion == 2 && sx > 256;
 	buffer += SpriteInfo::Size(grfcontversion);
 
-	if (tilesize <= sy * (long_format ? 4 : 2) + SpriteInfo::Size(grfcontversion)) return -1;
+	if (grfcontversion == 2 && tilesize <= sy * (long_format ? 4 : 2) + SpriteInfo::Size(grfcontversion)) return -1;
 
 	for (int y=0; y<sy; y++) {
 		long offset;
@@ -45,13 +45,13 @@ static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, long t
 		long x, islast, chunkstart=0, len, ofs;
 		do {
 			if (long_chunk) {
-				if (offset + 3 >= tilesize) return -1;
+				if (grfcontversion == 2 && offset + 3 >= tilesize) return -1;
 				islast = buffer[offset + 1] & 0x80;
 				len = (buffer[offset + 1] & 0x7f) << 8 | buffer[offset + 0];
 				ofs = buffer[offset + 3] << 8 | buffer[offset + 2];
 				offset += 4;
 			} else {
-				if (offset + 1 >= tilesize) return -1;
+				if (grfcontversion == 2 && offset + 1 >= tilesize) return -1;
 				islast = buffer[offset] & 0x80;
 				len = buffer[offset++] & 0x7f;
 				ofs = buffer[offset++];
@@ -66,7 +66,7 @@ static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, long t
 
 			// then copy the number of actual bytes
 			const U8 *obuffer = buffer + offset;
-			if (offset + len > tilesize) return -1;
+			if (grfcontversion == 2 && offset + len > tilesize) return -1;
 			for (x=0; x<len; x++) {
 				obuffer = imgbuffer->Decode(obuffer, has_mask, rgba);
 				imgbuffer++;
