@@ -1,3 +1,8 @@
+Changes in 6.0.1 (unreleased)
+- NFORenum specific changes:
+  - Data file updates
+    - Action 2 global variables 06, 0B..0F, 13..16, 1E, 21, 22
+
 Changes in 6.0.0 (2012-03-05)
 - NFO version 32 for supporting GRF container version 2.
 - GRF container version 2 with bigger sprites and multiple images (bit depth and zoom level) for real sprites.
