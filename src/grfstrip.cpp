@@ -189,7 +189,7 @@ int main(int argc, char **argv)
 
 	const char *err = Strip(argv[1], argv[2], allowed);
 	if (err == NULL) {
-		printf("Stripped %s into %s succesfully\n", argv[1], argv[2]);
+		printf("Stripped %s into %s successfully\n", argv[1], argv[2]);
 		return 0;
 	}
 
