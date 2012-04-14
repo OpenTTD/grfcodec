@@ -91,8 +91,9 @@ inforeader::~inforeader()
 }
 
 void inforeader::PrepareReal(const SpriteInfo&info){
+	int oldy=inf.ypos;
 	inf=info;
-	if ( inf.forcereopen || !imgfile || !imgname || (stricmp(inf.name.c_str(), imgname) != 0) ) {
+	if ( inf.forcereopen || !imgfile || !imgname || (stricmp(inf.name.c_str(), imgname) != 0) || oldy > inf.ypos) {
 		// new file
 
 		delete imgfile;
