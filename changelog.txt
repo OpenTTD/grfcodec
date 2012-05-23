@@ -8,6 +8,7 @@ Changes in 6.0.1 (unreleased)
     - Action 2 aircraft variables 4B, 4C.
     - Callback 15F
   - Fix reading incorrect graphics when multiple graphics are provided for a sprite and writing a GRF container version 1 GRF and the y position decreases
+  - Fix decoding of regular encoded 32bpp sprites
 
 Changes in 6.0.0 (2012-03-05)
 - NFO version 32 for supporting GRF container version 2.

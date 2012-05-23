@@ -373,7 +373,8 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 				exit(2);
 			}
 		} else {
-			if (grfcontversion == 2 && datasize != (unsigned long)(sx * sy) + SpriteInfo::Size(grfcontversion)) {
+			U8 bytes_per_pixel=(has_mask?1:0)+(rgba?4:0);
+			if (grfcontversion == 2 && datasize != (unsigned long)(sx * sy * bytes_per_pixel) + SpriteInfo::Size(grfcontversion)) {
 				printf("\nError: not enough data to perform regular decoding for sprite %d\n", spriteno);
 				exit(2);
 			}
