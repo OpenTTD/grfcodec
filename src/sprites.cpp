@@ -200,7 +200,7 @@ void SpriteInfo::writetobuffer(U8 *buffer, int grfcontversion)
 	buffer[i++] = this->yrel >> 8;
 }
 
-void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf)
+void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf, int spriteno)
 {
 	int i = 0;
 	if (grfcontversion == 2) {
@@ -211,7 +211,10 @@ void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf)
 			case 0x03: this->depth=DEPTH_32BPP; break;
 			case 0x04: this->depth=DEPTH_8BPP; break;
 			case 0x07: this->depth=DEPTH_MASK; break;
-			default: this->depth=DEPTH_8BPP; break;
+			default: {
+				printf("\nUnknown colour depth %02x for sprite %d. GRFCodec currently only supports M, RGBA and RGBAM formats.\n", data&0x7, spriteno);
+				exit(2);
+			}
 		}
 		this->zoom = fgetc(grf);
 		this->ydim = readword(action, grf);
@@ -299,7 +302,7 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 		}
 
 		fseek(grf, startpos, SEEK_SET);
-		info.readfromfile(action, grfcontversion, grf);
+		info.readfromfile(action, grfcontversion, grf, spriteno);
 
 		if(info.zoom >= ZOOM_LEVELS){
 			printf("\nUnknown zoom level %02x for sprite %d\n", info.zoom, spriteno);

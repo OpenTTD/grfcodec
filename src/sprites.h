@@ -63,7 +63,7 @@ struct SpriteInfo {
 	bool forcereopen;
 
 	void writetobuffer(U8 *buffer, int grfcontversion);
-	void readfromfile(const char *action, int grfcontversion, FILE *grf);
+	void readfromfile(const char *action, int grfcontversion, FILE *grf, int spriteno);
 	static int Size(int grfcontversion) { return grfcontversion == 2 ? 10 : 8; }
 };
 
