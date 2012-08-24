@@ -1,7 +1,8 @@
 Changes in 6.0.1 (unreleased)
 - NFORenum specific changes:
   - Data file updates
-    - Action 2 global variables 06, 0B..0F, 13..16, 1E, 21, 22
+    - Action 0 station property 1A.
+    - Action 2 global variables 06, 0B..0F, 13..16, 1E, 21, 22.
     - Action 2 train variables 4C, 61, 62.
     - Action 2 road vehicle variables 4B, 4C, 61, 62.
     - Action 2 ship variables 4B, 4C.
