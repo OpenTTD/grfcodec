@@ -474,10 +474,24 @@ NDF_END
 
 /* Raw byte to appear in the nfo */
 #define RAW(b) 'l', b
+#define RAWBYTES(len, ...) 'm', len, __VA_ARGS__
+
+/* Test for a specific byte value
+ * 'offset' is the position of the byte to test within the current SUBDATA.
+ * 'mask' is a AND bitmask to apply before testing.
+ * 'value' is the value to test for.
+ * 'data' is the stuff to process when the test "(byte[offset] & mask) == value" succeeds. */
+#define IF(lhs, rhs, data) 'e', lhs, rhs, data
+#define IFNOT(lhs, rhs, data) 'n', lhs, rhs, data
+#define ASSERT 'a'
+#define SKIPNEXT 's'
+
+/* Bitwise AND */
+#define AND(lhs, rhs) '&', lhs, rhs
 
 /* Repeat 'data' 'times' times, where 'times' is known before reading the data.
  * 'times' may be a fixed number, or a reference to an earlier BYTE/EXTBYTE/WORD/DWORD within the current SUBDATA.
- * You can also multiple multiple values using MUL() */
+ * You can also multiply multiple values using MUL() */
 #define REPEAT_N(data, times) 'r', data, times
 #define MUL(a, b) 'x', a, b
 #define DATAFROM(offset) offset | 0x80           /* Uses the value read with the token at position 'offset' within the current SUBDATA */
@@ -486,7 +500,7 @@ NDF_END
 #define REPEAT_UNTIL(data, length, ...) '*', data, length, __VA_ARGS__
 
 static const unsigned char _dat0[]={
-NDF_HEADER(0x0D, 21),
+NDF_HEADER(0x0E, 0),
 /*Maximum feature:*/ 0x11,
 // Feature 00:
 /*00*/ WORD | DATE, INVALID, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, BYTE, BYTE, BYTE | DECIMAL,
@@ -539,15 +553,57 @@ BYTE, REPEAT_N(BYTE, DATAFROM(0)), END,
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
 /*08*/ DWORD | QUOTED, SUBDATA, BYTE, BYTE, BYTE, BYTE, SUBDATA, BYTE,
 /*10*/ WORD | DECIMAL, BYTE, DWORD | HEX, BYTE, BYTE, BYTE, WORD | HEX, BYTE | DECIMAL,
-/*18*/ WORD,
+/*18*/ WORD, INVALID, SUBDATA,
 END,
 // Subdata - prop 09:
 EXTBYTE, REPEAT_N(SUBDATA, DATAFROM(0)), END,
-	RAW(ZERO), RAW(ZERO), RAW(ZERO), RAW(ZERO), '|', DWORD | HEX, REPEAT_UNTIL(SUBDATA, 1, 0x80), END,
-		BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, DWORD | HEX, END,
+	LINEBREAK, RAW(ZERO), RAW(ZERO), RAW(ZERO), RAW(ZERO), '|', LINEBREAK, DWORD | HEX, LINEBREAK, REPEAT_UNTIL(SUBDATA, 1, 0x80), END,
+		BYTE, BYTE, BYTE, BYTE, BYTE, BYTE, DWORD | HEX, LINEBREAK, END,
 // Subdata - prop 0E:
 REPEAT_UNTIL(SUBDATA, 2, ZERO, ZERO), END,
 	BYTE, BYTE, REPEAT_N(BYTE, MUL(DATAFROM(0), DATAFROM(1))), LINEBREAK, END,
+// Subdata - prop 20:
+EXTBYTE, REPEAT_N(SUBDATA, DATAFROM(0)), END,
+	// spritelayout without flags
+	BYTE, IFNOT(AND(DATAFROM(0), RAW(0x40)), ZERO, SKIPNEXT), DWORD, LINEBREAK, REPEAT_N(SUBDATA, AND(DATAFROM(0), RAW(0x3F))),
+	// spritelayout with flags
+	'|', BYTE, LINEBREAK, SUBDATA, REPEAT_N(SUBDATA, AND(DATAFROM(0), RAW(0x3F))), END,
+		// building sprite without flags
+		DWORD, BYTE | DECIMAL, BYTE | DECIMAL, RAW(0x80), LINEBREAK,
+		'|', DWORD, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, LINEBREAK, END,
+		// groundsprite with flags
+		DWORD, WORD | HEX,
+		IFNOT(AND(DATAFROM(1), RAWBYTES(2, 0x30, 0xFF)), ZERO, ASSERT), // assert on unknown flags 
+		IFNOT(AND(DATAFROM(1), RAW(0x01)), ZERO, BYTE), // skip sprite
+		IFNOT(AND(DATAFROM(1), RAW(0x02)), ZERO, BYTE), // sprite offset
+		IFNOT(AND(DATAFROM(1), RAW(0x04)), ZERO, BYTE), // palette offset
+		IFNOT(AND(DATAFROM(1), RAW(0x40)), ZERO, BYTE), // sprite var10
+		IFNOT(AND(DATAFROM(1), RAW(0x80)), ZERO, BYTE), // palette var10
+		LINEBREAK,
+		END,
+		// buildingsprite with flags
+		DWORD, WORD | HEX, BYTE | DECIMAL, BYTE | DECIMAL, RAW(0x80),
+		IFNOT(AND(DATAFROM(1), RAWBYTES(2, ZERO, 0xFF)), ZERO, ASSERT), // assert on unknown flags
+		IFNOT(AND(DATAFROM(1), RAW(0x01)), ZERO, BYTE), // skip sprite
+		IFNOT(AND(DATAFROM(1), RAW(0x02)), ZERO, BYTE), // sprite offset
+		IFNOT(AND(DATAFROM(1), RAW(0x04)), ZERO, BYTE), // palette offset
+		IFNOT(AND(DATAFROM(1), RAW(0x10)), ZERO, BYTE), // X offset
+		IFNOT(AND(DATAFROM(1), RAW(0x20)), ZERO, BYTE), // Y offset
+		IFNOT(AND(DATAFROM(1), RAW(0x40)), ZERO, BYTE), // sprite var10
+		IFNOT(AND(DATAFROM(1), RAW(0x80)), ZERO, BYTE), // palette var10
+		LINEBREAK,
+		'|', DWORD, WORD | HEX, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL,
+		IFNOT(AND(DATAFROM(1), RAWBYTES(2, ZERO, 0xFF)), ZERO, ASSERT), // assert on unknown flags
+		IFNOT(AND(DATAFROM(1), RAW(0x01)), ZERO, BYTE), // skip sprite
+		IFNOT(AND(DATAFROM(1), RAW(0x02)), ZERO, BYTE), // sprite offset
+		IFNOT(AND(DATAFROM(1), RAW(0x04)), ZERO, BYTE), // palette offset
+		IFNOT(AND(DATAFROM(1), RAW(0x10)), ZERO, SUBDATA), // X/Y offset
+		IFNOT(AND(DATAFROM(1), RAW(0x20)), ZERO, BYTE), // Z offset
+		IFNOT(AND(DATAFROM(1), RAW(0x40)), ZERO, BYTE), // sprite var10
+		IFNOT(AND(DATAFROM(1), RAW(0x80)), ZERO, BYTE), // palette var10
+		LINEBREAK,
+		END,
+			BYTE, BYTE, END, // X/Y offset
 
 // Feature 05:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
@@ -702,6 +758,12 @@ NDF_END
 #undef LINEBREAK
 #undef SUBDATA
 #undef RAW
+#undef RAWBYTES
+#undef IF
+#undef IFNOT
+#undef ASSERT
+#undef SKIPNEXT
+#undef AND
 #undef REPEAT_N
 #undef MUL
 #undef DATAFROM
