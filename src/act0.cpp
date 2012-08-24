@@ -151,8 +151,19 @@ uint PropData::GetValue(uint&len_off,const int_str&decoded)const{
 		value=GetValue(++len_off,decoded);
 		return value*GetValue(++len_off,decoded);
 	}
+	if(value=='&'){
+		value=GetValue(++len_off,decoded);
+		return value&GetValue(++len_off,decoded);
+	}
 	if(value=='l')
 		return GetData(++len_off);
+	if(value=='m'){
+		uint len = GetData(++len_off);
+		value=0;
+		for(uint k=0;k<len;k++)
+			value|=GetData(++len_off)<<(8*k);
+		return value;
+	}
 	if(value&0x80)
 		return decoded[value&0x7F];
 	return value;
@@ -449,16 +460,45 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 		switch(ch){
 		case'|':return true;
 		case'l':
-			/* Check for a specific raw data value.
-			 * As this is used to check for certain formats, we do not want stuff like warning 209,
-			 * so use LinkSafeExtractByte().
-			 * Though the correct way of doing this would be to change the behaviour of '|' to dismiss
-			 * all warnings and errors of the branch that was declined, this still works reasonable well. */
-			if(vdata.GetData(++i)!=str.LinkSafeExtractByte(str_loc++)){
-				str_loc=orig_loc;
-				findPipe=true;
+		case'm':{
+			uint len=(ch=='m'?vdata.GetData(++i):1);
+			for(uint k=0;k<len;k++){
+				/* Check for a specific raw data value.
+				 * As this is used to check for certain formats, we do not want stuff like warning 209,
+				 * so use LinkSafeExtractByte().
+				 * Though the correct way of doing this would be to change the behaviour of '|' to dismiss
+				 * all warnings and errors of the branch that was declined, this still works reasonable well. */
+				if(vdata.GetData(++i)!=str.LinkSafeExtractByte(str_loc++)){
+					str_loc=orig_loc;
+					findPipe=true;
+					break;
+				}
 			}
 			break;
+		}
+		case'e':
+		case'n':{
+			uint lhs=vdata.GetValue(++i,decoded);
+			uint rhs=vdata.GetValue(++i,decoded);
+			const PropData*vdata2=vdata.GetVarLength(i);
+			uchar data=vdata.GetData(++i);
+			if ((lhs == rhs) == (ch == 'n')) break;
+			if(data=='a'){
+				IssueMessage(ERROR,UNKNOWN_ACT0_DATA,str_loc);
+				return false;
+			}else if(data=='s'){
+				str_loc=orig_loc;
+				findPipe=true;
+			}else if(data==0xFE){
+				if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
+			}else if(GetWidth(data)<5){
+				FormatSprite(str,str_loc,data,1);
+			}else{
+				IssueMessage(0,INVALID_DATAFILE,"0.dat",DAT2,ch,data);
+				exit(EDATA);
+			}
+			break;
+		}
 		case'r':{
 			const PropData*vdata2=vdata.GetVarLength(i);
 			uchar repeat_data=vdata.GetData(++i);
