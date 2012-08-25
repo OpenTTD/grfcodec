@@ -115,7 +115,16 @@ void pcxwrite::startsubimage(int /*x*/, int /*y*/, int sx, int sy)
 	}
 
 	if (sy > thisbandy) {
-		thisbandy = ( (int) (sy + bandy - 1) / bandy) * bandy;
+		int needbandy = ( (int) (sy + bandy - 1) / bandy) * bandy;
+		if ((totaly + needbandy > this->sy) && (needbandy <= this->sy)) {	// would be too large
+			newband();
+			lastdigitx = -50;
+			/* Above call to newband might had already switched into a new file, have to recheck */
+			if ((totaly + needbandy > this->sy) && (needbandy <= this->sy)) {
+				newfile(this->paletted, this->sx);
+			}
+		}
+		thisbandy = needbandy;
 		alloclines(thisbandy);
 	}
 
