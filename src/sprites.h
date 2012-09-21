@@ -71,7 +71,7 @@ class spriteinfowriter {
 	public:
 	~spriteinfowriter() {}
 	virtual void addsprite(bool /* first */, const char * /* filename */, int /* y */, int /*x*/, SpriteInfo /*info*/) { };
-	virtual void adddata(U16 /*size*/, U8 * /*data*/) { };
+	virtual void adddata(uint /*size*/, U8 * /*data*/) { };
 };
 
 class spritestorage {

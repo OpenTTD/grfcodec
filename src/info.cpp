@@ -199,7 +199,7 @@ infowriter::~infowriter()
 void infowriter::flush()
 {
 	int i;
-	U16 j;
+	uint j;
 
 	for (i=0; i<boxnum; i++) {
 		switch (boxes[i]->type) {
@@ -369,7 +369,7 @@ void infowriter::addsprite(bool first, const char *filename, int x, int y, Sprit
 	boxes[boxnum++] = new BoxSprite(first, filename, x, y, info);
 }
 
-void infowriter::adddata(U16 size, U8 *data)
+void infowriter::adddata(uint size, U8 *data)
 {
 	if (boxnum >= maxboxes)
 		resize(maxboxes*2);
