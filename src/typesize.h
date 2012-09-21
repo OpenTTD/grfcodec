@@ -165,3 +165,5 @@ union multitype {
 #endif
 
 #endif /* _TYPESIZE_H */
+
+typedef unsigned int uint;
