@@ -113,7 +113,7 @@ public:
 	static bool CanQuote(uint);
 	static bool MayBeSprite(const string&);
 	enum width {_B_, _BX_, _W_, _D_};
-	static uint ReadValue(istream&, width);
+	uint ReadValue(istream&, width);
 
 private:
 	bool DoQuote(uint)const;
