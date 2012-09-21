@@ -1,4 +1,4 @@
-Changes in 6.0.1 (unreleased)
+Changes in 6.0.1 (2012-09-21)
 - NFORenum specific changes:
   - Data file updates
     - Action 0 station property 1A.
@@ -7,10 +7,16 @@ Changes in 6.0.1 (unreleased)
     - Action 2 road vehicle variables 4B, 4C, 61, 62.
     - Action 2 ship variables 4B, 4C.
     - Action 2 aircraft variables 4B, 4C.
-    - Callback 15F
-  - Fix reading incorrect graphics when multiple graphics are provided for a sprite and writing a GRF container version 1 GRF and the y position decreases
-  - Fix decoding of regular encoded 32bpp sprites
-  - Print appropiate error message when trying to decode unsupported colour depth formats
+    - Action 5 type 15.
+    - Callback 15F.
+  - Add RPN calculations; the RPN expression is replaced by the calculated value.
+- GRFcodec specific changes:
+  - Fix reading/writing the size value for pseudo sprites so pseudo sprites actually work with container v2.
+  - Reject pseudo sprites that are too large for container v1 when not compiling v2.
+  - Do not write incomplete sprites when the maximum height of output images is limited.
+  - Fix reading incorrect graphics when multiple graphics are provided for a sprite and writing a GRF container version 1 GRF and the y position decreases.
+  - Fix decoding of regular encoded 32bpp sprites.
+  - Print appropiate error message when trying to decode unsupported colour depth formats.
 
 Changes in 6.0.0 (2012-03-05)
 - NFO version 32 for supporting GRF container version 2.
