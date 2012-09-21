@@ -44,8 +44,8 @@ struct Box {
 };
 
 struct BoxData : Box {
-	BoxData(U16 size, U8 *data) : Box(isdata), size(size), data(data) {}
-	U16 size;
+	BoxData(uint size, U8 *data) : Box(isdata), size(size), data(data) {}
+	uint size;
 	U8 *data;
 };
 
@@ -65,7 +65,7 @@ class infowriter :  public spriteinfowriter {
 
 	void flush();
 	virtual void addsprite(bool first, const char *filename, int x, int y, SpriteInfo info);
-	virtual void adddata(U16 size, U8 *data);
+	virtual void adddata(uint size, U8 *data);
 
 	void done(int count);
 
