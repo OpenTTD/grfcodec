@@ -125,6 +125,7 @@ bool is_command(const string&);
 bool parse_comment(const string&);
 void reset_commands();
 int DoCalc(const string&,size_t&);
+int DoCalc(istream&,int&);
 bool CLCommand(int);
 
 #endif//_RENUM_COMMAND_H_FUNCTIONS_INCLUDED_
