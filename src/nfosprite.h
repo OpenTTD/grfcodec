@@ -29,7 +29,6 @@
 #include"typesize.h"
 #include"sprites.h"
 
-typedef unsigned int uint;
 typedef unsigned short ushort;
 
 class Sprite{
