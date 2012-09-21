@@ -785,9 +785,17 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 		in.ignore()>>setbase(16)>>ret>>setbase(10);
 		return ret;
 	}
-	/*if (in.peek() == '(') {		// Read any RPN value
-		//TODO: Magic goes here
-	}*/
+	if (in.peek() == '(') {		// Read any RPN value
+		if(RPNOFF){
+			IssueMessage(0, INVALID_EXTENSION);
+			return 0;
+		}
+		int val, err = 0;
+		val = DoCalc(in.ignore(),err);
+		if (err>0)
+			return 0;
+		return val;
+	}
 
 	// Read any other value
 	string str;
