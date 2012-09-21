@@ -339,7 +339,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 	if (_interactive) printf("Encoding in temporary file %s\n", grfnew);
 
-	inforeader info(infofile);
+	inforeader info(infofile, grfcontversion);
 
 	free(infofile);
 

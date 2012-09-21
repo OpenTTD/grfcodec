@@ -25,11 +25,11 @@ int makeint(U8 low, S8 high)
 	return combined;
 }
 
-void read_file(istream&in,int infover,AllocArray<Sprite>&sprites);
+void read_file(istream&in,int infover,int grfcontversion,AllocArray<Sprite>&sprites);
 
 nfe_map nfo_escapes;
 
-inforeader::inforeader(char *fn)
+inforeader::inforeader(char *fn, int grfcontversion)
 {
 	ifstream f;
 	f.open(fn);
@@ -39,7 +39,6 @@ inforeader::inforeader(char *fn)
 
 	imgfile = NULL;
 	imgname = NULL;
-
 
 	getline(f,buffer);		// read first line, a comment
 
@@ -78,7 +77,7 @@ inforeader::inforeader(char *fn)
 	colourmap = NULL;
 
 	try{
-		read_file(f,infover,nfofile);
+		read_file(f,infover,grfcontversion,nfofile);
 	}catch(Sprite::unparseable e){
 		printf("%s", e.reason.c_str());
 		exit(1);
