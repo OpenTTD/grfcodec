@@ -59,7 +59,7 @@ private:
 
 class Pseudo:public Sprite{
 public:
-	Pseudo(size_t,int,const string&,int);
+	Pseudo(size_t,int,int,const string&,int);
 
 	U8 operator[](int offs)const{return packed[offs];}
 	uint size()const;

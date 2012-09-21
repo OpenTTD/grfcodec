@@ -12,7 +12,7 @@
 
 class inforeader {
 	public:
-	inforeader(char *nf);
+	inforeader(char *nf, int grfcontversion);
 	~inforeader();
 	const Sprite&operator[](int x)const{return *(nfofile[x]);}
 	int size()const{return nfofile.size();}

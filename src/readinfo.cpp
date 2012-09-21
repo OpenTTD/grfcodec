@@ -66,14 +66,14 @@ const char *depths[DEPTHS] = { "8bpp", "32bpp", "mask" };
 	if(true){\
 		if(buffer!=""){\
 			checkspriteno();\
-			sprites.push_back(Pseudo(sprites.size(),infover,buffer,claimed_size));\
+			sprites.push_back(Pseudo(sprites.size(),infover,grfcontversion,buffer,claimed_size));\
 			buffer="";\
 		}\
 		spriteno=temp;\
 	}else\
 		(void(0))
 
-void read_file(istream&in,int infover,AllocArray<Sprite>&sprites){
+void read_file(istream&in,int infover,int grfcontversion,AllocArray<Sprite>&sprites){
 	string sprite,datapart,buffer;
 
 	int temp=-1,spriteno=-1,claimed_size=1;
@@ -286,7 +286,7 @@ string GetUtf8Encode(uint ch){
 
 int FindEscape(string);
 
-Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
+Pseudo::Pseudo(size_t num,int infover,int grfcontversion,const string&sprite,int claimed_size){
 	istringstream in(sprite);
 	ostringstream out;
 	char ch;
@@ -389,6 +389,8 @@ Pseudo::Pseudo(size_t num,int infover,const string&sprite,int claimed_size){
 	packed=out.str();
 	if(!size())
 		throw Sprite::unparseable("Found a zero-byte pseudo-sprite",num);
+	if(grfcontversion==1&&size()>=65536)
+		throw Sprite::unparseable("Found pseudo-sprite larger than 65535 bytes. This requires container version 2",num);
 	if(size()!=(uint)claimed_size&&claimed_size!=0 && !_quiet)
 		fprintf(stderr, "Warning: Sprite %d reports %d bytes, but I found %d.\n",(int)num,claimed_size,size());
 }
