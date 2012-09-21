@@ -790,10 +790,18 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 			IssueMessage(0, INVALID_EXTENSION);
 			return 0;
 		}
-		int val, err = 0;
+		int val, err = 0, s = in.tellg();
 		val = DoCalc(in.ignore(),err);
 		if (err>0)
 			return 0;
+
+		// Replace the original RPN with value
+		int e = in.tellg(),
+			p = orig.find(((istringstream&)in).str().substr(s, e - s));
+		orig.erase(p, e - s);
+		ostringstream Val;
+		Val << val;
+		orig.insert(p, Val.str());
 		return val;
 	}
 
