@@ -464,7 +464,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 				static const char *action = "writing pseudo sprite";
 				const Pseudo&sprite=(const Pseudo&)info[i];
-				U16 size=sprite.size();
+				uint size=sprite.size();
 				totalcomp += size;
 				totaluncomp += size;
 
