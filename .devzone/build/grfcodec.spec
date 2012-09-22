@@ -1,5 +1,5 @@
 Name:           %{dz_repo}
-Version:        5.2.%{dz_version}
+Version:        6.0.%{dz_version}
 Release:        %{_vendor}%{?suse_version}
 Summary:        A suite of programs to develop NewGRFs
 Group:          Development/Tools/Building
@@ -14,7 +14,7 @@ BuildRequires:  boost-devel > 1.36
 BuildRequires:  libpng-devel
 
 Provides:       nforenum = %{version}
-Obsoletes:      nforenum < 5.0
+Obsoletes:      nforenum < %{version}
 
 #We need Mercurial for auto version detection: (not needed with source tarball)
 BuildRequires:  mercurial
