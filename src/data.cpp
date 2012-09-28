@@ -637,7 +637,7 @@ BYTE, REPEAT_N(BYTE, DATAFROM(0)), END,
 //		The max ID that can be set
 // (0f8.dat was merged into here to prevent it from getting out of sync.)
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
-/*08*/ BYTE,          0x41, 0x41, DWORD | QUOTED, 0x00, 0xFC, TEXTID,         0x12, 0x12, DWORD | DECIMAL, 0x12, 0x12,
+/*08*/ BYTE,          0x46, 0x46, DWORD | QUOTED, 0x00, 0xFC, TEXTID,         0x12, 0x12, DWORD | DECIMAL, 0x12, 0x12,
 /*0C*/ WORD | QUOTED, 0x12, 0x12, DWORD | QUOTED, 0x12, 0x12, DWORD | QUOTED, 0x12, 0x12, WORD  | DECIMAL, 0x12, 0x12,
 /*10*/ SUBDATA,       0x00, 0x00, SUBDATA,        0x00, 0xFF, DWORD | QUOTED, 0x00, 0xFC, SUBDATA,         0x7E, 0x7E,
 /*14*/ SUBDATA,       0x7E, 0x7E, BYTE,           0x7E, 0x7E,
