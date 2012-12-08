@@ -576,7 +576,7 @@ static multitype strategy2(const U8* data, unsigned int datasize, unsigned int d
 #pragma warning(disable:4701)//chunk may be used uninitialized
 #endif
 
-static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long *compsize)
+static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long *compsize, int grfcontversion)
 {
 	long inpos = 0, outpos = 0;
 	U8 *lastcodepos = out;
@@ -610,8 +610,12 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long 
 			lastcodepos = &(out[outpos++]);
 			inpos += overlap;
 		} else {	//  no we didn't. Increase length of verbatim chunk
-			if (*lastcodepos == 0x80) {	// maximum length 128, encoded as 0
-				*lastcodepos = 0;
+			/* In container version 2, verbatim data of length 128 can be encoded using 0.
+			 * While various GRF format specs list this already for container version 1, it is not true.
+			 * See http://www.tt-forums.net/viewtopic.php?p=1051455#p1051455 for details. */
+			if (*lastcodepos == (grfcontversion >= 2 ? 0x80 : 0x7f)) {	// check for maximum verbatim length
+				if (*lastcodepos == 0x80)
+					*lastcodepos = 0;
 				lastcodepos = &(out[outpos++]);	// start new one
 				*lastcodepos = 0;
 			}
@@ -801,7 +805,7 @@ long encoderegular(U8 **compressed_data, const U8 *image, long imgsize, SpriteIn
 	while (1) {
 		inf.writetobuffer(compr, grfcontversion);
 		if (docompress)
-			result = realcompress(image, imgsize, compr+infobytes, compsize-infobytes, &realcompsize);
+			result = realcompress(image, imgsize, compr+infobytes, compsize-infobytes, &realcompsize, grfcontversion);
 		else
 			result = fakecompress(image, imgsize, compr+infobytes, compsize-infobytes, &realcompsize, grfcontversion);
 
