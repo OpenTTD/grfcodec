@@ -5,6 +5,7 @@ Changes in 6.0.2 (unreleased)
     - Action5 type 15.
 - GRFcodec specific changes:
   - Fix encoding container v1 wrt. maximum size of verbatim data.
+  - Fix container v2 tile decompression.
 
 Changes in 6.0.1 (2012-09-21)
 - NFORenum specific changes:
