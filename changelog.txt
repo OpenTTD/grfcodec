@@ -1,3 +1,11 @@
+Changes in 6.0.2 (unreleased)
+- NFORenum specific changes:
+  - Data file updates
+    - Base costs.
+    - Action5 type 15.
+- GRFcodec specific changes:
+  - Fix encoding container v1 wrt. maximum size of verbatim data.
+
 Changes in 6.0.1 (2012-09-21)
 - NFORenum specific changes:
   - Data file updates
