@@ -30,7 +30,7 @@ static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, long t
 	bool long_chunk  = grfcontversion == 2 && sx > 256;
 	buffer += SpriteInfo::Size(grfcontversion);
 
-	if (grfcontversion == 2 && tilesize <= sy * (long_format ? 4 : 2) + SpriteInfo::Size(grfcontversion)) return -1;
+	if (grfcontversion == 2 && tilesize <= sy * (long_format ? 4 : 2)) return -1;
 
 	for (int y=0; y<sy; y++) {
 		long offset;
