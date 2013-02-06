@@ -292,13 +292,19 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 		}
 
 		if (inf == 0xff) {
+			if (returnpos != 0) size--;
+
 			imgpal->setsize(1, 0);
 			outbuffer = (U8*) malloc(size);
 			//outbuffer[0] = 0xff;
 			cfread(action, outbuffer, 1, size, grf);
 			writer->adddata(size, outbuffer/*+1*/);
 			imgpal->spritedone();
-			return 1;
+			result = 1;
+
+			if (returnpos == 0) return result;
+			*dataoffset = startpos + size + 1;
+			break;
 		}
 
 		fseek(grf, startpos, SEEK_SET);
