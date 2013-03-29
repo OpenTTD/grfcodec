@@ -45,6 +45,10 @@ class pngread: public pcxread {
 	png_struct *png;
 	png_info *info;
 	bool paletted;
+
+	U8 *line_buffer;
+	U8 **whole_image;
+	uint read_row;
 };
 
 #endif /* WITH_PNG */
