@@ -1,6 +1,7 @@
 Changes in 6.0.3 (unreleased)
 - GRFcodec specific changes:
   - Fix container v2 include sprite decoding.
+  - Fix encoding from interlaced png images.
 
 Changes in 6.0.2 (2013-01-06)
 - NFORenum specific changes:

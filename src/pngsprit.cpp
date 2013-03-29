@@ -110,7 +110,7 @@ void pngwrite::encodebytes(const CommonPixel *buffer, int num)
 *                       *
 \***********************/
 
-pngread::pngread(singlefile *mfile): pcxread(mfile), png(NULL), info(NULL)
+pngread::pngread(singlefile *mfile): pcxread(mfile), png(NULL), info(NULL), line_buffer(NULL), whole_image(NULL)
 {
 }
 
@@ -118,13 +118,27 @@ pngread::~pngread()
 {
 	if (png)
 		png_destroy_read_struct(&png, &info, NULL);
+
+	delete[] line_buffer;
+	if (whole_image != NULL) {
+		for (int i = 0; i < sy; ++i) {
+			delete[] whole_image[i];
+		}
+		delete[] whole_image;
+	}
 }
 
 void pngread::setline(CommonPixel *band)
 {
-	// Read the next row of the png file
-	U8 *row = (U8*)malloc(sx*(paletted?1:4));
-	png_read_row(png, row, NULL);
+	U8 *row;
+	if (whole_image != NULL) {
+		// Already read the whole image
+		row = whole_image[read_row++];
+	} else {
+		// Read the next row of the png file
+		png_read_row(png, line_buffer, NULL);
+		row = line_buffer;
+	}
 
 	for (int i = 0; i < sx; i++) {
 		if (paletted) {
@@ -136,7 +150,6 @@ void pngread::setline(CommonPixel *band)
 			band[i].a = row[i * 4 + 3];
 		}
 	}
-	free(row);
 }
 
 extern bool _force;
@@ -228,6 +241,19 @@ void pngread::filestart(bool paletted)
 	sy = png_get_image_height(png, info);
 	totaly = 0;
 	thisbandy = 0;
+
+	if (png_get_interlace_type(png, info) == PNG_INTERLACE_NONE) {
+		/* Read image row by row */
+		line_buffer = new U8[sx * (paletted?1:4)];
+	} else {
+		/* Interlaced images can only be read as a whole */
+		read_row = 0;
+		whole_image = new U8*[sy];
+		for (int i = 0; i < sy; ++i) {
+			whole_image[i] = new U8[sx * (paletted?1:4)];
+		}
+		png_read_image(png, whole_image);
+	}
 }
 
 #endif /* WITH_PNG */
