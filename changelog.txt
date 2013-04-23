@@ -1,4 +1,7 @@
 Changes in 6.0.3 (unreleased)
+- NFORenum specific changes:
+  - Data file updates
+    - Action 4 language ID 0x13 (Scottish Gaelic).
 - GRFcodec specific changes:
   - Fix container v2 include sprite decoding.
   - Fix encoding from interlaced png images.
