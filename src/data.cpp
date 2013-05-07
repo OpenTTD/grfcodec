@@ -298,7 +298,7 @@ NDF_END
  *
  * Names of languages by ID (empty if not defined), each terminated by newline
  */
-static const char _datlangs[]="\x00\x06"
+static const char _datlangs[]="\x00\x07"
 //      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
 /*0x*/  "American\n"              "English\n"               "German\n"                "French\n"
 /*0x*/  "Spanish\n"               "Esperanto\n"             "Ido\n"                   "Russian\n"
@@ -908,9 +908,9 @@ NDF_END
 
 #define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
 static const unsigned char _datD[]={
-NDF_HEADER(0x14, 6),
+NDF_HEADER(0x14, 7),
 /*Maximum feature:*/ 0x11,
-/*Max patch variable:*/ 0x14,
+/*Max patch variable:*/ 0x16,
 /*Max operator:*/ 0x0C,
 // GRM count:
 /*00*/W(0x74),
