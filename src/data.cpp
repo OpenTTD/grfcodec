@@ -164,7 +164,7 @@ static const char _datB[]="\x01\x02"
 #define OFFSET 0x88                  /* Allow replacing sprite ranges with offsets */
 #define W(cnt) cnt & 0xFF, cnt >> 8  /* Construct word count */
 static const unsigned char _dat5[]={
-NDF_HEADER(0x04, 13),
+NDF_HEADER(0x04, 14),
 /*04*/ OFFSET,          OPTIONS(3), 0x30, 0x70, 0xF0,
 /*05*/ OFFSET,          OPTIONS(1), 0x30,
 /*06*/ OFFSET,          OPTIONS(2), 0x4A, 0x5A,
@@ -182,7 +182,7 @@ NDF_HEADER(0x04, 13),
 /*12*/ OFFSET,          OPTIONS(1), 0x08,
 /*13*/ OFFSET,          OPTIONS(1), 0x37,
 /*14*/ OFFSET,          OPTIONS(1), 0x24,
-/*15*/ OFFSET,          OPTIONS(1), 0xA8,
+/*15*/ OFFSET,          OPTIONS(1), 0xA9,
 /*16*/ OFFSET,          OPTIONS(1), 0x09,
 /*17*/ OFFSET,          OPTIONS(1), 0x10,
 00,
@@ -573,7 +573,7 @@ EXTBYTE, REPEAT_N(SUBDATA, DATAFROM(0)), END,
 		'|', DWORD, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, BYTE | DECIMAL, LINEBREAK, END,
 		// groundsprite with flags
 		DWORD, WORD | HEX,
-		IFNOT(AND(DATAFROM(1), RAWBYTES(2, 0x30, 0xFF)), ZERO, ASSERT), // assert on unknown flags 
+		IFNOT(AND(DATAFROM(1), RAWBYTES(2, 0x30, 0xFF)), ZERO, ASSERT), // assert on unknown flags
 		IFNOT(AND(DATAFROM(1), RAW(0x01)), ZERO, BYTE), // skip sprite
 		IFNOT(AND(DATAFROM(1), RAW(0x02)), ZERO, BYTE), // sprite offset
 		IFNOT(AND(DATAFROM(1), RAW(0x04)), ZERO, BYTE), // palette offset
