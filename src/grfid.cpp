@@ -181,6 +181,7 @@ const char *GetMD5(const char *filename, md5_state_t *md5)
 		_buffer += sizeof(header);
 		/* Reduce the length to contain only the data, but not the sprites. */
 		read_length = sizeof(header) + 4 + ReadDWord();
+		if (read_length > _file_length) return "Invalid sprite location offset";
 	}
 
 	md5_append(md5, _file_buffer, read_length);
