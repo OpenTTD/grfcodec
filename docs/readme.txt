@@ -1,6 +1,6 @@
 GRF development tools README
-Last updated:    2013-01-06
-Release version: 6.0.2
+Last updated:    2013-07-15
+Release version: 6.0.3
 ------------------------------------------------------------------------
 
 
