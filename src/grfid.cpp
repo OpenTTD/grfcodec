@@ -50,6 +50,7 @@ inline void SkipBytes(size_t count)
 
 inline uint8_t ReadByte()
 {
+	if (_buffer > _file_buffer + _file_length) return 0;
 	return *(_buffer++);
 }
 
@@ -134,6 +135,8 @@ const char *GetGrfID(const char *filename, uint32_t *grfid)
 	while (_buffer < _file_buffer + _file_length) {
 		uint32_t num = ReadSize(grfcontversion);
 		if (num == 0) break;
+
+		if (_buffer + num > _file_buffer + _file_length) return "Corrupt GRF; would read beyond buffer";
 
 		uint8_t type = ReadByte();
 		if (type == 0xFF) {
