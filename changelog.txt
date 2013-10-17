@@ -1,3 +1,9 @@
+Changes in 6.0.4 (unreleased)
+- NFORenum specific changes:
+  - Data file updates
+    - Action 0, feature 0xF, property 0x18 (Object amount on map)
+
+
 Changes in 6.0.3 (2013-07-15)
 - NFORenum specific changes:
   - Data file updates
