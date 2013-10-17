@@ -500,7 +500,7 @@ NDF_END
 #define REPEAT_UNTIL(data, length, ...) '*', data, length, __VA_ARGS__
 
 static const unsigned char _dat0[]={
-NDF_HEADER(0x0E, 0),
+NDF_HEADER(0x0E, 1),
 /*Maximum feature:*/ 0x11,
 // Feature 00:
 /*00*/ WORD | DATE, INVALID, BYTE, BYTE | DECIMAL, BYTE | DECIMAL, BYTE, BYTE, BYTE | DECIMAL,
@@ -711,7 +711,7 @@ END,
 // Feature 0F:
 /*00*/ INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID, INVALID,
 /*08*/ DWORD | QUOTED, WORD, WORD, BYTE, BYTE, BYTE, DWORD | DATE, DWORD | DATE,
-/*10*/ WORD | HEX, WORD | HEX, BYTE | DECIMAL, WORD, BYTE, WORD | HEX, BYTE, BYTE,
+/*10*/ WORD | HEX, WORD | HEX, BYTE | DECIMAL, WORD, BYTE, WORD | HEX, BYTE, BYTE, BYTE
 END,
 
 // Feature 10:
