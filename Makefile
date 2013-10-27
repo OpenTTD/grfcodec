@@ -249,7 +249,7 @@ endif
 objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.cpp=objs/%.os)
 	$(_C)rm -f $@
 	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) -Os $^
+	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $(LDOPT) -Os $^
 ifneq ($(STRIP),)
 	$(_E) [STRIP] $@
 	$(_C)$(STRIP) $@
