@@ -124,7 +124,11 @@ bool IsTextDefined(uint ID) {
 bool CheckID(uint feature,uint ID){
 	VERIFY(feature<=MaxFeature(),feature);
 	VERIFY(ID<0x10000,ID);
-	uint maxID=IDs::Instance()[feature];
+	/* Since OpenTTD 0.7 higher vehicle IDs are allowed; GRF version 8
+	 * is the first new GRF version after that, so use that as minimum
+	 * threshold for allowing the higher IDs. Even though this is not
+	 * actually tied to GRF version 8.*/
+	uint maxID=_grfver>=8&&feature<=0x03?0xFFFF:IDs::Instance()[feature];
 	if(ID>maxID){
 		IssueMessage(ERROR,INVALID_ID,ID,feature==0x0C?0x49:0,maxID);
 		return false;
