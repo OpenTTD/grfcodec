@@ -3,6 +3,7 @@ Changes in 6.0.4 (unreleased)
   - Data file updates
     - Action 0, feature 0xF, property 0x18 (Object amount on map)
     - Action 5, type 0x15 (OpenTTD GUI): Now 175 sprites are allowed
+  - Allow higher IDs for vehicles when GRF version >= 8
 
 Changes in 6.0.3 (2013-07-15)
 - NFORenum specific changes:
