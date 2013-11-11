@@ -43,7 +43,7 @@ struct act123{
 		void init(){_m.resize(0);}
 		bool is_defined(int id)const{return _m[id].sprite!=0;}
 		bool is_used(int id)const{return _m[id].used;}
-		unsigned short defined_at(int id)const{return _m[id].sprite;}
+		unsigned int defined_at(int id)const{return _m[id].sprite;}
 		void define(uint feature,unsigned int id,bool checks1C);
 		bool checks1C(int id)const{return _m[id].v1C;}
 		void use(int id){_m[id].used=true;}
@@ -52,10 +52,10 @@ struct act123{
 		friend uint act123::MaxFoundFeat()const;
 	private:
 		struct info{
-			info():used(false),v1C(false),sprite(0),feature((unsigned short)-1){}
+			info():used(false),v1C(false),feature((unsigned short)-1),sprite(0){}
 			bool used,v1C;
-			unsigned short sprite;
 			unsigned short feature;
+			unsigned int sprite;
 		};
 		ExpandingArray<info>_m;
 	}defined2IDs;
