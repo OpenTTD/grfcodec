@@ -38,14 +38,14 @@ public:
 	void init(){used.resize(0);sprite.resize(0);}
 	bool is_defined(int id)const{return sprite[id]!=0;}
 	bool is_used(int id)const{return used[id];}
-	unsigned short defined_at(int id)const{return sprite[id];}
+	uint defined_at(int id)const{return sprite[id];}
 	void define(unsigned int id){
 		used[id]=false;
-		sprite[id]=(unsigned short)_spritenum;
+		sprite[id]=_spritenum;
 	}
 	void use(int id){used[id]=true;}
 protected:
-	Expanding0Array<unsigned short>sprite;
+	Expanding0Array<uint>sprite;
 	Expanding0Array<bool>used;
 }status;
 static const IDarray&crStatus=status;
