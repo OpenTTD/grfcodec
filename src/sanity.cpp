@@ -96,12 +96,12 @@ static struct sanity{
 		void init(){used.resize(0);sprite.resize(0);}
 		bool is_defined(int id)const{return sprite[id]!=0;}
 		bool is_used(int id)const{return used[id];}
-		unsigned short defined_at(int id)const{return sprite[id];}
-		void define(uint id){sprite[id]=(unsigned short)_spritenum;used[id]=false;}
+		uint defined_at(int id)const{return sprite[id];}
+		void define(uint id){sprite[id]=_spritenum;used[id]=false;}
 		void use(int id){used[id]=true;}
 	protected:
 		Expanding0Array<bool>used;
-		Expanding0Array<unsigned short>sprite;
+		Expanding0Array<uint>sprite;
 	}defined10IDs;
 }status;
 static const sanity&crStatus=status;

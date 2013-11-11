@@ -62,7 +62,7 @@ uint act123::MaxFoundFeat()const{
 
 void act123::IDarray::define(uint feature,unsigned int id,bool checks1C){
 	_m[id].used=false;
-	_m[id].sprite=(unsigned short)_spritenum;
+	_m[id].sprite=_spritenum;
 	_m[id].v1C=checks1C;
 	_m[id].feature=(ushort)feature;
 }
