@@ -50,7 +50,7 @@ inline void SkipBytes(size_t count)
 
 inline uint8_t ReadByte()
 {
-	if (_buffer > _file_buffer + _file_length) return 0;
+	if (_buffer >= _file_buffer + _file_length) return 0;
 	return *(_buffer++);
 }
 
@@ -66,11 +66,12 @@ inline uint32_t ReadDWord()
 	return v | (ReadWord() << 16);
 }
 
-void SkipSpriteData(uint8_t type, uint16_t num)
+void SkipSpriteData(uint8_t type, int32_t num)
 {
 	if (type & 2) {
 		SkipBytes(num);
 	} else {
+		/* Note: num is signed. Invalid formats will result in num < 0 and abort the loop. */
 		while (num > 0) {
 			int8_t i = ReadByte();
 			if (i >= 0) {
@@ -152,10 +153,16 @@ const char *GetGrfID(const char *filename, uint32_t *grfid)
 			} else {
 				SkipBytes(num - 1);
 			}
-		} else {
+		} else if (grfcontversion == 2 && type== 0xfd) {
+			/* Skip sprite offset */
+			ReadDWord();
+		} else if (grfcontversion == 1) {
 			SkipBytes(7);
 			/* Skip sprite data */
 			SkipSpriteData(type, num - 8);
+		} else {
+			/* Invalid format, skip to end */
+			_buffer = _file_buffer + _file_length;
 		}
 	}
 
