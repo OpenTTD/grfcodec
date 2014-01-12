@@ -4,6 +4,7 @@ Changes in 6.0.4 (unreleased)
     - Action 0, feature 0xF, property 0x18 (Object amount on map)
     - Action 2 train and road vehicle variable 4D
     - Action 5, type 0x15 (OpenTTD GUI): Now 175 sprites are allowed
+  - Support string codes 9A 16 to 9A 1D
   - Allow higher IDs for vehicles when GRF version >= 8
   - Fix some checks for sprite numbers >= 65536
 

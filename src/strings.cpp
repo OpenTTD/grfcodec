@@ -289,6 +289,14 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				case 0x0B:		// ... qword
 				case 0x0C:		// print name of station
 				case 0x0D:		// print word in weight
+				case 0x16:		// print dword as long date
+				case 0x17:		// print dword as short date
+				case 0x18:		// print word as horse power
+				case 0x19:		// print word as short volume
+				case 0x1A:		// print word as short weight
+				case 0x1B:		// print two words as long cargo amount
+				case 0x1C:		// print two words as short cargo amount
+				case 0x1D:		// print two words as tiny cargo amount
 					break;
 
 				case 0x10:		// choice list value
@@ -331,18 +339,18 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				}
 			}
 			if(~perms&CTRL_NO_STACK_CHECK){
+				//for Extended format codes (9A XX), "ch" is the XX
 				switch(ch){
 				case 0x7D:case 0x06:
 					STACK_CHECK(STACK_BYTE,1)
 				case 0x82:case 0x83:
 					STACK_CHECK(STACK_DATE,2)
-				case 0x7C:case 0x7E:case 0x84:case 0x85:case 0x87:case 0x07:case 0x0C:case 0x0D:
+				case 0x7C:case 0x7E:case 0x84:case 0x85:case 0x87:case 0x07:case 0x0C:case 0x0D:case 0x18:case 0x19: case 0x1A:
 					STACK_CHECK(STACK_WORD,2)
 				case 0x80:
 					STACK_CHECK(STACK_TEXT,2)
-				case 0x7B:case 0x7F:case 0x08:
+				case 0x7B:case 0x7F:case 0x08:case 0x16:case 0x17:case 0x1B:case 0x1C:case 0x1D:
 					STACK_CHECK(STACK_DWORD,4)
-				//Extended format codes (9A XX)
 				case 0x00:case 0x01:case 0x0B:
 					STACK_CHECK(STACK_QWORD,8)
 				case 0x02:case 0x03:case 0x04:case 0x0E:case 0x0F:case 0x10:case 0x11:case 0x12:
