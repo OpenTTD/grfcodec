@@ -16,9 +16,6 @@
     2. Edit the PCX file
     3. Encode the GRF file
 
-   Optional steps to distribute your changes:
-    4. Make a GRD or self-extracting file
-
 1. Decode the GRF file
 
    After installing the GRFCodec programs into your TTD folder, simply
@@ -84,60 +81,6 @@ grfcodec -e trg1.grf
    long. Once it's done, you can start TTD and see the fruits of your
    labour!
 
-4. Make a GRD or self-extracting file
-
-   So now that you have successfully changed a GRF file, you'll of course
-   want to give your awesome modifications to other people. You can
-   simply send them the new trg1.grf file, but that has a few
-   disadvantages. First, the GRF files are fairly large, so downloading
-   them is going to take a fairly long time. Also, this means that your
-   friend will lose all changes he made to his own trg1.grf file.
-
-   If only there was a way to send only the changed sprites...
-
-   ...and luckily, there is! It's called GRFDiff, and you use it like
-   this:
-grfdiff trg1.bak trg1.grf
-
-   Here, trg1.bak is a backup copy of the original GRF file. GRFCodec
-   should have made it during step 3. Once it exists, GRFCodec won't
-   touch it again, so it'll always remain the original copy.
-
-   Now what this command does, is take all the sprites that are new and
-   put them in a file called trg1.grd. This file should be fairly small,
-   so that you can easily send it to your friend. What your friend then
-   has to do is run GRFMerge like this:
-grfmerge trg1.grd
-
-   That will integrate your changes into his trg1.grf, and everyone will
-   be happy.
-
-   Unless he doesn't have GRFMerge...
-
-   ...in that case, you can instead tell GRFDiff to make a
-   self-extracting file. That means it turns the GRD file into a program,
-   which you can run instead of GRFMerge. To do that, run
-grfdiff -x trg1.bak trg1.grf -o yourmod.exe
-
-   That will make yourmod.exe, or any other name you give it. Be
-   creative, and make the name relevant to what you actually changed.
-
-   Then simply send out yourmod.exe, and tell people to copy it to their
-   TTD folders and run it. Tadaa! They've got your modified sprites.
-
-   If you want to make your .exe file compatible with both the DOS and
-   the Windows version of the game, you of course need to edit both
-   trg1.grf and trg1r.grf. Then you combine the changes from both files
-   into one executable like this:
-
-grfdiff -x -o yourmod.exe trg1.bak trg1.grf + trg1r.bak trg1r.grf
-
-   When run, yourmod.exe will patch either both of the files if they are
-   installed, or otherwise it will just skip those that it can't find.
-   That way, it'll work no matter whether the DOS or the Windows version
-   is installed, or even if both are present.
-
-   Easy, wasn't it?
    ______________________________________________________________________
 
    Copyright © 1999-2003 by Josef Drexler.

@@ -27,8 +27,6 @@ MACHINE      ?= $(shell $(CXX) -dumpmachine || echo '??' )
 # OS dependent variables
 EXE          ?= $(shell ( [ \( $(ISCYGWIN) -eq 1 \) -o \( "$(MACHINE)" = "mingw32" \) ] ) && echo .exe)
 GRFCODEC     ?= grfcodec$(EXE)
-GRFDIFF      ?= grfdiff$(EXE)
-GRFMERGE     ?= grfmerge$(EXE)
 GRFID        ?= grfid$(EXE)
 GRFSTRIP     ?= grfstrip$(EXE)
 NFORENUM     ?= nforenum$(EXE)
@@ -143,10 +141,6 @@ GRFCODECSRC=grfcomm.cpp pcxfile.cpp sprites.cpp pcxsprit.cpp pngsprit.cpp \
 	info.cpp globals.cpp mapescapes.cpp error.cpp path.cpp readinfo.cpp \
 	file.cpp grfcodec.cpp
 
-GRFDIFFSRC=grfcomm.cpp error.cpp sprites.cpp grfdiff.cpp path.cpp
-
-GRFMERGESRC=grfcomm.cpp error.cpp grfmerge.cpp path.cpp
-
 GRFIDSRC=grfid.cpp md5.cpp
 
 GRFSTRIPSRC=grfstrip.cpp
@@ -160,8 +154,8 @@ NFORENUMSRC=IDs.cpp act0.cpp act123.cpp act123_classes.cpp act5.cpp act6.cpp \
 PALORDER = ttd_norm&ttw_norm&ttd_cand&ttw_cand&tt1_norm&tt1_mars&ttw_pb_pal1&ttw_pb_pal2
 PAL_FILES = pals/$(subst &,.bcp pals/,$(PALORDER)).bcp
 
-# deafult targets
-all: $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) $(GRFSTRIP) $(NFORENUM)
+# default targets
+all: $(GRFCODEC) $(GRFID) $(GRFSTRIP) $(NFORENUM)
 
 remake:
 	$(_E) [CLEAN]
@@ -178,14 +172,6 @@ else
 	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
 endif
 
-$(GRFDIFF):  $(GRFDIFFSRC:%.cpp=objs/%.o) objs/grfmrg.o
-	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
-
-$(GRFMERGE): $(GRFMERGESRC:%.cpp=objs/%.o)
-	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
-
 $(GRFID): $(GRFIDSRC:%.cpp=objs/%.o)
 	$(_E) [LD] $@
 	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $^ $(LDOPT)
@@ -200,10 +186,10 @@ $(NFORENUM): $(NFORENUMSRC:%.cpp=objs/%.o)
 
 
 clean:
-	$(_C)rm -rf objs $(GRFCODEC) $(GRFDIFF) $(GRFMERGE) $(GRFID) $(GRFSTRIP) $(NFORENUM) bundle bundles grfcodec-* src/endian.h
+	$(_C)rm -rf objs $(GRFCODEC) $(GRFID) $(GRFSTRIP) $(NFORENUM) bundle bundles grfcodec-* src/endian.h
 
 mrproper: clean
-	$(_C)rm -f src/version.h src/grfmrg.cpp
+	$(_C)rm -f src/version.h
 	$(_C)touch -ct 9901010000 ttdpal.h # don't delete it, so we don't confuse version control, but force it to be remade
 
 distclean: mrproper
@@ -243,25 +229,7 @@ ifneq ($(UPX),)
 	$(_C)$(UPX) $(_Q) --best  $(@:%_r=%)
 endif
 
-.NOTPARALLEL release: FORCE $(GRFCODEC)_r $(GRFDIFF)_r $(GRFMERGE)_r $(GRFID)_r $(GRFSTRIP)_r $(NFORENUM)_r
-
-# make grfmerge.exe (as grfmrgc.bin) optimized for size instead of speed
-objs/grfmrgc.bin: objs/grfmerge.os $(GRFMERGESRC:%.cpp=objs/%.os)
-	$(_C)rm -f $@
-	$(_E) [LD] $@
-	$(_C)$(CXX) -o $@ $(MY_CXXFLAGS) $(LDOPT) -Os $^
-ifneq ($(STRIP),)
-	$(_E) [STRIP] $@
-	$(_C)$(STRIP) $@
-endif
-ifneq ($(UPX),)
-	$(_E) [UPX] $@
-	$(_C)$(UPX) $(_Q) --best $@
-endif
-
-src/grfmrg.cpp: objs/grfmrgc.bin src/grfmrgc.pl
-	$(_E) [PERL] $@
-	$(_C)perl -w src/grfmrgc.pl > $@
+.NOTPARALLEL release: FORCE $(GRFCODEC)_r $(GRFID)_r $(GRFSTRIP)_r $(NFORENUM)_r
 
 src/ttdpal.h: $(PAL_FILES:%=src/%) src/pal2c.pl
 	$(_E) [PERL] $@
@@ -292,9 +260,6 @@ objs/%.os : src/%.cpp Makefile
 # found by the dependency tracker and thus the dependencies do not contain
 # a reference to version.h, so it isn't generated and compilation fails.
 objs/grfcodec.o: src/version.h
-objs/grfmerge.o: src/version.h
-objs/grfmerge.os: src/version.h
-objs/grfdiff.o: src/version.h
 objs/grfid.o: src/version.h
 objs/grfstrip.o: src/version.h
 objs/message_mgr.o: src/version.h
@@ -306,11 +271,8 @@ objs/%.o.d: src/%.cpp Makefile src/endian.h
 
 ifndef NO_MAKEFILE_DEP
 -include $(GRFCODECSRC:%.cpp=objs/%.o.d)
--include $(GRFMERGESRC:%.cpp=objs/%.o.d)
--include $(GRFDIFFSRC:%.cpp=objs/%.o.d)
 -include $(GRFIDSRC:%.cpp=objs/%.o.d)
 -include $(GRFSTRIPSRC:%.cpp=objs/%.o.d)
--include $(GRFMERGESRC:%.cpp=objs/%.os.d)
 -include $(NFORENUMSRC:%.cpp=objs/%.o.d)
 endif
 

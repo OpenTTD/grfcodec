@@ -24,14 +24,12 @@ Original), TTDPatch and OpenTTD. These GRFs are a collection of sprites,
 although for TTDPatch and OpenTTD these can be so-called pseudosprites
 which allow changes of behaviour of the game.
 
-GRFDiff and GRFMerge are for making and applying "diffs" for GRF files.
-
 GRFID is a small tool for extracting the so-called GRF ID from a GRF.
 
 NFORenum is a tool checking NFO code for errors, and for beautifying that
 code -- inasmuch as NFO can be beautified :)
 
-GRFCodec, GRFDiff, GRFMerge, GRFID and GRFStrip are licensed under the
+GRFCodec, GRFID and GRFStrip are licensed under the
 GNU General Public License version 2.0. For more information, see the
 file 'COPYING'. GRFID contains the MD5 implementation written by
 L. Peter Deutsch and this MD5 implementation is licensed under the
