@@ -528,7 +528,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 
 					if(_crop && !DONOTCROP(info.inf.info)){
 						int i=0,j=0;
-						for(i=info.imgsize-1;i>=0;i--)if(!image[i].IsTransparent(has_mask, rgba))break; // Find last non-blue pixel
+						for(i=info.imgsize-1;i>=0;i--)if(!image[i].IsTransparent(rgba))break; // Find last non-blue pixel
 						if(i<0)// We've got an all-blue sprite
 							info.sx=info.sy=info.imgsize=1;
 						else{
@@ -536,7 +536,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 							info.sy-=i/info.sx;
 
 							for(i=0;i<info.imgsize;i++){
-								if(!image[i].IsTransparent(has_mask, rgba))
+								if(!image[i].IsTransparent(rgba))
 									break; // Find first non-blue pixel
 							}
 							i-=i%info.sx;// Move to beginning of line
@@ -546,7 +546,7 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 							if(i)memmove(image,image+i,(info.imgsize-i)*sizeof(CommonPixel));
 							for(i=0;i<info.sx;i++){
 								for(j=0;j<info.sy;j++){
-									if(!image[i+j*info.sx].IsTransparent(has_mask, rgba))goto foundfirst;
+									if(!image[i+j*info.sx].IsTransparent(rgba))goto foundfirst;
 								}
 							}
 foundfirst:
@@ -559,7 +559,7 @@ foundfirst:
 
 							for(i=info.sx-1;i>=0;i--){
 								for(j=0;j<info.sy;j++){
-									if(!image[i+j*info.sx].IsTransparent(has_mask, rgba))goto foundlast;
+									if(!image[i+j*info.sx].IsTransparent(rgba))goto foundlast;
 								}
 							}
 foundlast:
