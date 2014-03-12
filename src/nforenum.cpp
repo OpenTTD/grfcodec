@@ -520,7 +520,7 @@ int process_file(istream&in){
  *                              from \a input. E.g. because of parsing an RPN expression.
  * @return true on error
  */
-static bool extract_string(string&input,string&token,string&processed,bool&anyprocessing)
+static bool extract_string(string&input,string&token,string&processed,bool&)
 {
 	const char *start = input.c_str();
 	const char *pos = start;
@@ -586,7 +586,7 @@ static bool extract_int(string&input,int&token,string&processed,bool&anyprocessi
  *                              from \a input. E.g. because of parsing an RPN expression.
  * @return true on error
  */
-static bool extract_hex(string&input,int&token,string&processed,bool&anyprocessing)
+static bool extract_hex(string&input,int&token,string&processed,bool&)
 {
 	const char *start = input.c_str();
 	const char *pos = start;

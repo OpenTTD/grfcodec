@@ -483,8 +483,6 @@ int mkdiff()
 			}
 			isdiff = ( (spriteno >= difflistfrom) && (spriteno <= difflistto) );
 		} else {
-			isdiff = 0;
-
 			// find out if they're different, and remember original data if so
 			if (verbsize[0]) {
 				if (verbsize[0] != verbsize[1])

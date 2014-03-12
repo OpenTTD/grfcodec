@@ -23,7 +23,7 @@ pngwrite::~pngwrite()
 		png_destroy_write_struct(&png, &info);
 }
 
-void pngwrite::filestart(bool paletted)
+void pngwrite::filestart(bool)
 {
 	// Create the libpng structs
 	png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
