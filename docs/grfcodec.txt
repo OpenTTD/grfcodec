@@ -8,12 +8,6 @@
    General Public License, Version 2. For more information read the file
    "COPYING".
 
-   The following three programs are part of GRFCODEC:
-    1. GRFCodec: Convert a GRF into an editable PCX file and vice versa
-    2. GRFDiff: Compare two GRF files for differences, and write only the
-       differences to a GRD file
-    3. GRFMerge: Take a GRD file and merge it back into the GRF file
-
 GRFCODEC
 
      * Copy it into your TTD directory
@@ -140,91 +134,6 @@ GRFCODEC
 
    Steps 3 and 4 are there to ensure proper spacing in the PCX file.
 
-GRFDIFF
-
-   Usage: grfdiff [options] Old-GRF-File New-GRF-File
-
-   GRFCodec makes a backup of your GRF file the first time it is changed,
-   so normally you would run GRFDiff like this:
-
-     grfdiff trg1.bak trg1.grf
-
-   This will generate the file trg1.grd, which contains only the sprites
-   which are new in trg1.grf.
-
-  Options
-
-   -l <numbers>
-          Instead of searching for the sprites which are new, you can
-          specify the numbers here, using a format like
-          -l 1-10,50,100-120
-          Note that the numbers must be in increasing order. If -l is
-          specified, you can omit the Old-GRF-File name.
-
-   -n
-          Instead of making the GRD file, only show which sprites are
-          new.
-
-   -o <filename>
-          Instead of making a GRD file of the same name, write to this
-          file.
-
-   -x
-          Make a self-extracting .exe file. Simply running that file will
-          automatically integrate the changes into the right .GRF file.
-          This self-extracting file is actually a copy of GRFMerge.
-
-   -y
-          Answer 'Y' to all questions.
-
-   You can also combine the differences between several sets of GRF files
-   into one GRD file (or one self-extracting .EXE) by adding more files
-   on the command line, separated by a plus. Example:
-
-     grfdiff file1.bak file1.grf + file2.bak file2.grf + file3.bak
-     file3.grf
-
-   This compares the three sets of GRF files and writes the differences
-   of all sets into file1.grd. When giving several sets of files like
-   this, only option -l can be specified multiple times, all other
-   options must be given for the first set:
-
-     grfdiff -x -o many.exe file1.bak file1.grf + -l 10-15 file2.grf +
-     -l 23 file3.grf
-
-   This can be useful when making diffs that should work for the DOS or
-   the Window version, because GRFMerge will just skip the files it can't
-   find. For example,
-
-     grfdiff -x -o bothver.exe trg1.bak trg1.grf + trg1r.bak trg1r.grf
-
-   will add the differences in both the DOS and Windows versions of the
-   main TTD sprite file to bothver.exe. When run, bothver.exe will patch
-   both files if they are present, or otherwise just patch the one that
-   exists.
-
-GRFMERGE
-
-   Usage: grfmerge GRD-File [GRF-File]
-
-   This takes the GRD file and integrates the new sprites into the GRF
-   file. If no GRF file is specified, it uses the one which the GRD file
-   was made from.
-
-  Options
-
-   -l
-          Do not integrate the sprites, only show which ones are
-          contained in the GRD file
-
-   -y
-          Answer 'Y' to all questions.
-
-   If called as a self-extracting file (made by GRFDiff -x), the GRD file
-   cannot be specified, it is always built into the .exe file. The GRF
-   and all options can still be specified though. You can also specify a
-   self-extracting file instead of the GRD-File, though that is perhaps a
-   bit redundant.
    ______________________________________________________________________
 
    Copyright © 1999-2003 by Josef Drexler.

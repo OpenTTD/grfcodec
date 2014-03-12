@@ -33,12 +33,10 @@ Targets
 The following are the most intersting targets. Other targets exist, but are
 less useful.
 
-all       Compile grfcodec, grfdiff, grfid, grfmerge, grfstrip and nforenum
+all       Compile grfcodec, grfid, grfstrip and nforenum
 
 grfcodec
-grfdiff
 grfid
-grfmerge
 grfstrip
 nforenum  Compile the program in question, using gcc.
 

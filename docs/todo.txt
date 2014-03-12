@@ -1,5 +1,3 @@
-- Make GRFMerge aware of DOS/Win difference: trg1 vs. trg1r
-- Build DOS/Win maps in GRFMerge
 - Make .nfo pseudo-sprite format more versatile:
   * no lengths, instead line-continuation with backslash-cr or backslash-lf
   * allow hex, dec, oct postfixes like assembly (40, 24d...), default hex

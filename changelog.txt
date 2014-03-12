@@ -8,6 +8,7 @@ Changes in 6.0.4 (unreleased)
   - Support string codes 9A 16 to 9A 1D
   - Allow higher IDs for vehicles when GRF version >= 8
   - Fix some checks for sprite numbers >= 65536
+- Remove grfdiff and grfmerge due to being unmaintained
 
 Changes in 6.0.3 (2013-07-15)
 - NFORenum specific changes:
