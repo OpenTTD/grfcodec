@@ -144,8 +144,8 @@ class infostorer : virtual public spriteinfowriter {
 public:
 	infostorer(U8 *infptr, U8 **dataptr, U16 *datasizeptr);
 
-	virtual void addsprite(int x, U8 info[8]);
-	virtual void adddata(U16 newsize, U8 *newdata);
+	virtual void addsprite(int x, U8 info[8]); // FIXME this is bollocks, the function signature in the base class changed, and noone updated this
+	virtual void adddata(U16 newsize, U8 *newdata); // FIXME this is bollocks, the function signature in the base class changed, and noone updated this
 
 	U8 *inf;
 	U8 **data;
@@ -177,7 +177,7 @@ public:
 
 	virtual void newsprite();
 	virtual void setsize(int sx, int sy);
-	virtual void nextpixel(U8 colour);
+	virtual void nextpixel(U8 colour); // FIXME this is bollocks, the function signature in the base class changed, and noone updated this
 	virtual void spritedone();
 
 	void getorgdata(U16 *size, U8 **data);
