@@ -700,14 +700,14 @@ long encodetile(U8 **compressed_data, long *uncompressed_size, const CommonPixel
 
 			while ( (x1 < sx) && (tileofs + offset_size + sx < tilesize) ) {
 				// find where next non-transparent part starts
-				while ( (x1 < sx) && (image[y*sx+x1].IsTransparent(has_mask, rgba)) )
+				while ( (x1 < sx) && (image[y*sx+x1].IsTransparent(rgba)) )
 					x1++;
 
 				if (x1 < sx) {
 					int len = 1;
 					// ...and where it ends
 					x2 = x1 + 1;
-					while ( (x2 < sx) && (len < chunk_len) && (!image[y*sx+x2].IsTransparent(has_mask, rgba)) ) {
+					while ( (x2 < sx) && (len < chunk_len) && (!image[y*sx+x2].IsTransparent(rgba)) ) {
 						len++;
 						x2++;
 					}
@@ -716,7 +716,7 @@ long encodetile(U8 **compressed_data, long *uncompressed_size, const CommonPixel
 						if (x1 > trans_len) // chunk cannot start after 255; move it back
 							x1 = trans_len;
 						x2 = sx;
-						while ( (image[y*sx+x2-1].IsTransparent(has_mask, rgba)) )
+						while ( (image[y*sx+x2-1].IsTransparent(rgba)) )
 							x2--;
 						len = x2 - x1;
 						if (len > chunk_len) { // chunk is too long

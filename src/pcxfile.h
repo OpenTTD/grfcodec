@@ -35,7 +35,7 @@ struct CommonPixel {
 
 	explicit CommonPixel(U8 r = 0, U8 g = 0, U8 b = 0, U8 a = 0, U8 m = 0) : r(r), g(g), b(b), a(a), m(m) {}
 
-	bool IsTransparent(bool has_mask, bool rgba) const
+	bool IsTransparent(bool rgba) const
 	{
 		return rgba ? this->a == 0 : this->m == 0;
 	}
