@@ -22,7 +22,6 @@ BuildRequires:  mercurial
 %description
 A suite of programs to modify Transport Tycoon Deluxe's GRF files.
 Contains GRFCodec for encoding and decoding the actual GRF files,
-GRFDiff and GRFMerge for making and applying patches for GRF files,
 GRFID for extracting the (unique) NewGRF identifier and NFORenum,
 a format correcter and linter for the NFO language. NFO and PCX
 or PNG files are encoded to form GRF files.
@@ -41,18 +40,14 @@ make install DESTDIR=%{buildroot} prefix=%{_prefix}
 %files
 %defattr(-,root,root,-)
 %{_bindir}/grfcodec
-%{_bindir}/grfdiff
 %{_bindir}/grfid
-%{_bindir}/grfmerge
 %{_bindir}/grfstrip
 %{_bindir}/nforenum
 %dir %{_datadir}/doc/grfcodec
 %doc %{_datadir}/doc/grfcodec/COPYING
 %doc %{_datadir}/doc/grfcodec/*.txt
 %{_mandir}/man1/grfcodec.1*
-%{_mandir}/man1/grfdiff.1*
 %{_mandir}/man1/grfid.1*
-%{_mandir}/man1/grfmerge.1*
 %{_mandir}/man1/grfstrip.1*
 %{_mandir}/man1/nforenum.1*
 
