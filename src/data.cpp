@@ -779,7 +779,7 @@ NDF_END
 #define BYTE6x(var, max) VAR6x(var, 1, max)
 #define WORD6x(var, max) VAR6x(var, 2, max)
 #define DWORD6x(var, max) VAR6x(var, 4, max)
-#define LASTVAR80(var) (var == 0xFF ? 0xFF : var + 1), (var == 0xFF ? 0xF0 : 0x80)
+#define LASTVAR80(var) (var == 0xFF ? 0xFF : (unsigned char)(var + 1)), (var == 0xFF ? 0xF0 : 0x80)
 #define NOVAR80 LASTVAR80(0x7F)
 static const unsigned char _dat2v[]={
 NDF_HEADER(0x0D, 30),

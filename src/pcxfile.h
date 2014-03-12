@@ -98,7 +98,7 @@ class pcxfile {
 	virtual FILE *getnextfile() { return mfile->nextfile(); };
 	virtual FILE *getcurfile() { return mfile->curfile(); };
 	virtual void filedone(int /*final*/) { };
-	virtual void filestart(bool paletted)
+	virtual void filestart(bool)
 		{ fseek(curfile, sizeof(header), SEEK_SET); };
 
 	void setfile(multifile *mfile);

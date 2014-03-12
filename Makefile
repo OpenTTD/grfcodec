@@ -63,7 +63,7 @@ else
 FLAGS = -idirafter$(BOOST_INCLUDE) -O2
 endif
 FLAGS += -D$(TYPESIZE) -D_FORTIFY_SOURCE=2
-FLAGS += -Wall -Wno-uninitialized -Wsign-compare -Wwrite-strings -Wpointer-arith -W -Wno-unused-parameter -Wformat=2
+FLAGS += -Wall -Wextra -Wno-format-nonliteral
 
 ifeq ($(DEBUG),1)
 FLAGS += -DDEBUG

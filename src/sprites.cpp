@@ -577,16 +577,12 @@ static multitype strategy2(const U8* data, unsigned int datasize, unsigned int d
 	return ret;
 }
 
-
-#ifdef _MSC_VER
-#pragma warning(disable:4701)//chunk may be used uninitialized
-#endif
-
 static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long *compsize, int grfcontversion)
 {
 	long inpos = 0, outpos = 0;
 	U8 *lastcodepos = out;
 	multitype chunk;
+	memset(chunk.u8, 0, 4);
 
 	out[outpos++] = 1;
 	out[outpos++] = in[inpos++];

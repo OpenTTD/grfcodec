@@ -617,7 +617,7 @@ ostream&PseudoSprite::output(ostream&out){
 		const int skipspace = (GetState(CONVERTONLY)&&i&&context[i-1]!="")?1:0;
 		if(DoQuote(i)){
 			if (!instr){
-				outbuf<<" \""+skipspace;
+				outbuf<< (skipspace ? "\"" : " \"");
 				count+=3-skipspace;// count close-quote here.
 				instr=true;
 			}
@@ -657,7 +657,7 @@ ostream&PseudoSprite::output(ostream&out){
 			if(NFOversion>6 && (beauty[i]&~NOBREAK)==NQEXT)
 				str = ext_print[i].c_str()+skipspace;
 			else
-				str = mysprintf(" %2x"+skipspace,(*this)[i]);
+				str = mysprintf(skipspace ? "%2x" : " %2x",(*this)[i]);
 			outbuf<<str;
 			count+=(uint)str.size();
 			noendl=false;
