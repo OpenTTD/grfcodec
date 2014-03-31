@@ -1,4 +1,4 @@
-Changes in 6.0.4 (unreleased)
+Changes in 6.0.4 (2014-03-31)
 - NFORenum specific changes:
   - Data file updates
     - Action 0, feature 0xF, property 0x18 (Object amount on map)
