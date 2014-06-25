@@ -38,7 +38,7 @@ inforeader::inforeader(char *fn, int grfcontversion)
 	int infover;
 
 	imgfile = NULL;
-	imgname = NULL;
+	imgname = "";
 
 	getline(f,buffer);		// read first line, a comment
 
@@ -92,19 +92,19 @@ inforeader::~inforeader()
 void inforeader::PrepareReal(const SpriteInfo&info){
 	int oldy=inf.ypos;
 	inf=info;
-	if ( inf.forcereopen || !imgfile || !imgname || (stricmp(inf.name.c_str(), imgname) != 0) || oldy > inf.ypos) {
+	if ( inf.forcereopen || !imgfile || inf.name != imgname || oldy > inf.ypos) {
 		// new file
 
 		delete imgfile;
 
-		imgname = inf.name.c_str();
+		imgname = inf.name;
 		if (_interactive) {
-			printf("Loading %s\n", imgname);
+			printf("Loading %s\n", imgname.c_str());
 		}
 
 		imgfile = MakeReader();
 		if (!imgfile) {
-			printf("\nError: can't open %s\n", imgname);
+			printf("\nError: can't open %s\n", imgname.c_str());
 			exit(2);
 		}
 
@@ -124,12 +124,12 @@ void inforeader::PrepareReal(const SpriteInfo&info){
 
 pcxread* inforeader::MakeReader()const{
 #ifdef WITH_PNG
-	if(toupper(imgname[strlen(imgname)-1])=='X')//pcx
- 		return new pcxread(new singlefile(imgname, "rb", NULL));
+	if(toupper(imgname[imgname.length()-1])=='X')//pcx
+		return new pcxread(new singlefile(imgname.c_str(), "rb", NULL));
 	else //png
-		return new pngread(new singlefile(imgname, "rb", NULL));
+		return new pngread(new singlefile(imgname.c_str(), "rb", NULL));
 #else
-	return new pcxread(new singlefile(imgname, "rb", NULL));
+	return new pcxread(new singlefile(imgname.c_str(), "rb", NULL));
 #endif
 }
 

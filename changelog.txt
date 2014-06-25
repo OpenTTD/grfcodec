@@ -1,3 +1,7 @@
+Changes in 6.0.5 (unreleased)
+- GRFcodec specific changes:
+  - Fix checks for opening sprites causing sprites to be read from the wrong file
+
 Changes in 6.0.4 (2014-03-31)
 - NFORenum specific changes:
   - Data file updates
