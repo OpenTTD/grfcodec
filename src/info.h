@@ -3,6 +3,7 @@
 
 
 #include <stdio.h>
+#include <string>
 
 #include "pcxsprit.h"
 #include "pngsprit.h"
@@ -29,7 +30,7 @@ class inforeader {
 
 	protected:
 
-	const char *imgname;
+	string imgname;
 	int *colourmap;
 	AllocArray<Sprite> nfofile;
 private:
