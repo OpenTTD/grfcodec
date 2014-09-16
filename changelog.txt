@@ -4,6 +4,7 @@ Changes in 6.0.5 (unreleased)
     - Callback 160
 - GRFcodec specific changes:
   - Fix checks for opening sprites causing sprites to be read from the wrong file
+  - Change default height for sprite sheets to 16000 rows so it does not hit memory issues on 32 bits computers
 
 Changes in 6.0.4 (2014-03-31)
 - NFORenum specific changes:
