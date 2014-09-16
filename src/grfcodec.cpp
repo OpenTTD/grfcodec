@@ -913,7 +913,7 @@ int main(int argc, char **argv)
 	char directory[MAXDIR];
 	char *grffile = NULL;
 	int action = 0;
-	int width = 800, height = -1, box = 16, compress = 1;
+	int width = 800, height = 16000, box = 16, compress = 1;
 	U8 *palette = NULL;
 	int *colourmap = NULL;
 	int useplaintext = 1;
@@ -945,10 +945,10 @@ int main(int argc, char **argv)
 			printf("%s\n", version);
 			return 0;
 		case 'w':
-			width = min(max(atoi(optarg), 0), 65535);
+			width = min(max(atoi(optarg), 16), 65535);
 			break;
 		case 'h':
-			height = min(max(atoi(optarg), 0), 65535);
+			height = min(max(atoi(optarg), 16), 65535);
 			break;
 		case 'b':
 			box = atoi(optarg);
