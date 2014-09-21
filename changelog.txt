@@ -2,6 +2,7 @@ Changes in 6.0.5 (unreleased)
 - NFORenum specific changes:
   - Data file updates
     - Callback 160
+    - Action 5, type 0x18 (black recolour sprite) added
 - GRFcodec specific changes:
   - Fix checks for opening sprites causing sprites to be read from the wrong file
   - Change default height for sprite sheets to 16000 rows so it does not hit memory issues on 32 bits computers
