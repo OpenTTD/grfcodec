@@ -333,7 +333,7 @@ static const char _datlangs[]="\x00\x07"
 /*5x*/  "Urdu\n"                  "\n"                      "\n"                      "\n"
 //      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
 /*6x*/  "\n"                      "Hebrew\n"                "Persian\n"               "\n"
-/*6x*/  "\n"                      "\n"                      "\n"                      "\n"
+/*6x*/  "\n"                      "\n"                      "Latin\n"                 "\n"
 /*6x*/  "\n"                      "\n"                      "\n"                      "\n"
 /*6x*/  "\n"                      "\n"                      "\n"                      "\n"
 //      x0/x4/x8/xC               x1/x5/x9/xD               x2/x6/xA/xE               x3/x7/xB/xF
