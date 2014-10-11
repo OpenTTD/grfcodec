@@ -2,6 +2,7 @@ Changes in 6.0.5 (unreleased)
 - NFORenum specific changes:
   - Data file updates
     - Callback 160
+    - Action 4 language ID 0x66 (Latin).
     - Action 5, type 0x18 (black recolour sprite) added
 - GRFcodec specific changes:
   - Fix checks for opening sprites causing sprites to be read from the wrong file
