@@ -1,4 +1,4 @@
-Changes in 6.0.5 (unreleased)
+Changes in 6.0.5 (2015-05-09)
 - NFORenum specific changes:
   - Data file updates
     - Callback 160
