@@ -35,8 +35,6 @@
 #include <boost/tokenizer.hpp>
 
 using namespace boost::gregorian;
-using namespace boost::lambda;
-using namespace boost;
 #define foreach BOOST_FOREACH
 using namespace std;
 
@@ -716,7 +714,7 @@ ostream&PseudoSprite::output(ostream&out){
 			sections.push_back(Tokenize(line, '\t'));
 
 		// Count the columns
-		uint columns = (uint)max_element(sections.begin(),sections.end(), bind(&vector<string>::size,_1) < bind(&vector<string>::size,_2))->size();
+		uint columns = (uint)max_element(sections.begin(),sections.end(), boost::lambda::bind(&vector<string>::size,boost::lambda::_1) < boost::lambda::bind(&vector<string>::size,boost::lambda::_2))->size();
 
 		// For each column,
 		for(uint i=0;i<columns;i++){
@@ -731,7 +729,7 @@ ostream&PseudoSprite::output(ostream&out){
 
 		// Tabs are expanded, write each line
 		foreach(const vector<string>&line, sections)
-			for_each(line.begin(),line.end(),out<<_1)('\n');
+			for_each(line.begin(),line.end(),out<<boost::lambda::_1)('\n');
 
 	}else out<<buffer;
 
