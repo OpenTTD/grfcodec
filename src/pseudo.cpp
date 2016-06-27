@@ -403,7 +403,8 @@ PseudoSprite&PseudoSprite::SetEol(uint i,uint minbreaks,uint lead){
 	return*this;
 }
 PseudoSprite&PseudoSprite::SetNoEol(uint i){
-	if(GetState(LINEBREAKS))beauty[i]|=NOBREAK;return*this;
+	if(GetState(LINEBREAKS))beauty[i]|=NOBREAK;
+	return*this;
 }
 
 PseudoSprite&PseudoSprite::SetGRFID(uint i){

@@ -116,10 +116,10 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 				Wrk++;
 				if (*++pB)
 					Ret |= FILENAME;
-					safestrncpy(nameP, pB, MAXFILE);
-					*pB-- = 0;
-					if (*pB == 0 || (*pB == ':' && pB == &buf[2]))
-						break;
+				safestrncpy(nameP, pB, MAXFILE);
+				*pB-- = 0;
+				if (*pB == 0 || (*pB == ':' && pB == &buf[2]))
+					break;
 			}
 			continue;
 		case '*'  :
