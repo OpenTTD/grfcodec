@@ -74,11 +74,23 @@ static const char header[] = {
 
 const char *Strip(const char *origin, const char *dest, uint32_t allowed)
 {
-	FILE *fin = fopen(origin, "rb");
-	if (fin == NULL) return "Unable to open origin file";
+	const char *ret = NULL;
+	uint32_t len;
+	uint8_t *end;
+	FILE *fout;
+	FILE *fin;
+	
+	fin = fopen(origin, "rb");
+	if (fin == NULL) {
+		ret = "Unable to open origin file";
+		goto fail_ret;
+	}
 
-	FILE *fout = fopen(dest, "wb");
-	if (fout == NULL) return "Unable to open destination file";
+	fout = fopen(dest, "wb");
+	if (fout == NULL) {
+		ret = "Unable to open destination file";
+		goto fail_close_fin;
+	}
 
 	/* Get the length of the file */
 	fseek(fin, 0, SEEK_END);
@@ -87,20 +99,25 @@ const char *Strip(const char *origin, const char *dest, uint32_t allowed)
 
 	/* Map the file into memory */
 	_file_buffer = (uint8_t*)mmap(NULL, _file_length, PROT_READ, MAP_PRIVATE, fileno(fin), 0);
-	uint8_t *end = _file_buffer + _file_length;
+	end = _file_buffer + _file_length;
 
 	if (_file_length <= sizeof(header) || memcmp(_file_buffer, header, sizeof(header)) != 0) {
 		return "No GRF with container version 2.";
+		goto fail;
 	}
 
 	_buffer = _file_buffer + sizeof(header);
-	uint32_t len = ReadDWord();
+	len = ReadDWord();
 	_buffer = _file_buffer + sizeof(header) + len + 4;
 
-	if (_buffer >= end) return "Invalid GRF";
+	if (_buffer >= end) {
+		return "Invalid GRF";
+		goto fail;
+	}
 
 	if (fwrite(_file_buffer, 1, _buffer - _file_buffer, fout) != (size_t)(_buffer - _file_buffer)) {
-		return "Could not write to file";
+		ret = "Could not write to file";
+		goto fail;
 	}
 
 	for (;;) {
@@ -108,7 +125,8 @@ const char *Strip(const char *origin, const char *dest, uint32_t allowed)
 		uint32_t id = ReadDWord();
 		if (id == 0) {
 			if (fwrite(begin, 1, end - begin, fout) != (size_t)(end - begin)) {
-				return "Could not write to file";
+				ret = "Could not write to file";
+				goto fail;
 			}
 			break;
 		}
@@ -122,20 +140,26 @@ const char *Strip(const char *origin, const char *dest, uint32_t allowed)
 		if (info == 0xFF || (allowed & (1 << offset)) != 0) {
 			/* Copy */
 			if (fwrite(begin, 1, size + 8, fout) != (size_t)(size + 8)) {
-				return "Could not write to file";
+				ret = "Could not write to file";
+				goto fail;
 			}
 		}
 
 		/* Skip sprite. */
 		SkipBytes(size - 2);
-		if (_buffer >= end) return "Invalid GRF";
+		if (_buffer >= end) { 
+			ret = "Invalid GRF";
+			goto fail;
+		}
 	}
 
-
+fail:
 	munmap(_file_buffer, _file_length);
+	fclose(fout);
+fail_close_fin:
 	fclose(fin);
-
-	return NULL;
+fail_ret:
+	return ret;
 }
 
 int main(int argc, char **argv)
