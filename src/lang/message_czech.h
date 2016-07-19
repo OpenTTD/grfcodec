@@ -117,7 +117,7 @@ NFO_MESSAGE(INVALID_COLOR_TRANS,"Prebarvovaci mod 3 neni definovan.\n",USE_PREFI
 NFO_MESSAGE(INVALID_COLOR_SPRITE,"Sprite %d neni sprite s tabulkou zmeny barev.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NO_GROUNDSPRITE,"Nebyl definovan zadny %s.\n",USE_PREFIX)
 NFO_MESSAGE(NO_STD_3,"Tato Akce 3 pro zmenu nateru nenasleduje standardni Akci 3.\n",USE_PREFIX)
-NFO_MESSAGE(NONEXISTANT_VARIABLE,"Promenna %2x neexistuje.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NONEXISTENT_VARIABLE,"Promenna %2x neexistuje.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(MODIFY_BEYOND_LENGTH,"Akce 6 se pokousi o zmenu bytu, ktery se nachazi za koncem tohoto spritu.\n",USE_PREFIX)
 NFO_MESSAGE(NO_FOLLOWING_SPRITE,"Po teto Akci 6 neni zadny sprite ke zmeneni.\n",USE_PREFIX)
 

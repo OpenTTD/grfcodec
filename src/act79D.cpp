@@ -113,7 +113,7 @@ int Check7(PseudoSprite&data){
 		SetSize(1);
 		var_size=1;
 	}
-	if(!Vars::Instance().canRead7(var))IssueMessage(ERROR,NONEXISTANT_VARIABLE,1,var);
+	if(!Vars::Instance().canRead7(var))IssueMessage(ERROR,NONEXISTENT_VARIABLE,1,var);
 	else if(var>0x7F&&cond>1&&Vars::Instance().isBitmask(var)){
 		IssueMessage(ERROR,BITTEST_VARIABLE,var);
 		desiredSize=0;

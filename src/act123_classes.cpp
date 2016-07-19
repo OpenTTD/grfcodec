@@ -145,11 +145,11 @@ void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 		if(var<0x60 || var>=0x80) IssueMessage(WARNING1,INDIRECT_VAR_NOT_6X,offs);
 	}
 	if(var&0x80){
-		if(var>_p[feature].last80) IssueMessage(ERROR,NONEXISTANT_VARIABLE,offs,var);
-		else if(!IsValid(feature, var)) IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
+		if(var>_p[feature].last80) IssueMessage(ERROR,NONEXISTENT_VARIABLE,offs,var);
+		else if(!IsValid(feature, var)) IssueMessage(WARNING1,NONEXISTENT_VARIABLE,offs,var);
 		else if(shift>=_p[feature].var80[var&0x7F].width<<3)IssueMessage(WARNING4,SHIFT_TOO_FAR,offs+1,var);
 	}else if(!IsValid(feature,var))
-		IssueMessage(WARNING1,NONEXISTANT_VARIABLE,offs,var);
+		IssueMessage(WARNING1,NONEXISTENT_VARIABLE,offs,var);
 	else{
 		if(var==0x7E){
 			if(real_var==0x7B){
