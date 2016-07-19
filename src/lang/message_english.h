@@ -132,7 +132,7 @@ NFO_MESSAGE(INVALID_COLOR_TRANS,"Color translation mode 3 is undefined.\n",USE_P
 NFO_MESSAGE(INVALID_COLOR_SPRITE,"Sprite %d is not a color translation sprite.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(NO_GROUNDSPRITE,"No %s sprite was specified.\n",USE_PREFIX)
 NFO_MESSAGE(NO_STD_3,"This livery override action 3 does not follow a standard action 3.\n",USE_PREFIX)
-NFO_MESSAGE(NONEXISTANT_VARIABLE,"Testing nonexistant variable %2x.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(NONEXISTENT_VARIABLE,"Testing nonexistent variable %2x.\n",USE_PREFIX|HAS_OFFSET)
 NFO_MESSAGE(MODIFY_BEYOND_LENGTH,"Action 6 attempts to modify a byte after the end of this sprite.\n",USE_PREFIX)
 NFO_MESSAGE(NO_FOLLOWING_SPRITE,"There is no following sprite for this Action 6 to modify.\n",USE_PREFIX)
 

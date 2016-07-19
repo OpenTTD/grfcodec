@@ -199,7 +199,7 @@ Correct this sprite, or add a standard action 3.
 This message will only be issued once, even if multiple override 3s precede
 the first standard 3.
 
-86: "<off> Testing nonexistant variable <var>." (Error/Warn 1)
+86: "<off> Testing nonexistent variable <var>." (Error/Warn 1)
 This variational action 2 or action 7 tests a variable that does not exist.
 Change the feature, type, and/or variable.
 
