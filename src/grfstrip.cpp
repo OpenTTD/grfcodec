@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 			"GRFSTRIP " VERSION " - Copyright (C) 2009 by Remko Bijker\n"
 			"\n"
 			"Usage:\n"
-			"    GRFSTRIP <origin> <dest> [<depth> <zoom>]\n"
+			"    GRFSTRIP <origin> <dest> (<depth> <zoom>)*\n"
 			"        Strip real sprites that are not in the set \"normal 8bpp and the ones\n"
 			"        specified at the command line\" from origin into dest.\n"
 			"    GRFSTRIP -v\n"
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
 	}
 
 	uint32_t allowed = 1;
-	for (int i = 3; i + 1 < argc; i++) {
+	for (int i = 3; i + 1 < argc; ) {
 		int depth_offset;
 		if (strcmp(argv[i], "32bpp") == 0) {
 			depth_offset = 16;
@@ -195,19 +195,22 @@ int main(int argc, char **argv)
 			printf("Invalid depth \"%s\"\n", argv[i]);
 			return 1;
 		}
+		i++;
 
 		static const char *zoom[] = { "normal", "zi4", "zi2", "zo2", "zo4", "zo8" };
 		int zoom_offset = 0xFF;
 		for (int j = 0; j < 6; j++) {
-			if (strcmp(argv[i + 1], zoom[j]) == 0) {
+			if (strcmp(argv[i], zoom[j]) == 0) {
 				zoom_offset = j;
 				break;
 			}
 		}
-
 		if (zoom_offset == 0xFF) {
 			printf("Invalid zoom \"%s\"\n", argv[i]);
+			return 1;
 		}
+		i++;
+
 		allowed |= 1 << (depth_offset + zoom_offset);
 	}
 
