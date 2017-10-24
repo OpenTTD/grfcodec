@@ -1,13 +1,13 @@
 .\"                                      Hey, EMACS: -*- nroff -*-
 .\" Please adjust this date whenever revising the manpage.
-.Dd February 04, 2012
+.Dd October 24, 2017
 .Dt GRFStrip 1
 .Sh NAME
 .Nm GRFID
 .Nd A tool strip (some) real sprites from a GRF
 .Sh SYNOPSIS
 .Op Fl hv
-.Nm grfstrip Ar origin dest [depth zoom]
+.Nm grfstrip Ar origin dest (depth zoom)*
 .Sh DESCRIPTION
 GRFStrip strips all real sprites from a GRF and leaves only the ones
 specified in the tuples at the command line and the 8bpp normal zoom.
@@ -19,6 +19,10 @@ Display the help message.
 .It Fl v
 Display the version.
 .El
+.Sh KNOWN SPRITE FORMATS
+Known depths are: 8bpp, 32bpp
+.Pp
+Known zoom levels are: normal, zi4, zi2, zo2, zo4, zo8
 .Sh SEE ALSO
 The documentation in
 .Pa /usr/share/doc/grfcodec/
