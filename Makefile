@@ -213,7 +213,7 @@ objs/$(ENDIAN_CHECK): src/endian_check.cpp
 
 src/endian.h: objs/$(ENDIAN_CHECK)
 	$(_E) [ENDIAN] Determining endianness
-	$(_C)objs/$(ENDIAN_CHECK) $(ENDIAN_PARAMS) > src/endian.h || rm src/endian.h
+	$(_C)objs/$(ENDIAN_CHECK) $(ENDIAN_PARAMS) > src/endian.h || { rm src/endian.h; exit 1; }
 
 FORCE:
 %_r: FORCE
