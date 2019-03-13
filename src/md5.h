@@ -47,8 +47,6 @@
   1999-05-03 lpd Original version.
  */
 
-#include "endian.h"
-
 #ifndef md5_INCLUDED
 #  define md5_INCLUDED
 
