@@ -1,0 +1,137 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(grfcodec)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_CXX_EXTENSIONS NO)
+
+find_package(Git REQUIRED)
+execute_process(
+	COMMAND ${GIT_EXECUTABLE} describe --tags --dirty=M
+	OUTPUT_VARIABLE GIT_VERSION
+	RESULT_VARIABLE GIT_DESCRIBE_RESULT
+	ERROR_VARIABLE GIT_DESCRIBE_ERROR
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+execute_process(
+	COMMAND ${GIT_EXECUTABLE} show -s --pretty=%cd --date=short HEAD
+	OUTPUT_VARIABLE GIT_DATE
+	RESULT_VARIABLE GIT_SHOW_RESULT
+	ERROR_VARIABLE GIT_SHOW_ERROR
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+find_package(PNG)
+
+include(TestBigEndian)
+TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
+if (IS_BIG_ENDIAN)
+	add_definitions(-DGRFCODEC_BIG_ENDIAN=1)
+else (IS_BIG_ENDIAN)
+	add_definitions(-DGRFCODEC_LITTLE_ENDIAN=1)
+endif (IS_BIG_ENDIAN)
+
+add_definitions(-DYEARS="2019")
+add_definitions(-DVERSION="${GIT_VERSION}\ \(${GIT_DATE}\)")
+
+set(GENERATED_BINARY_DIR ${CMAKE_BINARY_DIR}/generated)
+
+set(PALETTE_SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/tt1_mars.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/tt1_norm.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttd_cand.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttd_norm.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_cand.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_norm.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_pb_pal1.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_pb_pal2.bcp
+)
+
+add_custom_command(OUTPUT ${GENERATED_BINARY_DIR}/ttdpal.h
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${GENERATED_BINARY_DIR}
+	COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/src/pal2c.pl ${PALETTE_SOURCE_FILES} > ${GENERATED_BINARY_DIR}/ttdpal.h
+	DEPENDS ${PALETTE_SOURCE_FILES}
+)
+add_custom_target(palettes_header
+	DEPENDS ${GENERATED_BINARY_DIR}/ttdpal.h
+)
+add_library(PALETTES
+	INTERFACE
+)
+target_include_directories(PALETTES
+	INTERFACE
+	${GENERATED_BINARY_DIR}
+)
+add_dependencies(PALETTES
+	palettes_header
+)
+
+set(GRFID_SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/src/grfid.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/md5.cpp
+)
+add_executable(grfid ${GRFID_SOURCE_FILES})
+
+set(GRFSTRIP_SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/src/grfstrip.cpp
+)
+add_executable(grfstrip ${GRFSTRIP_SOURCE_FILES})
+
+set(NFORENUM_SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/src/act0.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/act123_classes.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/act123.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/act14.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/act5.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/act6.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/act79D.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/actB.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/actF.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/command.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/data.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/help.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/IDs.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/inject.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/language_mgr.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/mapescapes.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/message_mgr.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/messages.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/nforenum.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pseudo.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pseudo_seq.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/rangedint.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/sanity.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/strings.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/utf8.cpp
+)
+add_executable(nforenum ${NFORENUM_SOURCE_FILES})
+add_dependencies(nforenum PALETTES)
+target_link_libraries(nforenum PALETTES)
+
+set(GRFCODEC_SOURCE_FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/src/error.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/file.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/grfcodec.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/grfcomm.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/info.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/mapescapes.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/path.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pcxfile.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pcxsprit.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pngsprit.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/readinfo.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/sprites.cpp
+)
+add_executable(grfcodec ${GRFCODEC_SOURCE_FILES})
+add_dependencies(grfcodec PALETTES)
+target_link_libraries(grfcodec PALETTES)
+if(PNG_FOUND)
+	set_target_properties(grfcodec PROPERTIES COMPILE_FLAGS -DWITH_PNG)
+	target_link_libraries(grfcodec ${PNG_LIBRARY})
+endif(PNG_FOUND)
+
+
