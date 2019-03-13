@@ -1,8 +1,6 @@
 #ifndef _TYPESIZE_H
 #define _TYPESIZE_H
 
-#include "endian.h"
-
 /*****************************************\
 *                                         *
 * TYPESIZE.H - Defines variable types     *
@@ -21,9 +19,21 @@
 *                                         *
 \*****************************************/
 
-#define maketype(type,size) \
-	typedef   signed type S ## size; \
-	typedef unsigned type U ## size;
+#include <cstdint>
+
+#define HAVE_BYTES
+#define HAVE_SHORTS
+#define HAVE_LONGS
+#define HAVE_LONGLONGS
+
+typedef   int8_t S8;
+typedef  uint8_t U8;
+typedef  int16_t S16;
+typedef uint16_t U16;
+typedef  int32_t S32;
+typedef uint32_t U32;
+typedef  int64_t S64;
+typedef uint64_t U64;
 
 #ifndef _MSC_VER
 #define strnicmp strncasecmp
@@ -32,56 +42,10 @@
 
 #ifdef __BORLANDC__
 
-#	define HAVE_BYTES
-#	define HAVE_SHORTS
-#	define HAVE_LONGS
-
-	maketype(char,8)
-	maketype(short,16)
-	maketype(long,32)
-
 // disable warnings for "condition is always false" and "unreachable code"
 #pragma warn -ccc
 #pragma warn -rch
 
-#elif WIN32
-
-#	define HAVE_BYTES
-#	define HAVE_SHORTS
-#	define HAVE_LONGS
-#	define HAVE_LONGLONGS
-
-	maketype(char,8)
-	maketype(short int,16)
-	maketype(long int,32)
-	maketype(long long,64)
-
-#elif GCC32
-
-#   define HAVE_BYTES
-#   define HAVE_SHORTS
-#   define HAVE_LONGS
-#   define HAVE_LONGLONGS
-
-    maketype(char,8)
-    maketype(short int,16)
-    maketype(int,32)
-    maketype(long long,64)
-
-#elif GCC64
-
-#   define HAVE_BYTES
-#   define HAVE_SHORTS
-#   define HAVE_LONGS
-#   define HAVE_LONGLONGS
-
-    maketype(char,8)
-    maketype(short int,16)
-    maketype(int,32)
-    maketype(long int,64)
-
-#else
-#	error Unknown variables sizes, please define.
 #endif
 
 #ifdef _MSC_VER
