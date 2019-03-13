@@ -26,7 +26,7 @@ static char *stpcopy(char *dest, const char *src, unsigned maxlen)
 	return dest + strlen(dest);
 }
 
-void fnmerge(register char *pathP, const char *driveP,
+void fnmerge(char *pathP, const char *driveP,
 	const char *dirP, const char *nameP, const char *extP)
 {
 	char *origpathP = pathP;
@@ -54,9 +54,9 @@ void fnmerge(register char *pathP, const char *driveP,
 int fnsplit(const char *pathP, char *driveP, char *dirP,
 	char *nameP, char *extP)
 {
-	register char	*pB;
-	register int	Wrk;
-	int		Ret;
+	char *pB;
+	int  Wrk;
+	int  Ret;
 
 	char buf[ MAXPATH+2 ];
 
