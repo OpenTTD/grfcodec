@@ -7,21 +7,35 @@ set(CMAKE_CXX_STANDARD_REQUIRED)
 set(CMAKE_CXX_EXTENSIONS NO)
 
 find_package(Git REQUIRED)
-execute_process(
-	COMMAND ${GIT_EXECUTABLE} describe --tags --dirty=M
-	OUTPUT_VARIABLE GIT_VERSION
-	RESULT_VARIABLE GIT_DESCRIBE_RESULT
-	ERROR_VARIABLE GIT_DESCRIBE_ERROR
-	OUTPUT_STRIP_TRAILING_WHITESPACE
-)
 
-execute_process(
-	COMMAND ${GIT_EXECUTABLE} show -s --pretty=%cd --date=short HEAD
-	OUTPUT_VARIABLE GIT_DATE
-	RESULT_VARIABLE GIT_SHOW_RESULT
-	ERROR_VARIABLE GIT_SHOW_ERROR
-	OUTPUT_STRIP_TRAILING_WHITESPACE
+set(GENERATED_BINARY_DIR "${CMAKE_BINARY_DIR}/generated")
+include_directories("${GENERATED_BINARY_DIR}")
+
+add_custom_command(OUTPUT "{$GENERATED_BINARY_DIR}/version.h"
+	COMMAND ${CMAKE_COMMAND}
+		-D GIT_EXECUTABLE=${GIT_EXECUTABLE}
+		-D INPUT_FILE=${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
+		-D OUTPUT_FILE=${GENERATED_BINARY_DIR}/version.h
+		-P ${CMAKE_CURRENT_SOURCE_DIR}/generate_version.cmake
+	DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in"
 )
+add_custom_target(version_header DEPENDS "${GENERATED_BINARY_DIR}/version.h")
+
+#execute_process(
+#	COMMAND ${GIT_EXECUTABLE} describe --tags --dirty=M
+#	OUTPUT_VARIABLE GIT_VERSION
+#	RESULT_VARIABLE GIT_DESCRIBE_RESULT
+#	ERROR_VARIABLE GIT_DESCRIBE_ERROR
+#	OUTPUT_STRIP_TRAILING_WHITESPACE
+#)
+
+#execute_process(
+#	COMMAND ${GIT_EXECUTABLE} show -s --pretty=%cd --date=short HEAD
+#	OUTPUT_VARIABLE GIT_DATE
+#	RESULT_VARIABLE GIT_SHOW_RESULT
+#	ERROR_VARIABLE GIT_SHOW_ERROR
+#	OUTPUT_STRIP_TRAILING_WHITESPACE
+#)
 
 find_package(PNG)
 
@@ -33,10 +47,9 @@ else (IS_BIG_ENDIAN)
 	add_definitions(-DGRFCODEC_LITTLE_ENDIAN=1)
 endif (IS_BIG_ENDIAN)
 
-add_definitions(-DYEARS="2019")
-add_definitions(-DVERSION="${GIT_VERSION}\ \(${GIT_DATE}\)")
+#add_definitions(-DYEARS="2019")
+#add_definitions(-DVERSION="${GIT_VERSION}\ \(${GIT_DATE}\)")
 
-set(GENERATED_BINARY_DIR ${CMAKE_BINARY_DIR}/generated)
 
 set(PALETTE_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/tt1_mars.bcp
@@ -54,30 +67,23 @@ add_custom_command(OUTPUT ${GENERATED_BINARY_DIR}/ttdpal.h
 	COMMAND perl ${CMAKE_CURRENT_SOURCE_DIR}/src/pal2c.pl ${PALETTE_SOURCE_FILES} > ${GENERATED_BINARY_DIR}/ttdpal.h
 	DEPENDS ${PALETTE_SOURCE_FILES}
 )
-add_custom_target(palettes_header
-	DEPENDS ${GENERATED_BINARY_DIR}/ttdpal.h
-)
-add_library(PALETTES
-	INTERFACE
-)
-target_include_directories(PALETTES
-	INTERFACE
-	${GENERATED_BINARY_DIR}
-)
-add_dependencies(PALETTES
-	palettes_header
-)
+add_custom_target(palettes_header DEPENDS ${GENERATED_BINARY_DIR}/ttdpal.h)
+#add_library(PALETTES INTERFACE)
+#target_include_directories(PALETTES INTERFACE ${GENERATED_BINARY_DIR})
+#add_dependencies(PALETTES palettes_header)
 
 set(GRFID_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/grfid.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/md5.cpp
 )
 add_executable(grfid ${GRFID_SOURCE_FILES})
+add_dependencies(grfid version_header)
 
 set(GRFSTRIP_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/grfstrip.cpp
 )
 add_executable(grfstrip ${GRFSTRIP_SOURCE_FILES})
+add_dependencies(grfstrip version_header)
 
 set(NFORENUM_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/act0.cpp
@@ -108,8 +114,7 @@ set(NFORENUM_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/utf8.cpp
 )
 add_executable(nforenum ${NFORENUM_SOURCE_FILES})
-add_dependencies(nforenum PALETTES)
-target_link_libraries(nforenum PALETTES)
+add_dependencies(nforenum palettes_header version_header)
 
 set(GRFCODEC_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/error.cpp
@@ -127,8 +132,7 @@ set(GRFCODEC_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/sprites.cpp
 )
 add_executable(grfcodec ${GRFCODEC_SOURCE_FILES})
-add_dependencies(grfcodec PALETTES)
-target_link_libraries(grfcodec PALETTES)
+add_dependencies(grfcodec palettes_header version_header)
 if(PNG_FOUND)
 	set_target_properties(grfcodec PROPERTIES COMPILE_FLAGS -DWITH_PNG)
 	target_link_libraries(grfcodec ${PNG_LIBRARY})

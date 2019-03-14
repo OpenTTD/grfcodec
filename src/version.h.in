@@ -1,0 +1,4 @@
+
+
+#define VERSION "${GIT_VERSION}"
+#define YEARS "${GIT_DATE}"
