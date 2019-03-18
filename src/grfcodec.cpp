@@ -24,7 +24,7 @@
 #include <sys/stat.h>
 #include <getopt.h>
 
-#ifdef MINGW
+#ifdef __MINGW32__
 	#include <io.h>
 	#define mkdir(a,b) mkdir(a)
 	#define isatty _isatty
@@ -923,7 +923,7 @@ int main(int argc, char **argv)
 
 	checksizes();
 
-#ifdef WIN32
+#ifdef _WIN32
 	//  debugint();
 #endif
 

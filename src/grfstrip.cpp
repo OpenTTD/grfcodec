@@ -12,7 +12,7 @@
 
 #include "md5.h"
 
-#ifndef WIN32
+#ifndef _WIN32
 #include <sys/mman.h>
 #else
 #include <stdlib.h>
