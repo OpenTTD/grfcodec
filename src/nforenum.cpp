@@ -35,7 +35,7 @@
 #include<getopt.h>
 #include<set>
 
-#ifdef MINGW
+#ifdef __MINGW32__
 	#include <io.h>
 	#define isatty _isatty
 #elif defined(_MSC_VER)

@@ -10,7 +10,7 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
-#ifdef MINGW
+#ifdef __MINGW32__
 #	include <io.h>
 #	define mkdir(a,b) mkdir(a)
 #elif defined(_MSC_VER)
