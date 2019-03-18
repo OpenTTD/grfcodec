@@ -11,7 +11,7 @@ find_package(Git REQUIRED)
 set(GENERATED_BINARY_DIR "${CMAKE_BINARY_DIR}/generated")
 include_directories("${GENERATED_BINARY_DIR}")
 
-add_custom_command(OUTPUT "{$GENERATED_BINARY_DIR}/version.h"
+add_custom_command(OUTPUT "${GENERATED_BINARY_DIR}/version.h"
 	COMMAND ${CMAKE_COMMAND}
 		-D GIT_EXECUTABLE=${GIT_EXECUTABLE}
 		-D INPUT_FILE=${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
