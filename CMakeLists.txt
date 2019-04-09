@@ -25,11 +25,11 @@ find_package(PNG)
 
 include(TestBigEndian)
 TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
-if (IS_BIG_ENDIAN)
+if(IS_BIG_ENDIAN)
 	add_definitions(-DGRFCODEC_BIG_ENDIAN=1)
-else (IS_BIG_ENDIAN)
+else()
 	add_definitions(-DGRFCODEC_LITTLE_ENDIAN=1)
-endif (IS_BIG_ENDIAN)
+endif()
 
 set(PALETTE_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/tt1_mars.bcp
@@ -113,6 +113,6 @@ add_dependencies(grfcodec palettes_header version_header)
 if(PNG_FOUND)
 	set_target_properties(grfcodec PROPERTIES COMPILE_FLAGS -DWITH_PNG)
 	target_link_libraries(grfcodec ${PNG_LIBRARY})
-endif(PNG_FOUND)
+endif()
 
 
