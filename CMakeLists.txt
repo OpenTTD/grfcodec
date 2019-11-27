@@ -6,6 +6,14 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED)
 set(CMAKE_CXX_EXTENSIONS NO)
 
+if(MINGW)
+	# Force searching static libs, so the executables can run outside MinGW environment
+	set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+
+	# Force static linking, so the executables can run outside MinGW environment
+	link_libraries(-static -static-libgcc -static-libstdc++)
+endif()
+
 find_package(Git REQUIRED)
 
 set(GENERATED_BINARY_DIR "${CMAKE_BINARY_DIR}/generated")
@@ -101,7 +109,7 @@ add_dependencies(nforenum palettes_header version_header)
 
 set(GRFCODEC_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/error.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/file.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/file.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/globals.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/grfcodec.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/grfcomm.cpp
@@ -118,7 +126,5 @@ add_executable(grfcodec ${GRFCODEC_SOURCE_FILES})
 add_dependencies(grfcodec palettes_header version_header)
 if(PNG_FOUND)
 	set_target_properties(grfcodec PROPERTIES COMPILE_FLAGS -DWITH_PNG)
-	target_link_libraries(grfcodec ${PNG_LIBRARY})
+	target_link_libraries(grfcodec PNG::PNG)
 endif()
-
-
