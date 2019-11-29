@@ -14,6 +14,29 @@ if(MINGW)
 	link_libraries(-static -static-libgcc -static-libstdc++)
 endif()
 
+if(MSVC)
+	# Switch to MT (static) instead of MD (dynamic) binary
+
+	# For MSVC two generators are available
+	# - a command line generator (Ninja) using CMAKE_BUILD_TYPE to specify the
+	#   configuration of the build tree
+	# - an IDE generator (Visual Studio) using CMAKE_CONFIGURATION_TYPES to
+	#   specify all configurations that will be available in the generated solution
+	list(APPEND MSVC_CONFIGS "${CMAKE_BUILD_TYPE}" "${CMAKE_CONFIGURATION_TYPES}")
+
+	# Set usage of static runtime for all configurations
+	foreach(MSVC_CONFIG ${MSVC_CONFIGS})
+		string(TOUPPER "CMAKE_CXX_FLAGS_${MSVC_CONFIG}" MSVC_FLAGS)
+		string(REPLACE "/MD" "/MT" ${MSVC_FLAGS} "${${MSVC_FLAGS}}")
+	endforeach()
+
+	# Disable deprecation warnings
+	add_compile_options(/wd4996)
+
+	# Add includes for our own getopt
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src/msvc)
+endif()
+
 find_package(Git REQUIRED)
 
 set(GENERATED_BINARY_DIR "${CMAKE_BINARY_DIR}/generated")
@@ -30,6 +53,7 @@ add_custom_command(OUTPUT "${GENERATED_BINARY_DIR}/version.h"
 add_custom_target(version_header DEPENDS "${GENERATED_BINARY_DIR}/version.h")
 
 find_package(PNG)
+find_package(Boost REQUIRED)
 
 include(TestBigEndian)
 TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
@@ -106,6 +130,7 @@ set(NFORENUM_SOURCE_FILES
 )
 add_executable(nforenum ${NFORENUM_SOURCE_FILES})
 add_dependencies(nforenum palettes_header version_header)
+target_link_libraries(nforenum Boost::boost)
 
 set(GRFCODEC_SOURCE_FILES
 	${CMAKE_CURRENT_SOURCE_DIR}/src/error.cpp
@@ -124,7 +149,16 @@ set(GRFCODEC_SOURCE_FILES
 )
 add_executable(grfcodec ${GRFCODEC_SOURCE_FILES})
 add_dependencies(grfcodec palettes_header version_header)
+target_link_libraries(grfcodec Boost::boost)
 if(PNG_FOUND)
 	set_target_properties(grfcodec PROPERTIES COMPILE_FLAGS -DWITH_PNG)
 	target_link_libraries(grfcodec PNG::PNG)
+endif()
+
+if(MSVC)
+	# use our own getopt to nforenum
+	target_sources(nforenum PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/msvc/getopt.cpp)
+
+	# use our own getopt to grfcodec
+	target_sources(grfcodec PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/msvc/getopt.cpp)
 endif()

@@ -90,6 +90,6 @@ public:
 };
 #define WrapAp(v)\
 	apWrapper ap;\
-	va_start(ap,v);
+	va_start((va_list&)ap,v);
 
 #endif//_RENUM_SANITY_DEFS_H_INCLUDED_
