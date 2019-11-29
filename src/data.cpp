@@ -1046,7 +1046,7 @@ struct dat{
 #undef DATA
 #undef DATA_FILE
 #undef END_DATA
-#define DATA() static const dat data[]={
+#define DATA() static const dat datafiles[]={
 #define DATA_FILE(name)\
 	{(char*)_dat##name,"/.nforenum/" #name ".dat",sizeof(_dat##name)-1},\
 
@@ -1126,11 +1126,11 @@ FILE*tryopen(const char*name,const char*mode,bool allownull=false){
 }
 
 FILE*_myfopen(files file, bool write){
-	FILE*pFile=tryopen(data[file].name,"rb",true);
+	FILE*pFile=tryopen(datafiles[file].name,"rb",true);
 	if(pFile){
-		if(fgetc(pFile)==data[file].data[0]&&fgetc(pFile)>=data[file].data[1]){
+		if(fgetc(pFile)==datafiles[file].data[0]&&fgetc(pFile)>=datafiles[file].data[1]){
 			if(file>datfeat && (uint)fgetc(pFile)<MaxFeature()){
-				IssueMessage(0,DATAFILE_MISMATCH,data[file].name+NFORENUM_DIR_LEN);
+				IssueMessage(0,DATAFILE_MISMATCH,datafiles[file].name+NFORENUM_DIR_LEN);
 				assert(false);
 				exit(EDATA);
 			}
@@ -1140,9 +1140,9 @@ FILE*_myfopen(files file, bool write){
 	}
 #if WITH_FMEMOPEN
 	if (!write) {
-		pFile = fmemopen(const_cast<char *>(data[file].data), data[file].len, "rb");
+		pFile = fmemopen(const_cast<char *>(datafiles[file].data), datafiles[file].len, "rb");
 		if (pFile == NULL) {
-			IssueMessage(0, DATAFILE_ERROR, OPEN, data[file].name + 1, ERRNO, errno);
+			IssueMessage(0, DATAFILE_ERROR, OPEN, datafiles[file].name + 1, ERRNO, errno);
 			perror(NULL);
 			assert(false);
 			exit(EDATA);
@@ -1152,19 +1152,19 @@ FILE*_myfopen(files file, bool write){
 	(void)write;
 #endif /* WITH_FMEMOPEN */
 	{
-		pFile = tryopen(data[file].name,"wb");
-		if (fwrite(data[file].data, 1, data[file].len, pFile) != data[file].len) {
-			IssueMessage(0, DATAFILE_ERROR, WRITE, data[file].name + 1, -1);
+		pFile = tryopen(datafiles[file].name,"wb");
+		if (fwrite(datafiles[file].data, 1, datafiles[file].len, pFile) != datafiles[file].len) {
+			IssueMessage(0, DATAFILE_ERROR, WRITE, datafiles[file].name + 1, -1);
 			assert(false);
 			exit(EDATA);
 		}
 		fclose(pFile);
-		pFile = tryopen(data[file].name,"rb");
+		pFile = tryopen(datafiles[file].name,"rb");
 	}
 	fgetc(pFile);
 	fgetc(pFile);
 	if(file>datfeat && (uint)fgetc(pFile)<MaxFeature()){
-		IssueMessage(0,DATAFILE_MISMATCH,data[file].name+NFORENUM_DIR_LEN);
+		IssueMessage(0,DATAFILE_MISMATCH,datafiles[file].name+NFORENUM_DIR_LEN);
 		assert(false);
 		exit(EDATA);
 	}
@@ -1173,7 +1173,7 @@ FILE*_myfopen(files file, bool write){
 
 int _CheckEOF(int dat,files file,const char*src,int line){
 	if(dat==EOF){
-		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+NFORENUM_DIR_LEN,FILELINE,src,line);
+		IssueMessage(0,DATAFILE_ERROR,LOAD,datafiles[file].name+NFORENUM_DIR_LEN,FILELINE,src,line);
 		assert(false);
 		exit(EDATA);
 	}
@@ -1187,7 +1187,7 @@ int _GetCheckWord(FILE*pFile,files file,const char*src,int line){
 
 void _myfread(FILE*pFile,uchar*target,uint count,files file,const char*src,int line){
 	if(fread(target,1,count,pFile)!=count){
-		IssueMessage(0,DATAFILE_ERROR,LOAD,data[file].name+NFORENUM_DIR_LEN,FILELINE,src,line);
+		IssueMessage(0,DATAFILE_ERROR,LOAD,datafiles[file].name+NFORENUM_DIR_LEN,FILELINE,src,line);
 		assert(false);
 		exit(EDATA);
 	}
