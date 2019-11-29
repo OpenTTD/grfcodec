@@ -23,6 +23,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <getopt.h>
+#include <algorithm>
 
 #ifdef __MINGW32__
 	#include <io.h>
