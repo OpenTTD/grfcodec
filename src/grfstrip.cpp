@@ -19,7 +19,7 @@
 #define PROT_READ 0
 #define MAP_PRIVATE 0
 /* Lets fake mmap for Windows, please! */
-void *mmap (void * /*ptr*/, long size, long /*prot*/, long /*type*/, long handle, long /*arg*/) {
+void *mmap (void * /*ptr*/, size_t size, long /*prot*/, long /*type*/, long handle, long /*arg*/) {
 	char *mem = (char*)malloc(size + 1);
 	mem[size] = 0;
 	FILE *in = fdopen(handle, "rb");
@@ -31,7 +31,7 @@ void *mmap (void * /*ptr*/, long size, long /*prot*/, long /*type*/, long handle
 	fclose(in);
 	return mem;
 }
-long munmap (void *ptr, long /*size*/) {
+long munmap (void *ptr, size_t /*size*/) {
 	free(ptr);
 	return 0;
 }
