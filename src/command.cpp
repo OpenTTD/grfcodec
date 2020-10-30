@@ -300,8 +300,9 @@ bool parse_comment(const string&line){
 		break;
 	case BEAUTIFY:{
 		commandstream>>command_part;
-		uint val=find_command(command_part,beaut),togglebit;
-		if(val!=(uint)-1&&val!=OFF)_commandState.beautifier=true;
+		int val=find_command(command_part,beaut);
+		uint togglebit;
+		if(val!=-1&&val!=OFF)_commandState.beautifier=true;
 		switch(val){
 		case -1:
 			IssueMessage(0,COMMAND_INVALID_ARG,gen[BEAUTIFY].name);
@@ -372,7 +373,7 @@ bool parse_comment(const string&line){
 dotoggle:
 			commandstream>>command_part;
 			val=find_command(command_part,beaut);
-			if(!commandstream||val==(uint)-1){
+			if(!commandstream||val==-1){
 				IssueMessage(0,COMMAND_INVALID_ARG,gen[BEAUTIFY].name);
 				return true;
 			}
