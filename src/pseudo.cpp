@@ -196,6 +196,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 				return;
 			}
 			//fall through to default when !GetState(EXTENSIONS)
+			/* FALLTHROUGH */
 		default:
 			if (is_comment(in)) {
 				string comment;
@@ -846,7 +847,7 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 
 		try {
 			return (date((ushort)y, (ushort)m, (ushort)d) - date(1920, 1, 1)).days() + extra;
-		} catch (std::out_of_range) {
+		} catch (std::out_of_range&) {
 			// Fall through to fail
 		}
 	}

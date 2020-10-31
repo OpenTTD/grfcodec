@@ -90,6 +90,7 @@ string vIssueMessage(int minSan,RenumMessageId id,va_list& arg_ptr){
 		case FATAL:
 		case ERROR:
 			prefix=minSan==FATAL?PREFIX_LINT_FATAL:PREFIX_LINT_ERROR;
+			/* FALLTHROUGH */
 		case WARNING1:
 		case WARNING2:
 		case WARNING3:

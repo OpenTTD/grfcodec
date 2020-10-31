@@ -98,6 +98,7 @@ private:
 		explicit range(uint max):min(0,max),max(max,max){}
 		range(const range&right):min(right.min),max(right.max){}
 		range(uint rangemax,uint minval,uint maxval):min(minval,rangemax),max(maxval,rangemax){}
+		range&operator=(const range&right){min=right.min; max=right.max; return *this;}
 		RangedUint min,max;
 	}dflt;
 public:

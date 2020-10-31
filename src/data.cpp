@@ -1148,6 +1148,8 @@ FILE*_myfopen(files file, bool write){
 			exit(EDATA);
 		}
 	} else
+#else
+	(void)write;
 #endif /* WITH_FMEMOPEN */
 	{
 		pFile = tryopen(data[file].name,"wb");

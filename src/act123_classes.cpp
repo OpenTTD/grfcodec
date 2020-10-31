@@ -293,6 +293,7 @@ void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,u
 	case 5:// max
         dflt.min=max(dflt.min,var.min);
         dflt.max=max(dflt.max,var.max);
+	/* FALLTHROUGH */
 	case 8:// /
 		if(var.min==0){
 			dflt.min=0;

@@ -379,6 +379,7 @@ Pseudo::Pseudo(size_t num,int infover,int grfcontversion,const string&sprite,int
 				}}
 				throw Sprite::unparseable("Could not parse unquoted escape sequence",num);
 			}
+			/* FALLTHROUGH */
 		default:
 			ch=(char)ReadHex(in,2);
 			if(!in)
@@ -467,7 +468,7 @@ uint Pseudo::ReadValue(istream& in, width w)
 
 		try {
 			return (date((ushort)y, (ushort)m, (ushort)d) - date(1920, 1, 1)).days() + extra;
-		} catch (std::out_of_range) {
+		} catch (std::out_of_range&) {
 			// Fall through to fail
 		}
 	}
