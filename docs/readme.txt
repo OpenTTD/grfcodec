@@ -1,6 +1,6 @@
 GRF development tools README
-Last updated:    2015-05-09
-Release version: 6.0.5
+Last updated:    2016-06-27
+Release version: 6.0.6
 ------------------------------------------------------------------------
 
 
@@ -43,8 +43,8 @@ your option, any later version. For more information, see 'COPYING'
 2) Contact:
 -- --------
 Contact can be made via the issue tracker / source repository at
-http://dev.openttdcoop.org/projects/grfcodec or via IRC on the
-#openttdcoop.devzone channel on OFTC.
+https://github.com/OpenTTD/grfcodec or via IRC on the
+#openttd channel on OFTC.
 
 
 3) Installation:
