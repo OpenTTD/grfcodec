@@ -1007,6 +1007,7 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			_interactive = false;
+			break;
 		case 'X':
 			_hexspritenums=true;
 			break;

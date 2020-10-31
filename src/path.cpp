@@ -11,6 +11,7 @@ static int DotFound(const char *pB)
 	case ':'  :
 		if (*(pB-2) != '\0')
 			break;
+		/* FALLTHROUGH */
 	case '/'  :
 	case '\\' :
 	case '\0' :
@@ -102,6 +103,7 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 		case ':'  :
 			if (pB != &buf[2])
 				continue;
+			/* FALLTHROUGH */
 		case '\0' :
 			if (Wrk) {
 				if (*++pB)
@@ -110,6 +112,7 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 				*pB-- = 0;
 				break;
 			}
+			/* FALLTHROUGH */
 		case '/'  :
 		case '\\' :
 			if (!Wrk) {
@@ -126,6 +129,7 @@ int fnsplit(const char *pathP, char *driveP, char *dirP,
 		case '?'  :
 			if (!Wrk)
 				Ret |= WILDCARDS;
+			/* FALLTHROUGH */
                 default :
 			continue;
 		}
