@@ -1,0 +1,19 @@
+/objs/*
+/Makefile.local
+/grfcodec
+/grfcodec.exe
+/grfid
+/grfid.exe
+/grfstrip
+/grfstrip.exe
+/nforenum
+/nforenum.exe
+
+# Automatically generated source files
+/src/version.h
+/src/endian.h
+
+# Bundle/tarball names
+grfcodec-*
+
+/bundle
