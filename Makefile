@@ -72,7 +72,7 @@ FLAGS += -DMINGW
 endif
 
 # Sadly enough fmemopen is
-ifneq ($(shell grep fmemopen /usr/include/stdio.h 2> /dev/null | wc -l | sed "s/ *//"),0)
+ifneq ($(shell echo "#include <stdio.h>" | $(CXX) -E -x c++ - | grep fmemopen | wc -l | sed "s/ *//"),0)
 ifndef NO_FMEMOPEN
 FLAGS += -DWITH_FMEMOPEN
 endif
