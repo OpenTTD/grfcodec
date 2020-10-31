@@ -34,32 +34,12 @@ ENDIAN_CHECK ?= endian_check$(EXE)
 
 TYPESIZE     ?= GCC32
 
-# Somewhat automatic detection of the correct boost include folder
-ifndef BOOST_INCLUDE
-BOOST_INCLUDE=$(shell \
-find /usr/include /usr/local/include /opt/local/include -maxdepth 1 -name 'boost-*' 2> /dev/null | sort -t - -k 2 | tail -n 1 )
-ifeq ($(BOOST_INCLUDE),)
-BOOST_INCLUDE=$(shell \
-( [ -d /usr/include/boost/date_time ] && echo /usr/include ) || \
-( [ -d /usr/local/include/boost/date_time ] && echo /usr/local/include ) || \
-( [ -d /opt/local/include/boost/date_time ] && echo /opt/local/include ) )
-endif
-endif
-
-ifeq ($(BOOST_INCLUDE),)
-BOOST_ERROR = echo Error: Boost not found. Compilation will fail.
-endif
-
 ifndef V
 V=0 # verbose build default off
 endif
 
 ifndef FLAGS
-ifeq ($(ISCYGWIN),1)
-FLAGS = -I $(BOOST_INCLUDE) -O2
-else
-FLAGS = -idirafter$(BOOST_INCLUDE) -O2
-endif
+FLAGS = -O2
 FLAGS += -D$(TYPESIZE) -D_FORTIFY_SOURCE=2
 FLAGS += -Wall -Wextra -Wno-format-nonliteral
 
@@ -196,7 +176,6 @@ distclean: mrproper
 	$(_C)rm -rf Makefile.local
 
 FORCE:
-	@$(BOOST_ERROR)
 
 include version.def
 
