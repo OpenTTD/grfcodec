@@ -40,7 +40,7 @@ endif
 
 ifndef FLAGS
 FLAGS = -O2
-FLAGS += -D$(TYPESIZE) -D_FORTIFY_SOURCE=2
+FLAGS += -D$(TYPESIZE) -D_FORTIFY_SOURCE=2 -fstack-protector
 FLAGS += -Wall -Wextra -Wno-format-nonliteral
 
 ifeq ($(DEBUG),1)
