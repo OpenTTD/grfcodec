@@ -67,7 +67,7 @@ ifeq ($(DEBUG),1)
 FLAGS += -DDEBUG
 endif
 
-ifeq ($(MACHINE),mingw32)
+ifneq (,$(findstring mingw32,$(MACHINE)))
 FLAGS += -DMINGW
 endif
 
