@@ -30,8 +30,29 @@ if(MSVC)
 		string(REPLACE "/MD" "/MT" ${MSVC_FLAGS} "${${MSVC_FLAGS}}")
 	endforeach()
 
-	# Disable deprecation warnings
-	add_compile_options(/wd4996)
+	add_compile_options(
+		/wd4996 # Disable deprecation warnings
+		/W3
+	)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+	add_compile_options(
+		-Wall
+		-Wextra
+		-Wno-format-nonliteral
+	)
+endif()
+
+
+# Add some -D flags for Debug builds. We cannot use add_definitions(), because
+# it does not appear to support the $<> tags.
+add_compile_options(
+    "$<$<CONFIG:Debug>:-D_DEBUG>"
+    "$<$<NOT:$<CONFIG:Debug>>:-D_FORTIFY_SOURCE=2>" # FORTIFY_SOURCE should only be used in non-debug builds (requires -O1+)
+)
+if(MINGW)
+    add_link_options(
+        "$<$<NOT:$<CONFIG:Debug>>:-fstack-protector>" # Prevent undefined references when _FORTIFY_SOURCE > 0
+    )
 endif()
 
 
