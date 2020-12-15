@@ -70,6 +70,13 @@ else()
 endif()
 
 
+include(CheckCXXSymbolExists)
+check_cxx_symbol_exists("fmemopen" "cstdio" HAS_FMEMOPEN)
+if(HAS_FMEMOPEN)
+	add_definitions(-DWITH_FMEMOPEN)
+endif()
+
+
 # Prepare generated dir
 set(GENERATED_BINARY_DIR "${CMAKE_BINARY_DIR}/generated")
 include_directories("${GENERATED_BINARY_DIR}")
