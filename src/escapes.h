@@ -8,6 +8,7 @@
 #ifndef GRFCODEC
 
 #define START_ESCAPES()\
+	namespace {\
 	const struct esc{\
 		char byte;\
 		char*str;\
@@ -30,6 +31,7 @@
 #else	/* GRFCODEC */
 
 #define START_ESCAPES()\
+	namespace {\
 	const struct esc{\
 		char byte;\
 		char*str;\
@@ -59,7 +61,8 @@
 #endif /* GRFCODEC */
 
 #define END_ESCAPES() };\
-	static const unsigned int num_esc=sizeof(escapes)/sizeof(escapes[0]);
+	static const unsigned int num_esc=sizeof(escapes)/sizeof(escapes[0]);\
+	}
 
 #ifdef GRFCODEC
 
