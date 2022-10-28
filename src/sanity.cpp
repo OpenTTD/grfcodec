@@ -151,13 +151,15 @@ void Before8(int action){
 }
 
 bool CheckLength(int alen,int elen,RenumMessageId message,...){
-	WrapAp(message);
+	va_list ap;
+	va_start(ap, message);
 	if(alen<elen){
 		vIssueMessage(FATAL,message,ap);
 		return true;
 	}
 	if(alen>elen)
 		vIssueMessage(WARNING2,message,ap);
+	va_end(ap);
 	return false;
 }
 
