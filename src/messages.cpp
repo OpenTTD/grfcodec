@@ -60,8 +60,11 @@ void ManualConsoleMessages(){
 }
 
 string mysprintf(const char*str,...){
-	WrapAp(str);
-	return myvsprintf(str,ap);
+	va_list ap;
+	va_start(ap, str);
+	string result = myvsprintf(str,ap);
+	va_end(ap);
+	return result;
 }
 
 #if defined DEBUG || defined _DEBUG
@@ -69,8 +72,11 @@ static RenumMessageId curMessage;
 #endif
 
 string IssueMessage(int minSan,RenumMessageId id,...){
-	WrapAp(id);
-	return vIssueMessage(minSan,id,ap);
+	va_list ap;
+	va_start(ap, id);
+	string result = vIssueMessage(minSan,id,ap);
+	va_end(ap);
+	return result;
 }
 
 string vIssueMessage(int minSan,RenumMessageId id,va_list& arg_ptr){

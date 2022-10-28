@@ -22,7 +22,6 @@
 #ifndef _RENUM_SANITY_DEFS_H_INCLUDED_
 #define _RENUM_SANITY_DEFS_H_INCLUDED_
 
-#include <cstdarg>
 #include "message_mgr.h"
 
 bool CheckLength(int,int,RenumMessageId,...);
@@ -69,27 +68,5 @@ typedef auto_array<uint> Guintp;
 	auto_array<type>_p;\
 	type&operator[](uint x){return _p[x];}\
 	type operator[](uint x)const{return _p[x];}\
-
-class apWrapper{
-private:
-	va_list _ap;
-public:
-	~apWrapper(){va_end(_ap);}
-	operator va_list&(){return _ap;}
-	operator const va_list&()const{return _ap;}
-#ifdef __va_copy
-	va_list&operator=(va_list&ap){
-	    __va_copy(_ap,ap);
-		return _ap;
-	}
-#else
-	va_list const&operator=(va_list const&ap){
-	    return _ap=ap;
-	}
-#endif
-};
-#define WrapAp(v)\
-	apWrapper ap;\
-	va_start((va_list&)ap,v);
 
 #endif//_RENUM_SANITY_DEFS_H_INCLUDED_

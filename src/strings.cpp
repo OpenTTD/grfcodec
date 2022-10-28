@@ -23,6 +23,7 @@
 #include<string>
 #include<cerrno>
 #include<cstdlib>
+#include<cstdarg>
 
 using namespace std;
 
@@ -396,15 +397,15 @@ static const uchar stackSize[]={0,1,2,2,4,2,8};
 
 string MakeStack(int items,...){
 	string ret;
-	WrapAp(items);
+	va_list ap;
+	va_start(ap, items);
 	uint item;
 	for(int i=0;i<items;i++){
-		item=va_arg(ap.operator va_list&(),uint);
-		//             ^^^^^^^^^^^^^^^^^^^
-		// gcc complains without that call.
+		item=va_arg(ap, uint);
 		VERIFY(item&&item<STACK_INVALID,item);
 		ret+=string(stackSize[item],char(item|i<<4));
 	}
+	va_end(ap);
 	return ret;
 }
 
