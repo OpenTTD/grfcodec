@@ -9,7 +9,6 @@
 
 #include "info.h"
 #include "sprites.h"
-#include "error.h"
 #include "grfcomm.h"
 
 #define GRFCODEC
@@ -256,7 +255,7 @@ void infowriter::flush()
 
 				FILE *bin = fopen(filename, "wb");
 				if (!bin) {
-					fperror("Cannot write to %s", filename);
+					fprintf(stderr, "Cannot write to %s", filename);
 					exit(2);
 				}
 				cfwrite("writing binary include", d->data+3+namelen, d->size-3-namelen, 1, bin);

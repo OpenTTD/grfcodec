@@ -49,7 +49,6 @@
 #include "ttdpal.h"
 #include "grfcomm.h"
 #include "info.h"
-#include "error.h"
 #include "version.h"
 #include "conv.h"
 #include "nfosprite.h"
@@ -228,7 +227,7 @@ static int movetoreal(char *newfile, char *realfile)
 	if (access(realfile, F_OK) == 0) {
 		if (_interactive) printf("\nDeleting %s",realfile);
 		if (remove(realfile))
-			fperror("\nError deleting %s", realfile);
+			fprintf(stderr, "\nError deleting %s", realfile);
 	}
 
 	// rename tmp to grf
@@ -236,7 +235,7 @@ static int movetoreal(char *newfile, char *realfile)
 	if (_interactive) printf("\nReplacing %s with %s\n", realfile, newfile);
 
 	if (rename(newfile, realfile)) {
-		fperror("Error renaming %s to %s", newfile, realfile);
+		fprintf(stderr, "Error renaming %s to %s", newfile, realfile);
 		exit(2);
 	}
 	return 1;
@@ -395,13 +394,13 @@ static int encode(const char *file, const char *dir, int compress, int *colourma
 				const char *bininclude=((const Include&)info[i]).GetName();
 				FILE *bin = fopen(bininclude, "rb");
 				if (!bin) {
-					fperror("%s:%i: Error: Cannot include %s: Could not open.\n", file, i, bininclude);
+					fprintf(stderr, "%s:%i: Error: Cannot include %s: Could not open.\n", file, i, bininclude);
 					exit(2);
 				}
 
 				struct stat stat_buf;
 				if ( fstat(fileno(bin), &stat_buf) ) {
-					fperror("%s:%i: Error: Could not stat %s.\n", file, i, bininclude);
+					fprintf(stderr, "%s:%i: Error: Could not stat %s.\n", file, i, bininclude);
 					exit(2);
 				}
 				if ( stat_buf.st_mode & S_IFDIR ) {
@@ -663,7 +662,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 
 	grf = fopen(file, "rb");
 	if (!grf) {
-		fperror(e_openfile, file);
+		fprintf(stderr, e_openfile, file);
 		exit(2);
 	}
 
@@ -674,12 +673,12 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	if (stat(realdir, &statbuf)) {
 		// error during stat
 		if (errno != ENOENT) {
-			fperror("Error accessing %s", realdir);
+			fprintf(stderr, "Error accessing %s", realdir);
 			exit(2);
 		}
 
 		if (mkdir(realdir, 0755)) {
-			fperror("Error making %s", realdir);
+			fprintf(stderr, "Error making %s", realdir);
 			exit(2);
 		}
 	}
@@ -807,7 +806,7 @@ static U8 *readpal(const char *filearg)
 
 	FILE *f = fopen(filearg, "rb");
 	if (!f) {
-		fperror(e_openfile, filearg);
+		fprintf(stderr, e_openfile, filearg);
 		exit(1);
 	}
 

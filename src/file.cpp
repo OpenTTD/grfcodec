@@ -19,7 +19,6 @@
 #include <cstring>
 
 #include "file.h"
-#include "error.h"
 
 /***********************\
 *						*
@@ -31,7 +30,7 @@ singlefile::singlefile(const char *filename, const char *mode, const char *dir)
 {
 	FILE *f = fopen(filename, mode);
 	if (!f) {
-		fperror("\nCan't read %s", filename);
+		fprintf(stderr, "\nCan't read %s", filename);
 		exit(1);
 	}
 	setfile(f);

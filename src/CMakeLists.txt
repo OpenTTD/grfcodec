@@ -18,7 +18,6 @@ target_sources(grfstrip PRIVATE
 
 # Add files for grfcodec
 target_sources(grfcodec PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/error.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/file.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/globals.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/grfcodec.cpp

@@ -19,7 +19,6 @@
 //#include <mem.h>
 
 #include "pcxfile.h"
-#include "error.h"
 
 
 /***********************\
