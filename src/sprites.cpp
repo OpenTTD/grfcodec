@@ -17,7 +17,6 @@
 \*****************************************/
 
 #include <stdlib.h>
-#include "error.h"
 
 #include "sprites.h"
 #include "grfcomm.h"

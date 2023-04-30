@@ -19,7 +19,6 @@
 #endif
 
 
-#include "error.h"
 //#include "sprites.h"
 
 #include "path.h"
@@ -121,15 +120,15 @@ char *spritefilename(const char *basefilename, const char *reldirectory, const c
 			if (errno == ENOENT) {		// directory doesn't exist
 				if (strchr(mode, 'w')) {	// but we need to write to a file there
 					if (mkdir(directory, 0755)) {	// so try creating it
-						fperror("Creating %.228s", directory);
+						fprintf(stderr, "Creating %.228s", directory);
 						exit(2);
 					}
 				} else {			// not writing, so report file missing
-					fperror("Cannot read %s", filename);
+					fprintf(stderr, "Cannot read %s", filename);
 					exit(2);
 				}
 			} else {
-				fperror(e_openfile, filename);
+				fprintf(stderr, e_openfile, filename);
 				exit(2);
 			}
 		} else
@@ -156,7 +155,7 @@ int doopen(const char *grffile, const char *dir, const char *ext, const char *mo
 	f = fopen(fn, mode);
 
 	if (!f) {
-		fperror(e_openfile, lastspritefilename);
+		fprintf(stderr, e_openfile, lastspritefilename);
 		exit(2);
 	}
 
@@ -171,7 +170,7 @@ void cfread(const char *action, void *ptr, size_t size, size_t n, FILE *stream)
 	size_t read = fread(ptr, 1, size * n, stream);
 
 	if (read != size * n) {
-		fperror("\nError while %s, got %d, wanted %d, at %ld", action, read, size * n,
+		fprintf(stderr, "\nError while %s, got %zd, wanted %zd, at %ld", action, read, size * n,
 			ftell(stream));
 		exit(2);
 	}
@@ -182,7 +181,7 @@ void cfwrite(const char *action, const void *ptr, size_t size, size_t n, FILE *s
 	size_t written = fwrite(ptr, 1, size * n, stream);
 
 	if (written != size * n) {
-		fperror("\nError while %s, got %d, wanted %d", action, written, size * n);
+		fprintf(stderr, "\nError while %s, got %zd, wanted %zd", action, written, size * n);
 		exit(2);
 	}
 }
