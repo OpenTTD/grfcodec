@@ -250,7 +250,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	printf("Unable to get requested information: %s\n", err);
+	fprintf(stderr, "Unable to get requested information: %s\n", err);
 	return 1;
 }
 
