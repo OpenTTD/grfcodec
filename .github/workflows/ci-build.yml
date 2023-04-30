@@ -86,15 +86,16 @@ jobs:
       uses: actions/cache@v3
       with:
         path: /usr/local/share/vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-0 # Increase the number whenever dependencies are modified
+        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
         restore-keys: |
           ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
 
     - name: Prepare vcpkg
       run: |
         vcpkg install --triplet=${{ matrix.arch }}-osx \
-          boost-assert \
           boost-bimap \
+          boost-date-time \
+          boost-foreach \
           # EOF
 
     - name: Install GCC problem matcher
@@ -146,7 +147,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-0 # Increase the number whenever dependencies are modified
+        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
         restore-keys: |
           ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
 
@@ -154,8 +155,9 @@ jobs:
       shell: bash
       run: |
         vcpkg install --triplet=${{ matrix.arch }}-windows-static \
-          boost-assert \
           boost-bimap \
+          boost-date-time \
+          boost-foreach \
           libpng \
           # EOF
 
