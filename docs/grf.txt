@@ -209,8 +209,8 @@ Compression algorithm
    The meaning of the following bytes depends on whether the high bit of
    code is set.
 
-   If the high bit is not set, what follows is code&0x7f bytes of
-   verbatim data.
+   If the high bit is not set, what follows is code&0x7f bytes (128 bytes
+   if code is 0) of verbatim data.
 
    If the high bit is set, the code has a slightly different meaning.
    Bits 3 to 7 are now three bits to a length value, stating how much
