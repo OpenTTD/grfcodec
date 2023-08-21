@@ -900,7 +900,7 @@ static U8* findpal(char *grffile)
 			return defaultpalettes[defpals[i].defpalno];
 	}
 
-	return defaultpalettes[0];
+	return defaultpalettes[PAL_ttd_norm];
 }
 
 //extern "C" void debugint(void);
