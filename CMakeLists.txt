@@ -95,12 +95,12 @@ add_custom_target(version_header
 
 # Target to generate ttpal.h
 set(PALETTE_SOURCE_FILES
-	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/tt1_mars.bcp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/tt1_norm.bcp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttd_cand.bcp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttd_norm.bcp
-	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_cand.bcp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_norm.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttd_cand.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_cand.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/tt1_norm.bcp
+	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/tt1_mars.bcp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_pb_pal1.bcp
 	${CMAKE_CURRENT_SOURCE_DIR}/src/pals/ttw_pb_pal2.bcp
 )
