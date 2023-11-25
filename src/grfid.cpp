@@ -5,83 +5,106 @@
  * See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with OpenTTD. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <string.h>
+#include <cstdbool>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <filesystem>
+#include <fstream>
+#include <vector>
 
 #include "md5.h"
 
-#ifndef _WIN32
-#include <sys/mman.h>
-#else
-#include <stdlib.h>
-#define PROT_READ 0
-#define MAP_PRIVATE 0
-/* Lets fake mmap for Windows, please! */
-void *mmap (void * /*ptr*/, size_t size, long /*prot*/, long /*type*/, long handle, long /*arg*/) {
-	char *mem = (char*)malloc(size + 1);
-	mem[size] = 0;
-	FILE *in = fdopen(handle, "rb");
-	if (fread(mem, size, 1, in) != 1) {
-		fclose(in);
-		free(mem);
-		return NULL;
-	}
-	fclose(in);
-	return mem;
-}
-long munmap (void *ptr, size_t /*size*/) {
-	free(ptr);
-	return 0;
-}
-#endif
-
 #include "version.h"
 
-size_t _file_length;
-uint8_t *_file_buffer;
-uint8_t *_buffer;
+struct FileReader {
+	std::vector<uint8_t> file_buffer;
+	std::vector<uint8_t>::iterator buffer;
 
-inline void SkipBytes(size_t count)
-{
-	_buffer += count;
-}
+	/**
+	 * Open a file for reading.
+	 * @param filename Filename of file to read.
+	 * @return true iff the file was successfully opened for reading.
+	 */
+	bool Open(const std::string &filename)
+	{
+		/* Open file at the end -- this puts us in the right place to get the file size. */
+		std::ifstream ifs(filename, std::ios::binary | std::ios::ate);
+		if (!ifs) return false;
 
-inline uint8_t ReadByte()
-{
-	if (_buffer >= _file_buffer + _file_length) return 0;
-	return *(_buffer++);
-}
+		/* Get file size. */
+		auto end = ifs.tellg();
+		ifs.seekg(0, std::ios::beg);
+		auto size = std::size_t(end - ifs.tellg());
 
-inline uint16_t ReadWord()
-{
-	uint16_t v = ReadByte();
-	return v | (ReadByte() << 8);
-}
+		/* Don't load empty file. */
+		if (size == 0) return false;
 
-inline uint32_t ReadDWord()
-{
-	uint32_t v = ReadWord();
-	return v | (ReadWord() << 16);
-}
+		this->file_buffer.resize(size);
 
-void SkipSpriteData(uint8_t type, int32_t num)
+		/* Slurp the file into the buffer. */
+		if (!ifs.read((char *)this->file_buffer.data(), this->file_buffer.size())) return false;
+
+		this->buffer = this->file_buffer.begin();
+		return true;
+	}
+
+	/**
+	 * Skip bytes in the buffer.
+	 * @param count bytes to skip.
+	 */
+	inline void SkipBytes(size_t count)
+	{
+		this->buffer += count;
+	}
+
+	/**
+	 * Read byte from buffer.
+	 * @return byte from buffer.
+	 */
+	inline uint8_t ReadByte()
+	{
+		if (this->buffer >= this->file_buffer.end()) return 0;
+		return *(this->buffer++);
+	}
+
+	/**
+	 * Read 16-bit little-endian word from buffer.
+	 * @return 16-bit word from buffer.
+	 */
+	inline uint16_t ReadWord()
+	{
+		uint16_t v = ReadByte();
+		return v | (ReadByte() << 8);
+	}
+
+	/**
+	 * Read 32-bit little-endian doubleword from buffer.
+	 * @return 32-bit doubleword from buffer.
+	 */
+	inline uint32_t ReadDWord()
+	{
+		uint32_t v = ReadWord();
+		return v | (ReadWord() << 16);
+	}
+};
+
+void SkipSpriteData(FileReader &file, uint8_t type, int32_t num)
 {
 	if (type & 2) {
-		SkipBytes(num);
+		file.SkipBytes(num);
 	} else {
 		/* Note: num is signed. Invalid formats will result in num < 0 and abort the loop. */
 		while (num > 0) {
-			int8_t i = ReadByte();
+			int8_t i = file.ReadByte();
 			if (i >= 0) {
 				int size = (i == 0) ? 0x80 : i;
 				num -= size;
-				SkipBytes(size);
+				file.SkipBytes(size);
 			} else {
 				i = -(i >> 3);
 				num -= i;
-				ReadByte();
+				file.ReadByte();
 			}
 		}
 	}
@@ -92,114 +115,89 @@ inline uint32_t Swap32(uint32_t x)
 	return ((x >> 24) & 0xFF) | ((x >> 8) & 0xFF00) | ((x << 8) & 0xFF0000) | ((x << 24) & 0xFF000000);
 }
 
-static const char header[] = {
-	'\x00', '\x00',                 // End-of-file marker for old OTTDp versions
-	'G',    'R',    'F',    '\x82', // Container version 2
-	'\x0D', '\x0A', '\x1A', '\x0A', // Detect garbled transmission
+static const uint8_t header[] = {
+	0x00, 0x00,             // End-of-file marker for old OTTDp versions
+	'G',  'R',  'F',  0x82, // Container version 2
+	0x0d, 0x0a, 0x1a, 0x0a, // Detect garbled transmission
 };
 
-inline uint32_t ReadSize(int grfcontversion)
+inline uint32_t ReadSize(FileReader &file, int grfcontversion)
 {
-	return grfcontversion == 2 ? ReadDWord() : ReadWord();
+	return grfcontversion == 2 ? file.ReadDWord() : file.ReadWord();
 }
-
 
 const char *GetGrfID(const char *filename, uint32_t *grfid)
 {
 	*grfid = 0;
 
-	FILE *f = fopen(filename, "rb");
-	if (f == NULL) return "Unable to open file";
-
-	/* Get the length of the file */
-	fseek(f, 0, SEEK_END);
-	_file_length = ftell(f);
-	fseek(f, 0, SEEK_SET);
-
-	/* Map the file into memory */
-	_file_buffer = (uint8_t*)mmap(NULL, _file_length, PROT_READ, MAP_PRIVATE, fileno(f), 0);
-	_buffer = _file_buffer;
+	FileReader file;
+	if (!file.Open(filename)) return "Unable to open file";
 
 	int grfcontversion = 1;
 
-	if (_file_length > sizeof(header) && memcmp(_buffer, header, sizeof(header)) == 0) {
+	if (file.file_buffer.size() > sizeof(header) && std::equal(std::begin(header), std::end(header), file.buffer)) {
 		grfcontversion = 2;
-		_buffer += sizeof(header) + 4 + 1; // Header + offset till data + compression
+		file.buffer += sizeof(header) + 4 + 1; // Header + offset till data + compression
 	}
 
 	/* Check the magic header, or what there is of one */
-	if (ReadSize(grfcontversion) != 0x04 || ReadByte() != 0xFF) return "No magic header";
+	if (ReadSize(file, grfcontversion) != 0x04 || file.ReadByte() != 0xFF) return "No magic header";
 
 	/* Number of sprites. */
-	ReadDWord();
+	file.ReadDWord();
 
-	while (_buffer < _file_buffer + _file_length) {
-		uint32_t num = ReadSize(grfcontversion);
+	while (file.buffer < file.file_buffer.end()) {
+		uint32_t num = ReadSize(file, grfcontversion);
 		if (num == 0) break;
 
-		if (_buffer + num > _file_buffer + _file_length) return "Corrupt GRF; would read beyond buffer";
+		if (file.buffer + num > file.file_buffer.end()) return "Corrupt GRF; would read beyond buffer";
 
-		uint8_t type = ReadByte();
+		uint8_t type = file.ReadByte();
 		if (type == 0xFF) {
 			/* Pseudo sprite */
-			uint8_t action = ReadByte();
+			uint8_t action = file.ReadByte();
 			if (action == 0x08) {
 				/* GRF Version, do not care */
-				ReadByte();
+				file.ReadByte();
 				/* GRF ID */
-				*grfid = Swap32(ReadDWord());
+				*grfid = Swap32(file.ReadDWord());
 				/* No more, we don't care */
 				break;
 			} else {
-				SkipBytes(num - 1);
+				file.SkipBytes(num - 1);
 			}
 		} else if (grfcontversion == 2 && type== 0xfd) {
 			/* Skip sprite offset */
-			ReadDWord();
+			file.ReadDWord();
 		} else if (grfcontversion == 1) {
-			SkipBytes(7);
+			file.SkipBytes(7);
 			/* Skip sprite data */
-			SkipSpriteData(type, num - 8);
+			SkipSpriteData(file, type, num - 8);
 		} else {
 			/* Invalid format, skip to end */
-			_buffer = _file_buffer + _file_length;
+			file.buffer = file.file_buffer.end();
 		}
 	}
 
-	munmap(_file_buffer, _file_length);
-	fclose(f);
-
-	return (*grfid == 0) ? "File valid but no GrfID found" : NULL;
+	return (*grfid == 0) ? "File valid but no GrfID found" : nullptr;
 }
 
-const char *GetMD5(const char *filename, md5_state_t *md5)
+const char *GetMD5(const char *filename, md5_state_t &md5)
 {
-	FILE *f = fopen(filename, "rb");
-	if (f == NULL) return "Unable to open file";
+	FileReader file;
+	if (!file.Open(filename)) return "Unable to open file";
 
-	/* Get the length of the file */
-	fseek(f, 0, SEEK_END);
-	_file_length = ftell(f);
-	fseek(f, 0, SEEK_SET);
-
-	/* Map the file into memory */
-	_file_buffer = (uint8_t*)mmap(NULL, _file_length, PROT_READ, MAP_PRIVATE, fileno(f), 0);
-	_buffer = _file_buffer;
-
-	size_t read_length = _file_length;
-	if (_file_length > sizeof(header) && memcmp(_buffer, header, sizeof(header)) == 0) {
-		_buffer += sizeof(header);
+	size_t read_length = file.file_buffer.size();
+	if (file.file_buffer.size() > sizeof(header) && std::equal(std::begin(header), std::end(header), file.buffer)) {
+		file.buffer += sizeof(header);
 		/* Reduce the length to contain only the data, but not the sprites. */
-		read_length = sizeof(header) + 4 + ReadDWord();
-		if (read_length > _file_length) return "Invalid sprite location offset";
+		read_length = sizeof(header) + 4 + file.ReadDWord();
+		if (read_length > file.file_buffer.size()) return "Invalid sprite location offset";
 	}
 
-	md5_append(md5, _file_buffer, (int)read_length);
+	md5_append(&md5, file.file_buffer.data(), (int)read_length);
 
-	munmap(_file_buffer, _file_length);
-	fclose(f);
-
-	return NULL;
+	return nullptr;
 }
 
 int main(int argc, char **argv)
@@ -230,7 +228,7 @@ int main(int argc, char **argv)
 	if (strcmp(argv[1], "-m") == 0) {
 		md5_state_t md5;
 		md5_init(&md5);
-		err = GetMD5(argv[2], &md5);
+		err = GetMD5(argv[2], md5);
 		if (err == NULL) {
 			md5_byte_t digest[16];
 			md5_finish(&md5, digest);
@@ -244,13 +242,13 @@ int main(int argc, char **argv)
 		uint32_t grfid;
 		err = GetGrfID(argv[1], &grfid);
 
-		if (err == NULL) {
+		if (err == nullptr) {
 			printf("%08x\n", grfid);
 			return 0;
 		}
 	}
 
-	fprintf(stderr, "Unable to get requested information: %s\n", err);
+	fprintf(stderr, "Unable to get requested information: %s (%s)\n", err, std::strerror(errno));
 	return 1;
 }
 
