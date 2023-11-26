@@ -201,7 +201,6 @@ void SpriteInfo::writetobuffer(U8 *buffer, int grfcontversion)
 
 void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf, int spriteno)
 {
-	int i = 0;
 	if (grfcontversion == 2) {
 		U8 data = fgetc(grf);
 		/* According to the documentation bit 0 must always be set, and bits 3 and 6 are the same as in the nfo. */
@@ -217,7 +216,6 @@ void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf,
 		}
 		this->zoom = fgetc(grf);
 		this->ydim = readword(action, grf);
-		i += 2;
 	} else {
 		this->info = fgetc(grf);
 		this->depth = DEPTH_8BPP;
