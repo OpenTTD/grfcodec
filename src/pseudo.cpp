@@ -791,15 +791,15 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 			return 0;
 		}
 		int val, err = 0;
-		size_t s = in.tellg();
+		auto s = in.tellg();
 		val = DoCalc(in.ignore(),err);
 		if (err>0)
 			return 0;
 
 		// Replace the original RPN with value
-		size_t e = in.tellg(),
-			p = orig.find(((istringstream&)in).str().substr(s, e - s));
-		orig.erase(p, e - s);
+		auto e = in.tellg();
+		size_t p = orig.find(((istringstream&)in).str().substr(size_t(s), size_t(e - s)));
+		orig.erase(p, size_t(e - s));
 		ostringstream Val;
 		Val << val;
 		orig.insert(p, Val.str());
