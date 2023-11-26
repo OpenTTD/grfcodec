@@ -172,9 +172,9 @@ void pcxwrite::showspriteno()
 	char spritenum[10];
 	int newlastx;
 	if(_hexspritenums)
-		sprintf(spritenum, "%X", spriteno);
+		snprintf(spritenum, sizeof(spritenum), "%X", spriteno);
 	else
-		sprintf(spritenum, "%d", spriteno);
+		snprintf(spritenum, sizeof(spritenum), "%d", spriteno);
 
 	newlastx = subx+strlen(spritenum)*(DIGITWIDTH+1)+dx;
 	if (newlastx >= pcxfile::sx)
