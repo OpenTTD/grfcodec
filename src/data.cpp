@@ -1240,18 +1240,30 @@ FILE*_myfopen(files file, bool write){
 	}
 #if WITH_FMEMOPEN
 	if (!write) {
-		pFile = fmemopen(const_cast<char *>(datafiles[file].data), datafiles[file].len, "rb");
-		if (pFile == NULL) {
-			IssueMessage(0, DATAFILE_ERROR, OPEN, datafiles[file].name + 1, ERRNO, errno);
-			perror(NULL);
-			assert(false);
-			exit(EDATA);
+#if defined(__clang__) && __has_builtin(__builtin_available)
+		if (__builtin_available(macOS 10.13, *)) {
+#endif
+			pFile = fmemopen(const_cast<char *>(datafiles[file].data), datafiles[file].len, "rb");
+			if (pFile == NULL) {
+				IssueMessage(0, DATAFILE_ERROR, OPEN, datafiles[file].name + 1, ERRNO, errno);
+				perror(NULL);
+				assert(false);
+				exit(EDATA);
+			}
+#if defined(__clang__) && __has_builtin(__builtin_available)
+		} else {
+			write = true;
 		}
+	}
+	if (write)
+#else
 	} else
+#endif
+
 #else
 	(void)write;
 #endif /* WITH_FMEMOPEN */
-	{
+	if (write) {
 		pFile = tryopen(datafiles[file].name,"wb");
 		if (fwrite(datafiles[file].data, 1, datafiles[file].len, pFile) != datafiles[file].len) {
 			IssueMessage(0, DATAFILE_ERROR, WRITE, datafiles[file].name + 1, -1);
