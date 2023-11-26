@@ -19,7 +19,7 @@ jobs:
           - compiler: gcc
             cxxcompiler: g++
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       CC: ${{ matrix.compiler }}
       CXX: ${{ matrix.cxxcompiler }}
