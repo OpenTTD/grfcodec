@@ -56,7 +56,6 @@ if(MINGW)
 endif()
 
 
-find_package(Git REQUIRED)
 find_package(PNG)
 find_package(Boost REQUIRED)
 
@@ -84,12 +83,9 @@ include_directories("${GENERATED_BINARY_DIR}")
 # Target to generate version.h
 add_custom_target(version_header
 	COMMAND ${CMAKE_COMMAND}
-		-D GIT_EXECUTABLE=${GIT_EXECUTABLE}
-		-D INPUT_FILE=${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in
-		-D OUTPUT_FILE=${GENERATED_BINARY_DIR}/version.h
+		-DGENERATED_BINARY_DIR=${GENERATED_BINARY_DIR}
 		-P "${CMAKE_CURRENT_SOURCE_DIR}/generate_version.cmake"
-	DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in"
-	DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/generate_version.cmake"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	BYPRODUCTS "${GENERATED_BINARY_DIR}/version.h"
 )
 
@@ -115,6 +111,7 @@ add_custom_target(palettes_header
 	DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/ttdpal.h.in"
 	DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/pal2c.cmake"
 	BYPRODUCTS "${GENERATED_BINARY_DIR}/ttdpal.h"
+	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 
 
