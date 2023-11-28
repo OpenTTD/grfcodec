@@ -34,4 +34,7 @@ if(WRITE_VERSION)
 else()
 	message(STATUS "Generating version.h")
 	configure_file("src/version.h.in" "${GENERATED_BINARY_DIR}/version.h")
+
+	message(STATUS "Generating CPackProperties.cmake")
+	configure_file("CPackProperties.cmake.in" "${CPACK_BINARY_DIR}/CPackProperties.cmake" @ONLY)
 endif()

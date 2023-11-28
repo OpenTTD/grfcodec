@@ -1,0 +1,5 @@
+# Make the current version available to CPack
+set(CPACK_PACKAGE_VERSION "@GIT_VERSION@")
+
+# Name the output file with the correct version
+string(REPLACE "#CPACK_PACKAGE_VERSION#" "${CPACK_PACKAGE_VERSION}" CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}")
