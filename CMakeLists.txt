@@ -146,3 +146,23 @@ endif()
 
 # Add source files
 add_subdirectory(src)
+
+
+# Install files
+include(GNUInstallDirs)
+
+install(TARGETS
+	grfid
+	grfstrip
+	nforenum
+	grfcodec
+	DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(FILES
+	${CMAKE_CURRENT_SOURCE_DIR}/changelog.txt
+	${CMAKE_CURRENT_SOURCE_DIR}/COPYING
+	DESTINATION ${CMAKE_INSTALL_DOCDIR}
+)
+
+add_subdirectory(docs)
