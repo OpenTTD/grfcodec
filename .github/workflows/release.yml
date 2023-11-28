@@ -1,0 +1,146 @@
+name: Release
+
+on:
+  release:
+    types:
+    - published
+
+jobs:
+  source:
+    name: Source
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Generate .version
+      run: |
+        cmake -DWRITE_VERSION=1 -P generate_version.cmake
+
+    - name: Create bundles
+      run: |
+        FOLDER_NAME=grfcodec-${{ github.event.release.tag_name }}
+
+        # Rename the folder to grfcodec-NNN
+        mkdir ${FOLDER_NAME}
+        find . -maxdepth 1 -not -name . -not -name .git -not -name ${FOLDER_NAME} -exec mv {} ${FOLDER_NAME}/ \;
+
+        mkdir -p build/bundles
+
+        echo "::group::Create tarball (xz) bundle"
+        tar --xz -cvf build/bundles/${FOLDER_NAME}-source.tar.xz ${FOLDER_NAME}
+        echo "::endgroup::"
+
+        echo "::group::Create zip bundle"
+        zip -9 -r build/bundles/${FOLDER_NAME}-source.zip ${FOLDER_NAME}
+        echo "::endgroup::"
+
+    - name: Store bundles
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release upload ${{ github.event.release.tag_name }} build/bundles/*
+
+  windows:
+    needs: source
+
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86, x64]
+
+    name: Windows (${{ matrix.arch }})
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Prepare build dir for gh usage
+      shell: bash
+      run: |
+        git init build
+        cd build
+        git remote add origin ${{ github.event.repository.html_url }}
+
+    - name: Download source
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash
+      run: |
+        cd build
+        gh release download ${{ github.event.release.tag_name }} -p "*.xz" -D ..
+
+    - name: Unpack source
+      shell: bash
+      run: |
+        tar --xz -xf *-source.tar.xz --strip-components=1
+
+    - name: Prepare cache key
+      id: key
+      shell: powershell
+      run: |
+        # Work around caching failure with GNU tar
+        New-Item -Type Junction -Path vcpkg -Target c:\vcpkg
+
+        Write-Output "image=$env:ImageOS-$env:ImageVersion" >> $env:GITHUB_OUTPUT
+
+    - name: Enable vcpkg cache
+      uses: actions/cache@v3
+      with:
+        path: vcpkg/installed
+        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
+        restore-keys: |
+          ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
+
+    - name: Prepare vcpkg
+      shell: bash
+      run: |
+        vcpkg install --triplet=${{ matrix.arch }}-windows-static \
+          boost-bimap \
+          boost-date-time \
+          boost-foreach \
+          libpng \
+          # EOF
+
+    - name: Install MSVC problem matcher
+      uses: ammaraskar/msvc-problem-matcher@master
+
+    - name: Configure developer command prompt for ${{ matrix.arch }}
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ matrix.arch }}
+
+    - name: Build
+      shell: bash
+      run: |
+        cd build
+
+        echo "::group::CMake"
+        cmake .. \
+          -GNinja \
+          -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-windows-static \
+          -DCMAKE_TOOLCHAIN_FILE="c:\vcpkg\scripts\buildsystems\vcpkg.cmake" \
+          -DCMAKE_BUILD_TYPE=Release \
+          # EOF
+        echo "::endgroup::"
+
+        echo "::group::Build"
+        cmake --build .
+        echo "::endgroup::"
+
+    - name: Create bundles
+      shell: bash
+      run: |
+        cd build
+        echo "::group::Run CPack"
+        cpack
+        echo "::endgroup::"
+
+    - name: Store bundles
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: bash
+      run: |
+        cd build
+        gh release upload ${{ github.event.release.tag_name }} bundles/*
