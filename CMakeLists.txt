@@ -84,6 +84,7 @@ include_directories("${GENERATED_BINARY_DIR}")
 add_custom_target(version_header
 	COMMAND ${CMAKE_COMMAND}
 		-DGENERATED_BINARY_DIR=${GENERATED_BINARY_DIR}
+		-DCPACK_BINARY_DIR=${CMAKE_BINARY_DIR}
 		-P "${CMAKE_CURRENT_SOURCE_DIR}/generate_version.cmake"
 	WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 	BYPRODUCTS "${GENERATED_BINARY_DIR}/version.h"
@@ -163,3 +164,22 @@ install(FILES
 )
 
 add_subdirectory(docs)
+
+
+# CPack
+if(WIN32)
+	if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+		set(ARCHITECTURE "win64")
+	else()
+		set(ARCHITECTURE "win32")
+	endif()
+
+	set(CPACK_SYSTEM_NAME "${ARCHITECTURE}")
+	set(CPACK_STRIP_FILES YES)
+	set(CPACK_OUTPUT_FILE_PREFIX "bundles")
+	set(CPACK_PACKAGE_FILE_NAME "grfcodec-#CPACK_PACKAGE_VERSION#-windows-${CPACK_SYSTEM_NAME}")
+
+	set(CPACK_GENERATOR "ZIP")
+
+	include(CPack)
+endif()
