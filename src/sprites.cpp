@@ -17,6 +17,7 @@
 \*****************************************/
 
 #include <stdlib.h>
+#include <map>
 
 #include "sprites.h"
 #include "grfcomm.h"
@@ -241,7 +242,9 @@ static void writesprite(bool first, spritestorage *image_writer, spriteinfowrite
 	image_writer->spritedone(info.xdim, info.ydim);
 }
 
-int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, spriteinfowriter *writer, int spriteno, U32 *dataoffset, int grfcontversion)
+extern std::map<uint, off_t> _sprite_offsets;
+
+int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, spriteinfowriter *writer, int spriteno, int grfcontversion)
 {
 	static const char *action = "decoding sprite";
 	unsigned long size, datasize, inbufsize, outbufsize, startpos, returnpos = 0;
@@ -268,7 +271,8 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 		id = readdword(action, grf);
 		returnpos = ftell(grf);
 
-		fseek(grf, *dataoffset, SEEK_SET);
+		uint32_t dataoffset = _sprite_offsets[id];
+		fseek(grf, dataoffset, SEEK_SET);
 	}
 
 	long result;
@@ -302,7 +306,6 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 			result = 1;
 
 			if (returnpos == 0) return result;
-			*dataoffset = startpos + size + 1;
 			break;
 		}
 
@@ -422,10 +425,7 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 		free(outbuffer);
 		free(imgbuffer);
 
-		if (returnpos != 0) {
-			*dataoffset = startpos + inbufsize;
-			if (grfcontversion == 2 && HASTRANSPARENCY(info.info)) *dataoffset += 4;
-		} else {
+		if (returnpos == 0) {
 			returnpos = startpos + inbufsize;
 			break;
 		}

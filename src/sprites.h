@@ -91,7 +91,7 @@ class spritestorage {
 
 extern int maxx, maxy, maxs;
 
-int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, spriteinfowriter *writer, int spriteno, U32 *dataoffset, int grfcontversion);
+int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, spriteinfowriter *writer, int spriteno, int grfcontversion);
 
 long getlasttilesize();
 long encodetile(U8 **compressed_data, long *uncompressed_size, const CommonPixel *image, long imgsize, int sx, int sy, SpriteInfo inf, int docompress, int spriteno, bool has_mask, bool rgba, int grfcontversion);

@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <getopt.h>
 #include <algorithm>
+#include <map>
 
 #ifdef __MINGW32__
 	#include <io.h>
@@ -651,6 +652,31 @@ foundlast:
 	return 0;
 }
 
+std::map<uint, off_t> _sprite_offsets{};
+
+static void read_grf_sprite_offsets(FILE *grf)
+{
+	_sprite_offsets.clear();
+
+	const char action[] = "Reading sprite offsets";
+	uint32_t offset = readdword(action, grf);
+	off_t pos = ftell(grf);
+	fseek(grf, offset, SEEK_CUR);
+
+	uint id = 0, count = 0;
+	while ((id = readdword(action, grf)) != 0) {
+		if (_sprite_offsets.count(id) == 0)
+			_sprite_offsets[id] = ftell(grf) - 4;
+
+		fseek(grf, readdword(action, grf), SEEK_CUR);
+		count++;
+	}
+
+	printf("Found %zu / %u container chunks\n", _sprite_offsets.size(), count);
+
+	fseek(grf, pos, SEEK_SET);
+}
+
 static int decode(const char *file, const char *dir, const U8 *palette, int box, int width, int height, int *colourmap, int useplaintext)
 {
 	int count, result, lastpct = -1;
@@ -694,14 +720,13 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	cfread(action, buffer, 1, sizeof(buffer), grf);
 	int grfcontversion = memcmp(buffer, header, sizeof(header)) == 0 ? 2 : 1;
 
-	U32 dataoffset = 0;
+	printf("Found grf container version %d\n", grfcontversion);
 	if (grfcontversion == 1) {
 		fseek(grf, 0, SEEK_SET);
 	} else {
-		dataoffset = sizeof(header) + 4 + readdword(action, grf); // GRF data offset
+		read_grf_sprite_offsets(grf);
 		fgetc(grf); // Compression
 	}
-	printf("Found grf container version %d\n", grfcontversion);
 
 	// We do the 'file' and 'writer' seperate to make
 	//   this a little bit less messy
@@ -764,7 +789,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 		pcx->newsprite();
 		if (pcx32 != NULL) pcx32->newsprite();
 
-		result = decodesprite(grf, pcx, pcx32, &writer, count, &dataoffset, grfcontversion);
+		result = decodesprite(grf, pcx, pcx32, &writer, count, grfcontversion);
 		writer.flush();
 		count++;
 	} while (result);
