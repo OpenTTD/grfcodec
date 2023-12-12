@@ -392,14 +392,14 @@ int decodesprite(FILE *grf, spritestorage *imgpal, spritestorage *imgrgba, sprit
 				printf("\nError: cannot decode 32bpp sprites to pcx\n");
 				exit(2);
 			}
-			writesprite(false, imgrgba, writer, imgbuffer, info);
+			writesprite(i == 0, imgrgba, writer, imgbuffer, info);
 		} else if (info.depth==DEPTH_MASK) {
 			if (imgrgba == NULL) {
 				printf("\nError: cannot decode 32bpp sprites to pcx\n");
 				exit(2);
 			}
 			info.depth=DEPTH_32BPP;
-			writesprite(false, imgrgba, writer, imgbuffer, info);
+			writesprite(i == 0, imgrgba, writer, imgbuffer, info);
 			info.depth=DEPTH_MASK;
 			writesprite(false, imgpal, writer, imgbuffer, info);
 		} else if (info.depth==DEPTH_8BPP) {
