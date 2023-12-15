@@ -150,9 +150,10 @@ void Before8(int action){
 	}
 }
 
-bool CheckLength(int alen,int elen,RenumMessageId message,...){
+bool internal::CheckLength(int alen,int elen,...){
 	va_list ap;
-	va_start(ap, message);
+	va_start(ap, elen);
+	RenumMessageId message = (RenumMessageId)va_arg(ap, int);
 	if(alen<elen){
 		vIssueMessage(FATAL,message,ap);
 		return true;

@@ -23,8 +23,13 @@
 #define _RENUM_SANITY_DEFS_H_INCLUDED_
 
 #include "message_mgr.h"
-
-bool CheckLength(int,int,RenumMessageId,...);
+namespace internal {
+	bool CheckLength(int,int,...);
+}
+template<typename... Targs>
+bool CheckLength(int alen,int elen,RenumMessageId id,Targs... Fargs) {
+	return internal::CheckLength(alen,elen,id,Fargs...);
+}
 bool CheckTextID(uint,uint,uint);
 bool CheckID(uint,uint);
 
