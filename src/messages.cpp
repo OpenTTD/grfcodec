@@ -71,9 +71,10 @@ string mysprintf(const char*str,...){
 static RenumMessageId curMessage;
 #endif
 
-string IssueMessage(int minSan,RenumMessageId id,...){
+string internal::IssueMessage(int minSan,...){
 	va_list ap;
-	va_start(ap, id);
+	va_start(ap, minSan);
+	RenumMessageId id = (RenumMessageId)va_arg(ap, int);
 	string result = vIssueMessage(minSan,id,ap);
 	va_end(ap);
 	return result;
