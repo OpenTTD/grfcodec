@@ -35,11 +35,11 @@ static int decodetile(U8 *buffer, int sx, int sy, CommonPixel *imgbuffer, long t
 	for (int y=0; y<sy; y++) {
 		long offset;
 		if (long_format) {
-			U32 *ibuffer = (U32*)buffer;
-			offset = BE_SWAP32(ibuffer[y]);
+			offset = y * sizeof(U32);
+			offset = buffer[offset + 3] << 24 | buffer[offset + 2] << 16 | buffer[offset + 1] << 8 | buffer[offset + 0];
 		} else {
-			U16 *ibuffer = (U16*)buffer;
-			offset = BE_SWAP16(ibuffer[y]);
+			offset = y * sizeof(U16);
+			offset = buffer[offset + 1] << 8 | buffer[offset + 0];
 		}
 
 		long x, islast, chunkstart=0, len, ofs;
@@ -683,11 +683,15 @@ long encodetile(U8 **compressed_data, long *uncompressed_size, const CommonPixel
 			int x1 = 0, x2 = 0;
 
 			if (long_format) {
-				U32 *lineofs = (U32*)tile;
-				lineofs[y] = BE_SWAP32(tileofs);
+				size_t offset = y * sizeof(U32);
+				tile[offset++] = tileofs & 0xFF;
+				tile[offset++] = (tileofs >> 8) & 0xFF;
+				tile[offset++] = (tileofs >> 16) & 0xFF;
+				tile[offset++] = tileofs >> 24;
 			} else {
-				U16 *lineofs = (U16*)tile;
-				lineofs[y] = BE_SWAP16(tileofs);
+				size_t offset = y * sizeof(U16);
+				tile[offset++] = tileofs & 0xFF;
+				tile[offset++] = tileofs >> 8;
 			}
 			long lastlenofs = tileofs;
 
