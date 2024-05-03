@@ -1,3 +1,36 @@
+Changes in 6.1.0 (2024-05-03)
+- Change to building with CMake.
+- Move repository and building to GitHub.
+- Fix several compilation warnings/issues with newer compilers.
+- NFORenum specific changes:
+  - Data file updates:
+    - Features 12 (road types), 13 (tram types) and 14 (road stops) added.
+    - Action 0, feature 00, properties 2E-31 added.
+    - Action 0, feature 01, properties 26-28 added.
+    - Action 0, feature 02, properties 20-23 added.
+    - Action 0, feature 03, properties 20-23 added.
+    - Action 0, feature 07, property 23.
+    - Action 0, feature 08, properties 16 and 17 added.
+    - Action 0, feature 07, property 13.
+    - Action 0, feature 0A, properties 25-28 added.
+    - Action 0, feature 0F, property 18.
+    - Action 2, feature 00, variable 63 added.
+    - Action 2, feature 01, variables 4D and 63 added.
+    - Action 2, feature 04, variable 6A added.
+    - Action 2, feature 0A, variables 47 and 69-71 added.
+    - Action 2, feature 0D, variables 40, 48, 60-65 and 69 added.
+    - Action 2 callback 161 (build probability) added.
+    - Action 5, type 09 (one way arrows), type 0B (tram tracks) added sprite count option.
+    - Action 5, type 15 (OpenTTD GUI): now  191 sprites are allowed.
+- GRFCodec specific changes:
+  - Fix PowerPC failing to properly compress using the chunk format.
+  - Support decoding 32bpp only NewGRFs.
+  - Support decoding NewGRFs with out-of-order v2 container.
+- GRFStrip specific changes:
+  - Also allow stripping the 8bpp normal zoom graphics.
+  - Fix command line parsing failing when whitelisting more than one format.
+  - Add/update documentation.
+
 Changes in 6.0.6 (2016-06-27)
 - Support for building with GCC 6 / C++14
 

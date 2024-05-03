@@ -1,9 +1,9 @@
 # grfcodec
 GRF development tools README
 
-Last updated:    2016-06-27
+Last updated: 2024-05-03
 
-Release version: 6.0.6
+Release version: 6.1.0
 
 ## Table of Contents
 
