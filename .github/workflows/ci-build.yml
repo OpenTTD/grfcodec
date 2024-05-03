@@ -19,14 +19,14 @@ jobs:
           - compiler: gcc
             cxxcompiler: g++
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     env:
       CC: ${{ matrix.compiler }}
       CXX: ${{ matrix.cxxcompiler }}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
@@ -66,33 +66,33 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - arch: x64
-          full_arch: x86_64
+        - arch: arm64
+          full_arch: arm64
 
     runs-on: macos-latest
     env:
-      MACOSX_DEPLOYMENT_TARGET: 10.9
+      MACOSX_DEPLOYMENT_TARGET: 10.13
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Prepare cache key
-      id: key
-      run: |
-        echo "image=$ImageOS-$ImageVersion" >> $GITHUB_OUTPUT
-
-    - name: Enable vcpkg cache
-      uses: actions/cache@v3
+    - name: Setup vcpkg caching
+      uses: actions/github-script@v7
       with:
-        path: /usr/local/share/vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
-        restore-keys: |
-          ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+          core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite')
+
+    - name: Install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg
+        ./vcpkg/bootstrap-vcpkg.sh -disableMetrics
 
     - name: Prepare vcpkg
       run: |
-        vcpkg install --triplet=${{ matrix.arch }}-osx \
+        ./vcpkg/vcpkg install --triplet=${{ matrix.arch }}-osx \
           boost-bimap \
           boost-date-time \
           boost-foreach \
@@ -110,7 +110,7 @@ jobs:
         cmake ${GITHUB_WORKSPACE} \
           -DCMAKE_OSX_ARCHITECTURES=${{ matrix.full_arch }} \
           -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-osx \
-          -DCMAKE_TOOLCHAIN_FILE=/usr/local/share/vcpkg/scripts/buildsystems/vcpkg.cmake \
+          -DCMAKE_TOOLCHAIN_FILE=${GITHUB_WORKSPACE}/vcpkg/scripts/buildsystems/vcpkg.cmake \
           # EOF
         echo "::endgroup::"
 
@@ -125,36 +125,32 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, windows-2019]
+        os: [windows-latest]
         arch: [x86, x64]
 
     runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Prepare cache key
-      id: key
-      shell: powershell
-      run: |
-        # Work around caching failure with GNU tar
-        New-Item -Type Junction -Path vcpkg -Target c:\vcpkg
-
-        Write-Output "image=$env:ImageOS-$env:ImageVersion" >> $env:GITHUB_OUTPUT
-
-    - name: Enable vcpkg cache
-      uses: actions/cache@v3
+    - name: Setup vcpkg caching
+      uses: actions/github-script@v7
       with:
-        path: vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
-        restore-keys: |
-          ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+          core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite')
+
+    - name: Install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg
+        .\vcpkg\bootstrap-vcpkg.bat -disableMetrics
 
     - name: Prepare vcpkg
       shell: bash
       run: |
-        vcpkg install --triplet=${{ matrix.arch }}-windows-static \
+        ./vcpkg/vcpkg install --triplet=${{ matrix.arch }}-windows-static \
           boost-bimap \
           boost-date-time \
           boost-foreach \
@@ -179,7 +175,7 @@ jobs:
         cmake .. \
           -GNinja \
           -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-windows-static \
-          -DCMAKE_TOOLCHAIN_FILE="c:\vcpkg\scripts\buildsystems\vcpkg.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="${GITHUB_WORKSPACE}\vcpkg\scripts\buildsystems\vcpkg.cmake" \
           # EOF
         echo "::endgroup::"
 
