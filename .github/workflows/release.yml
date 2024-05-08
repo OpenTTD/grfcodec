@@ -76,27 +76,24 @@ jobs:
       run: |
         tar --xz -xf *-source.tar.xz --strip-components=1
 
-    - name: Prepare cache key
-      id: key
-      shell: powershell
-      run: |
-        # Work around caching failure with GNU tar
-        New-Item -Type Junction -Path vcpkg -Target c:\vcpkg
-
-        Write-Output "image=$env:ImageOS-$env:ImageVersion" >> $env:GITHUB_OUTPUT
-
-    - name: Enable vcpkg cache
-      uses: actions/cache@v4
+    - name: Setup vcpkg caching
+      uses: actions/github-script@v7
       with:
-        path: vcpkg/installed
-        key: ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}-1 # Increase the number whenever dependencies are modified
-        restore-keys: |
-          ${{ steps.key.outputs.image }}-vcpkg-${{ matrix.arch }}
+        script: |
+          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+          core.exportVariable('VCPKG_BINARY_SOURCES', 'clear;x-gha,readwrite')
+
+    - name: Install vcpkg
+      run: |
+        git clone https://github.com/microsoft/vcpkg
+        .\vcpkg\bootstrap-vcpkg.bat -disableMetrics
+
 
     - name: Prepare vcpkg
       shell: bash
       run: |
-        vcpkg install --triplet=${{ matrix.arch }}-windows-static \
+        ./vcpkg/vcpkg install --triplet=${{ matrix.arch }}-windows-static \
           boost-bimap \
           boost-date-time \
           boost-foreach \
@@ -120,7 +117,7 @@ jobs:
         cmake .. \
           -GNinja \
           -DVCPKG_TARGET_TRIPLET=${{ matrix.arch }}-windows-static \
-          -DCMAKE_TOOLCHAIN_FILE="c:\vcpkg\scripts\buildsystems\vcpkg.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="${GITHUB_WORKSPACE}\vcpkg\scripts\buildsystems\vcpkg.cmake" \
           -DCMAKE_BUILD_TYPE=Release \
           # EOF
         echo "::endgroup::"
