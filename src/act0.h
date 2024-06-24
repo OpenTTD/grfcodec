@@ -22,6 +22,6 @@
 #ifndef _RENUM_PROPERTIES_H_INCLUDED_
 #define _RENUM_PROPERTIES_H_INCLUDED_
 
-void Check0(const string&);
+void Check0(const std::string&);
 
 #endif

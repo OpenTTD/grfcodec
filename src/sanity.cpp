@@ -25,7 +25,6 @@
 #include<cstdarg>
 #include<errno.h>
 #include<cstdlib>
-using namespace std;
 
 #include"nforenum.h"
 #include"globals.h"

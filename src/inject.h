@@ -22,9 +22,9 @@
 #ifndef _RENUM_INJECT_H_INCLUDED_
 #define _RENUM_INJECT_H_INCLUDED_
 
-istream&inj_getline(istream&,string&);
-int peek(istream&);
-void inject(const string&);
-void inject_into(const istream&);
+std::istream&inj_getline(std::istream&,std::string&);
+int peek(std::istream&);
+void inject(const std::string&);
+void inject_into(const std::istream&);
 
 #endif//_RENUM_INJECT_H_INCLUDED_

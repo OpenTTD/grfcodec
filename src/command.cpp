@@ -35,7 +35,6 @@
 #include<cstdlib>
 #include<getopt.h>
 
-using namespace std;
 
 #include"globals.h"
 #include"nforenum.h"
@@ -88,7 +87,7 @@ struct command{
 	Expanding0Array<int>warnstate;
 }_commandState,_CLstate;
 
-static map<string,int>_varmap,_CLvar;
+static std::map<std::string,int>_varmap,_CLvar;
 
 const command&crCommandState=_commandState;
 
@@ -101,23 +100,23 @@ command::command(){
 //	verbose=0;
 }
 
-int find_command(const string&command,const commandData type[]){
+int find_command(const std::string&command,const commandData type[]){
 	for(int i=0;;i++){
 		if(type[i].name==NULL)return -1;
 		if(UCase(command)==type[i].name)return type[i].value;
 	}
 }
 
-bool is_command(const string&line){
+bool is_command(const std::string&line){
 	assert(is_comment(line));
-	string::size_type x=line.find_first_not_of(COMMENT+WHITESPACE);
-	return x!=string::npos&&x<(line.length()-1)&&line[x]=='@'&&line[x+1]=='@';
+	std::string::size_type x=line.find_first_not_of(COMMENT+WHITESPACE);
+	return x!=std::string::npos&&x<(line.length()-1)&&line[x]=='@'&&line[x+1]=='@';
 }
 
-bool is_message(const string&line){
+bool is_message(const std::string&line){
 	assert(is_comment(line));
-	string::size_type x=line.find_first_not_of(COMMENT+WHITESPACE);
-	return x!=string::npos&&x<(line.length()-1)&&line[x]=='!'&&line[x+1]=='!';
+	std::string::size_type x=line.find_first_not_of(COMMENT+WHITESPACE);
+	return x!=std::string::npos&&x<(line.length()-1)&&line[x]=='!'&&line[x+1]=='!';
 }
 
 void reset_commands(){
@@ -125,7 +124,7 @@ void reset_commands(){
 	_varmap=_CLvar;
 }
 
-string GetOnOffString(string str){
+std::string GetOnOffString(std::string str){
 	if(str[str.length()-1]=='+'){
 		str[str.length()-1]=' ';
 		str+="ON";
@@ -141,21 +140,21 @@ bool CLCommand(int command){
 	_commandState.locked=false;
 	switch(command){
 	case'd':parse_comment("//@@DIFF");break;
-	case'L':parse_comment("//@@LET "+string(optarg));break;
+	case'L':parse_comment("//@@LET "+std::string(optarg));break;
 	case'l':parse_comment("//@@LINT "+GetOnOffString(optarg));break;
-	case'r':parse_comment("//@@REALSPRITES "+string(optarg));break;
+	case'r':parse_comment("//@@REALSPRITES "+std::string(optarg));break;
 	case'b':parse_comment("//@@BEAUTIFY "+GetOnOffString(optarg));break;
 	case'p':_commandState.remove_messages=false;break;
 	case'e':parse_comment("//@@EXTENTIONS "+GetOnOffString(optarg));break;
 	case'o':parse_comment("//@@USEOLDSPRITENUMS "+GetOnOffString(optarg));break;
 	case 256:locked=true;break;
 	case'w':case'W':{
-		string s(optarg);
+		std::string s(optarg);
 		if (s.find_first_not_of("0123456789,") != NPOS) return false;
-		string::size_type loc;
+		std::string::size_type loc;
 		while ( (loc=s.find_first_of(',')) != NPOS)
 			s[loc]='+';
-		istringstream arg(s);
+		std::istringstream arg(s);
 		uint opt;
 		while(arg>>opt){
 			parse_comment((command=='w'?"//@@WARNING DISABLE ":"//@@WARNING ENABLE ")+itoa(opt));
@@ -170,18 +169,18 @@ bool CLCommand(int command){
 	return true;
 }
 
-void SetVar(const string&,const string&);
-string ReadVar(istream&);
+void SetVar(const std::string&,const std::string&);
+std::string ReadVar(std::istream&);
 
-bool parse_comment(const string&line){
+bool parse_comment(const std::string&line){
 	assert(is_comment(line));
 	if(is_message(line))
 		return!GetState(REMOVEMESSAGES);
 	if(!is_command(line))
 		return true;
-	string command=line.c_str()+line.find_first_not_of(COMMENT+WHITESPACE+'@'),command_part;
+	std::string command=line.c_str()+line.find_first_not_of(COMMENT+WHITESPACE+'@'),command_part;
 	while(command.find('=')!=NPOS)command[command.find('=')]=' ';
-	istringstream commandstream(command);
+	std::istringstream commandstream(command);
 	commandstream>>command_part;
 	int id;
 	switch(find_command(command_part,gen)){
@@ -202,7 +201,7 @@ bool parse_comment(const string&line){
 		return true;
 	case USEID2:{
 		int feature;
-		commandstream>>setbase(16)>>feature>>id;
+		commandstream>>std::setbase(16)>>feature>>id;
 		if(!commandstream)
 			id=feature;
 		else if(!IsValid2Feature(feature)){
@@ -215,7 +214,7 @@ bool parse_comment(const string&line){
 		sanity_use_id(id);
 		return true;
 	}case USESET:
-		commandstream>>setbase(16)>>id;
+		commandstream>>std::setbase(16)>>id;
 		sanity_use_set(id);
 		return true;
 	case DIFF:
@@ -280,7 +279,7 @@ bool parse_comment(const string&line){
 		//if(GetState(REMOVEMESSAGES))inject("//@@REMOVEMESSAGES NOPRESERVE");
 		return false;
 	}case LET:{
-		string var=ReadVar(commandstream);
+		std::string var=ReadVar(commandstream);
 		if(var=="")return true;
 		if(eat_white(commandstream).peek()=='=')commandstream.ignore();
 		getline(eat_white(commandstream),command_part);
@@ -395,7 +394,7 @@ dotoggle:
 		break;
 	case TESTID2:{
 		int feature;
-		commandstream>>setbase(16)>>feature>>id;
+		commandstream>>std::setbase(16)>>feature>>id;
 		if(!commandstream)
 			id=feature;
 		else if(!IsValid2Feature(feature)){
@@ -409,7 +408,7 @@ dotoggle:
 		return true;
 	}case DEFINEID2:{
 		int feature;
-		commandstream>>setbase(16)>>feature>>id;
+		commandstream>>std::setbase(16)>>feature>>id;
 		if(!commandstream)
 			id=feature;
 		else if(!IsValid2Feature(feature)){
@@ -420,7 +419,7 @@ dotoggle:
 		return true;
 	}case LOCATEID2:{
 		int feature;
-		commandstream>>setbase(16)>>feature>>id;
+		commandstream>>std::setbase(16)>>feature>>id;
 		if(!commandstream)
 			id=feature;
 		else if(!IsValid2Feature(feature)){
@@ -521,9 +520,9 @@ bool GetWarn(int message,int minSan){
 	return GetState(LINT)>=minSan;
 }
 
-void SetVar(const string&var,const string&value){
+void SetVar(const std::string&var,const std::string&value){
 	int val;
-	string::size_type offs;
+	std::string::size_type offs;
 	if((offs=value.find('('))==NPOS){
 		const char*pch=value.c_str();
 		while(isspace(*pch))pch++;
@@ -535,42 +534,42 @@ void SetVar(const string&var,const string&value){
 	_varmap[var] = val;
 }
 
-int GetVar(const string&var,int&err){
-	map<string,int>::const_iterator it;
+int GetVar(const std::string&var,int&err){
+	std::map<std::string,int>::const_iterator it;
 	if((it=_varmap.find(var))!=_varmap.end())return it->second;
 	IssueMessage(0,(RenumMessageId)(err=UNDEF_VAR),var.c_str());
 	SetCode(EPARSE);
 	return 0;
 }
 
-string ReadVar(istream&in){
+std::string ReadVar(std::istream&in){
 	eat_white(in);
 	int ch;
-	string delim="=()+/-*",var;
+	std::string delim="=()+/-*",var;
 	while(!isspace(ch=in.get())&&delim.find((char)ch)==NPOS&&ch!=EOF)var+=(char)ch;
 	if(ch==EOF)var="";
 	else in.unget();
 	return var;
 }
 
-int ReadNum(istream&in){
+int ReadNum(std::istream&in){
 	if (in.get()=='0') {
-		if (in.get()=='x') in>>setbase(16);
+		if (in.get()=='x') in>>std::setbase(16);
 		else{
-			in.unget()>>setbase(8);
+			in.unget()>>std::setbase(8);
 			if (!isdigit(in.peek()))
 				return 0;
 		}
-	} else in.unget()>>setbase(10);
+	} else in.unget()>>std::setbase(10);
 	int ret;
 	in>>ret;
 	return ret;
 }
 
-int DoCalc(istream&data,int&err){
-	stack<int>nums;
+int DoCalc(std::istream&data,int&err){
+	std::stack<int>nums;
 	// the unary and binary op charcters.
-	string unyops="-~)",
+	std::string unyops="-~)",
 		binops="+-*/%|&^<>";
 	int ch,l;
 	while(true){
@@ -646,22 +645,22 @@ int DoCalc(istream&data,int&err){
 			return 0;
 		}else{
 			data.unget();			// And now, restore first character of the var name.
-			string var=ReadVar(data);
+			std::string var=ReadVar(data);
 			nums.push(GetVar(var,err));
 			if(err)return 0;
 		}
 	}
 }
 
-int DoCalc(const string&data,string::size_type&offs){
-	istringstream in(data);
+int DoCalc(const std::string&data,std::string::size_type&offs){
+	std::istringstream in(data);
 	in.ignore((int)offs+1);
 	int err=0,ret=DoCalc(in,err);
 	offs=err?NPOS:data.find(')',offs)+1;
 	return ret;
 }
 
-/*int DoCalc(istringstream&data,int&err){
+/*int DoCalc(std::istringstream&data,int&err){
 	char ch=eat_white(data).peek();
 	int l,r,op;
 	if(isdigit(ch))data>>l;
@@ -669,14 +668,14 @@ int DoCalc(const string&data,string::size_type&offs){
 		l=DoCalc(data.ignore(),err);
 		if(err)return l;
 	}else{
-		string var;
+		std::string var;
 		data>>var;
 		l=GetVar(var,err);
 		if(err)return l;
 	}
 	eat_white(data).get(ch);
 	if(ch==')')return l;
-	string ops="+-*" "/";
+	std::string ops="+-*" "/";
 	int op=(int)ops.find(ch);
 	if(op==NPOS){
 		err=NOT_OP;
@@ -687,7 +686,7 @@ int DoCalc(const string&data,string::size_type&offs){
 		r=DoCalc(data.ignore(),err);
 		if(err)return r;
 	}else{
-		string var;
+		std::string var;
 		data>>var;
 		r=GetVar(var,err);
 		if(err)return r;
@@ -700,7 +699,7 @@ int DoCalc(const string&data,string::size_type&offs){
 	DEFAULT(DoCalc,op);
 	}
 }
-int DoCalc(const string&data,size_t&offs){
+int DoCalc(const std::string&data,size_t&offs){
 	char ch;
 	int l=0,r=0,op=0;
 	while(true){

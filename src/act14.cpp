@@ -23,7 +23,6 @@
 #include<cassert>
 #include<sstream>
 
-using namespace std;
 
 #include"nforenum.h"
 #include"pseudo.h"
@@ -31,13 +30,13 @@ using namespace std;
 #include"strings.h"
 #include"command.h"
 
-static bool Check14(PseudoSprite&data, uint&offset, vector<uint>&idstack)
+static bool Check14(PseudoSprite&data, uint&offset, std::vector<uint>&idstack)
 {
 	/* NFORenum reads the NFO, which is a text file. As per definition the
 	 * NFO is LE ordered. If characters are interpreted as bytes they will
 	 * therefore be read in LE order. ExtractDword does interpret the
-	 * characters as bytes and construct a host endian ordered integer. 
-	 * Consequently, there is no need to swap endian for the read data; it 
+	 * characters as bytes and construct a host endian ordered integer.
+	 * Consequently, there is no need to swap endian for the read data; it
 	 * will always be in the host order, or the constant below as long as
 	 * they have the expected integer value, thus reverse due to LE. */
 	static const uint ID_INFO = 0x4F464E49; // INFO in reverse order (LE)
@@ -94,7 +93,7 @@ static bool Check14(PseudoSprite&data, uint&offset, vector<uint>&idstack)
 
 void Check14(PseudoSprite&data)
 {
-	vector<uint>idstack;
+	std::vector<uint>idstack;
 	uint offset = 1;
 	Check14(data, offset, idstack);
 }

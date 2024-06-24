@@ -22,15 +22,14 @@
 #include<iostream>
 #include<string>
 
-using namespace std;
 
 #include "globals.h"
 
-ostream*pNfo=&cout,*pOut,*pErr=&cerr;
+std::ostream*pNfo=&std::cout,*pOut,*pErr=&std::cerr;
 
 const char*const VALID_PSEUDO="0123456789ABCDEFabcdef \t\v\r\n",*const WHITESPACE=" \t\v\r\n";
-const string COMMENT="/;#";
-string datadir;
+const std::string COMMENT="/;#";
+std::string datadir;
 const char*COMMENT_PREFIX="//";
 bool dosleep=true;
 unsigned int _spritenum,_grfver,_autocorrect=0,_act14_pal;

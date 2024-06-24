@@ -24,7 +24,6 @@
 #include<cstdlib>
 #include<algorithm>
 
-using namespace std;
 
 #include"inlines.h"
 #include"ExpandingArray.h"
@@ -54,10 +53,10 @@ void act123::init(){
 }
 
 uint act123::MaxFoundFeat()const{
-	const vector<IDarray::info>&m=defined2IDs._m;
+	const std::vector<IDarray::info>&m=defined2IDs._m;
 	short ret=0;
 	for(uint i=0;i<(uint)m.size();i++)
-		ret=max<short>(ret,m[i].feature);
+		ret=std::max<short>(ret,m[i].feature);
 	return ret;
 }
 
@@ -243,7 +242,7 @@ void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,u
 			}
 			if(shift&0x80){// %
 				var.min=0;
-				var.max=min<uint>(var.max,divmod-1);
+				var.max=std::min<uint>(var.max,divmod-1);
 				add%=divmod;
 			}else{// /
 				var.min/=divmod;
@@ -288,12 +287,12 @@ void varRange::UpdateRange(uint Var,uint op,uint shift,const PseudoSprite&data,u
 		break;
 	case 4:// min
 	case 0xB:// &
-        dflt.min=min(dflt.min,var.min);
-        dflt.max=min(dflt.max,var.max);
+		dflt.min=std::min(dflt.min,var.min);
+		dflt.max=std::min(dflt.max,var.max);
 		break;
 	case 5:// max
-        dflt.min=max(dflt.min,var.min);
-        dflt.max=max(dflt.max,var.max);
+		dflt.min=std::max(dflt.min,var.min);
+		dflt.max=std::max(dflt.max,var.max);
 	/* FALLTHROUGH */
 	case 8:// /
 		if(var.min==0){

@@ -29,7 +29,7 @@
 class PseudoSprite{
 public:
 	//PseudoSprite();
-	PseudoSprite(const string&,int);
+	PseudoSprite(const std::string&,int);
 
 	void CheckLinkage(int ofs,int count)const;
 	// Use to read a single byte if you don't know/care about its meaning.
@@ -58,7 +58,7 @@ public:
 	PseudoSprite&SetQEscape(uint);
 	PseudoSprite&SetQEscape(uint,uint);
 private:
-	PseudoSprite&SetEscape(uint,bool,string,uint);
+	PseudoSprite&SetEscape(uint,bool,std::string,uint);
 
 public:
 	PseudoSprite&SetHex(uint);
@@ -99,21 +99,21 @@ public:
 		SetBE(offs,2);
 		return ExtractWord(offs);
 	}
-	void AddComment(const string&,uint);
-	void TrailComment(const string&,uint);
+	void AddComment(const std::string&,uint);
+	void TrailComment(const std::string&,uint);
 	void AddBlank(uint);
 
 	void NoBeautify();
 
-	friend ostream&operator<<(ostream&,PseudoSprite&);
+	friend std::ostream&operator<<(std::ostream&,PseudoSprite&);
 private:
-	ostream&output(ostream&);
+	std::ostream&output(std::ostream&);
 
 public:
 	static bool CanQuote(uint);
-	static bool MayBeSprite(const string&);
+	static bool MayBeSprite(const std::string&);
 	enum width {_B_, _BX_, _W_, _D_};
-	uint ReadValue(istream&, width);
+	uint ReadValue(std::istream&, width);
 
 private:
 	bool DoQuote(uint)const;
@@ -126,9 +126,9 @@ private:
 	void Invalidate();
 	bool UseOrig()const;
 
-	string orig,packed;
+	std::string orig,packed;
 	Expanding0Array<uchar>beauty;
-	ExpandingArray<string>context,ext_print;
+	ExpandingArray<std::string>context,ext_print;
 	bool valid,useorig;
 	const int oldspritenum;
 

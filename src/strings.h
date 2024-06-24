@@ -38,9 +38,9 @@ enum{RETURN_NULL,RETURN_STACK};
 class PseudoSprite;
 
 void Check4(PseudoSprite&);
-int CheckString(PseudoSprite&,uint&,int,bool =false,string="",int =0);
-string MakeStack(int,...);
-string GetLangName(uint);
+int CheckString(PseudoSprite&,uint&,int,bool =false,std::string="",int =0);
+std::string MakeStack(int,...);
+std::string GetLangName(uint);
 void CheckLangID(uint,uint);
 
 #endif//_RENUM_STRINGS_H_INCLUDED_

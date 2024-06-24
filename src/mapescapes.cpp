@@ -21,14 +21,13 @@
 
 #include <string>
 
-using namespace std;
 
 #include "nforenum.h"
 #include "inlines.h"
 #include "messages.h"
 #include "mapescapes.h"
 
-string FindEscape(char action, int byte) {
+std::string FindEscape(char action, int byte) {
 	// Look for a custom escape
 	foreach(const nfe_rpair& p, nfo_escapes.right.equal_range(byte))
 		if (p.second[0] == action)
@@ -37,15 +36,15 @@ string FindEscape(char action, int byte) {
 	// Look for a built-in escape
 	foreach(const esc& e, escapes)
 		if (e.action==ctoi(action) && e.byte==byte)
-			return ' ' + string(e.str);
+			return ' ' + std::string(e.str);
 	return "";
 }
 
-string FindEscape(char action, int byte, uint offset) {
+std::string FindEscape(char action, int byte, uint offset) {
 	// This time, look for a built-in escape first
 	foreach(const esc& e, escapes)
 		if (e.action==ctoi(action) && e.byte==byte && e.pos==offset)
-			return ' ' + string(e.str);
+			return ' ' + std::string(e.str);
 	// Look for a custom escape
 	foreach(const nfe_rpair& p, nfo_escapes.right.equal_range(byte))
 		if (p.second[0] == action)
@@ -53,7 +52,7 @@ string FindEscape(char action, int byte, uint offset) {
 	return "";
 }
 
-int FindEscape(string str) {
+int FindEscape(std::string str) {
 	foreach(esc e, escapes)
 		if(str == e.str+1)
 			return e.byte;
