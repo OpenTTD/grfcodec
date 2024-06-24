@@ -31,7 +31,6 @@
 #include<errno.h>
 #include<cstdlib>
 
-using namespace std;
 
 #include"nforenum.h"
 #include"inlines.h"
@@ -96,8 +95,8 @@ A backslash is used to escape nulls that are not end-of-string characters
 char FF is undef
 */
 
-typedef basic_string<uchar> ustring;
-typedef vector<int> int_str;
+typedef std::basic_string<uchar> ustring;
+typedef std::vector<int> int_str;
 
 class PropData:public auto_array<PropData>{
 public:
@@ -111,7 +110,7 @@ public:
 	uint maxlast(int prop){return (idRange[prop]>>8)&0xFF;}
 private:
 	ustring length;
-	vector<uint> idRange;
+	std::vector<uint> idRange;
 	void readString(FILE*,bool);
 	int CountFE();
 	void operator=(const PropData&);
@@ -259,7 +258,7 @@ void Init0(){
 
 bool IsTextDefined(uint);
 
-static vector<uint> lengthlist;
+static std::vector<uint> lengthlist;
 
 static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const uint IDs = 1) {
 	uint feature = str.ExtractByte(1);

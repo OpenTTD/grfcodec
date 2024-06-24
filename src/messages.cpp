@@ -26,7 +26,6 @@
 #include<cstdlib>
 //#include<sstream>
 
-using namespace std;
 
 // The prefered method for generating version.h for Visual Studio is to
 // install Cygwin and use the command "make version.h".
@@ -59,10 +58,10 @@ void ManualConsoleMessages(){
 	bAutoMessage=false;
 }
 
-string mysprintf(const char*str,...){
+std::string mysprintf(const char*str,...){
 	va_list ap;
 	va_start(ap, str);
-	string result = myvsprintf(str,ap);
+	std::string result = myvsprintf(str,ap);
 	va_end(ap);
 	return result;
 }
@@ -71,16 +70,16 @@ string mysprintf(const char*str,...){
 static RenumMessageId curMessage;
 #endif
 
-string internal::IssueMessage(int minSan,...){
+std::string internal::IssueMessage(int minSan,...){
 	va_list ap;
 	va_start(ap, minSan);
 	RenumMessageId id = (RenumMessageId)va_arg(ap, int);
-	string result = vIssueMessage(minSan,id,ap);
+	std::string result = vIssueMessage(minSan,id,ap);
 	va_end(ap);
 	return result;
 }
 
-string vIssueMessage(int minSan,RenumMessageId id,va_list& arg_ptr){
+std::string vIssueMessage(int minSan,RenumMessageId id,va_list& arg_ptr){
 #if defined DEBUG || defined _DEBUG
 	curMessage=id;
 #endif
@@ -116,14 +115,14 @@ string vIssueMessage(int minSan,RenumMessageId id,va_list& arg_ptr){
 		return MessageMgr::Instance().GetMessageData(id).Display(
 			mysprintf(MessageMgr::Instance().GetExtraText(prefix).c_str(),id),arg_ptr);
 	}catch(...){
-		(*pErr)<<MessageMgr::Instance().GetMessageData(FATAL_MESSAGE_ERROR).GetText()<<id<<endl;
+		(*pErr)<<MessageMgr::Instance().GetMessageData(FATAL_MESSAGE_ERROR).GetText()<<id<<std::endl;
 		assert(false);
 		exit(EFATAL);
 	}
 }
 
-string myvsprintf(const char*fmt,va_list&arg_ptr){
-	string ret;
+std::string myvsprintf(const char*fmt,va_list&arg_ptr){
+	std::string ret;
 	int i=-1,pad;
 	while(fmt[++i]!='\0'){
 		if(fmt[i]!='%')ret+=fmt[i];

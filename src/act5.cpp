@@ -24,7 +24,6 @@
 #include<cassert>
 #include<errno.h>
 
-using namespace std;
 
 #include"nforenum.h"
 #include"sanity.h"
@@ -41,15 +40,15 @@ extern bool _base_grf;
 class c5{
 public:
 	int maxFeature(){return (int)sizes.size()+3;}
-	const vector<int>&operator[](int x)const {return sizes[x-4];}
+	const std::vector<int>&operator[](int x)const {return sizes[x-4];}
 	SINGLETON(c5)
 private:
-	vector<vector<int> >sizes;
+	std::vector<std::vector<int> >sizes;
 };
 
 c5::c5(){
 	FILE*pFile=myfopen(5);
-	vector<int> temp;
+	std::vector<int> temp;
 	int ch, count, opts, flags;
 	while((ch=GetCheckByte(5))!=0){
 		flags = 0;
@@ -73,8 +72,8 @@ c5::c5(){
 
 //	I finally want to do runtime-generated varargs calls.
 // But I can't, so I have to manually generate the string instead.
-void Act5CountWarn(const vector<int>&sizes){
-	string str = mysprintf("%S",ACT5_SIZE, sizes[1], sizes[1]);
+void Act5CountWarn(const std::vector<int>&sizes){
+	std::string str = mysprintf("%S",ACT5_SIZE, sizes[1], sizes[1]);
 	int count=(int)sizes.size()-1;
 	switch(count){
 	case 1:
@@ -101,7 +100,7 @@ int Check5(PseudoSprite&data,sanstate&state){
 		IssueMessage(FATAL,INVALID_FEATURE);
 		return sprites;
 	}
-	const vector<int>&expSprites=c5::Instance()[feature];
+	const std::vector<int>&expSprites=c5::Instance()[feature];
 	if(!hasoffset){
 		for(int i=(int)expSprites.size();--i;){		// Test [1] ... [.size()-1]
 			if(expSprites[i] == 0)goto countok;

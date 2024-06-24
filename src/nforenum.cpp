@@ -24,6 +24,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include<algorithm>
 #include<iostream>
 #include<string>
 #include<sstream>
@@ -47,7 +48,6 @@
 	#include <unistd.h>
 #endif//_MSC_VER
 
-using namespace std;
 
 #include"getopt.h"
 #include"globals.h"
@@ -94,21 +94,21 @@ struct RealSpriteState {
 	}
 };
 
-int process_file(istream&);
-void output_buffer(const string&,bool,int);
-bool verify_real(string&,RealSpriteState&);
+int process_file(std::istream&);
+void output_buffer(const std::string&,bool,int);
+bool verify_real(std::string&,RealSpriteState&);
 
 static int _retval=EOK;
 static int _force=0;
 bool _interactive;
 
-void SetCode(int x){_retval=max(_retval,x);}
+void SetCode(int x){_retval=std::max(_retval,x);}
 void doexit(){exit(_retval);}
 
 //The VS project file specifies __stdcall as the default convention,
 //so main must be explicitly __cdecl'd
 int __cdecl main(const int argc,char**argv){
-	string infilename,outfilename,bakfilename,basename;
+	std::string infilename,outfilename,bakfilename,basename;
 	int result,longind,opt=0,replace=1;
 	static const option optlist[]={
 		/* Command-line only options */
@@ -139,9 +139,9 @@ int __cdecl main(const int argc,char**argv){
 	};
 	_interactive = (isatty(fileno(stdout)) != 0);
 	bool seen_startup_message = false;
-	pOut=argc==1?&cerr:&cout;
-	ifstream fin;
-	ofstream fout;
+	pOut=argc==1?&std::cerr:&std::cout;
+	std::ifstream fin;
+	std::ofstream fout;
 	while(argc>1){
 		if(opt!=EOF)opt=getopt_long(argc,argv,"ac:D::fhksv" "b:de:L:l:pr:o:w:W:",optlist,&longind);
 		switch(opt){
@@ -266,9 +266,9 @@ int __cdecl main(const int argc,char**argv){
 		}
 		if (_interactive) IssueMessage(0,PROCESSING_COMPLETE);
 	}
-	pNfo=&cout;
+	pNfo=&std::cout;
 	IssueMessage(0,PROCESSING);
-	process_file(cin);
+	process_file(std::cin);
 	IssueMessage(0,PROCESSING_COMPLETE);
 	return _retval;
 }
@@ -284,7 +284,7 @@ int __cdecl main(const int argc,char**argv){
 		(void(0))
 
 #define SetVersion(x)\
-	(NFOversion=max((x),NFOversion))
+	(NFOversion=std::max((x),NFOversion))
 
 static bool hasHeader;
 int NFOversion;
@@ -296,16 +296,16 @@ bool TrySetVersion(int x){
 	return true;
 }
 
-string smash(const string&,int&);
+std::string smash(const std::string&,int&);
 
-int process_file(istream&in){
+int process_file(std::istream&in){
 	NFOversion=4;
-	string sprite,datapart,buffer;
+	std::string sprite,datapart,buffer;
 	inject_into(in);
 	nfo_escapes.clear();
-	vector<string> extra_lines;
+	std::vector<std::string> extra_lines;
 
-	if(string(" \t\n*0123456789/;#*").find((char)in.peek())==NPOS){
+	if(std::string(" \t\n*0123456789/;#*").find((char)in.peek())==NPOS){
 		IssueMessage(0,APPARENTLY_NOT_NFO);
 		if(!_force){
 			IssueMessage(0,SKIPPING_FILE);
@@ -337,8 +337,8 @@ int process_file(istream&in){
 			if (NFOversion>6) {
 				while (strncmp(sprite.c_str(), "// Format: ", 11)) {
 					if (!strncmp(sprite.c_str(), "// Escapes: ", 12)) {	// Actually, that was an escapes line. Read it.
-						istringstream esc(sprite);
-						string str;
+						std::istringstream esc(sprite);
+						std::string str;
 						int byte = 0;
 						esc.ignore(12);
 						while (esc>>str)
@@ -371,16 +371,16 @@ int process_file(istream&in){
 	int temp=-1,size,oldspritenum=-1;
 	_spritenum=(unsigned)-1;
 	RealSpriteState realsprite_state;
-	string::size_type firstnotpseudo;
+	std::string::size_type firstnotpseudo;
 	bool isPatch=false;
-	ostringstream outbuffer;
-	ostream*real_out=pNfo;
+	std::ostringstream outbuffer;
+	std::ostream*real_out=pNfo;
 	pNfo=&outbuffer;
 	SetVersion(4);
 	AutoConsoleMessages();
 	while(true){
 		//IssueMessage(0,SPRITE,spritenum+1,sprite.c_str());
-		istringstream spritestream(sprite);
+		std::istringstream spritestream(sprite);
 		eat_white(spritestream);
 		if(spritestream.peek()==EOF) {
             buffer+='\n';
@@ -408,7 +408,7 @@ int process_file(istream&in){
 						IssueMessage(ERROR,UNEXPECTED,BIN_INCLUDE);
 					}
 					_spritenum++;
-					(*pNfo)<<setw(5)<<spritenum()<<" **\t "<<datapart<<'\n';
+					(*pNfo)<<std::setw(5)<<spritenum()<<" **\t "<<datapart<<'\n';
 				}else{
 					(spritestream>>size).clear();
 					eat_white(spritestream);
@@ -416,7 +416,7 @@ int process_file(istream&in){
 					if(_spritenum==(uint)-1){
 						isPatch=true;
 						if(size!=4 && size!=0)
-							outbuffer<<COMMENT_PREFIX<<sprite<<endl;
+							outbuffer<<COMMENT_PREFIX<<sprite<<std::endl;
 						_spritenum=0;
 					}else{
 						getline(spritestream,buffer);
@@ -432,7 +432,7 @@ int process_file(istream&in){
 				}else{
 					if(verify_real(datapart,realsprite_state)){
 						flush_buffer();
-						(*pNfo)<<"    | "<<datapart<<endl;
+						(*pNfo)<<"    | "<<datapart<<std::endl;
 					}else{
 						buffer+="//"+sprite+'\n';
 						SetCode(EPARSE);
@@ -460,7 +460,7 @@ int process_file(istream&in){
 						flush_buffer();
 						_spritenum++;
 						if(isPatch)check_sprite(REAL);
-						(*pNfo)<<setw(5)<<spritenum()<<' '<<datapart<<endl;
+						(*pNfo)<<std::setw(5)<<spritenum()<<' '<<datapart<<std::endl;
 					}else{
 						buffer+="//"+sprite+'\n';
 						SetCode(EPARSE);
@@ -511,16 +511,16 @@ int process_file(istream&in){
 }
 
 /**
- * Extract a string token from the beginning of a string.
+ * Extract a std::string token from the beginning of a std::string.
  * This can involve parsing a RPN expression.
- * @param[in,out] input         Input to extract integer from. The extracted data is removed from this string.
+ * @param[in,out] input         Input to extract integer from. The extracted data is removed from this std::string.
  * @param[out]    token         Extracted token.
- * @param[in,out] processed     Processed data. The extracte data is appended to this string.
+ * @param[in,out] processed     Processed data. The extracte data is appended to this std::string.
  * @param[in,out] anyprocessing Is set to true, if the data added to \a processed differs from the date removed
  *                              from \a input. E.g. because of parsing an RPN expression.
  * @return true on error
  */
-static bool extract_string(string&input,string&token,string&processed,bool&)
+static bool extract_string(std::string&input,std::string&token,std::string&processed,bool&)
 {
 	const char *start = input.c_str();
 	const char *pos = start;
@@ -544,16 +544,16 @@ static bool extract_string(string&input,string&token,string&processed,bool&)
 }
 
 /**
- * Extract a decimal integer from the beginning of a string.
+ * Extract a decimal integer from the beginning of a std::string.
  * This can involve parsing a RPN expression.
- * @param[in,out] input         Input to extract integer from. The extracted data is removed from this string.
+ * @param[in,out] input         Input to extract integer from. The extracted data is removed from this std::string.
  * @param[out]    token         Extracted integer
- * @param[in,out] processed     Processed data. The extracte data is appended to this string.
+ * @param[in,out] processed     Processed data. The extracte data is appended to this std::string.
  * @param[in,out] anyprocessing Is set to true, if the data added to \a processed differs from the date removed
  *                              from \a input. E.g. because of parsing an RPN expression.
  * @return true on error
  */
-static bool extract_int(string&input,int&token,string&processed,bool&anyprocessing)
+static bool extract_int(std::string&input,int&token,std::string&processed,bool&anyprocessing)
 {
 	const char *start = input.c_str();
 	const char *pos = start;
@@ -577,16 +577,16 @@ static bool extract_int(string&input,int&token,string&processed,bool&anyprocessi
 }
 
 /**
- * Extract a hexadecimal integer from the beginning of a string.
+ * Extract a hexadecimal integer from the beginning of a std::string.
  * This can involve parsing a RPN expression.
- * @param[in,out] input         Input to extract integer from. The extracted data is removed from this string.
+ * @param[in,out] input         Input to extract integer from. The extracted data is removed from this std::string.
  * @param[out]    token         Extracted integer
- * @param[in,out] processed     Processed data. The extracte data is appended to this string.
+ * @param[in,out] processed     Processed data. The extracte data is appended to this std::string.
  * @param[in,out] anyprocessing Is set to true, if the data added to \a processed differs from the date removed
  *                              from \a input. E.g. because of parsing an RPN expression.
  * @return true on error
  */
-static bool extract_hex(string&input,int&token,string&processed,bool&)
+static bool extract_hex(std::string&input,int&token,std::string&processed,bool&)
 {
 	const char *start = input.c_str();
 	const char *pos = start;
@@ -600,9 +600,9 @@ static bool extract_hex(string&input,int&token,string&processed,bool&)
 	return false;
 }
 
-bool verify_real(string&data,RealSpriteState&formats){
-	string::size_type loc=NPOS;
-	string udata=UCase(data);
+bool verify_real(std::string&data,RealSpriteState&formats){
+	std::string::size_type loc=NPOS;
+	std::string udata=UCase(data);
 	while(true){
 		loc=udata.find(".PCX",loc+1);
 		if(loc==NPOS)
@@ -613,13 +613,13 @@ bool verify_real(string&data,RealSpriteState&formats){
 		}
 		if(isspace(data[loc+4]))break;
 	}
-	string name=data.substr(0,loc+4);
+	std::string name=data.substr(0,loc+4);
 
 	if(NFOversion>=32){
-		string depth;
+		std::string depth;
 		int xpos, ypos, xsize, ysize, xrel, yrel, zoom;
-		string meta=data.substr(loc+5);
-		string processed;
+		std::string meta=data.substr(loc+5);
+		std::string processed;
 		bool anyprocessing = false;
 		if (extract_string(meta,depth,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"depth");  return COMMENTOFF(); }
 		if (depth=="mask"){
@@ -633,14 +633,14 @@ bool verify_real(string&data,RealSpriteState&formats){
 			if(xpos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,XPOS,0);
 			if(ypos<0)IssueMessage(ERROR,REAL_VAL_TOO_SMALL,YPOS,0);
 
-			string flag;
+			std::string flag;
 			while (!extract_string(meta,flag,processed,anyprocessing)) {
 				{ IssueMessage(0,REAL_UNKNOWN_FLAG,flag.c_str()); return COMMENTOFF(); }
 			}
 		} else if (depth=="32bpp"||depth=="8bpp"){
 			formats.mask_allowed = depth=="32bpp";
 
-			string zoom_str;
+			std::string zoom_str;
 			if (extract_int(meta,xpos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xpos");  return COMMENTOFF(); }
 			if (extract_int(meta,ypos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"ypos");  return COMMENTOFF(); }
 			if (extract_int(meta,xsize,processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xsize"); return COMMENTOFF(); }
@@ -669,7 +669,7 @@ bool verify_real(string&data,RealSpriteState&formats){
 			else if (zoom_str=="zo8") zoom = 5;
 			else { IssueMessage(0,REAL_MISSING_DATA,"zoom"); return COMMENTOFF(); }
 
-			string flag;
+			std::string flag;
 			bool chunked = false, nocrop=false;
 			while (!extract_string(meta,flag,processed,anyprocessing)) {
 				if (!chunked&&flag=="chunked") chunked = true;
@@ -691,8 +691,8 @@ bool verify_real(string&data,RealSpriteState&formats){
 		return true;
 	}else{
 		int xpos, ypos, comp, ysize, xsize, xrel, yrel;
-		string meta=data.substr(loc+5);
-		string processed;
+		std::string meta=data.substr(loc+5);
+		std::string processed;
 		bool anyprocessing = false;
 
 		if (extract_int(meta,xpos, processed,anyprocessing)) { IssueMessage(0,REAL_MISSING_DATA,"xpos");  return COMMENTOFF(); }
@@ -721,7 +721,7 @@ bool verify_real(string&data,RealSpriteState&formats){
 	}
 }
 
-void output_buffer(const string&sprite,bool isPatch,int spriteno){
+void output_buffer(const std::string&sprite,bool isPatch,int spriteno){
 	PseudoSprite data(sprite,spriteno);
 	if(data.IsValid()){
 		_spritenum++;

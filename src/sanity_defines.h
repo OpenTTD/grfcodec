@@ -42,7 +42,7 @@ void InitF();
 void finalF();
 
 bool IsLabel(uint);
-//int GetBit(const string&);
+//int GetBit(const std::string&);
 
 enum ActBit{ACT0=1,ACT1=2,ACT3=4,ACT4=8,EMPTY1=0x10,OVERRIDE3=0x20,GENERIC3=0x40,ACT3_BEFORE_PROP08=0x80};
 enum sanstate{UNKNOWN,FIND_PSEUDO,FIND_REAL,FIND_INCLUDE,FIND_RECOLOR,FIND_REAL_OR_RECOLOR};

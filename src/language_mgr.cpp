@@ -23,7 +23,6 @@
 
 #include "language_mgr.h"
 
-using namespace std;
 
 #include "inlines.h"
 
@@ -33,11 +32,11 @@ LanguageMgr::LanguageMgr() {
 }
 
 RenumLanguageId LanguageMgr::DetectLanguage() const {
-	string langCode = safetostring(getenv("LANG"));
+	std::string langCode = safetostring(getenv("LANG"));
 	return DecodeLanguageCode(langCode);
 }
 
-RenumLanguageId LanguageMgr::DecodeLanguageCode(const string& code) const {
+RenumLanguageId LanguageMgr::DecodeLanguageCode(const std::string& code) const {
 	str2lang_map::const_iterator pos = codeIdMap.find(code);
 	if(pos != codeIdMap.end())
 		return pos->second;
@@ -52,6 +51,6 @@ RenumLanguageId LanguageMgr::DecodeLanguageCode(const string& code) const {
 #undef END_LANGUAGES
 #define START_LANGUAGES() void LanguageMgr::InitLanguageMap() {
 #define RENUM_LANGUAGE(name,code) \
-	codeIdMap.insert(make_pair(code,name));
+	codeIdMap.insert(std::make_pair(code,name));
 #define END_LANGUAGES() }
 #include "lang/language_list.h"

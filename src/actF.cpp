@@ -23,7 +23,6 @@
 #include<cassert>
 #include<sstream>
 
-using namespace std;
 
 #include"nforenum.h"
 #include"inlines.h"
@@ -111,7 +110,7 @@ void CheckF(PseudoSprite&data){
 		uint total_prob=0,firstbit=data.ExtractByte(++offset),fb_offs=offset,numbits=data.ExtractByte(++offset);
 		if(textcount>1){
 			if(bitsused&BITS(firstbit,numbits)){
-				ostringstream s;
+				std::ostringstream s;
 				int first=-1,bits=bitsused&BITS(firstbit,numbits);
 				for(int j=0;j<32;j++){
 					if(bits&(1<<j)){
@@ -124,7 +123,7 @@ void CheckF(PseudoSprite&data){
 					else s<<first<<".."<<j-1<<", ";
 					first=-1;
 				}
-				string str=s.str();
+				std::string str=s.str();
 				str[str.length()-2]='\0';
 				IssueMessage(WARNING1,BITS_OVERLAP,fb_offs,i,str.c_str());
 			}

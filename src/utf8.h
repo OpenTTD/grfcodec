@@ -10,6 +10,6 @@
 #ifndef UTF8_H_INCLUDED
 #define UTF8_H_INCLUDED
 
-string GetUtf8Encode(uint);
+std::string GetUtf8Encode(uint);
 
 #endif /*UTF8_H_INCLUDED*/

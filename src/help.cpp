@@ -26,13 +26,12 @@
 #include "language_mgr.h"
 #include "help.h"
 
-using namespace std;
 
 // --------
 
 // Generate a ShowHelp function for each supported language.
 #define START_HELP_TEXT(lang) void ShowHelp_##lang(){ \
-	cout << ""
+	std::cout << ""
 #define END_HELP_TEXT() ; }
 #include "lang/all_help.h"
 

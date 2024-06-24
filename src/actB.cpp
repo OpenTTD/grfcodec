@@ -22,7 +22,6 @@
 #include<fstream>
 #include<string>
 
-using namespace std;
 
 #include"nforenum.h"
 #include"inlines.h"

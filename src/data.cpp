@@ -34,7 +34,6 @@
 #   include<unistd.h>
 #endif
 
-using namespace std;
 
 #include"nforenum.h"
 #include"inlines.h"
@@ -1155,7 +1154,7 @@ struct dat{
 
 #include "data.h"
 
-bool makedir(const string&dir,bool dieonfail=false){
+bool makedir(const std::string&dir,bool dieonfail=false){
 	if(dir==""){
 		if(dieonfail)exit(EDATA);
 		return false;
@@ -1173,7 +1172,7 @@ bool makedir(const string&dir,bool dieonfail=false){
 	}
 }
 
-bool finddir(string&dir){
+bool finddir(std::string&dir){
 	if(dir=="")return false;
 	struct stat Stat;
 	if(dir[dir.length()-1]=='\\'||dir[dir.length()-1]=='/')
@@ -1183,9 +1182,9 @@ bool finddir(string&dir){
 	return true;
 }
 
-static string getdir(bool allow_mkdir){
-	string *pret;
-	string cwd,home,homedrpath;
+static std::string getdir(bool allow_mkdir){
+	std::string *pret;
+	std::string cwd,home,homedrpath;
 	if(datadir!=""){
 		verify(finddir(datadir)||makedir(datadir,true));
 		pret=&datadir;
@@ -1216,7 +1215,7 @@ static string getdir(bool allow_mkdir){
 }
 
 FILE*tryopen(const char*name,const char*mode,bool allownull=false){
-	string dir = getdir(mode[0] == 'w');
+	std::string dir = getdir(mode[0] == 'w');
 	FILE*pFile=fopen((dir+name).c_str(),mode);
 	if(pFile||allownull)return pFile;
 	IssueMessage(0,DATAFILE_ERROR,OPEN,name+1,ERRNO,errno);

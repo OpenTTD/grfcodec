@@ -33,7 +33,7 @@ using namespace boost::bimaps;
 typedef unsigned char U8;
 #include "escapes.h"
 
-typedef bimap<string, multiset_of<int> > nfe_map;
+typedef bimap<std::string, multiset_of<int> > nfe_map;
 typedef nfe_map::value_type nfe_pair;
 typedef nfe_map::left_value_type nfe_lpair;
 typedef nfe_map::right_value_type nfe_rpair;

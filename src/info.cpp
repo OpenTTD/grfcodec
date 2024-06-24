@@ -24,16 +24,16 @@ int makeint(U8 low, S8 high)
 	return combined;
 }
 
-void read_file(istream&in,int infover,int grfcontversion,AllocArray<Sprite>&sprites);
+void read_file(std::istream&in,int infover,int grfcontversion,AllocArray<Sprite>&sprites);
 
 nfe_map nfo_escapes;
 
 inforeader::inforeader(char *fn, int grfcontversion)
 {
-	ifstream f;
+	std::ifstream f;
 	f.open(fn);
 
-	string buffer;
+	std::string buffer;
 	int infover;
 
 	imgfile = NULL;
@@ -58,8 +58,8 @@ inforeader::inforeader(char *fn, int grfcontversion)
 	if (infover > 6) {
 		while (strncmp(buffer.c_str(), "// Format: ", 11)) {
 			if (!strncmp(buffer.c_str(), "// Escapes: ", 12)) { // Nope. That was an escapes line.
-				istringstream esc(buffer);
-				string str;
+				std::istringstream esc(buffer);
+				std::string str;
 				int byte = 0;
 				esc.ignore(12);
 				while (esc>>str){

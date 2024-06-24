@@ -24,7 +24,6 @@
 #include<fstream>
 #include<errno.h>
 
-using namespace std;
 
 #include"nforenum.h"
 #include"inlines.h"
@@ -87,7 +86,7 @@ struct act7{
 	uint act,spriteno,skips;
 };
 
-static vector<act7>jumps;
+static std::vector<act7>jumps;
 
 int Check7(PseudoSprite&data){
 	uint desiredSize=data.Length()-5;

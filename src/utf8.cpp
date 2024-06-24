@@ -92,12 +92,12 @@ uint PseudoSprite::ExtractUtf8(uint& off, bool& valid){
 
 #define CHAR(x) (char(((ch>>((x)*6))&0x3F)|0x80))
 
-string GetUtf8Encode(uint ch){
-	if(ch<0x80)return string()+char(ch);
-	if(ch<0x800)return string()+char(((ch>>6 )&0x1F)|0xC0)+CHAR(0);
-	if(ch<0x10000)return string()+char(((ch>>12)&0x0F)|0xE0)+CHAR(1)+CHAR(0);
-	if(ch<0x200000)return string()+char(((ch>>18)&0x07)|0xF0)+CHAR(2)+CHAR(1)+CHAR(0);
-	if(ch<0x4000000)return string()+char(((ch>>24)&0x03)|0xF8)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
-	if(ch<0x80000000)return string()+char(((ch>>30)&0x01)|0xFC)+CHAR(4)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
+std::string GetUtf8Encode(uint ch){
+	if(ch<0x80)return std::string()+char(ch);
+	if(ch<0x800)return std::string()+char(((ch>>6 )&0x1F)|0xC0)+CHAR(0);
+	if(ch<0x10000)return std::string()+char(((ch>>12)&0x0F)|0xE0)+CHAR(1)+CHAR(0);
+	if(ch<0x200000)return std::string()+char(((ch>>18)&0x07)|0xF0)+CHAR(2)+CHAR(1)+CHAR(0);
+	if(ch<0x4000000)return std::string()+char(((ch>>24)&0x03)|0xF8)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
+	if(ch<0x80000000)return std::string()+char(((ch>>30)&0x01)|0xFC)+CHAR(4)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
 	INTERNAL_ERROR(ch,ch);
 }

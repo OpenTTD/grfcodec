@@ -30,7 +30,7 @@ class inforeader {
 
 	protected:
 
-	string imgname;
+	std::string imgname;
 	int *colourmap;
 	AllocArray<Sprite> nfofile;
 private:
