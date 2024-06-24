@@ -36,7 +36,6 @@
 
 using namespace boost::gregorian;
 #define foreach BOOST_FOREACH
-using namespace std;
 
 #include"nforenum.h"
 #include"pseudo.h"
@@ -65,22 +64,22 @@ enum{HEX,TEXT,UTF8,ENDQUOTE,QESC,QEXT,NQEXT,NOBREAK=0x80};
 		white="";\
 	}else ((void)0)
 
-int FindEscape(string str);
-string FindEscape(char, int);
-string FindEscape(char, int, uint);
+int FindEscape(std::string str);
+std::string FindEscape(char, int);
+std::string FindEscape(char, int, uint);
 
-PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
+PseudoSprite::PseudoSprite(const std::string&sprite,int oldspritenum):
 	orig(sprite),
 	valid(true),
 	useorig(false),
 	oldspritenum(oldspritenum),
 	extract_offs(0)
 {
-	istringstream in(sprite);
-	ostringstream out;
+	std::istringstream in(sprite);
+	std::ostringstream out;
 	char ch;
 	bool newline=true;
-	string white;
+	std::string white;
 	while(in){
 		switch(in.peek()){
 		case EOF:continue;
@@ -181,7 +180,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 					continue;
 				default:{
 					in.unget();
-					string esc;
+					std::string esc;
 					in>>esc;
 					int byte = FindEscape(esc);
 					if(byte == -1)
@@ -199,7 +198,7 @@ PseudoSprite::PseudoSprite(const string&sprite,int oldspritenum):
 			/* FALLTHROUGH */
 		default:
 			if (is_comment(in)) {
-				string comment;
+				std::string comment;
 				getline(in,comment);
 				comment=white+comment;
 				white="";
@@ -260,8 +259,8 @@ void PseudoSprite::CheckLinkage(int ofs, int count)const{
 	}
 }
 
-bool PseudoSprite::MayBeSprite(const string&sprite){
-	istringstream in(sprite);
+bool PseudoSprite::MayBeSprite(const std::string&sprite){
+	std::istringstream in(sprite);
 	char ch;
 	while(in.get(ch)){
 		if(ch=='"')return true;
@@ -269,7 +268,7 @@ bool PseudoSprite::MayBeSprite(const string&sprite){
 			in.ignore(INT_MAX,'\n');
 			continue;
 		}
-		if(isspace(ch)||string(VALID_PSEUDO).find(ch)==NPOS)continue;
+		if(isspace(ch)||std::string(VALID_PSEUDO).find(ch)==NPOS)continue;
 		return true;
 	}
 	return false;
@@ -299,12 +298,12 @@ PseudoSprite&PseudoSprite::SetText(uint i,uint num){
 }
 
 PseudoSprite&PseudoSprite::SetOpByte (uint i, char action) {
-	string s = FindEscape(action, ExtractByte(i));
+	std::string s = FindEscape(action, ExtractByte(i));
 	if (s != "") SetEscape(i, false, s, 1);
 	return *this;
 }
 PseudoSprite&PseudoSprite::SetPositionalOpByte (uint i, char action) {
-	string s = FindEscape(action, ExtractByte(i), i);
+	std::string s = FindEscape(action, ExtractByte(i), i);
 	if (s != "") SetEscape(i, false, s, 1);
 	return *this;
 }
@@ -384,7 +383,7 @@ PseudoSprite&PseudoSprite::SetQEscape(uint i,uint num){
 	return SetHex(i,num);
 }
 
-PseudoSprite&PseudoSprite::SetEscape(uint i, bool quote, string ext, uint len){
+PseudoSprite&PseudoSprite::SetEscape(uint i, bool quote, std::string ext, uint len){
 	if(GetState(USEESCAPES)){
 		while(len--){
 			ext_print[i+len]="";
@@ -400,7 +399,7 @@ PseudoSprite&PseudoSprite::SetEot(uint i){beauty[i]=ENDQUOTE;return*this;}
 PseudoSprite&PseudoSprite::SetEol(uint i,uint minbreaks,uint lead){
 	if(GetState(CONVERTONLY)||GetState(LINEBREAKS)<minbreaks||i+1==Length())return*this;
 	if(context[i].find_first_of('\n')==NPOS)context[i]+="\n";
-	if(context[i][context[i].length()-1]=='\n')context[i]+=string(GetState(LEADINGSPACE,lead),' ');
+	if(context[i][context[i].length()-1]=='\n')context[i]+=std::string(GetState(LEADINGSPACE,lead),' ');
 	return*this;
 }
 PseudoSprite&PseudoSprite::SetNoEol(uint i){
@@ -525,7 +524,7 @@ uint PseudoSprite::ExtractDword(uint offs)const{
 	}
 }
 
-void PseudoSprite::AddComment(const string&str,uint i){
+void PseudoSprite::AddComment(const std::string&str,uint i){
 	if(i==(uint)-1)NoBeautify();
 	else if(context[i]=="")context[i]+='\n'+str+'\n';
 	else if(context[i][context[i].length()-1]=='\n')context[i]+=str+'\n';
@@ -535,7 +534,7 @@ void PseudoSprite::AddComment(const string&str,uint i){
 	}
 }
 
-void PseudoSprite::TrailComment(const string&str,uint i){
+void PseudoSprite::TrailComment(const std::string&str,uint i){
 	if(i==(uint)-1)NoBeautify();
 	else if(context[i]=="")context[i]=str+'\n';
 	else if(context[i][0]!='\n')return;
@@ -547,7 +546,7 @@ void PseudoSprite::AddBlank(uint i){
 	else if(context[i]=="")context[i]="\n\n";
 	else if(!Length())context[i]+='\n';
 	else{
-		string::size_type offs=context[i].find_first_of('\n');
+		std::string::size_type offs=context[i].find_first_of('\n');
 		if(offs==NPOS||context[i].substr(offs,2)!="\n\n")
 			context[i]=context[i].substr(0,offs)+'\n'+context[i].substr(offs);
 	}
@@ -557,7 +556,7 @@ void PseudoSprite::NoBeautify(){
 	useorig=true;
 }
 
-ostream&operator<<(ostream&out,PseudoSprite&sprite){
+std::ostream&operator<<(std::ostream&out,PseudoSprite&sprite){
 	sprite.output(out);
 	return out;
 }
@@ -566,46 +565,46 @@ ostream&operator<<(ostream&out,PseudoSprite&sprite){
 // http://oopweb.com/CPP/Documents/CPPHOWTO/Volume/C++Programming-HOWTO-7.html#ss7.3
 // "Copyright policy is GNU/GPL as per LDP (Linux Documentation project)."
 // http://oopweb.com/CPP/Documents/CPPHOWTO/Volume/C++Programming-HOWTO-22.html
-vector<string> Tokenize(const string& str, char delimiter) {
-	vector<string> tokens;
-    // Skip delimiters at beginning.
-	string::size_type lastPos = str.find_first_not_of(delimiter);
-    // Find first "non-delimiter".
-	string::size_type pos     = str.find_first_of(delimiter, lastPos);
+std::vector<std::string> Tokenize(const std::string& str, char delimiter) {
+	std::vector<std::string> tokens;
+	// Skip delimiters at beginning.
+	std::string::size_type lastPos = str.find_first_not_of(delimiter);
+	// Find first "non-delimiter".
+	std::string::size_type pos     = str.find_first_of(delimiter, lastPos);
 
-    while (string::npos != pos || string::npos != lastPos) {
-        // Found a token, add it to the vector.
-        tokens.push_back(str.substr(lastPos, pos - lastPos));
-        // Skip delimiters.  Note the "not_of"
-        lastPos = str.find_first_not_of(delimiter, pos);
-        // Find next "non-delimiter"
-        pos = str.find_first_of(delimiter, lastPos);
-    }
+	while (std::string::npos != pos || std::string::npos != lastPos) {
+		// Found a token, add it to the vector.
+		tokens.push_back(str.substr(lastPos, pos - lastPos));
+		// Skip delimiters.  Note the "not_of"
+		lastPos = str.find_first_not_of(delimiter, pos);
+		// Find next "non-delimiter"
+		pos = str.find_first_of(delimiter, lastPos);
+	}
 	return tokens;
 }
 
-ostream&PseudoSprite::output(ostream&out){
+std::ostream&PseudoSprite::output(std::ostream&out){
 	if(!valid){
-		istringstream datastream(orig);
-		string line;
+		std::istringstream datastream(orig);
+		std::string line;
 		getline(datastream,line);
-		out<<COMMENT_PREFIX<<"    0 * 0\t "<<line<<endl;
+		out<<COMMENT_PREFIX<<"    0 * 0\t "<<line<<std::endl;
 		while(getline(datastream,line)){
 			if(!is_comment(line))out<<COMMENT_PREFIX;
-			out<<line<<endl;
+			out<<line<<std::endl;
 		}
 		return out;
 	}
 	if(UseOrig()){
 		if(Length())
-			out<<setw(5)<<spritenum()<<" * "<<(GetState(DIFF)?0:Length())<<"\t ";
+			out<<std::setw(5)<<spritenum()<<" * "<<(GetState(DIFF)?0:Length())<<"\t ";
 		return out<<orig;
 	}
 	bool instr=false,noendl=false;
 	uint count=16;
-	out<<setw(5)<<spritenum()<<" * "<<(GetState(DIFF)?0:Length())<<"\t";
+	out<<std::setw(5)<<spritenum()<<" * "<<(GetState(DIFF)?0:Length())<<"\t";
 
-	ostringstream outbuf;	// buffer output for potential tab expansion
+	std::ostringstream outbuf; // buffer output for potential tab expansion
 
 //This section contains a rewrite of lines 402-438 or thereabouts of info.cc
 //from grfcodec v0.9.7: http://www.ttdpatch.net/grfcodec
@@ -653,7 +652,7 @@ ostream&PseudoSprite::output(ostream&out){
 				outbuf<<'"';
 				instr=false;
 			}
-			string str;
+			std::string str;
 			if(NFOversion>6 && (beauty[i]&~NOBREAK)==NQEXT)
 				str = ext_print[i].c_str()+skipspace;
 			else
@@ -701,42 +700,42 @@ ostream&PseudoSprite::output(ostream&out){
 				outbuf<<'"';
 				instr=false;
 			}
-			outbuf<<(noendl?"":"\n")<<string(count=GetState(LEADINGSPACE,2),' ');
+			outbuf<<(noendl?"":"\n")<<std::string(count=GetState(LEADINGSPACE,2),' ');
 		}
 	}
 	ignorelinkage=false;
 	if (instr)outbuf<<'"';
 
 	// Collected all output; perform tab expansion
-	string buffer = outbuf.str();
+	std::string buffer = outbuf.str();
 	if(buffer.find('\t')!=NPOS){
 		// Split into columns
-		vector<vector<string> > sections;
-		foreach(const string &line, (Tokenize(buffer, '\n')))
+		std::vector<std::vector<std::string> > sections;
+		foreach(const std::string &line, (Tokenize(buffer, '\n')))
 			sections.push_back(Tokenize(line, '\t'));
 
 		// Count the columns
-		uint columns = (uint)max_element(sections.begin(),sections.end(), boost::lambda::bind(&vector<string>::size,boost::lambda::_1) < boost::lambda::bind(&vector<string>::size,boost::lambda::_2))->size();
+		uint columns = (uint)max_element(sections.begin(),sections.end(), boost::lambda::bind(&std::vector<std::string>::size,boost::lambda::_1) < boost::lambda::bind(&std::vector<std::string>::size,boost::lambda::_2))->size();
 
 		// For each column,
 		for(uint i=0;i<columns;i++){
 			// determine how wide it must be,
-			string::size_type padWidth = 0;
-			foreach(const vector<string> &section, sections)
-				if(section.size()>i+1) padWidth = max(padWidth, section[i].length()+1);
+			std::string::size_type padWidth = 0;
+			foreach(const std::vector<std::string> &section, sections)
+				if(section.size()>i+1) padWidth = std::max(padWidth, section[i].length()+1);
 			// and make it that wide.
-			foreach(vector<string> &section, sections)
-				if(section.size()>i+1) section[i] += string(padWidth - section[i].length(), ' ');
+			foreach(std::vector<std::string> &section, sections)
+				if(section.size()>i+1) section[i] += std::string(padWidth - section[i].length(), ' ');
 		}
 
 		// Tabs are expanded, write each line
-		foreach(const vector<string>&line, sections)
+		foreach(const std::vector<std::string>&line, sections)
 			for_each(line.begin(),line.end(),out<<boost::lambda::_1)('\n');
 
 	}else out<<buffer;
 
 	if(noendl)return out;
-	return out<<endl;
+	return out<<std::endl;
 }
 
 bool PseudoSprite::CanQuote(uint byte){
@@ -779,10 +778,10 @@ bool PseudoSprite::UseOrig()const{
 	return useorig||!GetState(BEAUTIFY);
 }
 
-uint PseudoSprite::ReadValue(istream& in, width w) {
+uint PseudoSprite::ReadValue(std::istream& in, width w) {
 	if (in.peek() == 'x') {		// Read any hex value
 		uint ret;
-		in.ignore()>>setbase(16)>>ret>>setbase(10);
+		in.ignore()>>std::setbase(16)>>ret>>std::setbase(10);
 		return ret;
 	}
 	if (in.peek() == '(') {		// Read any RPN value
@@ -798,16 +797,16 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 
 		// Replace the original RPN with value
 		auto e = in.tellg();
-		size_t p = orig.find(((istringstream&)in).str().substr(size_t(s), size_t(e - s)));
+		size_t p = orig.find(((std::istringstream&)in).str().substr(size_t(s), size_t(e - s)));
 		orig.erase(p, size_t(e - s));
-		ostringstream Val;
+		std::ostringstream Val;
 		Val << val;
 		orig.insert(p, Val.str());
 		return val;
 	}
 
 	// Read any other value
-	string str;
+	std::string str;
 	// can't use operator>> -- that will consume comments in cases like \w12000//comment
 	eat_white(in); // skip whitespace at front
 	while(in && !is_comment(in) && !isspace(in.peek()) && in.peek() != EOF)
@@ -828,13 +827,13 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 
 		if (w == _W_) {
 			// word date
-			if (d==0 || (d>31 && d<100) || d>1919) swap(y, d);	// Try DMY instead
+			if (d==0 || (d>31 && d<100) || d>1919) std::swap(y, d); // Try DMY instead
 			if (y==0) y = 2000;
 			else if (y>31 && y<100) y+=1900;
 		} else if (w == _D_) {
 			// dword date
 			extra = 701265;
-			if (d >= 32) swap(y, d); // Try DMY instead
+			if (d >= 32) std::swap(y, d); // Try DMY instead
 			// Boost doesn't support years out of the range 1400..9999
 			while (y>9999) {
 				y -= 400;
@@ -854,6 +853,6 @@ uint PseudoSprite::ReadValue(istream& in, width w) {
 	}
 
 fail:	// Nothing worked
-	in.clear(ios::badbit);
+	in.clear(std::ios::badbit);
 	return (uint)-1;
 }

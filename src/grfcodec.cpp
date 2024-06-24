@@ -970,10 +970,10 @@ int main(int argc, char **argv)
 			printf("%s\n", version);
 			return 0;
 		case 'w':
-			width = min(max(atoi(optarg), 16), 65535);
+			width = std::min(std::max(atoi(optarg), 16), 65535);
 			break;
 		case 'h':
-			height = min(max(atoi(optarg), 16), 65535);
+			height = std::min(std::max(atoi(optarg), 16), 65535);
 			break;
 		case 'b':
 			box = atoi(optarg);

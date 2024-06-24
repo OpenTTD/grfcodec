@@ -40,25 +40,25 @@ public:
 	virtual SpriteType GetType()const =0;
 	class unparseable{//thrown by the constructors
 	public:
-		unparseable(string reason,size_t sprite);
-		string reason;
+		unparseable(std::string reason,size_t sprite);
+		std::string reason;
 	};
 };
 
 class Real:public Sprite{
 public:
-	void AddSprite(size_t,int,const string&);
+	void AddSprite(size_t,int,const std::string&);
 	Sprite::SpriteType GetType()const{return ST_REAL;}
-	vector<SpriteInfo> infs;
+	std::vector<SpriteInfo> infs;
 private:
-	ostream&output(ostream&)const;
-	static string prevname;
+	std::ostream&output(std::ostream&)const;
+	static std::string prevname;
 	static int prevy;
 };
 
 class Pseudo:public Sprite{
 public:
-	Pseudo(size_t,int,int,const string&,int);
+	Pseudo(size_t,int,int,const std::string&,int);
 
 	U8 operator[](int offs)const{return packed[offs];}
 	uint size()const;
@@ -67,22 +67,22 @@ public:
 	const char*GetData()const{return packed.c_str();}
 
 	//static bool CanQuote(uint);
-	static bool MayBeSprite(const string&);
+	static bool MayBeSprite(const std::string&);
 	enum width {_B_, _BX_, _W_, _D_};
 
-	static uint ReadValue(istream&, width);
+	static uint ReadValue(std::istream&, width);
 
 private:
-	string packed;
+	std::string packed;
 };
 
 class Include:public Sprite{
 public:
-	Include(const string&);
+	Include(const std::string&);
 	Sprite::SpriteType GetType()const{return ST_INCLUDE;}
 	const char *GetName()const{return name.c_str();}
 private:
-	string name;
+	std::string name;
 };
 
 #endif /* _NFOSPRITE_H */

@@ -121,11 +121,11 @@ COMMAND_DATA_END()
 int GetState(enum gen);
 uint GetState(enum beaut,int =0);
 bool GetWarn(int,int);
-bool is_command(const string&);
-bool parse_comment(const string&);
+bool is_command(const std::string&);
+bool parse_comment(const std::string&);
 void reset_commands();
-int DoCalc(const string&,size_t&);
-int DoCalc(istream&,int&);
+int DoCalc(const std::string&,size_t&);
+int DoCalc(std::istream&,int&);
 bool CLCommand(int);
 
 #endif//_RENUM_COMMAND_H_FUNCTIONS_INCLUDED_

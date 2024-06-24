@@ -25,7 +25,6 @@
 #include<cstdlib>
 #include<cstdarg>
 
-using namespace std;
 
 #include"nforenum.h"
 #include"inlines.h"
@@ -181,7 +180,7 @@ void Check13(PseudoSprite&data){
  * (RETURN_NULL), or the number of stack-accessing control characters
  * encountered or -1 if the stack was smashed (RETURN_STACK)
  */
-int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,string stack,const int retInfo){
+int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,std::string stack,const int retInfo){
 	const uint length=data.Length();
 	if(offs>=length)return -1;
 	uint stackoffs=0,ret=0,ch;
@@ -256,12 +255,12 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					IssueMessage(WARNING1,CANNOT_SHUFFLE,offs);
 					perms|=CTRL_NO_STACK_CHECK;
 				}else{
-					swap(stack[6],stack[0]);
-					swap(stack[7],stack[1]);
-					swap(stack[4],stack[6]);
-					swap(stack[5],stack[7]);
-					swap(stack[2],stack[4]);
-					swap(stack[3],stack[5]);
+					std::swap(stack[6],stack[0]);
+					std::swap(stack[7],stack[1]);
+					std::swap(stack[4],stack[6]);
+					std::swap(stack[5],stack[7]);
+					std::swap(stack[2],stack[4]);
+					std::swap(stack[3],stack[5]);
 				}
 			}
 		}else if(ch<0x88||ch==0x9A){
@@ -275,7 +274,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 				case 0x02:		// ignore color code
 					break;
 				case 0x03:		// push WORD
-					stack = string(2,char(STACK_WORD)) + stack;
+					stack = std::string(2,char(STACK_WORD)) + stack;
 					arg=data.ExtractEscapeWord(++offs);
 					if(!(arg&0xFF)&&!include_00_safe)IssueMessage(WARNING1,EMBEDDED_00,offs);
 					++offs;
@@ -356,7 +355,7 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 					STACK_CHECK(STACK_QWORD,8)
 				case 0x02:case 0x03:case 0x04:case 0x0E:case 0x0F:case 0x10:case 0x11:case 0x12:
 				case 0x13:case 0x14:case 0x15:
-					--ret;	// These do not read from the stack.
+					--ret; // These do not read from the stack.
 					break;
 				DEFAULT(ch)
 				}
@@ -395,15 +394,15 @@ int CheckString(PseudoSprite&data,uint&offs,int perms,bool include_00_safe,strin
 
 static const uchar stackSize[]={0,1,2,2,4,2,8};
 
-string MakeStack(int items,...){
-	string ret;
+std::string MakeStack(int items,...){
+	std::string ret;
 	va_list ap;
 	va_start(ap, items);
 	uint item;
 	for(int i=0;i<items;i++){
 		item=va_arg(ap, uint);
 		VERIFY(item&&item<STACK_INVALID,item);
-		ret+=string(stackSize[item],char(item|i<<4));
+		ret+=std::string(stackSize[item],char(item|i<<4));
 	}
 	va_end(ap);
 	return ret;
@@ -414,7 +413,7 @@ string MakeStack(int items,...){
  *******************************************************/
 
 struct langNames{
-	string names[0x80];
+	std::string names[0x80];
 	C_SINGLETON(langNames)
 };
 
@@ -445,7 +444,7 @@ void CheckLangID(uint id,uint offs){
 	if(GetLangName(id)==_unknownLanguage)IssueMessage(WARNING2,UNKNOWN_LANGUAGE,offs,id);
 }
 
-string GetLangName(uint id){
+std::string GetLangName(uint id){
 	VERIFY(id<0x80,id);
 	if(langNames::Instance().names[id]!="")return langNames::Instance().names[id];
 	return _unknownLanguage;

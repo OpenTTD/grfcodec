@@ -25,7 +25,6 @@
 #include<errno.h>
 #include<cstdlib>
 
-using namespace std;
 
 #include"inlines.h"
 #include"ExpandingArray.h"

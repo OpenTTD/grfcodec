@@ -31,17 +31,16 @@
 #else
 #include<vector>
 #endif
-using namespace std;
 
-template<typename _Ty>class ExpandingArray:public vector<_Ty>{
+template<typename _Ty>class ExpandingArray:public std::vector<_Ty>{
 	typedef ExpandingArray<_Ty> _MyT;
-	typedef vector<_Ty> _Mybase;
+	typedef std::vector<_Ty> _Mybase;
 public:
 	ExpandingArray(){}
 	ExpandingArray(const _Ty&_fill):m_fill(_fill){}
 	const _Ty&operator[](unsigned int x)const{
 		if(x>=_MyT::size())return m_fill;
-		return vector<_Ty>::operator[](x);
+		return std::vector<_Ty>::operator[](x);
 	}
 	_Ty&operator[](unsigned int x){
 		if(x>=_MyT::size())_MyT::resize(x+1);
@@ -52,27 +51,27 @@ private:
 	_Ty m_fill;
 };
 
-template<typename _Ty>class Expanding0Array:public vector<_Ty>{
+template<typename _Ty>class Expanding0Array:public std::vector<_Ty>{
 	typedef Expanding0Array<_Ty> _MyT;
 public:
 	_Ty operator[](unsigned int x)const{
 		if(x>=_MyT::size())return 0;
-		return vector<_Ty>::operator[](x);
+		return std::vector<_Ty>::operator[](x);
 	}
 	_Ty&operator[](unsigned int x){
 		if(x>=_MyT::size())_MyT::resize(x+1,0);
-		return vector<_Ty>::operator[](x);
+		return std::vector<_Ty>::operator[](x);
 	}
 };
-template<>class Expanding0Array<bool>:public vector<bool>{
+template<>class Expanding0Array<bool>:public std::vector<bool>{
 public:
 	bool operator[](unsigned int x)const{
 		if(x>=size())return false;
-		return vector<bool>::operator[](x);
+		return std::vector<bool>::operator[](x);
 	}
 	reference operator[](unsigned int x){
 		if(x>=size())resize(x+1,false);
-		return vector<bool>::operator[](x);
+		return std::vector<bool>::operator[](x);
 	}
 };
 

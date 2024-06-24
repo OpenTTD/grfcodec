@@ -25,6 +25,7 @@
 #ifdef _WIN32
 
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include<windows.h>
 #include<direct.h>
 
@@ -39,7 +40,7 @@ inline int mkdir(const char*x,int){return _mkdir(x);}
 inline int mkdir(const char*x,int){return mkdir(x);}
 #endif
 
-//string GetOpt(char*);
+//std::string GetOpt(char*);
 
 #endif//_WIN32
 
