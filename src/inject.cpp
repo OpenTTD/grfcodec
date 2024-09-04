@@ -24,15 +24,14 @@
 #include<string>
 #include<cassert>
 
-using namespace std;
 
 #include"globals.h"
 #include"inject.h"
 
-static queue<string>_injected;
-static const istream*_into;
+static std::queue<std::string>_injected;
+static const std::istream*_into;
 
-istream&inj_getline(istream&in,string&str){
+std::istream&inj_getline(std::istream&in,std::string&str){
 	assert(&in==_into);
 	if(_injected.size()){
 		str=_injected.front();
@@ -42,18 +41,18 @@ istream&inj_getline(istream&in,string&str){
 	return getline(in,str);
 }
 
-int peek(istream&in){
+int peek(std::istream&in){
 	assert(&in==_into);
 	if(&in==_into&&_injected.size())return _injected.front()[0];
 	return in.peek();
 }
 
-void inject(const string&str){
-	if(_into==NULL)(*pOut)<<str<<endl;
+void inject(const std::string&str){
+	if(_into==NULL)(*pOut)<<str<<std::endl;
 	else _injected.push(str);
 }
 
-void inject_into(const istream&into){
+void inject_into(const std::istream&into){
 	_into=&into;
 	while(!_injected.empty())_injected.pop();
 }

@@ -23,7 +23,6 @@
 #include <stdarg.h>
 #include <string>
 
-using namespace std;
 
 #define ZOOM_LEVELS (6)
 extern const char *zoom_levels[ZOOM_LEVELS];
@@ -58,7 +57,7 @@ struct SpriteInfo {
 	S16 xrel; ///< Horizontal offset
 	S16 yrel; ///< Vertical offset
 
-	string name;
+	std::string name;
 	int xpos,ypos,imgsize;
 	bool forcereopen;
 

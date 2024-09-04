@@ -23,7 +23,6 @@
 #include<cassert>
 #include<algorithm>
 
-using namespace std;
 
 #include"nforenum.h"
 #include"inlines.h"

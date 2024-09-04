@@ -34,7 +34,6 @@
 #   include<unistd.h>
 #endif
 
-using namespace std;
 
 #include"nforenum.h"
 #include"inlines.h"
@@ -208,9 +207,9 @@ static const char _datTextIDs[]="\x04\x09"
 "\x08\x01\x6C\x00\x38\x00\x43\x00\x44\x00\x00\x00\x06\x00\x00\x00"
 //-C000-          -D000-          -E000-          -F000-
 "\xFF\xFF\xFF\xFF\xFF\xFF\xFF\xFF\x4D\x00\x00\x00\x00\x00\x9B\x01"
-// Number of special string ID ranges:
+// Number of special std::string ID ranges:
 "\x03"
-// High bytes of special string IDs:
+// High bytes of special std::string IDs:
 "\xC4\xC5\xC9"
 ;
 
@@ -460,7 +459,7 @@ NDF_END
 #define DWORD 0x04
 
 /* Formatting */
-#define QUOTED 0x10   /* Quoted string */
+#define QUOTED 0x10   /* Quoted std::string */
 #define DECIMAL 0x20  /* Escaped decimal */
 #define HEX 0x30      /* Escaped hex */
 
@@ -1155,7 +1154,7 @@ struct dat{
 
 #include "data.h"
 
-bool makedir(const string&dir,bool dieonfail=false){
+bool makedir(const std::string&dir,bool dieonfail=false){
 	if(dir==""){
 		if(dieonfail)exit(EDATA);
 		return false;
@@ -1173,7 +1172,7 @@ bool makedir(const string&dir,bool dieonfail=false){
 	}
 }
 
-bool finddir(string&dir){
+bool finddir(std::string&dir){
 	if(dir=="")return false;
 	struct stat Stat;
 	if(dir[dir.length()-1]=='\\'||dir[dir.length()-1]=='/')
@@ -1183,9 +1182,9 @@ bool finddir(string&dir){
 	return true;
 }
 
-static string getdir(bool allow_mkdir){
-	string *pret;
-	string cwd,home,homedrpath;
+static std::string getdir(bool allow_mkdir){
+	std::string *pret;
+	std::string cwd,home,homedrpath;
 	if(datadir!=""){
 		verify(finddir(datadir)||makedir(datadir,true));
 		pret=&datadir;
@@ -1216,7 +1215,7 @@ static string getdir(bool allow_mkdir){
 }
 
 FILE*tryopen(const char*name,const char*mode,bool allownull=false){
-	string dir = getdir(mode[0] == 'w');
+	std::string dir = getdir(mode[0] == 'w');
 	FILE*pFile=fopen((dir+name).c_str(),mode);
 	if(pFile||allownull)return pFile;
 	IssueMessage(0,DATAFILE_ERROR,OPEN,name+1,ERRNO,errno);

@@ -32,16 +32,16 @@
 #include"globals.h"
 #include"nforenum.h"
 
-inline string safetostring(const char*ptr){return ptr?ptr:"";}
+inline std::string safetostring(const char*ptr){return ptr?ptr:"";}
 
-inline istream&eat_white(istream&in){
+inline std::istream&eat_white(std::istream&in){
 	while(isspace(in.peek()))in.ignore();
 	return in;
 }
 
-inline void strip_trailing_white(string&str){
-	string::iterator last = str.end();
-	for (string::iterator i = str.begin(); i != str.end(); i++)
+inline void strip_trailing_white(std::string&str){
+	std::string::iterator last = str.end();
+	for (std::string::iterator i = str.begin(); i != str.end(); i++)
 		if (!isspace(*i)) last = i;
 	if (last != str.end()) str.erase(last+1, str.end());
 }
@@ -53,7 +53,7 @@ inline int ctoi(char ch){
 	return 0;
 }
 
-inline bool is_comment(istream&in){
+inline bool is_comment(std::istream&in){
 	if(strchr("#;",in.peek()))return true;
 	if(in.peek()!='/')return false;
 	in.ignore();
@@ -65,25 +65,25 @@ inline bool is_comment(istream&in){
 	return false;
 }
 
-inline bool is_comment(const string&str,size_t off){
+inline bool is_comment(const std::string&str,size_t off){
 	if(strchr("#;",str[off]))return true;
 	if(str[off]!='/'||str[off+1]!='/') return false;
 	return true;
 }
 
-inline bool is_comment(const string&line){
+inline bool is_comment(const std::string&line){
 	return line==""||is_comment(line,line.find_first_not_of(WHITESPACE));
 }
 
-inline string UCase(string str){
+inline std::string UCase(std::string str){
 	size_t len=str.length();
 	for(size_t i=0;i<len;i++)
 		str[i]=(char)toupper(str[i]);
 	return str;
 }
 
-inline string itoa(uint x,uint radix=10,uint minlen=1){
-	string ret;
+inline std::string itoa(uint x,uint radix=10,uint minlen=1){
+	std::string ret;
 	if(radix==256){
 		while(x||minlen--){
 			ret+=char(x&0xFF);
@@ -102,19 +102,19 @@ inline string itoa(uint x,uint radix=10,uint minlen=1){
 	return ret;
 }
 
-inline string itoa(int x,uint radix=10,uint minlen=1){
+inline std::string itoa(int x,uint radix=10,uint minlen=1){
 	if(x>=0)return itoa((uint)x,radix,minlen);
 	if(x==INT_MIN)return '-'+itoa(uint(INT_MAX)+1,radix,minlen);
 	else return '-'+itoa((uint)-x,radix,minlen);
 }
 
-inline uint ReadHex(istream&in,uint digits){
+inline uint ReadHex(std::istream&in,uint digits){
 	uint ret;
 	while(isspace(in.peek()))in.ignore();
 	char ch;
 	in.get(ch);
 	if((ret=ctoi(ch))==0&&ch!='0'){
-		in.unget().clear(ios::badbit);
+		in.unget().clear(std::ios::badbit);
 		return ret;
 	}
 	for(;--digits;){

@@ -110,7 +110,7 @@ public:
 private:
 	int num;
 	uint width;
-	vector<range>ranges;
+	std::vector<range>ranges;
 	void AddRangeInternal(uint min,uint max,RenumMessageId unreachable);
 };
 
