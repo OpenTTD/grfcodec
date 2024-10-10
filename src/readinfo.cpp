@@ -253,7 +253,6 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 	inf.forcereopen=(inf.ypos<prevy);
 	prevy=inf.ypos;
 
-	if(infs.size()==0&&inf.zoom!=0)throw Sprite::unparseable("first sprite is not 8bpp normal zoom sprite",sprite);
 	if(inf.depth==DEPTH_MASK){
 		SpriteInfo parent=infs[infs.size()-1];
 		if (parent.depth!=DEPTH_32BPP)throw Sprite::unparseable("mask sprite not preceded by 32bpp sprite",sprite);
