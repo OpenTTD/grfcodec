@@ -27,28 +27,27 @@
 #include "globals.h"
 #include "message_mgr.h"
 
-using namespace std;
 
-const string MessageData::commentPrefix = "!!";
+const std::string MessageData::commentPrefix = "!!";
 
 MessageData::MessageData(char props_) : textMap() {
 	props = props_;
 }
 
-MessageData::MessageData(char props_, const string& default_text) : textMap() {
+MessageData::MessageData(char props_, const std::string& default_text) : textMap() {
 	props = props_;
 	SetText(RL_DEFAULT, default_text);
 }
 
-string MessageData::Display(const string& prefix, va_list& ap) const {
-	string ret = myvsprintf(GetMessage(prefix).c_str(), ap);
-	ostream* const stream[] = {pErr, pOut, pNfo};
+std::string MessageData::Display(const std::string& prefix, va_list& ap) const {
+	std::string ret = myvsprintf(GetMessage(prefix).c_str(), ap);
+	std::ostream* const stream[] = {pErr, pOut, pNfo};
 	if((props & TO_MASK) != TO_NULL)
 		(*(stream[(props & TO_MASK) >> TO_SHIFT])) << ret;
 	return ret;
 }
 
-const string& MessageData::GetText() const {
+const std::string& MessageData::GetText() const {
 	lang2str_map::const_iterator pos = textMap.find(
 		LanguageMgr::Instance().GetCurrentLanguage());
 	if(pos == textMap.end()) {
@@ -60,12 +59,12 @@ const string& MessageData::GetText() const {
 	return pos->second;
 }
 
-void MessageData::SetText(RenumLanguageId lang, const string& text) {
+void MessageData::SetText(RenumLanguageId lang, const std::string& text) {
 	textMap[lang] = text;
 }
 
-string MessageData::GetMessage(const string& prefix) const {
-	string ret = GetText();
+std::string MessageData::GetMessage(const std::string& prefix) const {
+	std::string ret = GetText();
 	if(props & HAS_OFFSET)
 		ret = MessageMgr::Instance().GetExtraText(OFFSET) + ret;
 	if(props & USE_PREFIX)
@@ -77,7 +76,7 @@ string MessageData::GetMessage(const string& prefix) const {
 
 // --------
 
-const string MessageMgr::UNDEFINED_TEXT = "UNDEFINED_TEXT";
+const std::string MessageMgr::UNDEFINED_TEXT = "UNDEFINED_TEXT";
 const MessageData MessageMgr::UNKNOWN_MESSAGE = MessageData(0,"UNKNOWN_MESSAGE");
 
 MessageMgr::MessageMgr() {
@@ -112,7 +111,7 @@ const std::string& MessageMgr::GetExtraText(RenumExtraTextId i) const {
 }
 
 bool MessageMgr::AddMessage(RenumMessageId i, char props) {
-	return msgDataMap.insert(make_pair(i, MessageData(props))).second;
+	return msgDataMap.insert(std::make_pair(i, MessageData(props))).second;
 }
 
 bool MessageMgr::SetMessageText(RenumMessageId i, RenumLanguageId lang, const std::string& text) {
@@ -127,9 +126,9 @@ bool MessageMgr::SetMessageText(RenumMessageId i, RenumLanguageId lang, const st
 void MessageMgr::SetExtraText(RenumExtraTextId i, RenumLanguageId lang, const std::string& text) {
 	extid2data_map::iterator pos = extraTextMap.find(i);
 	if(pos == extraTextMap.end()) {
-		pos = extraTextMap.insert(make_pair(i,lang2str_map())).first;
+		pos = extraTextMap.insert(std::make_pair(i,lang2str_map())).first;
 	}
-	pos->second.insert(make_pair(lang, text));
+	pos->second.insert(std::make_pair(lang, text));
 }
 
 // -------

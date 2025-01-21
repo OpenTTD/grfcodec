@@ -41,7 +41,6 @@ Version 7: Add backslash escapes
 #include<iomanip>
 #include<cstdio>
 
-using namespace std;
 
 // grfcodec requires boost::date_time for its processing of the \wYMD and
 // \wDMY formats. Get boost from www.boost.org
@@ -73,14 +72,14 @@ const char *depths[DEPTHS] = { "8bpp", "32bpp", "mask" };
 	}else\
 		(void(0))
 
-void read_file(istream&in,int infover,int grfcontversion,AllocArray<Sprite>&sprites){
-	string sprite,datapart,buffer;
+void read_file(std::istream&in,int infover,int grfcontversion,AllocArray<Sprite>&sprites){
+	std::string sprite,datapart,buffer;
 
 	int temp=-1,spriteno=-1,claimed_size=1;
-	string::size_type firstnotpseudo;
+	std::string::size_type firstnotpseudo;
 	while(true){
 		getline(in,sprite);
-		istringstream spritestream(sprite);
+		std::istringstream spritestream(sprite);
 		eat_white(spritestream);
 		if(spritestream.peek()==EOF || // blank
 			is_comment(spritestream)){ // comment
@@ -133,13 +132,13 @@ void read_file(istream&in,int infover,int grfcontversion,AllocArray<Sprite>&spri
 	}
 }
 
-Sprite::unparseable::unparseable(string reason,size_t sprite){
+Sprite::unparseable::unparseable(std::string reason,size_t sprite){
 	this->reason="Error: "+reason+".\n\tWhile reading sprite:"+itoa((int)sprite)+'\n';
 }
 
-void Real::AddSprite(size_t sprite,int infover,const string&data){
-	string::size_type loc=NPOS;
-	string udata=UCase(data);
+void Real::AddSprite(size_t sprite,int infover,const std::string&data){
+	std::string::size_type loc=NPOS;
+	std::string udata=UCase(data);
 	while(true){
 		loc=udata.find(".PCX",loc+1);
 #ifdef WITH_PNG
@@ -266,28 +265,28 @@ void Real::AddSprite(size_t sprite,int infover,const string&data){
 	infs.push_back(inf);
 }
 
-string Real::prevname;
+std::string Real::prevname;
 int Real::prevy=0;
 
 #define CHAR(x) (char(((ch>>((x)*6))&0x3F)|0x80))
 
-string GetUtf8Encode(uint ch){
-	if(ch<0x80)return string()+char(ch);
-	if(ch<0x800)return string()+char(((ch>>6 )&0x1F)|0xC0)+CHAR(0);
-	/*if(ch<0x10000)*/return string()+char(((ch>>12)&0x0F)|0xE0)+CHAR(1)+CHAR(0);
-	//if(ch<0x200000)return string()+char(((ch>>18)&0x07)|0xF0)+CHAR(2)+CHAR(1)+CHAR(0);
-	//if(ch<0x4000000)return string()+char(((ch>>24)&0x03)|0xF8)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
-	//if(ch<0x80000000)return string()+char(((ch>>30)&0x01)|0xFC)+CHAR(4)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
+std::string GetUtf8Encode(uint ch){
+	if(ch<0x80)return std::string()+char(ch);
+	if(ch<0x800)return std::string()+char(((ch>>6 )&0x1F)|0xC0)+CHAR(0);
+	/*if(ch<0x10000)*/return std::string()+char(((ch>>12)&0x0F)|0xE0)+CHAR(1)+CHAR(0);
+	//if(ch<0x200000)return std::string()+char(((ch>>18)&0x07)|0xF0)+CHAR(2)+CHAR(1)+CHAR(0);
+	//if(ch<0x4000000)return std::string()+char(((ch>>24)&0x03)|0xF8)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
+	//if(ch<0x80000000)return std::string()+char(((ch>>30)&0x01)|0xFC)+CHAR(4)+CHAR(3)+CHAR(2)+CHAR(1)+CHAR(0);
 	//INTERNAL_ERROR(ch,ch);
 }
 
 #undef CHAR
 
-int FindEscape(string);
+int FindEscape(std::string);
 
-Pseudo::Pseudo(size_t num,int infover,int grfcontversion,const string&sprite,int claimed_size){
-	istringstream in(sprite);
-	ostringstream out;
+Pseudo::Pseudo(size_t num,int infover,int grfcontversion,const std::string&sprite,int claimed_size){
+	std::istringstream in(sprite);
+	std::ostringstream out;
 	char ch;
 	while(in){
 		eat_white(in);
@@ -297,7 +296,7 @@ Pseudo::Pseudo(size_t num,int infover,int grfcontversion,const string&sprite,int
 			in.ignore();
 			while(true){
 				if(!in.get(ch))
-					throw Sprite::unparseable("Unterminated literal string",num);
+					throw Sprite::unparseable("Unterminated literal std::string",num);
 				if(ch=='"')
 					break;
 				if(ch=='\\'&&infover>6){
@@ -369,7 +368,7 @@ Pseudo::Pseudo(size_t num,int infover,int grfcontversion,const string&sprite,int
 					continue;
 				default:{
 					in.unget();
-					string esc;
+					std::string esc;
 					in>>esc;
 					int byte = FindEscape(esc);
 					if(byte == -1) break;
@@ -397,8 +396,8 @@ Pseudo::Pseudo(size_t num,int infover,int grfcontversion,const string&sprite,int
 
 uint Pseudo::size()const{return (uint)packed.size();}
 
-bool Pseudo::MayBeSprite(const string&sprite){
-	istringstream in(sprite);
+bool Pseudo::MayBeSprite(const std::string&sprite){
+	std::istringstream in(sprite);
 	char ch;
 	while(in.get(ch)){
 		if(ch=='"')return true;
@@ -406,19 +405,19 @@ bool Pseudo::MayBeSprite(const string&sprite){
 			in.ignore(INT_MAX,'\n');
 			continue;
 		}
-		if(isspace(ch)||string(VALID_PSEUDO).find(ch)==NPOS)continue;
+		if(isspace(ch)||std::string(VALID_PSEUDO).find(ch)==NPOS)continue;
 		return true;
 	}
 	return false;
 }
 
-Include::Include(const string&data):name(data){}
+Include::Include(const std::string&data):name(data){}
 
-uint Pseudo::ReadValue(istream& in, width w)
+uint Pseudo::ReadValue(std::istream& in, width w)
 {
 	if (in.peek() == 'x') {		// Read any hex value
 		uint ret;
-		in.ignore()>>setbase(16)>>ret>>setbase(10);
+		in.ignore()>>std::setbase(16)>>ret>>std::setbase(10);
 		return ret;
 	}
 	/*if (in.peek() == '(') {		// Read any RPN value
@@ -426,7 +425,7 @@ uint Pseudo::ReadValue(istream& in, width w)
 	}*/
 
 	// Read any other value
-	string str;
+	std::string str;
 	// can't use operator>> -- that will consume comments in cases like \w12000//comment
 	eat_white(in); // skip whitespace at front
 	while(in && !is_comment(in) && !isspace(in.peek()) && in.peek() != EOF)
@@ -447,13 +446,13 @@ uint Pseudo::ReadValue(istream& in, width w)
 
 		if (w == _W_) {
 			// word date
-			if (d==0 || (d>31 && d<100) || d>1919) swap(y, d);	// Try DMY instead
+			if (d==0 || (d>31 && d<100) || d>1919) std::swap(y, d); // Try DMY instead
 			if (y==0) y = 2000;
 			else if (y>31 && y<100) y+=1900;
 		} else if (w == _D_) {
 			// dword date
 			extra = 701265;
-			if (d >= 32) swap(y, d); // Try DMY instead
+			if (d >= 32) std::swap(y, d); // Try DMY instead
 			// Boost doesn't support years out of the range 1400..9999
 			while (y>9999) {
 				y -= 400;
@@ -474,6 +473,6 @@ uint Pseudo::ReadValue(istream& in, width w)
 
 fail:
 	// Nothing worked
-	in.clear(ios::badbit);
+	in.clear(std::ios::badbit);
 	return (uint)-1;
 }
