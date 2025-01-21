@@ -278,7 +278,6 @@ NFO_MESSAGE(INVALID_ACT2_FLAGS,"Unknown flag set (offset %d) in advanced action2
 NFO_MESSAGE(NOT_IN_REALSPRITE,"Found realsprite continuation line while looking for sprite %d.\n",0)
 NFO_MESSAGE(REAL_UNKNOWN_FLAG,"Unknown or duplicate flag '%t'.\n",0)
 NFO_MESSAGE(REAL_DUPLICATE_ZOOM,"Duplicate zoomlevel/depth sprite.\n",0)
-NFO_MESSAGE(REAL_8BPP_NORMAL_FIRST,"8bpp normal zoom sprite must appear first.\n",0)
 NFO_MESSAGE(REAL_32BPP_BEFORE_MASK,"mask sprites must be preceded by 32bpp sprites.\n",0)
 NFO_MESSAGE(UNKNOWN_ACT0_DATA,"Unknown data does not allow processesing past this point.\n",USE_PREFIX|HAS_OFFSET)
 

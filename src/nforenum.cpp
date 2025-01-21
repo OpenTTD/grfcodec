@@ -681,7 +681,6 @@ bool verify_real(string&data,RealSpriteState&formats){
 			format.bpp32 = depth=="32bpp";
 			format.zoom = zoom;
 
-			if (formats.present.empty()&&(format.bpp32||format.zoom!=0)) IssueMessage(0,REAL_8BPP_NORMAL_FIRST);
 			if (formats.present.count(format) > 0) { IssueMessage(0,REAL_DUPLICATE_ZOOM); return COMMENTOFF(); }
 			formats.present.insert(format);
 		} else {
