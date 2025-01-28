@@ -1,0 +1,62 @@
+name: Upload (CDN)
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      folder:
+        required: true
+        type: string
+      trigger_type:
+        required: true
+        type: string
+
+jobs:
+  prepare:
+    name: Prepare
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download all bundles
+      uses: actions/download-artifact@v4
+
+    - name: Calculate checksums
+      run: |
+        echo "::group::Move bundles to a single folder"
+        mkdir bundles
+        mv grfcodec-*/* bundles/
+        echo "::endgroup::"
+
+        cd bundles
+        for i in $(ls grfcodec-*); do
+          echo "::group::Calculating checksums for ${i}"
+          openssl dgst -r -md5 -hex $i > $i.md5sum
+          openssl dgst -r -sha1 -hex $i > $i.sha1sum
+          openssl dgst -r -sha256 -hex $i > $i.sha256sum
+          echo "::endgroup::"
+        done
+
+    - name: Store bundles
+      uses: actions/upload-artifact@v4
+      with:
+        name: cdn-bundles
+        path: bundles/*
+        retention-days: 5
+
+  publish-bundles:
+    needs:
+    - prepare
+
+    name: Publish bundles
+    uses: OpenTTD/actions/.github/workflows/rw-cdn-upload.yml@v5
+    secrets:
+      CDN_SIGNING_KEY: ${{ secrets.CDN_SIGNING_KEY }}
+      DEPLOYMENT_APP_ID: ${{ secrets.DEPLOYMENT_APP_ID }}
+      DEPLOYMENT_APP_PRIVATE_KEY: ${{ secrets.DEPLOYMENT_APP_PRIVATE_KEY }}
+    with:
+      artifact-name: cdn-bundles
+      folder: ${{ inputs.folder }}
+      version: ${{ inputs.version }}
