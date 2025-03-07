@@ -11,8 +11,7 @@ Release version: 6.1.0
 - 2.0) Contact
 - 3.0) Installation
 - 4.0) Running
-- 5.0) Known issues
-- 6.0) Compiling
+- 5.0) Compiling
 
 ## 1.0) About
 
@@ -63,7 +62,7 @@ To uninstall, delete the executables and any .nforenum directories.
 Information about the usage of the different tools can be found in their
 respective man pages as well as grfcodec.txt, grftut.txt and nforenum.txt.
 
-## 6.0) Compiling
+## 5.0) Compiling
 
 GCC/ICC:
   Just use "make", or on non-GNU systems "gmake".
