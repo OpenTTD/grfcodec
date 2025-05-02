@@ -177,14 +177,14 @@ void SpriteInfo::writetobuffer(U8 *buffer, int grfcontversion)
 {
 	int i = 0;
 	if (grfcontversion == 2) {
-		/* Copy bits 3 and 6 of the nfo and make it, for now, an 8bpp normal GRF. */
+		/* Copy bits 3, 4, 6 of the nfo and make it, for now, an 8bpp normal GRF. */
 		U8 img=0;
 		switch(this->depth){
 			case DEPTH_8BPP:  img=0x04; break;
 			case DEPTH_32BPP: img=0x03; break;
 			case DEPTH_MASK:  img=0x07; break;
 		}
-		buffer[i++] = img | (this->info & (1 << 3 | 1 << 6));
+		buffer[i++] = img | (this->info & (1 << 3 | 1 << 4 | 1 << 6));
 		buffer[i++] = this->zoom;
 		buffer[i++] = this->ydim & 0xFF;
 		buffer[i++] = this->ydim >> 8;
@@ -204,8 +204,8 @@ void SpriteInfo::readfromfile(const char *action, int grfcontversion, FILE *grf,
 {
 	if (grfcontversion == 2) {
 		U8 data = fgetc(grf);
-		/* According to the documentation bit 0 must always be set, and bits 3 and 6 are the same as in the nfo. */
-		this->info = (1 << 0) | (data & (1 << 3 | 1 << 6));
+		/* According to the documentation bit 0 must always be set, and bits 3, 4, 6 are the same as in the nfo. */
+		this->info = (1 << 0) | (data & (1 << 3 | 1 << 4 | 1 << 6));
 		switch(data&0x7){
 			case 0x03: this->depth=DEPTH_32BPP; break;
 			case 0x04: this->depth=DEPTH_8BPP; break;

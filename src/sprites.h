@@ -39,6 +39,7 @@ static const int DEPTH_MASK  = 2;
 
 // Define some of the bits in SpriteInfo::info
 #define DONOTCROP(info) (info & 64)
+#define ISRTL(info) (info & 16)
 #define HASTRANSPARENCY(info) (info & 8)
 #define SIZEISCOMPRESSED(info) (info & 2)
 

@@ -121,6 +121,7 @@ Normal sprites
     1   2  Pixel format contains alpha component.
     2   4  Pixel format contains mask/palette component.
     3   8  Has transparency (i.e. is a tile), see below.
+    4  10h Alternative sprite for right-to-left languages.
     6  40h The exact size of this sprite is significant. If not set,
              grfcodec may attempt to remove extraneous transparent pixels.
     others Undefined.
