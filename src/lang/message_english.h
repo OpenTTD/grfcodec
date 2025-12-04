@@ -279,7 +279,7 @@ NFO_MESSAGE(NOT_IN_REALSPRITE,"Found realsprite continuation line while looking 
 NFO_MESSAGE(REAL_UNKNOWN_FLAG,"Unknown or duplicate flag '%t'.\n",0)
 NFO_MESSAGE(REAL_DUPLICATE_ZOOM,"Duplicate zoomlevel/depth sprite.\n",0)
 NFO_MESSAGE(REAL_32BPP_BEFORE_MASK,"mask sprites must be preceded by 32bpp sprites.\n",0)
-NFO_MESSAGE(UNKNOWN_ACT0_DATA,"Unknown data does not allow processesing past this point.\n",USE_PREFIX|HAS_OFFSET)
+NFO_MESSAGE(UNKNOWN_ACT0_DATA,"Unknown data does not allow processing past this point.\n",USE_PREFIX|HAS_OFFSET)
 
 /* Insert new NFO_MESSAGEs above this line unless a MESSAGE_UNUSED appears in a logical location. */
 
