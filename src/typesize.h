@@ -20,6 +20,7 @@
 \*****************************************/
 
 #include <cstdint>
+#include <bit>
 
 #define HAVE_BYTES
 #define HAVE_SHORTS
@@ -114,19 +115,21 @@ union multitype {
 	S8  s8[4];
 };
 
-#ifdef GRFCODEC_BIG_ENDIAN
-#	define BE_SWAP16(b) (*((U8*)(&b))+(*(((U8*)(&b))+1)<<8))
-#	define BE_SWAP32(b) (*((U8*)(&b))+(*(((U8*)(&b))+1)<<8)+(*(((U8*)(&b))+2)<<16)+(*(((U8*)(&b))+3)<<24))
-#	define BYTE_OFSL 1
-#	define BYTE_OFSH 0
-#elif defined(GRFCODEC_LITTLE_ENDIAN)
-#	define BE_SWAP16(b) (b)
-#	define BE_SWAP32(b) (b)
-#	define BYTE_OFSL 0
-#	define BYTE_OFSH 1
-#else
-# error "Endianness not defined!"
-#endif
+static constexpr U16 BE_SWAP16(U16 value)
+{
+	if constexpr (std::endian::native == std::endian::big) {
+		return (value >> 8) | (value << 8);
+	}
+	return value;
+}
+
+static constexpr U32 BE_SWAP32(U32 value)
+{
+	if constexpr (std::endian::native == std::endian::big) {
+		return ((value >> 24) & 0xFF) | ((value >> 8) & 0xFF00) | ((value << 8) & 0xFF0000) | ((value << 24) & 0xFF000000);
+	}
+	return value;
+}
 
 #endif /* _TYPESIZE_H */
 
