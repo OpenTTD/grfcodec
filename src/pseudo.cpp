@@ -715,7 +715,7 @@ std::ostream&PseudoSprite::output(std::ostream&out){
 			sections.push_back(Tokenize(line, '\t'));
 
 		// Count the columns
-		uint columns = (uint)max_element(sections.begin(),sections.end(), boost::lambda::bind(&std::vector<std::string>::size,boost::lambda::_1) < boost::lambda::bind(&std::vector<std::string>::size,boost::lambda::_2))->size();
+		uint columns = (uint)std::ranges::max_element(sections, {}, &std::vector<std::string>::size)->size();
 
 		// For each column,
 		for(uint i=0;i<columns;i++){
