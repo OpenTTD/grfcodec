@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 
 project(grfcodec)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED)
 set(CMAKE_CXX_EXTENSIONS NO)
 
