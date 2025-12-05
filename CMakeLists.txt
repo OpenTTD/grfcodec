@@ -57,7 +57,7 @@ endif()
 
 
 find_package(PNG)
-find_package(Boost REQUIRED)
+find_package(Boost CONFIG REQUIRED)
 
 
 include(TestBigEndian)
