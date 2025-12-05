@@ -60,15 +60,6 @@ find_package(PNG)
 find_package(Boost CONFIG REQUIRED)
 
 
-include(TestBigEndian)
-TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
-if(IS_BIG_ENDIAN)
-	add_definitions(-DGRFCODEC_BIG_ENDIAN=1)
-else()
-	add_definitions(-DGRFCODEC_LITTLE_ENDIAN=1)
-endif()
-
-
 include(CheckCXXSymbolExists)
 check_cxx_symbol_exists("fmemopen" "cstdio" HAS_FMEMOPEN)
 if(HAS_FMEMOPEN)

@@ -596,8 +596,8 @@ static long realcompress(const U8 *in, long insize, U8 *out, long outsize, long 
 			if (!*lastcodepos)	// there's a zero length verbatim chunk -> delete it
 				outpos--;
 
-			ofsl = chunk.u8[BYTE_OFSL];
-			ofsh = chunk.u8[BYTE_OFSH];
+			ofsl = chunk.u16[0] & 0xff;
+			ofsh = chunk.u16[0] >> 8;
 			overlap = chunk.u8[2];
 
 			out[outpos++] = (-overlap << 3) | ofsh;
