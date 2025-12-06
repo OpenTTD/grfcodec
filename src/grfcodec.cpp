@@ -255,7 +255,7 @@ SpriteSheetFormat _outputformat = SSF_PNG;
 SpriteSheetFormat _outputformat = SSF_PCX;
 #endif
 
-const char * getoutputext(bool rgba)
+const char * getoutputext([[maybe_unused]] bool rgba)
 {
 	switch (_outputformat) {
 #ifdef WITH_PNG
