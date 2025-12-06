@@ -200,8 +200,8 @@ void Real::AddSprite(size_t sprite,int infover,const std::string&data){
 		inf.yrel = S16(ry);
 	}else{
 		int sx,sy,rx,ry;
-		char depth[8],zoom[8],flags[2][8];
-		int read = sscanf(meta,"%7s %d %d %d %d %d %d %7s %7s %7s",depth,&inf.xpos,&inf.ypos,&sx,&sy,&rx,&ry,zoom,flags[0],flags[1]);
+		char depth[8],zoom[8],flags[3][8];
+		int read = sscanf(meta,"%7s %d %d %d %d %d %d %7s %7s %7s %7s",depth,&inf.xpos,&inf.ypos,&sx,&sy,&rx,&ry,zoom,flags[0],flags[1],flags[2]);
 		if(strcmp(depth,"mask")==0?read!=3:read < 8){
 			throw Sprite::unparseable("Insufficient meta-data",sprite);
 		}
@@ -236,6 +236,7 @@ void Real::AddSprite(size_t sprite,int infover,const std::string&data){
 				/* Comment. */
 				if (*flag == '#' || *flag == '/' || *flag == ';') break;
 				if (strcmp(flag,"chunked")==0)inf.info|=8;
+				else if (strcmp(flag,"rtl")==0)inf.info|=16;
 				else if (strcmp(flag,"nocrop")==0)inf.info|=64;
 				else throw Sprite::unparseable("invalid flag",sprite);
 			}

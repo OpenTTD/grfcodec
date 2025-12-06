@@ -76,11 +76,14 @@ nfe_map nfo_escapes;
 #endif
 
 struct RealSpriteFormat{
+	bool rtl;
 	bool bpp32;
 	int zoom;
 
 	bool operator<(const RealSpriteFormat&other)const{
-		return bpp32==other.bpp32?zoom<other.zoom:other.bpp32;
+		if (rtl != other.rtl) return other.rtl;
+		if (bpp32 != other.bpp32) return other.bpp32;
+		return zoom < other.zoom;
 	}
 };
 
@@ -670,14 +673,16 @@ bool verify_real(std::string&data,RealSpriteState&formats){
 			else { IssueMessage(0,REAL_MISSING_DATA,"zoom"); return COMMENTOFF(); }
 
 			std::string flag;
-			bool chunked = false, nocrop=false;
+			bool chunked = false, nocrop = false, rtl = false;
 			while (!extract_string(meta,flag,processed,anyprocessing)) {
 				if (!chunked&&flag=="chunked") chunked = true;
 				else if (!nocrop&&flag=="nocrop") nocrop = true;
+				else if (!rtl&&flag=="rtl") rtl = true;
 				else { IssueMessage(0,REAL_UNKNOWN_FLAG,flag.c_str()); return COMMENTOFF(); }
 			}
 
 			RealSpriteFormat format;
+			format.rtl = rtl;
 			format.bpp32 = depth=="32bpp";
 			format.zoom = zoom;
 

@@ -223,6 +223,7 @@ void infowriter::flush()
 							zoom_levels[s->info.zoom]);
 					if (HASTRANSPARENCY(s->info.info)) fputs(" chunked", info);
 					if (DONOTCROP(s->info.info)) fputs(" nocrop", info);
+					if (ISRTL(s->info.info)) fputs(" rtl", info);
 				}
 			} else {
 				fprintf(info, "%s %d %d %02X %d %d %d %d",
