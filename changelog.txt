@@ -1,3 +1,13 @@
+Changes in 6.2.0 (2025-12-06)
+- Upgrade minimum versions to CMake 3.17 and C++20.
+- Fix several compilation warnings/issues with newer compilers.
+- Support 32bpp only sprites.
+- Support alternate sprites for RTL languages.
+- NFORenum specific changes:
+  - Data file updates:
+    - Action 5, type 19 (road waypoint), type 1A (rocky overlay), type 1B (bridge decks) added.
+    - Action 5, type 15 (OpenTTD GUI): now 192 sprites are allowed.
+
 Changes in 6.1.0 (2024-05-03)
 - Change to building with CMake.
 - Move repository and building to GitHub.
