@@ -4,12 +4,12 @@
 
 #include <stdio.h>
 #include <string>
+#include <memory>
 
 #include "pcxsprit.h"
 #include "pngsprit.h"
 #include "sprites.h"
 #include "nfosprite.h"
-#include "allocarray.h"
 
 class inforeader {
 	public:
@@ -32,7 +32,7 @@ class inforeader {
 
 	std::string imgname;
 	int *colourmap;
-	AllocArray<Sprite> nfofile;
+	std::vector<std::unique_ptr<Sprite>> nfofile;
 private:
 	pcxread* MakeReader()const;
 };

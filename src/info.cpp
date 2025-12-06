@@ -24,7 +24,7 @@ int makeint(U8 low, S8 high)
 	return combined;
 }
 
-void read_file(std::istream&in,int infover,int grfcontversion,AllocArray<Sprite>&sprites);
+void read_file(std::istream&in,int infover,int grfcontversion,std::vector<std::unique_ptr<Sprite>>&sprites);
 
 nfe_map nfo_escapes;
 

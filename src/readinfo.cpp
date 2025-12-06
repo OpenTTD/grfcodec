@@ -40,6 +40,7 @@ Version 7: Add backslash escapes
 #include<sstream>
 #include<iomanip>
 #include<cstdio>
+#include<memory>
 
 
 // grfcodec requires boost::date_time for its processing of the \wYMD and
@@ -48,7 +49,6 @@ Version 7: Add backslash escapes
 using namespace boost::gregorian;
 
 #include"nfosprite.h"
-#include"allocarray.h"
 #include"inlines.h"
 
 extern int _quiet;
@@ -65,14 +65,14 @@ const char *depths[DEPTHS] = { "8bpp", "32bpp", "mask" };
 	if(true){\
 		if(buffer!=""){\
 			checkspriteno();\
-			sprites.push_back(Pseudo(sprites.size(),infover,grfcontversion,buffer,claimed_size));\
+			sprites.push_back(std::make_unique<Pseudo>(sprites.size(),infover,grfcontversion,buffer,claimed_size));\
 			buffer="";\
 		}\
 		spriteno=temp;\
 	}else\
 		(void(0))
 
-void read_file(std::istream&in,int infover,int grfcontversion,AllocArray<Sprite>&sprites){
+void read_file(std::istream&in,int infover,int grfcontversion,std::vector<std::unique_ptr<Sprite>>&sprites){
 	std::string sprite,datapart,buffer;
 
 	int temp=-1,spriteno=-1,claimed_size=1;
@@ -95,7 +95,7 @@ void read_file(std::istream&in,int infover,int grfcontversion,AllocArray<Sprite>
 					getline(eat_white(spritestream.ignore()),datapart);
 					strip_trailing_white(datapart);
 					checkspriteno();
-					sprites.push_back(Include(datapart));
+					sprites.push_back(std::make_unique<Include>(datapart));
 				}else{
 					flush_buffer();
 					eat_white(spritestream>>claimed_size);
@@ -115,13 +115,15 @@ void read_file(std::istream&in,int infover,int grfcontversion,AllocArray<Sprite>
 					flush_buffer();
 					checkspriteno();
 					if (peeked!='|') {
-						sprites.push_back(Real());
+						sprites.push_back(std::make_unique<Real>());
 					} else {
 						do {
 							datapart.erase(0, 1);
 						} while (isspace(datapart[0]));
 					}
-					((Real*)sprites.last())->AddSprite(sprites.size()-1,infover,datapart);
+					Real *r = dynamic_cast<Real *>(sprites.back().get());
+					if (r == nullptr) throw Sprite::unparseable("internal error, expected Real sprite", sprites.size() - 1);
+					r->AddSprite(sprites.size()-1,infover,datapart);
 				}
 			}
 		}
