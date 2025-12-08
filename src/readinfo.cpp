@@ -33,6 +33,7 @@ Version 6: Add binary includes
 Version 7: Add backslash escapes
 */
 
+#include<chrono>
 #include<cstring>
 #include<climits>
 #include<iostream>
@@ -45,6 +46,9 @@ Version 7: Add backslash escapes
 #include"mapescapes.h"
 #include"nfosprite.h"
 #include"inlines.h"
+
+using namespace std::chrono;
+constexpr year_month_day SINCE_1920{year(1920), month(1), day(1)};
 
 extern int _quiet;
 const char *zoom_levels[ZOOM_LEVELS] = { "normal", "zi4", "zi2", "zo2", "zo4", "zo8" };
@@ -449,22 +453,11 @@ uint Pseudo::ReadValue(std::istream& in, width w)
 			// dword date
 			extra = 701265;
 			if (d >= 32) std::swap(y, d); // Try DMY instead
-			// Boost doesn't support years out of the range 1400..9999
-			while (y>9999) {
-				y -= 400;
-				extra += 365*400 + 97; // 97 leap years every 400 years.
-			}
-			while (y<1400) {
-				y += 400;
-				extra -= 365*400 + 97;
-			}
 		} else goto fail;		// I can't read a date of that width.
 
-		try {
-			return (date((ushort)y, (ushort)m, (ushort)d) - date(1920, 1, 1)).days() + extra;
-		} catch (std::out_of_range&) {
-			// Fall through to fail
-		}
+		return uint(static_cast<local_days>(year_month_day(static_cast<year>(y), static_cast<month>(m), static_cast<day>(d)))
+			- static_cast<local_days>(SINCE_1920)
+			+ static_cast<day>(extra));
 	}
 
 fail:

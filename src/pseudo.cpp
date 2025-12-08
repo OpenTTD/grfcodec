@@ -22,18 +22,16 @@
 #include<sstream>
 #include<iostream>
 #include<iomanip>
+#include<chrono>
 #include<cstdarg>
 #include<cstdio>
 
 /* If your compiler errors on the following lines, boost is not
  * properly installed.
  * Get boost from http://www.boost.org */
-#include <boost/date_time/gregorian/gregorian_types.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/tokenizer.hpp>
-
-using namespace boost::gregorian;
 
 #include"nforenum.h"
 #include"mapescapes.h"
@@ -51,6 +49,10 @@ bool TrySetVersion(int);
 //		\" and \\ are implicit in TEXT.
 //QEXT: \Uxxxx, usually.
 enum{HEX,TEXT,UTF8,ENDQUOTE,QESC,QEXT,NQEXT,NOBREAK=0x80};
+
+using namespace std::chrono;
+
+constexpr year_month_day SINCE_1920{year(1920), month(1), day(1)};
 
 
 #define cur_pos() ((uint)out.str().length()-1)
@@ -309,9 +311,9 @@ PseudoSprite&PseudoSprite::SetDate(uint i, uint num) {
 	case 1:
 		return SetEscape(i, false, mysprintf(" \\b%d", 1920+ExtractByte(i)), 1);
 	case 2:{
-		date::ymd_type ymd = (date(1920,1,1) + days(ExtractWord(i))).year_month_day();
-		ushort y = ymd.year, m = ymd.month, d = ymd.day;
-		return SetEscape(i, false, mysprintf(" \\w%d/%d/%d", y, m, d), 2);
+		auto ymd = year_month_day(static_cast<local_days>(SINCE_1920) + static_cast<days>(ExtractWord(i)));
+		std::string formatted_date = mysprintf(" \\w%d/%u/%u", static_cast<int>(ymd.year()), static_cast<unsigned>(ymd.month()), static_cast<unsigned>(ymd.day()));
+		return SetEscape(i, false, formatted_date, 2);
 	} case 4: {
 		const int min = 511340,		// == PseudoSprite("\\d1400-1-1", 0).ExtractDword(0)
 			max = 3652424,			// == PseudoSprite("\\d9999-12-31", 0).ExtractDword(0)
@@ -326,9 +328,9 @@ PseudoSprite&PseudoSprite::SetDate(uint i, uint num) {
 			val -= 365*400 + 97;
 			yearmod += 400;
 		}
-		date::ymd_type ymd = (date(1920,1,1) + days(val-base)).year_month_day();
-		uint y = ymd.year+yearmod, m = ymd.month, d = ymd.day;
-		return SetEscape(i, false, mysprintf(" \\d%d/%d/%d", y, m, d), 4);
+		auto ymd = year_month_day(static_cast<local_days>(SINCE_1920) + static_cast<days>(val - base));
+		std::string formatted_date = mysprintf(" \\d%d/%u/%u", static_cast<int>(ymd.year()) + yearmod, static_cast<unsigned>(ymd.month()), static_cast<unsigned>(ymd.day()));
+		return SetEscape(i, false, formatted_date, 4);
 	}}
 	return SetDec(i, num);
 }
@@ -832,24 +834,14 @@ uint PseudoSprite::ReadValue(std::istream& in, width w) {
 			else if (y>31 && y<100) y+=1900;
 		} else if (w == _D_) {
 			// dword date
-			extra = 701265;
+			extra = 1920 * 365;
 			if (d >= 32) std::swap(y, d); // Try DMY instead
-			// Boost doesn't support years out of the range 1400..9999
-			while (y>9999) {
-				y -= 400;
-				extra += 365*400 + 97; // 97 leap years every 400 years.
-			}
-			while (y<1400) {
-				y += 400;
-				extra -= 365*400 + 97;
-			}
 		} else goto fail;		// I can't read a date of that width.
 
-		try {
-			return (date((ushort)y, (ushort)m, (ushort)d) - date(1920, 1, 1)).days() + extra;
-		} catch (std::out_of_range&) {
-			// Fall through to fail
-		}
+		auto ymd = year_month_day(static_cast<year>(y), static_cast<month>(m), static_cast<day>(d));
+		if (!ymd.ok()) goto fail;
+		int day_count = (static_cast<local_days>(ymd) - static_cast<local_days>(SINCE_1920)).count();
+		return static_cast<uint>(day_count + extra);
 	}
 
 fail:	// Nothing worked
