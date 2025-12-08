@@ -1,2 +1,0 @@
-R;%{RPMBUILDDIR}/RPMS/%{ARCH}/*.%{ARCH}.rpm
-5;%{RPMBUILDDIR}/SRPMS/*.src.rpm
