@@ -25,7 +25,6 @@
 #include<string>
 #include"ExpandingArray.h"
 
-
 class PseudoSprite{
 public:
 	//PseudoSprite();
@@ -134,30 +133,54 @@ private:
 
 // Support for sequential access
 public:
-#define PS_LOC_REF(size)		\
-	class size;					\
-	PseudoSprite& operator >>(size&); \
-	PseudoSprite& Extract(size&, uint);	\
-	class size {				\
-	public:						\
-		size();					\
-		size& set(uint);		\
-		uint val() const;		\
-		uint loc() const;		\
-		operator uint() const {return val();} \
-		friend PseudoSprite& PseudoSprite::operator >>(size&); \
-		friend PseudoSprite& PseudoSprite::Extract(size&, uint); \
-	private:					\
-		PseudoSprite *p;		\
-		uint offs;				\
-	};							\
+	class BaseSeqAccess;
+	PseudoSprite &operator>>(PseudoSprite::BaseSeqAccess &);
+	PseudoSprite &Extract(PseudoSprite::BaseSeqAccess &, uint);
+	class BaseSeqAccess {
+	public:
+		BaseSeqAccess() = default;
+		virtual uint val() const = 0;
+		uint loc() const;
+		operator uint() const {
+			return this->val();
+		}
+		friend PseudoSprite &PseudoSprite::operator>>(PseudoSprite::BaseSeqAccess &);
+		friend PseudoSprite &PseudoSprite::Extract(PseudoSprite::BaseSeqAccess &, uint);
+	protected:
+		virtual uint read_len(uint) const = 0;
+		PseudoSprite *p;
+		uint offs;
+	};
 
-	PS_LOC_REF(Byte)
-	PS_LOC_REF(Word)
-	PS_LOC_REF(ExtByte)
-	PS_LOC_REF(Dword)
+	class Byte : public BaseSeqAccess {
+	public:
+		uint val() const override;
+		Byte &set(uint u);
+	private:
+		uint read_len(uint) const override { return 1; };
+	};
 
-#undef PS_LOC_REF
+	class Word : public BaseSeqAccess {
+	public:
+		uint val() const override;
+		Word &set(uint u);
+	private:
+		uint read_len(uint) const override { return 2; };
+	};
+
+	class ExtByte : public BaseSeqAccess {
+	public:
+		uint val() const override;
+	private:
+		uint read_len(uint off) const override { return this->p->ExtendedLen(off); };
+	};
+
+	class Dword : public BaseSeqAccess {
+	public:
+		uint val() const override;
+	private:
+		uint read_len(uint) const override { return 4; };
+	};
 
 	uint BytesRemaining() const;
 	PseudoSprite& seek(uint);

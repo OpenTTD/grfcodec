@@ -56,7 +56,6 @@ target_sources(nforenum PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/messages.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/nforenum.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/pseudo.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/pseudo_seq.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/rangedint.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/sanity.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/strings.cpp
