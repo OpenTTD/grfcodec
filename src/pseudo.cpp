@@ -774,7 +774,10 @@ std::ostream&PseudoSprite::output(std::ostream&out){
 
 		// Tabs are expanded, write each line
 		for (const std::vector<std::string>&line : sections) {
-			for_each(line.begin(),line.end(),out<<boost::lambda::_1)('\n');
+			for (const auto &str : line) {
+				out << str;
+			}
+			out << '\n';
 		}
 
 	}else out<<buffer;
