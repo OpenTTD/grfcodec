@@ -29,33 +29,33 @@
 
 std::string FindEscape(char action, int byte) {
 	// Look for a custom escape
-	foreach(const nfe_rpair& p, nfo_escapes.right.equal_range(byte))
-		if (p.second[0] == action)
-			return " \\" + p.second;
+	for (const nfe_rpair &p : nfo_escapes.right.equal_range(byte)) {
+		if (p.second[0] == action) return " \\" + p.second;
+	}
 
 	// Look for a built-in escape
-	foreach(const esc& e, escapes)
-		if (e.action==ctoi(action) && e.byte==byte)
-			return ' ' + std::string(e.str);
+	for (const esc &e : escapes) {
+		if (e.action==ctoi(action) && e.byte==byte) return ' ' + std::string(e.str);
+	}
 	return "";
 }
 
 std::string FindEscape(char action, int byte, uint offset) {
 	// This time, look for a built-in escape first
-	foreach(const esc& e, escapes)
-		if (e.action==ctoi(action) && e.byte==byte && e.pos==offset)
-			return ' ' + std::string(e.str);
+	for (const esc &e : escapes) {
+		if (e.action==ctoi(action) && e.byte==byte && e.pos==offset) return ' ' + std::string(e.str);
+	}
 	// Look for a custom escape
-	foreach(const nfe_rpair& p, nfo_escapes.right.equal_range(byte))
-		if (p.second[0] == action)
-			return " \\" + p.second;
+	for (const nfe_rpair &p : nfo_escapes.right.equal_range(byte)) {
+		if (p.second[0] == action) return " \\" + p.second;
+	}
 	return "";
 }
 
 int FindEscape(std::string str) {
-	foreach(esc e, escapes)
-		if(str == e.str+1)
-			return e.byte;
+	for (const esc &e : escapes) {
+		if(str == e.str+1) return e.byte;
+	}
 	nfe_left_iter ret = nfo_escapes.left.find(str);
 	if(ret == nfo_escapes.left.end())
 		return -1;

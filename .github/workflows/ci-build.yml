@@ -86,7 +86,6 @@ jobs:
         ${{ steps.vcpkg.outputs.vcpkg }} install --triplet=${{ matrix.arch }}-osx \
           boost-bimap \
           boost-date-time \
-          boost-foreach \
           # EOF
 
     - name: Install GCC problem matcher
@@ -135,7 +134,6 @@ jobs:
         "${{ steps.vcpkg.outputs.vcpkg }}" install --triplet=${{ matrix.arch }}-windows-static \
           boost-bimap \
           boost-date-time \
-          boost-foreach \
           libpng \
           # EOF
 

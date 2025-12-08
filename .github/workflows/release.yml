@@ -86,7 +86,6 @@ jobs:
         "${{ steps.vcpkg.outputs.vcpkg }}" install --triplet=${{ matrix.arch }}-windows-static \
           boost-bimap \
           boost-date-time \
-          boost-foreach \
           libpng \
           # EOF
 

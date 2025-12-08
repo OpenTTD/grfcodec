@@ -24,11 +24,8 @@
  * Get boost from http://www.boost.org */
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
-#include <boost/foreach.hpp>
 
 using namespace boost::bimaps;
-
-#define foreach BOOST_FOREACH
 
 typedef unsigned char U8;
 #include "escapes.h"
