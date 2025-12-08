@@ -57,7 +57,6 @@ endif()
 
 
 find_package(PNG)
-find_package(Boost CONFIG REQUIRED)
 
 
 include(CheckCXXSymbolExists)
@@ -120,13 +119,11 @@ add_dependencies(grfstrip version_header)
 # Create nforenum
 add_executable(nforenum)
 add_dependencies(nforenum palettes_header version_header)
-target_link_libraries(nforenum Boost::boost)
 
 
 # Create grfcodec
 add_executable(grfcodec)
 add_dependencies(grfcodec palettes_header version_header)
-target_link_libraries(grfcodec Boost::boost)
 if(PNG_FOUND)
 	set_target_properties(grfcodec PROPERTIES COMPILE_FLAGS -DWITH_PNG)
 	target_link_libraries(grfcodec PNG::PNG)

@@ -36,7 +36,7 @@ jobs:
 
         echo "::group::Install dependencies"
         sudo apt-get install -y --no-install-recommends \
-          libboost-dev \
+          libpng-dev \
           # EOF
         echo "::endgroup::"
       env:
@@ -84,7 +84,7 @@ jobs:
     - name: Prepare vcpkg
       run: |
         ${{ steps.vcpkg.outputs.vcpkg }} install --triplet=${{ matrix.arch }}-osx \
-          boost-date-time \
+          libpng \
           # EOF
 
     - name: Install GCC problem matcher
@@ -131,7 +131,6 @@ jobs:
       shell: bash
       run: |
         "${{ steps.vcpkg.outputs.vcpkg }}" install --triplet=${{ matrix.arch }}-windows-static \
-          boost-date-time \
           libpng \
           # EOF
 
