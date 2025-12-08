@@ -152,13 +152,14 @@ infowriter::infowriter(FILE *info, int useplaintext, const char *directory)
 	fprintf(info,"// (Info version %d)", _useexts ? 32 : 6);
 	if(_useexts) {
 		// (re)insert default escapes
-		foreach(const esc& e, escapes)
+		for (const esc &e : escapes) {
 			nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
+		}
 		fputs("\n// Escapes:", info);
 		int oldbyte = -1;
 
 		for (int act = 0; act < 255; act++) {
-			foreach (const nfe_rpair& p, nfo_escapes.right) {
+			for (const nfe_rpair &p : nfo_escapes.right) {
 				if (p.second[0] != act) continue;
 
 				if (p.first == oldbyte) {

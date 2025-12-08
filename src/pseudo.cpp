@@ -29,13 +29,11 @@
  * properly installed.
  * Get boost from http://www.boost.org */
 #include <boost/date_time/gregorian/gregorian_types.hpp>
-#include <boost/foreach.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/tokenizer.hpp>
 
 using namespace boost::gregorian;
-#define foreach BOOST_FOREACH
 
 #include"nforenum.h"
 #include"pseudo.h"
@@ -711,8 +709,9 @@ std::ostream&PseudoSprite::output(std::ostream&out){
 	if(buffer.find('\t')!=NPOS){
 		// Split into columns
 		std::vector<std::vector<std::string> > sections;
-		foreach(const std::string &line, (Tokenize(buffer, '\n')))
+		for (const std::string &line : Tokenize(buffer, '\n')) {
 			sections.push_back(Tokenize(line, '\t'));
+		}
 
 		// Count the columns
 		uint columns = (uint)std::ranges::max_element(sections, {}, &std::vector<std::string>::size)->size();
@@ -721,16 +720,20 @@ std::ostream&PseudoSprite::output(std::ostream&out){
 		for(uint i=0;i<columns;i++){
 			// determine how wide it must be,
 			std::string::size_type padWidth = 0;
-			foreach(const std::vector<std::string> &section, sections)
+			for (const std::vector<std::string> &section : sections) {
 				if(section.size()>i+1) padWidth = std::max(padWidth, section[i].length()+1);
+			}
 			// and make it that wide.
-			foreach(std::vector<std::string> &section, sections)
+			for (std::vector<std::string> &section : sections) {
 				if(section.size()>i+1) section[i] += std::string(padWidth - section[i].length(), ' ');
+			}
+
 		}
 
 		// Tabs are expanded, write each line
-		foreach(const std::vector<std::string>&line, sections)
+		for (const std::vector<std::string>&line : sections) {
 			for_each(line.begin(),line.end(),out<<boost::lambda::_1)('\n');
+		}
 
 	}else out<<buffer;
 

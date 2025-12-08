@@ -360,8 +360,7 @@ int process_file(std::istream&in){
 				// Now remove all defaults. This serves two purposes:
 				// 1) Prevent incorrectly specified defaults from causing problems later.
 				// 2) Allow the beautifier to select custom escapes over built-ins.
-				foreach(const esc& e, escapes)
-					nfo_escapes.left.erase(e.str+1);
+				for (const esc& e : escapes) nfo_escapes.left.erase(e.str+1);
 			}
 		}else{
 			IssueMessage(0,UNKNOWN_VERSION,1);
@@ -477,13 +476,12 @@ int process_file(std::istream&in){
 			(*real_out)<<NFO_HEADER(NFOversion);
 			if (NFOversion > 6) {
 					// (re)insert default escapes
-					foreach(const esc& e, escapes)
-						nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
+					for (const esc &e : escapes) nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
 					(*real_out)<<"// Escapes:";
 					int oldbyte = -1;
 
 					for (int act = 0; act < 255; act++) {
-						foreach (const nfe_rpair& p, nfo_escapes.right) {
+						for (const nfe_rpair &p : nfo_escapes.right) {
 							if (p.second[0] != act) continue;
 
 							if (p.first == oldbyte) {
