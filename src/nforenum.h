@@ -23,11 +23,6 @@
 #ifndef _RENUM_RENUM_H_INCLUDED_
 #define _RENUM_RENUM_H_INCLUDED_
 
-/* If your compiler errors on the following line, boost is not
- * properly installed.
- * Get boost from http://www.boost.org */
-#include <boost/current_function.hpp>
-
 /* file handling defs:
  * dirname contains the name of the sprites directory
  * foo_ext contains the extention to use for foo
@@ -46,32 +41,30 @@ typedef unsigned short ushort;
 typedef unsigned char uchar;
 
 #if defined DEBUG || defined _DEBUG
-inline int _FORCE_INT_(int x){return x;}
 #define verify assert
 #else
 #define verify(x) (void(x))
-#define _FORCE_INT_(x) ((int)x)
 #endif
+
+#include <source_location>
 
 enum{EOK,EWARN=3,EERROR,EPARSE,EFILE,EDATA,EFATAL};
 void SetCode(int);
 
-#define INTERNAL_ERROR(var,val)\
-	if(true){\
-		IssueMessage(0,INTERNAL_ERROR_TEXT,__FILE__,__LINE__,_spritenum,#var,_FORCE_INT_(val),BOOST_CURRENT_FUNCTION);\
-		assert(false);\
-		exit(EFATAL);\
-	}else\
-		((void)0)
+#define INTERNAL_ERROR(var, val) \
+	do { \
+		const std::source_location location = std::source_location::current(); \
+		IssueMessage(0, INTERNAL_ERROR_TEXT, location.file_name(), location.line(), _spritenum, #var, val, location.function_name()); \
+		assert(false); \
+		exit(EFATAL); \
+	} while (false)
 
 #define DEFAULT(var)\
 	default:\
-		INTERNAL_ERROR(var,var);
+		INTERNAL_ERROR(#var,var);
 
 #define VERIFY(cond,var)\
-	if(!(cond))INTERNAL_ERROR(var,var);\
-	else\
-		((void)0)
+	if(!(cond)) { INTERNAL_ERROR(#var,var); }
 
 #define EXPECTED_BYTES(off) (off>>24)
 #define EXPECTED_LOC(off) (off&0xFFFFFF)
