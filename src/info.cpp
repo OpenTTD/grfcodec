@@ -26,8 +26,6 @@ int makeint(U8 low, S8 high)
 
 void read_file(std::istream&in,int infover,int grfcontversion,std::vector<std::unique_ptr<Sprite>>&sprites);
 
-nfe_map nfo_escapes;
-
 inforeader::inforeader(char *fn, int grfcontversion)
 {
 	std::ifstream f;
@@ -66,7 +64,9 @@ inforeader::inforeader(char *fn, int grfcontversion)
 					if(str == "=") byte--;
 					else if (str[0] == '@')
 						byte = strtol(str.c_str()+1, NULL, 16);
-					else nfo_escapes.insert(nfe_pair(str, byte++));
+					else {
+						InsertEscape(str, byte++);
+					}
 				}
 			}
 			getline(f, buffer);	// Try again to skip "format: " line
@@ -153,25 +153,26 @@ infowriter::infowriter(FILE *info, int useplaintext, const char *directory)
 	if(_useexts) {
 		// (re)insert default escapes
 		for (const esc &e : escapes) {
-			nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
+			InsertEscape(e.str + 1, e.byte);
 		}
 		fputs("\n// Escapes:", info);
 		int oldbyte = -1;
 
 		for (int act = 0; act < 255; act++) {
-			for (const nfe_rpair &p : nfo_escapes.right) {
-				if (p.second[0] != act) continue;
+			for (const auto &p : nfo_escapes) {
+				if (p.first[0] != act) continue;
 
-				if (p.first == oldbyte) {
+				if (p.second == oldbyte) {
 					fprintf(info, " =");
 					--oldbyte;
-				} else if (p.first < oldbyte) {
+				} else if (p.second < oldbyte) {
 					fputs("\n// Escapes:", info);
 					oldbyte = -1;
 				}
-				while (++oldbyte != p.first)
-					fprintf(info," %s", nfo_escapes.right.begin()->second.c_str());
-				fprintf(info, " %s", p.second.c_str());
+				while (++oldbyte != p.second) {
+					fprintf(info," %s", nfo_escapes[0].first.c_str());
+				}
+				fprintf(info, " %s", p.first.c_str());
 			}
 		}
 	}

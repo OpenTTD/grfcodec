@@ -36,6 +36,7 @@
 using namespace boost::gregorian;
 
 #include"nforenum.h"
+#include"mapescapes.h"
 #include"pseudo.h"
 #include"globals.h"
 #include"messages.h"
@@ -61,10 +62,6 @@ enum{HEX,TEXT,UTF8,ENDQUOTE,QESC,QEXT,NQEXT,NOBREAK=0x80};
 		if((cur_context()!=""&&cur_context().find('\n')!=NPOS)||GetState(CONVERTONLY))cur_context()+=white;\
 		white="";\
 	}else ((void)0)
-
-int FindEscape(std::string str);
-std::string FindEscape(char, int);
-std::string FindEscape(char, int, uint);
 
 PseudoSprite::PseudoSprite(const std::string&sprite,int oldspritenum):
 	orig(sprite),

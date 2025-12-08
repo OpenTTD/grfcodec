@@ -1,6 +1,6 @@
 /*
  * mapescapes.h
- * Helper definitions for using boost::bimap
+ * Helper definitions for using NFO escapes
  *
  * Copyright 2009 by Dale McCoy.
  *
@@ -19,22 +19,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/* If your compiler errors on the following lines, boost is not
- * properly installed, or your version of boost is too old.
- * Get boost from http://www.boost.org */
-#include <boost/bimap.hpp>
-#include <boost/bimap/multiset_of.hpp>
+#include <vector>
 
-using namespace boost::bimaps;
-
-typedef unsigned char U8;
+#include "typesize.h"
 #include "escapes.h"
 
-typedef bimap<std::string, multiset_of<int> > nfe_map;
-typedef nfe_map::value_type nfe_pair;
-typedef nfe_map::left_value_type nfe_lpair;
-typedef nfe_map::right_value_type nfe_rpair;
-typedef nfe_map::left_iterator nfe_left_iter;
-typedef nfe_map::right_iterator nfe_right_iter;
+using nfe_map = std::vector<std::pair<std::string, int>>;
+
+void InsertEscape(const std::string &key, int val);
+void RemoveEscape(const std::string &key);
+std::string FindEscape(char action, int byte);
+std::string FindEscape(char action, int byte, uint offset);
+int FindEscape(const std::string &str);
 
 extern nfe_map nfo_escapes;
