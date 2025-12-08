@@ -1,6 +1,6 @@
 /*
  * mapescapes.cpp
- * Helper functions for using boost::bimapped escapes
+ * Helper functions for using escapes
  *
  * Copyright 2009 by Dale McCoy.
  *
@@ -19,6 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <algorithm>
 #include <string>
 
 
@@ -27,10 +28,30 @@
 #include "messages.h"
 #include "mapescapes.h"
 
+nfe_map nfo_escapes;
+
+void InsertEscape(const std::string &key, int byte) {
+	auto new_pair = std::make_pair(key, byte);
+	auto it = std::find(nfo_escapes.begin(), nfo_escapes.end(), new_pair);
+	if (it == nfo_escapes.end()) {
+		nfo_escapes.push_back(new_pair);
+	}
+}
+
+void RemoveEscape(const std::string &key) {
+	auto it = std::remove_if(nfo_escapes.begin(), nfo_escapes.end(), [key](const auto &p) {
+		return p.first == key;
+	});
+	nfo_escapes.erase(it, nfo_escapes.end());
+}
+
 std::string FindEscape(char action, int byte) {
 	// Look for a custom escape
-	for (const nfe_rpair &p : nfo_escapes.right.equal_range(byte)) {
-		if (p.second[0] == action) return " \\" + p.second;
+	auto it = std::find_if(nfo_escapes.begin(), nfo_escapes.end(), [action, byte](const auto &p) {
+		return p.first[0] == action && p.second == byte;
+	});
+	if (it != nfo_escapes.end()) {
+		return " \\" + it->first;
 	}
 
 	// Look for a built-in escape
@@ -46,18 +67,26 @@ std::string FindEscape(char action, int byte, uint offset) {
 		if (e.action==ctoi(action) && e.byte==byte && e.pos==offset) return ' ' + std::string(e.str);
 	}
 	// Look for a custom escape
-	for (const nfe_rpair &p : nfo_escapes.right.equal_range(byte)) {
-		if (p.second[0] == action) return " \\" + p.second;
+	auto it = std::find_if(nfo_escapes.begin(), nfo_escapes.end(), [action, byte](const auto &p) {
+		return p.first[0] == action && p.second == byte;
+	});
+	if (it != nfo_escapes.end()) {
+		return " \\" + it->first;
 	}
 	return "";
 }
 
-int FindEscape(std::string str) {
+int FindEscape(const std::string &str) {
 	for (const esc &e : escapes) {
 		if(str == e.str+1) return e.byte;
 	}
-	nfe_left_iter ret = nfo_escapes.left.find(str);
-	if(ret == nfo_escapes.left.end())
-		return -1;
-	return ret->second;
+
+	const auto &it = std::find_if(nfo_escapes.begin(), nfo_escapes.end(), [str](const auto &p) {
+		return p.first == str;
+	});
+	if (it != nfo_escapes.end()) {
+		return it->second;
+	}
+
+	return -1;
 }

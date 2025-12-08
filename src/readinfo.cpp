@@ -42,12 +42,7 @@ Version 7: Add backslash escapes
 #include<cstdio>
 #include<memory>
 
-
-// grfcodec requires boost::date_time for its processing of the \wYMD and
-// \wDMY formats. Get boost from www.boost.org
-#include<boost/date_time/gregorian/gregorian_types.hpp>
-using namespace boost::gregorian;
-
+#include"mapescapes.h"
 #include"nfosprite.h"
 #include"inlines.h"
 
@@ -284,8 +279,6 @@ std::string GetUtf8Encode(uint ch){
 }
 
 #undef CHAR
-
-int FindEscape(std::string);
 
 Pseudo::Pseudo(size_t num,int infover,int grfcontversion,const std::string&sprite,int claimed_size){
 	std::istringstream in(sprite);

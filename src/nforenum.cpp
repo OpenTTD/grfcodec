@@ -65,8 +65,6 @@
 #include "mapescapes.h"
 #include "data.h"
 
-nfe_map nfo_escapes;
-
 #ifndef _MSC_VER
 //Cygwin's GCC #defines __cdecl, but other GCCs do not
 //#undef it to prevent GCC from warning on the #define,
@@ -348,7 +346,9 @@ int process_file(std::istream&in){
 							if (str == "=") byte--;
 							else if (str[0] == '@')
 								byte = strtol(str.c_str()+1,NULL,16);
-							else nfo_escapes.insert(nfe_pair(str, byte++));
+							else {
+								InsertEscape(str, byte++);
+							}
 					} else if (strncmp(sprite.c_str(), "// ",3)) { // EEEP! No "Format:" line in this file!
 						IssueMessage(0, APPARENTLY_NOT_NFO);
 						SetCode(EPARSE);
@@ -360,7 +360,9 @@ int process_file(std::istream&in){
 				// Now remove all defaults. This serves two purposes:
 				// 1) Prevent incorrectly specified defaults from causing problems later.
 				// 2) Allow the beautifier to select custom escapes over built-ins.
-				for (const esc& e : escapes) nfo_escapes.left.erase(e.str+1);
+				for (const esc& e : escapes) {
+					RemoveEscape(e.str + 1);
+				}
 			}
 		}else{
 			IssueMessage(0,UNKNOWN_VERSION,1);
@@ -476,24 +478,27 @@ int process_file(std::istream&in){
 			(*real_out)<<NFO_HEADER(NFOversion);
 			if (NFOversion > 6) {
 					// (re)insert default escapes
-					for (const esc &e : escapes) nfo_escapes.insert(nfe_pair(e.str+1, e.byte));
+					for (const esc &e : escapes) {
+						InsertEscape(e.str + 1, e.byte);
+					}
 					(*real_out)<<"// Escapes:";
 					int oldbyte = -1;
 
 					for (int act = 0; act < 255; act++) {
-						for (const nfe_rpair &p : nfo_escapes.right) {
-							if (p.second[0] != act) continue;
+						for (const auto &p : nfo_escapes) {
+							if (p.first[0] != act) continue;
 
-							if (p.first == oldbyte) {
+							if (p.second == oldbyte) {
 								(*real_out)<<" =";
 								--oldbyte;
-							} else if (p.first < oldbyte) {
+							} else if (p.second < oldbyte) {
 								(*real_out)<<"\n// Escapes:";
 								oldbyte = -1;
 							}
-							while (++oldbyte != p.first)
-								(*real_out)<<" "<<nfo_escapes.right.begin()->second;
-							(*real_out)<<" "<<p.second;
+							while (++oldbyte != p.second) {
+								(*real_out)<<" "<<nfo_escapes[0].first;
+							}
+							(*real_out)<<" "<<p.first;
 						}
 					}
 					(*real_out)<<"\n";

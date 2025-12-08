@@ -84,7 +84,6 @@ jobs:
     - name: Prepare vcpkg
       run: |
         ${{ steps.vcpkg.outputs.vcpkg }} install --triplet=${{ matrix.arch }}-osx \
-          boost-bimap \
           boost-date-time \
           # EOF
 
@@ -132,7 +131,6 @@ jobs:
       shell: bash
       run: |
         "${{ steps.vcpkg.outputs.vcpkg }}" install --triplet=${{ matrix.arch }}-windows-static \
-          boost-bimap \
           boost-date-time \
           libpng \
           # EOF
