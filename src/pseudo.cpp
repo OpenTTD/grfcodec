@@ -54,6 +54,49 @@ using namespace std::chrono;
 
 constexpr year_month_day SINCE_1920{year(1920), month(1), day(1)};
 
+uint PseudoSprite::Byte::val() const {
+	return this->p->ExtractByte(this->read_len(this->offs));
+}
+
+uint PseudoSprite::Word::val() const {
+	return this->p->ExtractWord(this->read_len(this->offs));
+}
+
+uint PseudoSprite::ExtByte::val() const {
+	return this->p->ExtractExtended(this->read_len(this->offs));
+}
+
+uint PseudoSprite::Dword::val() const {
+	return this->p->ExtractDword(this->read_len(this->offs));
+}
+
+uint PseudoSprite::BaseSeqAccess::loc() const {
+	return offs;
+}
+
+PseudoSprite::Byte& PseudoSprite::Byte::set(uint u) {
+	p->SetByteAt(offs, u);
+	return *this;
+}
+
+PseudoSprite::Word& PseudoSprite::Word::set(uint u) {
+	p->SetByteAt(offs, u&0xFF);
+	p->SetByteAt(offs, u>>8);
+	return *this;
+}
+
+PseudoSprite& PseudoSprite::operator >>(PseudoSprite::BaseSeqAccess &b) {
+	b.p = this;
+	b.offs = extract_offs;
+	extract_offs += b.read_len(extract_offs);
+	return *this;
+}
+
+PseudoSprite& PseudoSprite::Extract(PseudoSprite::BaseSeqAccess &b, uint off) {
+	b.p = this;
+	b.offs = off;
+	return *this;
+}
 
 #define cur_pos() ((uint)out.str().length()-1)
 #define next_pos() ((uint)out.str().length())
@@ -847,4 +890,13 @@ uint PseudoSprite::ReadValue(std::istream& in, width w) {
 fail:	// Nothing worked
 	in.clear(std::ios::badbit);
 	return (uint)-1;
+}
+
+uint PseudoSprite::BytesRemaining() const {
+	return (uint)packed.length() - extract_offs;
+}
+
+PseudoSprite& PseudoSprite::seek(uint off) {
+	extract_offs = off;
+	return *this;
 }
