@@ -19,19 +19,13 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include<algorithm>
 #include<sstream>
 #include<iostream>
 #include<iomanip>
 #include<chrono>
 #include<cstdarg>
 #include<cstdio>
-
-/* If your compiler errors on the following lines, boost is not
- * properly installed.
- * Get boost from http://www.boost.org */
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-#include <boost/tokenizer.hpp>
 
 #include"nforenum.h"
 #include"mapescapes.h"

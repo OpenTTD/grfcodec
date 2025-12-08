@@ -84,7 +84,6 @@ jobs:
       shell: bash
       run: |
         "${{ steps.vcpkg.outputs.vcpkg }}" install --triplet=${{ matrix.arch }}-windows-static \
-          boost-date-time \
           libpng \
           # EOF
 
