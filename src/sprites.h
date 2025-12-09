@@ -69,7 +69,7 @@ struct SpriteInfo {
 
 class spriteinfowriter {
 	public:
-	~spriteinfowriter() {}
+	virtual ~spriteinfowriter() {}
 	virtual void addsprite(bool /* first */, const char * /* filename */, int /* y */, int /*x*/, SpriteInfo /*info*/) { };
 	virtual void adddata(uint /*size*/, U8 * /*data*/) { };
 };

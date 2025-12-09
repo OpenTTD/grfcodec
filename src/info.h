@@ -59,10 +59,9 @@ struct BoxSprite : Box {
 	SpriteInfo info;
 };
 
-class infowriter :  public spriteinfowriter {
+class infowriter : public spriteinfowriter {
 	public:
-	infowriter(FILE *info, int maxboxes, int useplaintext, const char *directory);
-	virtual ~infowriter();
+	infowriter(FILE *info, int useplaintext, const char *directory);
 
 	void flush();
 	virtual void addsprite(bool first, const char *filename, int x, int y, SpriteInfo info);
@@ -73,10 +72,9 @@ class infowriter :  public spriteinfowriter {
 	private:
 	FILE *info;
 	const char *directory;
-	void resize(int newmaxboxes);
-	Box **boxes;
+	std::vector<std::unique_ptr<Box>> boxes;
 
-	int spriteno, maxboxes, boxnum;
+	int spriteno = 0;
 	int useplaintext;
 };
 

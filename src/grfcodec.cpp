@@ -766,7 +766,7 @@ static int decode(const char *file, const char *dir, const U8 *palette, int box,
 	pcx->setcolours(255, 0, 0);
 	if (pcx32 != NULL) pcx32->setcolours(255, 0, 0);
 
-	infowriter writer(info, (width + box - 1) / box, useplaintext, pcx->getdirectory());
+	infowriter writer(info, useplaintext, pcx->getdirectory());
 
 	if (colourmap)
 		pcx->installwritemap(colourmap);
