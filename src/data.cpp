@@ -1058,7 +1058,7 @@ NDF_END
 #undef W
 
 /*	Action 4 strings */
-static const unsigned char _dat4[]={
+static constexpr unsigned char _dat4[]={
 NDF_HEADER(0x03, 5),
 /*Maximum feature:*/ 0x14,
 // Rules for one-byte IDs:
@@ -1080,6 +1080,9 @@ NDF_HEADER(0x03, 5),
 /*0F*/0,
 /*10*/0,
 /*11*/                            CTRL_COLOR,
+/*12*/0,
+/*13*/0,
+/*14*/0,
 // Rules for two-byte IDs:
 /*00*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR,
 /*01*/CTRL_SPACE | CTRL_NEWLINE | CTRL_COLOR,
@@ -1104,6 +1107,7 @@ NDF_HEADER(0x03, 5),
 /*14*/CTRL_SPACE,
 NDF_END
 };
+static_assert(std::size(_dat4) == 2 + 1 + (_dat4[2] + 1) * 2 + 1);
 
 
 /*	Randomized action 2 */
