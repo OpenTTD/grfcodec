@@ -19,6 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <vector>
 #include "singleton.h"
 #include "message_mgr.h"
 
@@ -86,7 +87,7 @@ public:
 	SINGLETON(Check2v)
 private:
 	ExpandingArray<VarData>globvars;
-	auto_array<FeatData>_p;
+	std::vector<FeatData> data;
 	uint maxop;
 	uint MaxParam(uint feature, uint var)const;
 	uint GetWidth(uint feature, uint var)const;
@@ -119,7 +120,7 @@ private:
 	struct rand2info{
 		uint bits[2],numtriggers;
 	};
-	auto_array<rand2info>_p;
+	std::vector<rand2info> data;
 public:
 	void CheckRand(uint feat,uint type,uint triggers,uint first,uint nrand);
 	SINGLETON(rand2);
@@ -137,9 +138,9 @@ private:
 	bool checks1C;
 };
 
-class Callbacks:public auto_array<uint>{
+class Callbacks {
 public:
-	uint numcallbacks;
+	std::vector<uint> flags;
 	SINGLETON(Callbacks);
 };
 

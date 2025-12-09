@@ -89,20 +89,20 @@ Check2v::Check2v(){
 		if(var==-1)break;
 		globvars[var]=tempvar;
 	}
-	_p=new FeatData[MaxFeature()+1];
-	for(uint i=0;i<=MaxFeature();i++){
-		_p[i].last80=0xFF;
-		_p[i].featfor82=GetCheckByte(2v);
+	data.resize(MaxFeature() + 1);
+	for (FeatData &featdata : data) {
+		featdata.last80 = 0xFF;
+		featdata.featfor82 = GetCheckByte(2v);
 		while(true){
 			var=tempvar.Load(pFile);
 			if(var==-1)break;
 			if(tempvar.width==0x80){
-				_p[i].last80=var-1;
+				featdata.last80 = var - 1;
 				break;
 			}
 			if(var==0xFF&&tempvar.width==0xF0)break;
-			if(var&0x80)_p[i].var80[var&0x7F]=tempvar;
-			else _p[i].vars[var]=tempvar;
+			if (var & 0x80) featdata.var80[var & 0x7F] = tempvar;
+			else featdata.vars[var] = tempvar;
 		}
 	}
 	fclose(pFile);
@@ -110,30 +110,30 @@ Check2v::Check2v(){
 
 bool Check2v::IsValid(uint feature, uint var)const{
 	if(var>=0x80)
-		return _p[feature].var80[var&0x7F].width != 0;
+		return data.at(feature).var80[var & 0x7F].width != 0;
 	else
-		return _p[feature].vars[var].width || globvars[var].width;
+		return data.at(feature).vars[var].width || globvars[var].width;
 }
 
 uint Check2v::MaxParam(uint feature, uint var)const{
 	assert((var&0xE0)==0x60);
 	assert(IsValid(feature, var));
-	if(_p[feature].vars[var].width)
-		return _p[feature].vars[var].maxparam;
+	if (data.at(feature).vars[var].width)
+		return data.at(feature).vars[var].maxparam;
 	else
 		return globvars[var].maxparam;
 }
 
 uint Check2v::GetWidth(uint feature, uint var)const{
 	assert(IsValid(feature, var));
-	if(_p[feature].vars[var].width)
-		return _p[feature].vars[var].width;
+	if (data.at(feature).vars[var].width)
+		return data.at(feature).vars[var].width;
 	else
 		return globvars[var].width & ~0x40;
 }
 
 uint Check2v::GetEffFeature(uint feature,uint type){
-	if((type&3)==2)return Instance()._p[feature].featfor82;
+	if((type & 3) == 2) return Instance().data.at(feature).featfor82;
 	return feature;
 }
 
@@ -145,9 +145,9 @@ void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 		if(var<0x60 || var>=0x80) IssueMessage(WARNING1,INDIRECT_VAR_NOT_6X,offs);
 	}
 	if(var&0x80){
-		if(var>_p[feature].last80) IssueMessage(ERROR,NONEXISTENT_VARIABLE,offs,var);
+		if (var > data.at(feature).last80) IssueMessage(ERROR, NONEXISTENT_VARIABLE, offs, var);
 		else if(!IsValid(feature, var)) IssueMessage(WARNING1,NONEXISTENT_VARIABLE,offs,var);
-		else if(shift>=_p[feature].var80[var&0x7F].width<<3)IssueMessage(WARNING4,SHIFT_TOO_FAR,offs+1,var);
+		else if (shift >= data.at(feature).var80[var & 0x7F].width << 3) IssueMessage(WARNING4, SHIFT_TOO_FAR, offs + 1, var);
 	}else if(!IsValid(feature,var))
 		IssueMessage(WARNING1,NONEXISTENT_VARIABLE,offs,var);
 	else{
@@ -375,13 +375,13 @@ void varRange::AddRangeInternal(uint min,uint max,RenumMessageId unreachable){
 
 rand2::rand2(){
 	FILE*pFile=myfopen(2r);
-	_p=new rand2info[MaxFeature()+1];
-	for(uint i=0;i<=MaxFeature();i++){
-		_p[i].bits[0]=fgetc(pFile);
-		_p[i].bits[1]=fgetc(pFile);
-		_p[i].numtriggers=fgetc(pFile);
+	data.resize(MaxFeature() + 1);
+	for (rand2info &info : data) {
+		info.bits[0] = fgetc(pFile);
+		info.bits[1] = fgetc(pFile);
+		info.numtriggers = fgetc(pFile);
 	}
-	CheckEOF(_p[MaxFeature()].numtriggers,2r);
+	CheckEOF(data[MaxFeature()].numtriggers, 2r);
 	fclose(pFile);
 }
 
@@ -390,10 +390,10 @@ void rand2::CheckRand(uint feat,uint type,uint triggers,uint first,uint nrand){
 	type&=1;
 	uint bits=0;
 	while(nrand>>=1)bits++;
-	if(first>_p[feat].bits[type])IssueMessage(ERROR,OUT_OF_RANGE_BITS,5,_p[feat].bits[type]);
-	else if(first+bits>_p[feat].bits[type])IssueMessage(ERROR,OUT_OF_RANGE_BITS,6,_p[feat].bits[type]);
+	if (first > data.at(feat).bits[type]) IssueMessage(ERROR, OUT_OF_RANGE_BITS, 5, data.at(feat). bits[type]);
+	else if (first + bits > data.at(feat).bits[type]) IssueMessage(ERROR, OUT_OF_RANGE_BITS, 6 ,data.at(feat). bits[type]);
 	triggers&=0x7F;
-	if(triggers>>_p[feat].numtriggers)IssueMessage(WARNING1,UNDEFINED_TRIGGER);
+	if(triggers >> data.at(feat).numtriggers) IssueMessage(WARNING1, UNDEFINED_TRIGGER);
 }
 
 //****************************************
@@ -416,13 +416,13 @@ void Define2::ChangeFeature(uint feat){
 
 Callbacks::Callbacks(){
 	FILE*pFile=myfopen(callbacks);
-	_p=new uint[numcallbacks=GetCheckWord(callbacks)];
-	for(uint i=0;i<numcallbacks;i++){
+	flags.resize(GetCheckWord(callbacks));
+	for (uint &flag : flags) {
 		uint temp=GetCheckByte(callbacks);
 		if(temp==0x7F)
 			temp = GetCheckWord(callbacks) | (1<<31);
 		else if(temp&0x80)temp ^= (1<<31 | 0x80);
-		_p[i]=temp;
+		flag = temp;
 	}
 	fclose(pFile);
 }

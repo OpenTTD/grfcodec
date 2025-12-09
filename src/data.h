@@ -81,7 +81,7 @@ END_DATA()
 FILE*_myfopen(files, bool);
 int _CheckEOF(int,files,const char*,int);
 int _GetCheckWord(FILE*,files,const char*,int);
-void _myfread(FILE*,uchar*,uint,files,const char*,int);
+void _myfread(FILE*,uchar*,size_t,files,const char*,int);
 
 #define CheckEOF(ch,name) _CheckEOF(ch,dat##name,__FILE__,__LINE__)
 #define GetCheckByte(name) CheckEOF(fgetc(pFile),name)

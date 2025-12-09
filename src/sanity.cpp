@@ -42,41 +42,38 @@ bool _base_grf = false;
 
 class features{
 public:
-	uint maxFeat;
 	struct featdat{
 		uchar validbits;
 		uchar act2type;
 	};
-	AUTO_ARRAY(featdat);
+	std::vector<featdat> data;
 	SINGLETON(features)
 };
 
 features::features(){
 	FILE*pFile=myfopen(feat);
-	maxFeat=GetCheckByte(feat);
-	_p=new features::featdat[maxFeat+1];
-	uint i=0;
-	for(;i<=maxFeat;i++) _p[i].validbits=(uchar)GetCheckByte(feat);
-	for(i=0;i<=maxFeat;i++) _p[i].act2type=(uchar)GetCheckByte(feat);
+	data.resize(GetCheckByte(feat));
+	for (featdat &f : data) f.validbits = (uchar)GetCheckByte(feat);
+	for (featdat &f : data) f.act2type = (uchar)GetCheckByte(feat);
 	fclose(pFile);
 }
 
 bool IsValidFeature(int act,uint feat){
-	if(feat>features::Instance().maxFeat)return false;
-	return(features::Instance()[feat].validbits&act)!=0;
+	if (feat > features::Instance().data.size()) return false;
+	return (features::Instance().data[feat].validbits & act) != 0;
 }
 
 bool IsValid2Feature(uint feat){
-	if(feat>features::Instance().maxFeat)return false;
-	return features::Instance()[feat].act2type!=0xFF;
+	if (feat > features::Instance().data.size()) return false;
+	return features::Instance().data[feat].act2type != 0xFF;
 }
 
 uchar Get2Type(uint feat){
-	if(feat>features::Instance().maxFeat)return 0xFF;
-	return features::Instance()[feat].act2type;
+	if (feat > features::Instance().data.size()) return 0xFF;
+	return features::Instance().data[feat].act2type;
 }
 
-uint MaxFeature(){return features::Instance().maxFeat;}
+uint MaxFeature() { return static_cast<uint>(features::Instance().data.size()); }
 
 #define MAX_TTD_SPRITE 4894
 

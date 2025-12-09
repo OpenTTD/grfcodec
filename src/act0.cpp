@@ -98,30 +98,30 @@ char FF is undef
 typedef std::basic_string<uchar> ustring;
 typedef std::vector<int> int_str;
 
-class PropData:public auto_array<PropData>{
+class PropData{
 public:
 	PropData(){}
 	void Init(FILE*,bool);
 	uchar GetData(uint)const;
 	uint GetLength()const{return(uint)length.length();}
-	const PropData*GetVarLength(int)const;
+	const PropData &GetVarLength(int) const;
 	uint GetValue(uint&,const int_str&)const;
-	uint maxfirst(int prop){return idRange[prop]&0xFF;}
-	uint maxlast(int prop){return (idRange[prop]>>8)&0xFF;}
+	uint maxfirst(int prop) const { return idRange[prop] & 0xFF; }
+	uint maxlast(int prop) const { return (idRange[prop] >> 8) & 0xFF; }
+	std::vector<PropData> data;
 private:
 	ustring length;
 	std::vector<uint> idRange;
 	void readString(FILE*,bool);
 	int CountFE();
-	void operator=(const PropData&);
-	PropData(const PropData&);
 };
 
-class Check0:public auto_array<PropData>{
+class Check0 {
 public:
 	void Check(PseudoSprite&);
 	static Check0&Instance(){static Check0 obj;return obj;}
-	uint GetFeat8(){return _p[8].GetLength();}
+	uint GetFeat8() { return data.at(8).GetLength(); }
+	std::vector<PropData> data;
 private:
 	Check0();
 	bool CheckVar(uint&,PseudoSprite&,const PropData&,bool addblank,bool,int_str =int_str())const;
@@ -137,11 +137,11 @@ uchar PropData::GetData(unsigned int prop)const{
 	return prop<length.length()?length[prop]:(uchar)0xFF;
 }
 
-const PropData*PropData::GetVarLength(int prop)const{
-	PropData*ret=_p;
+const PropData &PropData::GetVarLength(int prop) const {
+	auto ret = data.begin();
 	for(int i=0;i<prop;i++)
 		if(length[i]==0xFE)ret++;
-	return ret;
+	return *ret;
 }
 
 uint PropData::GetValue(uint&len_off,const int_str&decoded)const{
@@ -172,9 +172,9 @@ void PropData::Init(FILE*pFile, bool withIDs){
 	readString(pFile, withIDs);
 	int j=CountFE();
 	if(j){
-		_p=new PropData[j];
+		data.clear();
 		for(int k=0;k<j;k++)
-			_p[k].Init(pFile, false);
+			data.emplace_back().Init(pFile, false);
 	}
 }
 
@@ -355,7 +355,7 @@ void Check0::Check(PseudoSprite&str){
 			}
 			if(feature==8 && prop==9)
 				CargoTransTable(IDs-1);
-			len=_p[feature].GetData(prop);
+			len = data.at(feature).GetData(prop);
 			if(prop==8)// Mark prop 08 as set, if necessary.
 				for(uint i=firstID;i<=maxID;i++)
 					Prop08Tracking::Set(feature,i);
@@ -373,18 +373,19 @@ void Check0::Check(PseudoSprite&str){
 				return;
 			}
 			if(feature==8){
-				if(firstID>_p[feature].maxfirst(prop))
-					IssueMessage(ERROR,INVALID_ID,firstID,0,_p[feature].maxfirst(prop));
-				if(IDs&&maxID>_p[feature].maxlast(prop))
-					IssueMessage(ERROR,INVALID_ID,maxID,0,_p[feature].maxlast(prop));
+				const PropData &prop_data = data.at(feature);
+				if (firstID > prop_data.maxfirst(prop))
+					IssueMessage(ERROR, INVALID_ID, firstID, 0, prop_data. maxfirst(prop));
+				if (IDs && maxID > prop_data.maxlast(prop))
+					IssueMessage(ERROR, INVALID_ID, maxID, 0, prop_data. maxlast(prop));
 			}
 			if(propLoc[prop]&&!(len&0x80))
 				IssueMessage(WARNING2,REPEATED_PROP,i,prop,propLoc[prop]);
 			propLoc[prop]=i++;
 			if(len==0xFE){
-				const PropData*data=_p[feature].GetVarLength(prop);
+				const PropData &prop_data = data.at(feature).GetVarLength(prop);
 				for(j=0;j<IDs;j++){
-					if(!CheckVar(i,str,*data,j+1<IDs,true))return;
+					if (!CheckVar(i, str, prop_data, j + 1 < IDs, true)) return;
 					while (lengthlist.size()) {
 						const uint loc = lengthlist.back(),
 							val = str.ExtractDword(loc),
@@ -408,7 +409,7 @@ void Check0::Check(PseudoSprite&str){
 			IssueMessage(ERROR,INSUFFICIENT_DATA2,i-str.Length(),prop);
 		else{
 			if(i<str.Length()){
-				len=_p[feature].GetData(str.ExtractByte(4+str.ExtendedLen(4)));
+				len = data.at(feature).GetData(str.ExtractByte(4 + str.ExtendedLen(4)));
 				if(_autocorrect&&str.ExtractByte(2)==1&&GetWidth(len)<5){
 					// If setting one property, assume setting same prop for more IDs
 					while(i+(GetWidth(len)==3?str.ExtendedLen(i):GetWidth(len))<=str.Length()&&IDs<0xFF){
@@ -426,14 +427,15 @@ void Check0::Check(PseudoSprite&str){
 			}
 			if(!GetState(LINEBREAKS))return;
 			bool linebreaks=(IDs>1||GetState(LINEBREAKS)==3)&&str.ExtractByte(2)>1;
+			const PropData &prop_data = data.at(feature);
 			uint data;
 			for(i=0;i<propLoc.size();i++)
-				linebreaks |= propLoc[i] && _p[feature].GetData(i)==0xFE;
+				linebreaks |= propLoc[i] && prop_data.GetData(i) == 0xFE;
 			if(!linebreaks)return;
 			for(i=0;i<propLoc.size();i++){
 				if(!propLoc[i])continue;
 				str.SetEol(propLoc[i]-1,1);
-				if((data=_p[feature].GetData(i))==0xFE)continue;
+				if ((data = prop_data.GetData(i)) == 0xFE) continue;
 				for(uint j=IDs;j;j--)
 					str.ColumnAfter(propLoc[i]+GetWidth(data)*j);
 			}
@@ -457,9 +459,9 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			continue;
 		}
 		switch(ch){
-		case'|':return true;
-		case'l':
-		case'm':{
+		case '|':return true;
+		case 'l':
+		case 'm':{
 			uint len=(ch=='m'?vdata.GetData(++i):1);
 			for(uint k=0;k<len;k++){
 				/* Check for a specific raw data value.
@@ -475,11 +477,11 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			}
 			break;
 		}
-		case'e':
-		case'n':{
+		case 'e':
+		case 'n':{
 			uint lhs=vdata.GetValue(++i,decoded);
 			uint rhs=vdata.GetValue(++i,decoded);
-			const PropData*vdata2=vdata.GetVarLength(i);
+			const PropData &vdata2 = vdata.GetVarLength(i);
 			uchar data=vdata.GetData(++i);
 			if ((lhs == rhs) == (ch == 'n')) break;
 			if(data=='a'){
@@ -489,7 +491,7 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 				str_loc=orig_loc;
 				findPipe=true;
 			}else if(data==0xFE){
-				if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
+				if (!CheckVar(str_loc, str, vdata2, false, false, pass)) return false;
 			}else if(GetWidth(data)<5){
 				FormatSprite(str,str_loc,data,1);
 			}else{
@@ -498,13 +500,13 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			}
 			break;
 		}
-		case'r':{
-			const PropData*vdata2=vdata.GetVarLength(i);
+		case 'r':{
+			const PropData &vdata2 = vdata.GetVarLength(i);
 			uchar repeat_data=vdata.GetData(++i);
 			uint times=vdata.GetValue(++i,decoded);
 			if(repeat_data==0xFE){
 				for(uint j=0;j<times;j++)
-					if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
+					if (!CheckVar(str_loc, str, vdata2, false, false, pass)) return false;
 			}else if(GetWidth(repeat_data)<5){
 				FormatSprite(str,str_loc,repeat_data,times);
 			}else{
@@ -512,8 +514,9 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 				exit(EDATA);
 			}
 			break;
-		}case'*':{
-			const PropData*vdata2=vdata.GetVarLength(i);
+		}
+		case '*':{
+			const PropData &vdata2 = vdata.GetVarLength(i);
 			uchar repeat_data=vdata.GetData(++i);
 			int term_len=vdata.GetData(++i);
 			uint term;
@@ -542,7 +545,7 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			try{
 				if(repeat_data==0xFE){
 					while((str.*ExtractTerm)(str_loc)!=term)
-						if(!CheckVar(str_loc,str,*vdata2,false,false,pass))return false;
+						if (!CheckVar(str_loc, str, vdata2, false, false, pass)) return false;
 				}else if(GetWidth(repeat_data)<5){
 					while((str.*ExtractTerm)(str_loc)!=term)
 						FormatSprite(str,str_loc,repeat_data);
@@ -561,7 +564,7 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 			pass.push_back(vdata.GetValue(++i,decoded));
 			break;
 		case 0xFE:
-			CheckVar(str_loc,str,*vdata.GetVarLength(i),false,false,pass);
+			CheckVar(str_loc, str, vdata.GetVarLength(i), false, false, pass);
 			break;
 		default:
 			switch(GetWidth(ch)){
@@ -594,8 +597,8 @@ bool Check0::CheckVar(uint&str_loc,PseudoSprite&str,const PropData&vdata,bool ca
 
 Check0::Check0(){
 	FILE*pFile=myfopen(0);
-	_p=new PropData[MaxFeature()+1];
-	for(uint i=0;i<=MaxFeature();i++)
-		_p[i].Init(pFile,i==8);
+	data.resize(MaxFeature() + 1);
+	for (uint i = 0; i < data.size(); i++)
+		data[i].Init(pFile, i == 8);
 	fclose(pFile);
 }

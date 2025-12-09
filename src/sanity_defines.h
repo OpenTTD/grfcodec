@@ -53,25 +53,4 @@ bool IsProp08Set(uint feat,uint id);
 uchar Get2Type(uint feat);
 uint MaxFeature();
 
-template<typename _Ty>class auto_array{//can't use auto_ptr because I use new[]/delete[]
-public:
-	auto_array():_p(NULL){}
-	~auto_array(){delete[]_p;}
-	operator _Ty*&(){return _p;}
-	operator const _Ty*()const{return _p;}
-	const _Ty* operator=(_Ty*p){return _p=p;}
-protected:
-	_Ty*_p;
-private:
-	void operator=(const auto_array<_Ty>&);
-	auto_array(const auto_array&);
-};
-
-typedef auto_array<uint> Guintp;
-
-#define AUTO_ARRAY(type)\
-	auto_array<type>_p;\
-	type&operator[](uint x){return _p[x];}\
-	type operator[](uint x)const{return _p[x];}\
-
 #endif//_RENUM_SANITY_DEFS_H_INCLUDED_

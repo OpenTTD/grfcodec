@@ -33,42 +33,43 @@
 #include"pseudo.h"
 #include"command.h"
 
-uint numvars;
 class Vars{
 public:
-	bool canRead7(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x80));}
-	bool canReadD(uint v){return(v<0x80||v==0xFF||(v<numvars&&_p[v&0x7F]&0x40));}
-	bool canWriteD(uint v){return(v<0x80||(v<numvars&&_p[v&0x7F]&0x20));}
-	bool isBitmask(uint v){return(v<numvars&&_p[v&0x7F]&7)==0;}
+	bool canRead7(uint v) const { return (v < 0x80 || (v < numvars && data.at(v & 0x7F) & 0x80)); }
+	bool canReadD(uint v) const { return (v < 0x80 || v == 0xFF || (v < numvars && data.at(v & 0x7F) & 0x40)); }
+	bool canWriteD(uint v) const { return (v < 0x80 || (v < numvars && data.at(v & 0x7F) & 0x20)); }
+	bool isBitmask(uint v) const { return (v < numvars && data.at(v & 0x7F) & 7) == 0; }
 	bool lenOK(uint v,uint len){
 		if(len==4)len--;
-		return(_p[v&0x7F]&(1<<(len-1)))!=0;
+		return (data.at(v & 0x7F) & (1 << (len - 1))) != 0;
 	}
-	AUTO_ARRAY(uchar)
+	std::vector<uchar> data;
+	uint numvars;
 	SINGLETON(Vars)
 };
 
-class D:public Guintp{
+class D {
 public:
+	std::vector<uint> flags;
 	uint maxpatchvar,maxop;
 	SINGLETON(D)
 };
 
 Vars::Vars(){
 	FILE*pFile=myfopen(79Dv);
-	_p=new uchar[numvars=GetCheckByte(79Dv)];
-	myfread(_p,numvars,79Dv);
+	data.resize(GetCheckByte(79Dv));
+	myfread(data.data(), data.size(), 79Dv);
 	fclose(pFile);
-	numvars|=0x80;
+	numvars = static_cast<uint>(data.size()) | 0x80;
 }
 
 D::D(){
 	FILE*pFile=myfopen(D);
 	maxpatchvar=GetCheckByte(D);
 	maxop=GetCheckByte(D);
-	_p=new uint[MaxFeature()+1];
-	for(uint i=0;i<=MaxFeature();i++)
-		_p[i]=GetCheckWord(D);
+	flags.resize(MaxFeature() + 1);
+	for (uint &flag : flags)
+		flag = GetCheckWord(D);
 	fclose(pFile);
 }
 
@@ -190,8 +191,8 @@ bool CheckD(PseudoSprite&data,uint length){
 				data.SetPositionalOpByte(3, 'D');
 				uint feat=(info>>8)&0xFF,count=info>>16;
 				if(src1>6)IssueMessage(ERROR,INVALID_SRC,1);
-				if(feat>MaxFeature()||!D::Instance()[feat])IssueMessage(ERROR,INVALID_FEATURE);
-				else if(count>D::Instance()[feat])IssueMessage(WARNING1,OOR_COUNT);
+				if (feat > MaxFeature() || !D::Instance().flags.at(feat)) IssueMessage(ERROR, INVALID_FEATURE);
+				else if (count > D::Instance().flags.at(feat)) IssueMessage(WARNING1, OOR_COUNT);
 				return true;
 			}
 		}
