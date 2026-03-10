@@ -35,27 +35,28 @@
 #include"command.h"
 #include"ExpandingArray.h"
 
-class IDs:public Guintp{
+class IDs {
 public:
+	std::vector<uint> flags;
 	SINGLETON(IDs);
 };
 
 IDs::IDs(){
 	FILE*pFile=myfopen(IDs);
-	_p=new uint[MaxFeature()+1];
-	for(uint i=0;i<=MaxFeature();i++)
-		_p[i]=GetCheckWord(IDs);
+	flags.resize(MaxFeature() + 1);
+	for (auto &flag : flags)
+		flag = GetCheckWord(IDs);
 	fclose(pFile);
 }
 
 class TextIDs{
 public:
-	uint idClasses[0x20],numspecials;
+	uint idClasses[0x20];
 	bool CheckID(uint,uint);
 	void Define(uint);
 	bool IsDefined(uint);
 	static void Clear();
-	AUTO_ARRAY(uchar);
+	std::vector<uchar> specials;
 	SINGLETON(TextIDs);
 private:
 	static Expanding0Array<bool> _m;
@@ -67,8 +68,8 @@ TextIDs::TextIDs(){
 	uint i=0;
 	for(;i<0x20;i++)
 		idClasses[i]=GetCheckWord(TextIDs);
-	_p=new uchar[numspecials=GetCheckByte(TextIDs)];
-	myfread(_p,numspecials,TextIDs);
+	specials.resize(GetCheckByte(TextIDs));
+	myfread(specials.data(), specials.size(), TextIDs);
 	fclose(pFile);
 }
 
@@ -79,8 +80,8 @@ bool TextIDs::CheckID(uint feature,uint ID){
 	}
 	if(feature==0x49&&ID==0xC7FF)return true;
 	if(idClasses[ID>>11]==0xFFFF){
-		for(uint i=0;i<numspecials;i++)if(ID>>8==_p[i])return true;
-		return false;
+		auto it = std::ranges::find(specials, ID >> 8);
+		return it != specials.end();
 	}
 	return(ID&0x7FF)<idClasses[ID>>11];
 }
@@ -127,7 +128,7 @@ bool CheckID(uint feature,uint ID){
 	 * is the first new GRF version after that, so use that as minimum
 	 * threshold for allowing the higher IDs. Even though this is not
 	 * actually tied to GRF version 8.*/
-	uint maxID=_grfver>=8&&feature<=0x03?0xFFFF:IDs::Instance()[feature];
+	uint maxID = _grfver >= 8 && feature <= 0x03 ? 0xFFFF : IDs::Instance().flags.at(feature);
 	if(ID>maxID){
 		IssueMessage(ERROR,INVALID_ID,ID,feature==0x0C?0x49:0,maxID);
 		return false;

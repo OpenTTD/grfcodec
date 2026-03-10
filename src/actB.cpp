@@ -34,16 +34,16 @@
 
 class B{
 public:
-	uint maxSeverity,numMessages;
-	AUTO_ARRAY(uchar);
+	uint maxSeverity;
+	std::vector<uchar> data;
 	SINGLETON(B);
 };
 
 B::B(){
 	FILE*pFile=myfopen(B);
 	maxSeverity=GetCheckByte(B);
-	_p=new uchar[numMessages=GetCheckByte(B)];
-	myfread(_p,numMessages,B);
+	data.resize(GetCheckByte(B));
+	myfread(data.data(), data.size(), B);
 	fclose(pFile);
 }
 
@@ -61,14 +61,14 @@ void CheckB(PseudoSprite&data){
 		CheckLangID(lang,2);
 		_grfver=0;
 	}
-	if(messageid!=0xFF&&messageid>=B::Instance().numMessages){
+	if (messageid != 0xFF && messageid >= B::Instance().data.size()) {
 		IssueMessage(FATAL,INVALID_MESSAGEID);
 		return;
 	}
 	if(messageid==0xFF)
 		specials=CheckString(data,offset,CTRL_NEWLINE,false,MakeStack(4,STACK_TEXT,STACK_TEXT,STACK_DWORD,STACK_DWORD),RETURN_STACK);
 	else
-		specials=B::Instance()[messageid];
+		specials=B::Instance().data.at(messageid);
 	if(specials==-1)return;
 	if(specials>1){
 		try{

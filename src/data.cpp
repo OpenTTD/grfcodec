@@ -1303,7 +1303,7 @@ int _GetCheckWord(FILE*pFile,files file,const char*src,int line){
 	return ret|(_CheckEOF(fgetc(pFile),file,src,line)<<8);
 }
 
-void _myfread(FILE*pFile,uchar*target,uint count,files file,const char*src,int line){
+void _myfread(FILE*pFile,uchar*target,size_t count,files file,const char*src,int line){
 	if(fread(target,1,count,pFile)!=count){
 		IssueMessage(0,DATAFILE_ERROR,LOAD,datafiles[file].name+NFORENUM_DIR_LEN,FILELINE,src,line);
 		assert(false);

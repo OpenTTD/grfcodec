@@ -36,26 +36,26 @@
 #include"messages.h"
 #include"command.h"
 
-class check4:public Guintp{
+class check4{
 public:
 	int GetGenericPerms(int feature);
 	int GetNamePerms(int feature);
 	SINGLETON(check4)
+	std::vector<uint> features;
 };
 
 check4::check4(){
 	FILE*pFile=myfopen(4);
-	_p=new uint[MaxFeature()+1];
-	uint i=0;
-	for(;i<=MaxFeature();i++)
-		_p[i]=fgetc(pFile);
-	for(i=0;i<=MaxFeature();i++)
-		_p[i]|=GetCheckByte(4)<<8;
+	features.resize(MaxFeature() + 1);
+	for (auto &flags : features)
+		flags = GetCheckByte(4);
+	for (auto &flags : features)
+		flags |= GetCheckByte(4) << 8;
 	fclose(pFile);
 }
 
-int check4::GetGenericPerms(int feature){return _p[feature]>>8;}
-int check4::GetNamePerms(int feature){return _p[feature]&0xFF;}
+int check4::GetGenericPerms(int feature) { return features.at(feature) >> 8; }
+int check4::GetNamePerms(int feature) { return features.at(feature) & 0xFF; }
 
 void Check4(PseudoSprite&data){
 	const uint feature=data.ExtractByte(1),lang=data.ExtractByte(2);
