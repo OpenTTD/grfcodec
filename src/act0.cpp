@@ -209,9 +209,10 @@ int PropData::CountFE(){
 	return ret;
 }
 
-class Prop08Tracking{
-	STATIC(Prop08Tracking)
+class Prop08Tracking {
 public:
+	Prop08Tracking() = delete;
+
 	static void Set(uint feat,uint id){
 		_m[feat][id]=true;
 	}

@@ -40,14 +40,16 @@
 
 bool _base_grf = false;
 
-class features{
+class features : public Singleton<features> {
 public:
 	struct featdat{
 		uchar validbits;
 		uchar act2type;
 	};
 	std::vector<featdat> data;
-	SINGLETON(features)
+private:
+	features();
+	friend Singleton;
 };
 
 features::features(){
