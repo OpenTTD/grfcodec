@@ -116,8 +116,7 @@ typedef std::map<RenumMessageId,MessageData> msgid2data_map;
 typedef std::map<RenumExtraTextId,lang2str_map> extid2data_map;
 
 /*! Manages program messages and extra texts for various supported languages. */
-class MessageMgr {
-	SINGLETON(MessageMgr);
+class MessageMgr : public Singleton<MessageMgr> {
 public:
 	const static MessageData UNKNOWN_MESSAGE; /*!< Fallback message data. */
 	const static std::string UNDEFINED_TEXT; /*!< Fallback message text. */
@@ -160,6 +159,9 @@ public:
 	void SetExtraText(RenumExtraTextId i, RenumLanguageId lang, const std::string& text);
 
 private:
+	MessageMgr();
+	friend Singleton;
+
 	/*! Initialize message data and properties. */
 	void InitMessages();
 

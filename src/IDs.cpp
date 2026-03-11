@@ -35,10 +35,12 @@
 #include"command.h"
 #include"ExpandingArray.h"
 
-class IDs {
+class IDs : public Singleton<IDs> {
 public:
 	std::vector<uint> flags;
-	SINGLETON(IDs);
+private:
+	IDs();
+	friend Singleton;
 };
 
 IDs::IDs(){
@@ -49,7 +51,7 @@ IDs::IDs(){
 	fclose(pFile);
 }
 
-class TextIDs{
+class TextIDs : public Singleton<TextIDs> {
 public:
 	uint idClasses[0x20];
 	bool CheckID(uint,uint);
@@ -57,8 +59,9 @@ public:
 	bool IsDefined(uint);
 	static void Clear();
 	std::vector<uchar> specials;
-	SINGLETON(TextIDs);
 private:
+	TextIDs();
+	friend Singleton;
 	static Expanding0Array<bool> _m;
 };
 Expanding0Array<bool> TextIDs::_m;

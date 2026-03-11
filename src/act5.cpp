@@ -37,13 +37,14 @@
 
 extern bool _base_grf;
 
-class c5{
+class c5 : public Singleton<c5> {
 public:
 	int maxFeature(){return (int)sizes.size()+3;}
 	const std::vector<int>&operator[](int x)const {return sizes[x-4];}
-	SINGLETON(c5)
 private:
 	std::vector<std::vector<int> >sizes;
+	c5();
+	friend Singleton;
 };
 
 c5::c5(){

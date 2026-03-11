@@ -32,11 +32,13 @@
 #include"pseudo.h"
 #include"command.h"
 
-class B{
+class B : public Singleton<B> {
 public:
 	uint maxSeverity;
 	std::vector<uchar> data;
-	SINGLETON(B);
+private:
+	B();
+	friend Singleton;
 };
 
 B::B(){

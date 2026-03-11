@@ -33,7 +33,7 @@
 #include"pseudo.h"
 #include"command.h"
 
-class Vars{
+class Vars : public Singleton<Vars> {
 public:
 	bool canRead7(uint v) const { return (v < 0x80 || (v < numvars && data.at(v & 0x7F) & 0x80)); }
 	bool canReadD(uint v) const { return (v < 0x80 || v == 0xFF || (v < numvars && data.at(v & 0x7F) & 0x40)); }
@@ -45,14 +45,18 @@ public:
 	}
 	std::vector<uchar> data;
 	uint numvars;
-	SINGLETON(Vars)
+private:
+	Vars();
+	friend Singleton;
 };
 
-class D {
+class D : public Singleton<D> {
 public:
 	std::vector<uint> flags;
 	uint maxpatchvar,maxop;
-	SINGLETON(D)
+private:
+	D();
+	friend Singleton;
 };
 
 Vars::Vars(){

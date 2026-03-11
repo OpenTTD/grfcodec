@@ -36,12 +36,14 @@
 #include"messages.h"
 #include"command.h"
 
-class check4{
+class check4 : public Singleton<check4> {
 public:
 	int GetGenericPerms(int feature);
 	int GetNamePerms(int feature);
-	SINGLETON(check4)
 	std::vector<uint> features;
+private:
+	check4();
+	friend Singleton;
 };
 
 check4::check4(){
@@ -412,9 +414,11 @@ std::string MakeStack(int items,...){
  * Lang ID code
  *******************************************************/
 
-struct langNames{
+struct langNames : ConstSingleton<langNames> {
 	std::string names[0x80];
-	C_SINGLETON(langNames)
+private:
+	langNames();
+	friend ConstSingleton;
 };
 
 langNames::langNames(){

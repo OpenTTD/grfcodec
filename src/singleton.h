@@ -23,30 +23,58 @@
 #ifndef _RENUM_SINGLETON_H_INCLUDED_
 #define _RENUM_SINGLETON_H_INCLUDED_
 
-//Mutable singleton
-#define SINGLETON(class)\
-public:\
-	static class&Instance(){static class obj;return obj;}\
-	static const class&CInstance(){return Instance();}\
-private:\
-	class();\
-	class(const class&);\
-	void operator=(const class&);
+/**
+ * Base class to make a singleton class.
+ * @tparam T the singleton class.
+ */
+template <typename T>
+class Singleton {
+public:
+	/**
+	 * Get the singleton class instance.
+	 * @return the singleton class instance.
+	 */
+	static T &Instance() {
+		static T instance{};
+		return instance;
+	}
 
-//Immutable singleton
-#define C_SINGLETON(class)\
-public:\
-	static const class&Instance(){static const class obj;return obj;}\
-private:\
-	class();\
-	class(const class&);\
-	void operator=(const class&);
+	/**
+	 * Get the const singleton class instance.
+	 * @return the const singleton class instance.
+	 */
+	static const T &CInstance() { return Instance(); }
 
-//Non-object class
-#define STATIC(class)\
-private:\
-	class();\
-	class(const class&);\
-	void operator=(const class&);
+	Singleton(const Singleton &) = delete;
+	Singleton &operator=(const Singleton) = delete;
+
+protected:
+	Singleton() = default;
+	virtual ~Singleton() = default;
+};
+
+/**
+ * Base class to make a const singleton class.
+ * @tparam T the singleton class.
+ */
+template <typename T>
+class ConstSingleton {
+public:
+	/**
+	 * Get the const singleton class instance.
+	 * @return the const singleton class instance.
+	 */
+	static const T &Instance() {
+		static T instance;
+		return instance;
+	}
+
+	ConstSingleton(const ConstSingleton &) = delete;
+	ConstSingleton &operator=(const ConstSingleton) = delete;
+
+protected:
+	ConstSingleton() = default;
+	virtual ~ConstSingleton() = default;
+};
 
 #endif // _RENUM_SINGLETON_H_INCLUDED_

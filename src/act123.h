@@ -25,7 +25,7 @@
 
 class PseudoSprite;
 
-struct act123{
+struct act123 : Singleton<act123> {
 	void init();
 	uint MaxFoundFeat()const;
 
@@ -62,10 +62,12 @@ struct act123{
 	}defined2IDs;
 
 	uint act3feature,act3spritenum;
-	SINGLETON(act123)
+private:
+	act123();
+	friend Singleton;
 };
 
-class Check2v{
+class Check2v : public Singleton<Check2v> {
 	struct VarData{
 		VarData():width(0){}
 		VarData(int x):width(x){}
@@ -84,8 +86,9 @@ public:
 	static uint Prohibit0Mask(uint);
 	static uint GetEffFeature(uint,uint);
 	bool IsValid(uint feature, uint var)const;
-	SINGLETON(Check2v)
 private:
+	Check2v();
+	friend Singleton;
 	ExpandingArray<VarData>globvars;
 	std::vector<FeatData> data;
 	uint maxop;
@@ -115,15 +118,16 @@ private:
 	void AddRangeInternal(uint min,uint max,RenumMessageId unreachable);
 };
 
-class rand2{
+class rand2 : public Singleton<rand2> {
 private:
+	rand2();
+	friend Singleton;
 	struct rand2info{
 		uint bits[2],numtriggers;
 	};
 	std::vector<rand2info> data;
 public:
 	void CheckRand(uint feat,uint type,uint triggers,uint first,uint nrand);
-	SINGLETON(rand2);
 };
 
 //An object of this class will check and define the given ID when it is destroyed.
@@ -138,9 +142,11 @@ private:
 	bool checks1C;
 };
 
-class Callbacks {
+class Callbacks : public Singleton<Callbacks> {
 public:
 	std::vector<uint> flags;
-	SINGLETON(Callbacks);
+private:
+	Callbacks();
+	friend Singleton;
 };
 

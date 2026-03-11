@@ -56,8 +56,7 @@
 typedef std::map<std::string,RenumLanguageId> str2lang_map;
 
 /*! Handles program language detection and selection. */
-class LanguageMgr {
-	SINGLETON(LanguageMgr);
+class LanguageMgr : public Singleton<LanguageMgr> {
 public:
 	/*! Gets the current language ID.
 		\return ID of the current language.
@@ -80,11 +79,14 @@ public:
 	RenumLanguageId DecodeLanguageCode(const std::string& code) const;
 
 private:
+	LanguageMgr();
+	friend Singleton;
+
 	/*! Initializes the language map with data about supported languages. */
 	void InitLanguageMap();
 
-	RenumLanguageId currentId; /*!< Current language ID */
-	str2lang_map codeIdMap; /*!< Maps language codes to identifiers */
+	RenumLanguageId currentId{}; /*!< Current language ID */
+	str2lang_map codeIdMap{}; /*!< Maps language codes to identifiers */
 };
 
 #endif // _RENUM_LANGUAGE_MGR_H_INCLUDED_
