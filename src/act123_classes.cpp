@@ -26,7 +26,6 @@
 
 
 #include"inlines.h"
-#include"ExpandingArray.h"
 #include"sanity_defines.h"
 #include"data.h"
 #include"rangedint.h"
@@ -53,21 +52,23 @@ void act123::init(){
 }
 
 uint act123::MaxFoundFeat()const{
-	const std::vector<IDarray::info>&m=defined2IDs._m;
 	short ret=0;
-	for(uint i=0;i<(uint)m.size();i++)
-		ret=std::max<short>(ret,m[i].feature);
+	for (const auto &[_, inf] : defined2IDs._m) {
+		ret=std::max<short>(ret, inf.feature);
+	}
 	return ret;
 }
 
-void act123::IDarray::define(uint feature,unsigned int id,bool checks1C){
-	_m[id].used=false;
-	_m[id].sprite=_spritenum;
-	_m[id].v1C=checks1C;
-	_m[id].feature=(ushort)feature;
+void act123::IDarray::define(uint feature,int id,bool checks1C){
+	IDarray::info inf;
+	inf.used = false;
+	inf.sprite = _spritenum;
+	inf.v1C = checks1C;
+	inf.feature = (ushort)feature;
+	_m[id] = inf;
 }
 
-bool act123::IDarray::test(uint offset,uint id)const{
+bool act123::IDarray::test(uint offset,int id)const{
 	if(!is_defined(id)){
 		IssueMessage(ERROR,UNDEFINED_ID,offset,id);
 		return false;
@@ -109,27 +110,33 @@ Check2v::Check2v(){
 }
 
 bool Check2v::IsValid(uint feature, uint var)const{
-	if(var>=0x80)
-		return data.at(feature).var80[var & 0x7F].width != 0;
-	else
-		return data.at(feature).vars[var].width || globvars[var].width;
+	if(var>=0x80) {
+		if (data.at(feature).var80.contains(var & 0x7F)) return data.at(feature).var80.at(var & 0x7F).width > 0;
+		return true; // width = 1 by default
+	} else {
+		return (data.at(feature).vars.contains(var) && data.at(feature).vars.at(var).width > 0)
+			|| (globvars.contains(var) && globvars.at(var).width > 0);
+	}
 }
 
 uint Check2v::MaxParam(uint feature, uint var)const{
 	assert((var&0xE0)==0x60);
 	assert(IsValid(feature, var));
-	if (data.at(feature).vars[var].width)
-		return data.at(feature).vars[var].maxparam;
-	else
-		return globvars[var].maxparam;
+	if (data.at(feature).vars.contains(var) && data.at(feature).vars.at(var).width > 0) {
+		return data.at(feature).vars.at(var).maxparam;
+	} else if (globvars.contains(var)) {
+		return globvars.at(var).maxparam;
+	} else {
+		return 0;
+	}
 }
 
 uint Check2v::GetWidth(uint feature, uint var)const{
 	assert(IsValid(feature, var));
-	if (data.at(feature).vars[var].width)
-		return data.at(feature).vars[var].width;
+	if (data.at(feature).vars.contains(var) && data.at(feature).vars.at(var).width > 0)
+		return data.at(feature).vars.at(var).width;
 	else
-		return globvars[var].width & ~0x40;
+		return globvars.at(var).width & ~0x40;
 }
 
 uint Check2v::GetEffFeature(uint feature,uint type){
@@ -147,7 +154,10 @@ void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 	if(var&0x80){
 		if (var > data.at(feature).last80) IssueMessage(ERROR, NONEXISTENT_VARIABLE, offs, var);
 		else if(!IsValid(feature, var)) IssueMessage(WARNING1,NONEXISTENT_VARIABLE,offs,var);
-		else if (shift >= data.at(feature).var80[var & 0x7F].width << 3) IssueMessage(WARNING4, SHIFT_TOO_FAR, offs + 1, var);
+		else {
+			uint var80_width = data.at(feature).var80.contains(var & 0x7F) ? data.at(feature).var80.at(var & 0x7F).width : 1; // width = 1 by default
+			if (shift >= var80_width << 3) IssueMessage(WARNING4, SHIFT_TOO_FAR, offs + 1, var);
+		}
 	}else if(!IsValid(feature,var))
 		IssueMessage(WARNING1,NONEXISTENT_VARIABLE,offs,var);
 	else{
@@ -170,7 +180,8 @@ void Check2v::Check(uint feature,uint var,uint offs,uint param,uint shift)const{
 }
 
 uint Check2v::Prohibit0Mask(uint var){
-	return !(CInstance().globvars[var].width & 0x40);
+	uint width = CInstance().globvars.contains(var) ? CInstance().globvars.at(var).width : 0;
+	return !(width & 0x40);
 }
 
 //****************************************

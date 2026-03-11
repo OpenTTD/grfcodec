@@ -285,8 +285,8 @@ bool PseudoSprite::ignorelinkage=false;
 void PseudoSprite::CheckLinkage(int ofs, int count)const{
 	if(!ignorelinkage) {
 		for(int i=0;i<count;i++) {
-			if(linkage[ofs+i] != 0 && linkage[ofs+i] != (i<<8 | count)) {
-				IssueMessage(WARNING2,EXTENSION_MISMATCH,ofs+i,((linkage[ofs+i]>>8)&0xFF)+1,linkage[ofs+i]&0xFF,i+1,count);
+			if(linkage.contains(ofs + i) && linkage.at(ofs+i) != 0 && linkage.at(ofs+i) != (i<<8 | count)) {
+				IssueMessage(WARNING2,EXTENSION_MISMATCH,ofs+i,((linkage.at(ofs+i)>>8)&0xFF)+1,linkage.at(ofs+i)&0xFF,i+1,count);
 				return;
 			}
 		}
@@ -537,7 +537,7 @@ uint PseudoSprite::ExtractExtended(uint offs)const{
 		CheckLinkage(offs,1);
 		return val;
 	}
-	if(linkage[offs]!=0 && linkage[offs]!=1) {
+	if(linkage.contains(offs) && linkage.at(offs)!=0 && linkage.at(offs)!=1) {
 		CheckLinkage(offs,3);
 		ignorelinkage = true;
 	}
@@ -789,7 +789,7 @@ bool PseudoSprite::CanQuote(uint byte){
 }
 
 bool PseudoSprite::DoQuote(uint i)const{
-	if((beauty[i]&~NOBREAK)==QESC || (beauty[i]&~NOBREAK)==QEXT) return NFOversion>6;	// Quote IFF we have escapes
+	if(beauty.contains(i) && ((beauty.at(i)&~NOBREAK)==QESC || (beauty.at(i)&~NOBREAK)==QEXT)) return NFOversion>6; // Quote IFF we have escapes
 	return (CanQuote((*this)[i])&&IsText(i))||(IsUTF8(i)&&GetState(QUOTEUTF8));
 }
 
@@ -800,20 +800,22 @@ void PseudoSprite::Invalidate(){
 }
 
 bool PseudoSprite::IsText(uint i)const{
-	int type = beauty[i]&~NOBREAK;
+	int type = (beauty.contains(i) ? beauty.at(i) : 0) & ~NOBREAK;
 	if (NFOversion>6)
 		return type==TEXT || type==ENDQUOTE || type==QESC || type==QEXT;
 	else
 		return type==TEXT || type==ENDQUOTE;
 }
 bool PseudoSprite::IsUTF8(uint i)const{
-	return (beauty[i]&~NOBREAK)==UTF8;
+	int type = (beauty.contains(i) ? beauty.at(i) : 0) & ~NOBREAK;
+	return type == UTF8;
 }
 bool PseudoSprite::IsEot(uint i)const{
-	return (beauty[i]&~NOBREAK)==ENDQUOTE;
+	int type = (beauty.contains(i) ? beauty.at(i) : 0) & ~NOBREAK;
+	return type == ENDQUOTE;
 }
 bool PseudoSprite::IsLinePermitted(uint i)const{
-	return!(beauty[i]&NOBREAK);
+	return ((beauty.contains(i) ? beauty.at(i) : 0) & NOBREAK) == 0;
 }
 
 bool PseudoSprite::UseOrig()const{

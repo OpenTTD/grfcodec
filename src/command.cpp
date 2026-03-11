@@ -25,13 +25,7 @@
 #include<string>
 #include<cassert>
 #include<stack>
-#ifdef _MSC_VER
-#   pragma warning(disable:4702)//unreachable code
-#   include<map>
-#   pragma warning(default:4702)
-#else
-#   include<map>
-#endif
+#include<map>
 #include<cstdlib>
 #include<getopt.h>
 
@@ -45,8 +39,6 @@
 #include"inject.h"
 #include"sanity_defines.h"
 #include"data.h"
-
-#include"ExpandingArray.h"
 
 #define CASE(_case,_return)\
 	case _case:return _commandState._return;
@@ -84,7 +76,7 @@ struct command{
 	//20..16, 25..21, 30..26: Leading space 1,2,3
 	//31: CONVERTONLY
 	uint beauty;
-	Expanding0Array<int>warnstate;
+	std::map<int, int> warnstate;
 }_commandState,_CLstate;
 
 static std::map<std::string,int>_varmap,_CLvar;
@@ -230,7 +222,7 @@ bool parse_comment(const std::string&line){
 			IssueMessage(0,COMMAND_UNKNOWN,command_part.c_str());
 			IssueMessage(0,COMMAND_REVERT_DEFAULT);
 		}
-		_commandState.warnstate[num]=state;
+		_commandState.warnstate[num] = state;
 		break;
 	}case VERSIONCHECK:{
 		commandstream>>command_part;
@@ -513,9 +505,11 @@ uint GetState(enum beaut type,int arg){
 
 bool GetWarn(int message,int minSan){
 	message=msg_type[message];
-	switch(crCommandState.warnstate[message]){
-	case ENABLE:return true;
-	case DISABLE:if(minSan>=ERROR)return false;
+	if(crCommandState.warnstate.contains(message)) {
+		switch(crCommandState.warnstate.at(message)) {
+			case ENABLE: return true;
+			case DISABLE: if(minSan>=ERROR) return false;
+		}
 	}
 	return GetState(LINT)>=minSan;
 }

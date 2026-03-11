@@ -22,34 +22,37 @@
 #include<string>
 #include<cassert>
 #include<sstream>
+#include<set>
+#include<map>
 
 
 #include"nforenum.h"
 #include"inlines.h"
 #include"pseudo.h"
 #include"messages.h"
-#include"ExpandingArray.h"
 #include"strings.h"
 #include"command.h"
 
 class IDarray{
 public:
-	void init(){used.resize(0);sprite.resize(0);}
-	bool is_defined(int id)const{return sprite[id]!=0;}
-	bool is_used(int id)const{return used[id];}
-	uint defined_at(int id)const{return sprite[id];}
-	void define(unsigned int id){
-		used[id]=false;
-		sprite[id]=_spritenum;
+	IDarray() = default;
+	void init() { used.clear(); sprite.clear(); }
+	bool is_defined(int id) const { return sprite.contains(id); }
+	bool is_used(int id) const { return used.contains(id); }
+	uint defined_at(int id) const {
+		if (sprite.contains(id)) return sprite.at(id);
+		return 0;
 	}
-	void use(int id){used[id]=true;}
+	void define(int id) { sprite.insert({id, _spritenum}); }
+	void use(int id) { used.insert(id); }
 protected:
-	Expanding0Array<uint>sprite;
-	Expanding0Array<bool>used;
-}status;
-static const IDarray&crStatus=status;
+	std::map<int, uint> sprite;
+	std::set<int> used;
+};
 
-void InitF(){status.init();}
+static IDarray status;
+
+void InitF() { status.init(); }
 
 #define BITS(first, num) (((1U << (num)) - 1) << (first))
 
@@ -58,12 +61,11 @@ void CheckF(PseudoSprite&data){
 	uint id=data.ExtractByte(1),offset=2,langs,oldoff=0;
 	bool isFinal=(id>=0x80);
 	id&=0x7F;
-	if(crStatus.is_defined(id)&&!status.is_used(id))IssueMessage(WARNING1,UNUSED_ID,id,status.defined_at(id));
+	if(status.is_defined(id)&&!status.is_used(id))IssueMessage(WARNING1,UNUSED_ID,id,status.defined_at(id));
 	status.define(id);
 	if(isFinal){
 		status.use(id);
-		ExpandingArray<uint>nameLocs;
-		const ExpandingArray<uint>&cNameLocs=nameLocs;
+		std::map<uint, uint> nameLocs;
 		uint names=0;
 		langs=data.ExtractByte(offset);
 		do{
@@ -72,18 +74,32 @@ void CheckF(PseudoSprite&data){
 			names++;
 			if(names>1)data.SetEol(oldoff-1,1);
 			oldoff=offset;
-			if(_grfver<7){
+			if(_grfver<7) {
 				if(langs!=0x7F&&langs&0x60)IssueMessage(WARNING3,UNKNOWN_LANG_BIT,offset,langs);
-				if(langs&0x10){if(nameLocs[4])IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,4,nameLocs[4]);nameLocs[4]=offset;}
-				if(langs&0x08){if(nameLocs[3])IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,3,nameLocs[3]);nameLocs[3]=offset;}
-				if(langs&0x04){if(nameLocs[2])IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,2,nameLocs[2]);nameLocs[2]=offset;}
-				if(langs&0x02){if(nameLocs[1])IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,1,nameLocs[1]);nameLocs[1]=offset;}
-				if(langs&0x01){if(nameLocs[0])IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,0,nameLocs[0]);nameLocs[0]=offset;}
-			}else{
+				if(langs & 0x10) {
+					if(nameLocs.contains(4)) IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,4,nameLocs[4]);
+					nameLocs[4] = offset;
+				}
+				if(langs&0x08) {
+					if(nameLocs.contains(3)) IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,3,nameLocs[3]);
+					nameLocs[3] = offset;
+				}
+				if(langs&0x04) {
+					if(nameLocs.contains(2)) IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,2,nameLocs[2]);
+					nameLocs[2] = offset;
+				}
+				if(langs&0x02) {
+					if(nameLocs.contains(1)) IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,1,nameLocs[1]);
+					nameLocs[1] = offset;
+				}
+				if(langs&0x01) {
+					if(nameLocs.contains(0)) IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,0,nameLocs[0]);
+					nameLocs[0] = offset;
+				}
+			} else {
 				CheckLangID(langs,offset);
-				if(nameLocs[langs])
-					IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,langs,nameLocs[langs]);
-				nameLocs[langs]=offset;
+				auto [_, inserted] = nameLocs.insert({langs, offset});
+				if(!inserted) IssueMessage(WARNING2,DUPLICATE_LANG_NAME,offset,langs,nameLocs[langs]);
 			}
 			if(CheckString(data,++offset,0)){
 				IssueMessage(FATAL,OVERRAN_F_NAME,oldoff+1,langs);
@@ -91,13 +107,15 @@ void CheckF(PseudoSprite&data){
 			}
 		}while((langs=data.ExtractByte(offset))!=0);
 		if(names>1)data.SetEol(oldoff-1,1);
-		if(_grfver<7){
-			if(!nameLocs[4])IssueMessage(WARNING1,MISSING_LANG_NAME,4);
-			if(!nameLocs[3])IssueMessage(WARNING1,MISSING_LANG_NAME,3);
-			if(!nameLocs[2])IssueMessage(WARNING1,MISSING_LANG_NAME,2);
-			if(!nameLocs[1])IssueMessage(WARNING1,MISSING_LANG_NAME,1);
-			if(!nameLocs[0])IssueMessage(WARNING1,MISSING_LANG_NAME,0);
-		}else if(!cNameLocs[0x7F])IssueMessage(WARNING1,MISSING_FALLBACK);
+		if(_grfver<7) {
+			if(!nameLocs.contains(4)) IssueMessage(WARNING1,MISSING_LANG_NAME,4);
+			if(!nameLocs.contains(3)) IssueMessage(WARNING1,MISSING_LANG_NAME,3);
+			if(!nameLocs.contains(2)) IssueMessage(WARNING1,MISSING_LANG_NAME,2);
+			if(!nameLocs.contains(1)) IssueMessage(WARNING1,MISSING_LANG_NAME,1);
+			if(!nameLocs.contains(0)) IssueMessage(WARNING1,MISSING_LANG_NAME,0);
+		} else if(!nameLocs.contains(0x7F)) {
+			IssueMessage(WARNING1,MISSING_FALLBACK);
+		}
 		offset++;
 	}
 	uint num_parts=data.SetEol(offset,1).ExtractByte(offset);
@@ -162,12 +180,12 @@ void finalF(){
 	ManualConsoleMessages();
 	bool header=false;
 	for(uint i=0;i<128;i++)
-		if(crStatus.is_defined(i)&&!crStatus.is_used(i)){
+		if(status.is_defined(i)&&!status.is_used(i)){
 			if(!header){
 				IssueMessage(WARNING1,UNUSEDFIDLEAD,i);
 				IssueMessage(WARNING1,UNEXP_EOF_TOWNNAMES,i);
 				header=true;
 			}
-			IssueMessage(WARNING1,UNUSEDIDFINAL,i,crStatus.defined_at(i));
+			IssueMessage(WARNING1,UNUSEDIDFINAL,i,status.defined_at(i));
 		}
 }

@@ -25,6 +25,8 @@
 #include<cstdarg>
 #include<errno.h>
 #include<cstdlib>
+#include<set>
+#include<map>
 
 #include"nforenum.h"
 #include"globals.h"
@@ -32,7 +34,6 @@
 #include"command.h"
 #include"messages.h"
 #include"sanity.h"
-#include"ExpandingArray.h"
 #include"sanity_defines.h"
 #include"data.h"
 #include"strings.h"
@@ -77,7 +78,7 @@ uint MaxFeature() { return static_cast<uint>(features::Instance().data.size()); 
 
 #define MAX_TTD_SPRITE 4894
 
-static struct sanity{
+struct sanity{
 	sanity(){init();}
 	void init(){
 		state=FIND_PSEUDO;
@@ -88,19 +89,25 @@ static struct sanity{
 	unsigned int expectedsprites,seensprites,spritenum,act8,act11,act14,minnextlen;
 	class labelArray{
 	public:
-		labelArray(){init();}
-		void init(){used.resize(0);sprite.resize(0);}
-		bool is_defined(int id)const{return sprite[id]!=0;}
-		bool is_used(int id)const{return used[id];}
-		uint defined_at(int id)const{return sprite[id];}
-		void define(uint id){sprite[id]=_spritenum;used[id]=false;}
-		void use(int id){used[id]=true;}
+		labelArray() = default;
+		void init() { used.clear(); sprite.clear(); }
+		bool is_defined(int id) const { return sprite.contains(id); }
+		bool is_used(int id) const { return used.contains(id); }
+		uint defined_at(int id) const {
+			if (sprite.contains(id)) return sprite.at(id);
+			return 0;
+		}
+		void define(int id) { sprite[id] = _spritenum; used.erase(id); }
+		void use(int id) { used.insert(id); }
 	protected:
-		Expanding0Array<bool>used;
-		Expanding0Array<uint>sprite;
-	}defined10IDs;
-}status;
-static const sanity&crStatus=status;
+		std::set<int> used;
+		std::map<int, uint> sprite;
+	};
+
+	labelArray defined10IDs;
+};
+
+static sanity status;
 
 void Init123();
 void InitF();
@@ -381,9 +388,9 @@ void check_sprite(PseudoSprite&data){
 			break;
 		}
 		int label=data.SetHex(1).ExtractByte(1);
-		if(!crStatus.defined10IDs.is_used(label)){
-			if(crStatus.defined10IDs.is_defined(label))
-				IssueMessage(WARNING1,UNUSED_LABEL_PREV_DEF,label,crStatus.defined10IDs.defined_at(label));
+		if(!status.defined10IDs.is_used(label)){
+			if(status.defined10IDs.is_defined(label))
+				IssueMessage(WARNING1,UNUSED_LABEL_PREV_DEF,label,status.defined10IDs.defined_at(label));
 			else
 				IssueMessage(WARNING2,UNUSED_LABEL_NO_PREV_DEF,label);
 		}

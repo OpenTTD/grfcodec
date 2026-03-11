@@ -19,7 +19,10 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <set>
+#include <map>
 #include <vector>
+
 #include "singleton.h"
 #include "message_mgr.h"
 
@@ -31,25 +34,41 @@ struct act123{
 
 	class Act1{
 	public:
-		Act1(){init();}
-		void init(){spritenum=0;used.resize(0);}
-		bool is_used(int set)const{return used[set];}
-		void use(int set){used[set]=true;}
-		unsigned int feature,numsets,spritenum;
+		Act1() = default;
+		void init() { spritenum = 0; used.clear(); }
+		bool is_used(int set) const { return used.contains(set); }
+		void use(int set) { used.insert(set); }
+		unsigned int feature,numsets,spritenum = 0;
 	private:
-		Expanding0Array<bool>used;
+		std::set<int> used;
 	}act1;
+
 	class IDarray{
 	public:
-		void init(){_m.resize(0);}
-		bool is_defined(int id)const{return _m[id].sprite!=0;}
-		bool is_used(int id)const{return _m[id].used;}
-		unsigned int defined_at(int id)const{return _m[id].sprite;}
-		void define(uint feature,unsigned int id,bool checks1C);
-		bool checks1C(int id)const{return _m[id].v1C;}
-		void use(int id){_m[id].used=true;}
-		bool test(uint,uint)const;
-		unsigned short GetFeature(uint id)const{return _m[id].feature;}
+		void init() { _m.clear(); }
+		bool is_defined(int id) const {
+			if (_m.contains(id)) return _m.at(id).sprite != 0;
+			return false;
+		}
+		bool is_used(int id) const {
+			if (_m.contains(id)) return _m.at(id).used;
+			return false;
+		}
+		unsigned int defined_at(int id) const {
+			if (_m.contains(id)) return _m.at(id).sprite;
+			return 0;
+		}
+		void define(uint feature, int id, bool checks1C);
+		bool checks1C(int id) const {
+			if (_m.contains(id)) return _m.at(id).v1C;
+			return false;
+		}
+		void use(int id) { _m[id].used = true; }
+		bool test(uint, int) const;
+		unsigned short GetFeature(int id) const {
+			if (_m.contains(id)) return _m.at(id).feature;
+			return (unsigned short)-1;
+		}
 		friend uint act123::MaxFoundFeat()const;
 	private:
 		struct info{
@@ -58,10 +77,12 @@ struct act123{
 			unsigned short feature;
 			unsigned int sprite;
 		};
-		ExpandingArray<info>_m;
-	}defined2IDs;
+		std::map<int, info> _m;
+	};
 
-	uint act3feature,act3spritenum;
+	IDarray defined2IDs;
+
+	uint act3feature,act3spritenum = 0;
 	SINGLETON(act123)
 };
 
@@ -73,9 +94,9 @@ class Check2v{
 		uint min,max,width,maxparam;
 	};
 	struct FeatData{
-		FeatData():var80(VarData(1)){}
-		ExpandingArray<VarData>vars;
-		ExpandingArray<VarData>var80;
+		FeatData() = default;
+		std::map<uint, VarData>vars;
+		std::map<uint, VarData>var80;
 		uint last80,featfor82;
 	};
 public:
@@ -86,7 +107,7 @@ public:
 	bool IsValid(uint feature, uint var)const;
 	SINGLETON(Check2v)
 private:
-	ExpandingArray<VarData>globvars;
+	std::map<uint, VarData> globvars;
 	std::vector<FeatData> data;
 	uint maxop;
 	uint MaxParam(uint feature, uint var)const;

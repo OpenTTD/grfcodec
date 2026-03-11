@@ -20,11 +20,13 @@
  */
 
 
+#include<set>
 #include<string>
 #include<cassert>
 #include<fstream>
 #include<errno.h>
 #include<cstdlib>
+#include<vector>
 
 
 #include"nforenum.h"
@@ -33,7 +35,6 @@
 #include"sanity_defines.h"
 #include"data.h"
 #include"command.h"
-#include"ExpandingArray.h"
 
 class IDs {
 public:
@@ -59,9 +60,9 @@ public:
 	std::vector<uchar> specials;
 	SINGLETON(TextIDs);
 private:
-	static Expanding0Array<bool> _m;
+	static std::set<uint> _m;
 };
-Expanding0Array<bool> TextIDs::_m;
+std::set<uint> TextIDs::_m;
 
 TextIDs::TextIDs(){
 	FILE*pFile=myfopen(TextIDs);
@@ -89,12 +90,12 @@ bool TextIDs::CheckID(uint feature,uint ID){
 void TextIDs::Define(uint ID){
 	if(idClasses[ID>>11]==0xFFFF){
 		ID-=0xC000;
-		_m[ID]=true;
+		_m.insert(ID);
 	}
 }
 bool TextIDs::IsDefined(uint ID){
 	if(idClasses[ID>>11]==0xFFFF)
-		return const_cast<const Expanding0Array<bool>& >(_m)[ID-0xC000];
+		return _m.contains(ID-0xC000);
 	return (ID&0x7FF)<idClasses[ID>>11];
 }
 
