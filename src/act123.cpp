@@ -24,10 +24,10 @@
 #include<cassert>
 #include<errno.h>
 #include<cstdlib>
+#include<map>
 
 
 #include"inlines.h"
-#include"ExpandingArray.h"
 #include"sanity_defines.h"
 #include"data.h"
 #include"rangedint.h"
@@ -446,13 +446,14 @@ CHANGED_FEATURE(act3)
 	if(!isGeneric&&!IsValidFeature(ACT3,feature)){IssueMessage(FATAL,INVALID_FEATURE);return;}
 	else if(isOverride&&!IsValidFeature(OVERRIDE3,feature))IssueMessage(ERROR,INVALID_FEATURE);
 	else if(isGeneric&&!IsValidFeature(GENERIC3,feature))IssueMessage(ERROR,INVALID_FEATURE);
-	Expanding0Array<int> ids;
+	std::map<uint, int> ids;
 	PseudoSprite::ExtByte id;
 	for(i=0;i<(numIDs&0x7F);i++){
 		data>>id;
-		if(ids[id])
+		auto [_, inserted] = ids.insert({static_cast<uint>(id), id.loc()});
+		if (!inserted) {
 			IssueMessage(WARNING1,DUPLICATE,id.loc(),ID,id.val(),ids[id]);
-		ids[id]=id.loc();
+		}
 		CheckID(feature,id);
 		if(!IsValidFeature(ACT3_BEFORE_PROP08,feature) && !IsProp08Set(feature,id))
 			IssueMessage(ERROR,ACT3_PRECEDES_PROP08,id.loc(),id.val());
@@ -474,16 +475,16 @@ CHANGED_FEATURE(act3)
 	data.Extract(def,numCIDs.loc()+1+numCIDs*3);
 
 	ids.clear();	// Reuse as cargos
-	ids.reserve(256);
 	for (i=0; i<numCIDs; i++) {
 		data>>cargo>>cid;
 		if ((feature == 0x0F && cargo != 0x00 && cargo != 0xFF) ||
 				(feature == 0x10 && cargo > 0x0A) ||
 				(feature <= 0x04 && cargo>CargoTransTable() && cargo != 0xFF && (cargo != 0xFE || feature != 4)))
 			IssueMessage(ERROR,INVALID_CARGO_TYPE,cargo.loc(),cargo.val());
-		if(ids[cargo])
+		auto [_, inserted] = ids.insert({static_cast<uint>(cargo), cargo.loc()});
+		if(!inserted) {
 			IssueMessage(WARNING1,DUPLICATE,cargo.loc(),CARGO,cargo.val(),ids[cargo]);
-		ids[cargo] = cargo.loc();
+		}
 		CheckCargoID(cid.loc(),cid,feature,newfeature);
 		if(def==cid)
 			IssueMessage(WARNING1,REUSED_DEFAULT);

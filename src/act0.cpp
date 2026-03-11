@@ -30,12 +30,13 @@
 #include<cassert>
 #include<errno.h>
 #include<cstdlib>
+#include<map>
+#include<set>
 
 
 #include"nforenum.h"
 #include"inlines.h"
 #include"messages.h"
-#include"ExpandingArray.h"
 #include"sanity_defines.h"
 #include"data.h"
 #include"pseudo.h"
@@ -213,19 +214,19 @@ class Prop08Tracking{
 	STATIC(Prop08Tracking)
 public:
 	static void Set(uint feat,uint id){
-		_m[feat][id]=true;
+		_m.insert(std::make_pair(feat, id));
 	}
 	static void Reset(){
 		_m.clear();
 	}
 	static bool Check(uint feat,uint id){
-		return ((const ExpandingArray<Expanding0Array<bool> >)_m)[feat][id];
+		return _m.contains(std::make_pair(feat, id));
 	}
 private:
-	static ExpandingArray<Expanding0Array<bool> > _m;
+	static std::set<std::pair<uint, uint>> _m;
 };
 
-ExpandingArray<Expanding0Array<bool> > Prop08Tracking::_m;
+std::set<std::pair<uint, uint>> Prop08Tracking::_m;
 
 bool IsProp08Set(uint feature,uint id){
 	return Prop08Tracking::Check(feature,id);
@@ -270,10 +271,10 @@ static void FormatSprite(PseudoSprite&str, uint&ofs, const uint format, const ui
 				for (uint i=0;i<=MaxFeature();i++)
 					if (Check2v::GetEffFeature(i,0x82)==feature && (k==UINT_MAX||k==feature)) k=i;
 
-				static Expanding0Array<bool> warned;
+				static std::set<uint> warned;
 				if (k>MaxFeature()) {
-					if (!warned[feature]) IssueMessage(WARNING1,COULD_NOT_VERIFY);
-					warned[feature]=true;
+					auto [_, inserted] = warned.insert(feature);
+					if (inserted) IssueMessage(WARNING1,COULD_NOT_VERIFY);
 					break;
 				}
 
@@ -332,7 +333,7 @@ void Check0::Check(PseudoSprite&str){
 		return;
 	}
 	feature!=8&&IDs&&CheckID(feature,firstID)&&CheckID(feature,maxID);
-	Expanding0Array<uint>propLoc, idWidth;
+	std::map<uint, uint> propLoc;
 	try{
 		while(propsRemain||_autocorrect){
 			try{
@@ -379,7 +380,7 @@ void Check0::Check(PseudoSprite&str){
 				if (IDs && maxID > prop_data.maxlast(prop))
 					IssueMessage(ERROR, INVALID_ID, maxID, 0, prop_data. maxlast(prop));
 			}
-			if(propLoc[prop]&&!(len&0x80))
+			if(propLoc[prop] > 0 &&!(len&0x80))
 				IssueMessage(WARNING2,REPEATED_PROP,i,prop,propLoc[prop]);
 			propLoc[prop]=i++;
 			if(len==0xFE){
@@ -429,15 +430,16 @@ void Check0::Check(PseudoSprite&str){
 			bool linebreaks=(IDs>1||GetState(LINEBREAKS)==3)&&str.ExtractByte(2)>1;
 			const PropData &prop_data = data.at(feature);
 			uint data;
-			for(i=0;i<propLoc.size();i++)
-				linebreaks |= propLoc[i] && prop_data.GetData(i) == 0xFE;
+			for (const auto &[prop, loc] : propLoc) {
+				linebreaks |= loc > 0 && prop_data.GetData(prop) == 0xFE;
+			}
 			if(!linebreaks)return;
-			for(i=0;i<propLoc.size();i++){
-				if(!propLoc[i])continue;
-				str.SetEol(propLoc[i]-1,1);
-				if ((data = prop_data.GetData(i)) == 0xFE) continue;
+			for (const auto &[prop, loc] : propLoc) {
+				if(loc == 0) continue;
+				str.SetEol(loc-1,1);
+				if ((data = prop_data.GetData(prop)) == 0xFE) continue;
 				for(uint j=IDs;j;j--)
-					str.ColumnAfter(propLoc[i]+GetWidth(data)*j);
+					str.ColumnAfter(loc+GetWidth(data)*j);
 			}
 		}
 	}catch(uint off){

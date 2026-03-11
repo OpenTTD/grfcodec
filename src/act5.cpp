@@ -28,7 +28,6 @@
 #include"nforenum.h"
 #include"sanity.h"
 #include"inlines.h"
-#include"ExpandingArray.h"
 #include"sanity_defines.h"
 #include"data.h"
 #include"pseudo.h"
