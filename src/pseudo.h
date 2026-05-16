@@ -23,7 +23,8 @@
 #define _RENUM_PSEUDO_H_INCLUDED_
 
 #include<string>
-#include"ExpandingArray.h"
+#include<map>
+#include<vector>
 
 class PseudoSprite{
 public:
@@ -36,7 +37,7 @@ public:
 	uint LinkSafeExtractByte(uint)const;
 private:
 	void LinkBytes(int,size_t);
-	Expanding0Array<int> linkage;
+	std::map<int, int> linkage;
 	static bool ignorelinkage;
 
 public:
@@ -126,8 +127,9 @@ private:
 	bool UseOrig()const;
 
 	std::string orig,packed;
-	Expanding0Array<uchar>beauty;
-	ExpandingArray<std::string>context,ext_print;
+	std::map<uint, uchar> beauty;
+	std::vector<std::string> context;
+	std::map<uint, std::string> ext_print;
 	bool valid,useorig;
 	const int oldspritenum;
 
